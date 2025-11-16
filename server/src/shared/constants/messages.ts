@@ -1,6 +1,6 @@
 export const MESSAGES = {
   USERS: {
-    REGISTER_SUCCESS: "User registered successfully.",
+    REGISTER_SUCCESS: "User registered successfully",
     LOGIN_SUCCESS: "User logged in successfully.",
     LOGOUT_SUCCESS: "User logged out successfully.",
     PROFILE_UPDATED: "Profile updated successfully.",
