@@ -9,20 +9,4 @@ export interface LoginUserDTO {
     phone?: string;
     role: UserRole;
     isActive: boolean;
-    profileCompleted: boolean;
-
-    // Profile fields (all optional)
-    profileImage?: string;
-    dateOfBirth?: Date;
-    gender?: UserGender;
-    height?: number;
-    weight?: number;
-    targetWeight?: number;
-    fitnessGoal?: FitnessGoal;
-    experienceLevel?: ExperienceLevel;
-    preferredWorkoutType?: WorkoutType[];
-    medicalConditions?: string[];
-    dietPreference?: DietPreference;
-    waterIntakeGoal?: number;
-
 }

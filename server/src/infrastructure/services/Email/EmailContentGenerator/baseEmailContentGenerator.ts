@@ -11,7 +11,7 @@ export abstract class BaseEmailContentGenerator {
                     🚀 FitStack
                   </h1>
                   <p style="margin:5px 0 0; font-size:14px; color:#6b7280;">
-                    Empowering Entrepreneurs & Startups
+                    FitStack is an AI-powered 
                   </p>
                 </td>
               </tr>

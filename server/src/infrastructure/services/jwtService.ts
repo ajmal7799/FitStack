@@ -42,12 +42,12 @@ export class JWTService implements IJWTService {
         if (!SecreteKey) {
             throw new Error("Access Token Secrete Key Not Found")
         }
-
-        verify(token, SecreteKey, (err, decoded) => {
-            if (err) return null
-
-            return decoded as JWTPayloadType
-        })
-        return null
+        try {
+            const decode = verify(token,SecreteKey) as JWTPayloadType;
+            return decode
+            
+        } catch (error) {
+            return null
+        }
     }
 }

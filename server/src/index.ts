@@ -1,16 +1,21 @@
-import express, { Express } from "express";
+import express, { Express, NextFunction,Request,Response } from "express";
+import cookieParser from "cookie-parser";
 import cors from 'cors'
 import { User_Router } from "./interfaceAdapters/routes/userRoutes";
 import { mongoConnect } from "./infrastructure/database/connectDB/mongoConnect";
+import { Admin_Routes } from "./interfaceAdapters/routes/adminRoutes";
+import { errorHandlingMiddleware } from "./interfaceAdapters/middleware/errorHandlingMiddleware";
+
 
 class ExpressApp {
-    private _app : Express;
+    private _app: Express;
 
     constructor() {
-        this._app = express()
-        mongoConnect.connect()
+        this._app = express();
+        mongoConnect.connect();
         this._setMiddlewares();
-        this._setRoutes()
+        this._setRoutes();
+        this._setErrorHandlingMiddleware();
     }
 
     private _setMiddlewares() {
@@ -19,25 +24,33 @@ class ExpressApp {
                 origin: "http://localhost:5173",
                 credentials: true
             })
-        ) 
+        )
         this._app.use(express.json())
+        this._app.use(cookieParser());
     }
-  
+
+    private _setErrorHandlingMiddleware () {
+        this._app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+            errorHandlingMiddleware(err, req, res, next)
+        });
+    }
+
     private _setRoutes() {
-        // this._app.get("/",(req,res)=> {
-        //     res.send("server is running")
-        // })
+        
+        const userRouter = new User_Router(); 
+        this._app.use("/", userRouter.routes);
 
-         const userRouter = new User_Router();
-         this._app.use("/", userRouter.routes); 
+
+        //  Admin routes
+        this._app.use('/admin', new Admin_Routes().get_router())
     }
 
-  public listen(port:number) {
-        this._app.listen(port,(err) => {
-            if(err) {
+    public listen(port: number) {
+        this._app.listen(port, (err) => {
+            if (err) {
                 console.log("Error while starting server")
                 throw err
-            }else{
+            } else {
                 console.log(`✅ Server started on http://localhost:${port}`);
             }
         })

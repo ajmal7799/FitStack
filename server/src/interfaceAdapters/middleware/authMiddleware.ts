@@ -15,8 +15,10 @@ export class AuthMiddleware {
             res.status(HTTPStatus.UNAUTHORIZED).json({ success: false, message: Errors.INVALID_TOKEN });
             return;
         }
+        
         const token = header.split(" ")[1];
         const decoded = this._jwtService.verifyAccessToken(token as string);
+        
         if (!decoded) {
             res.status(HTTPStatus.UNAUTHORIZED).json({ success: false, message: Errors.INVALID_TOKEN });
             return;

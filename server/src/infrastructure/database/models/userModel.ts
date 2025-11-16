@@ -21,31 +21,31 @@ export interface IUserModel extends Document {
     isActive: boolean;
 
     // Basic Info
-    profileImage?: string;
-    dateOfBirth?: Date;
-    gender?: UserGender;
-    height?: number;
-    weight?: number;
-    targetWeight?: number;
+    // profileImage?: string;
+    // dateOfBirth?: Date;
+    // gender?: UserGender;
+    // height?: number;
+    // weight?: number;
+    // targetWeight?: number;
 
-    // Fitness Info
-    fitnessGoal?: FitnessGoal;
-    experienceLevel?: ExperienceLevel;
-    preferredWorkoutType?: WorkoutType[];
+    // // Fitness Info
+    // fitnessGoal?: FitnessGoal;
+    // experienceLevel?: ExperienceLevel;
+    // preferredWorkoutType?: WorkoutType[];
 
-    // Health & Diet
-    medicalConditions?: string[];
-    dietPreference?: DietPreference;
+    // // Health & Diet
+    // medicalConditions?: string[];
+    // dietPreference?: DietPreference;
 
-    // Goals & Tracking
-    waterIntakeGoal?: number;
+    // // Goals & Tracking
+    // waterIntakeGoal?: number;
 
-    // Tracking
-    profileCompleted: boolean;
+    // // Tracking
+    // profileCompleted: boolean;
 
-    // Timestamps (Document already provides these, but good to be explicit)
-    createdAt: Date;
-    updatedAt: Date;
+    // // Timestamps (Document already provides these, but good to be explicit)
+    // createdAt: Date;
+    // updatedAt: Date;
 }
 
 export const userModel = model<IUserModel>("User", userSchema);

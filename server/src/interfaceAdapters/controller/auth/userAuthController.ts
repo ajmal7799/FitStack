@@ -2,7 +2,7 @@ import { ICreateUserUseCase } from "../../../application/useCase/auth/user/ICrea
 import { registerUserSchema } from "../../../shared/validations/userRegisterValidator";
 import { HTTPStatus } from "../../../shared/constants/httpStatus";
 import { Errors } from "../../../shared/constants/error";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { IVerifyOtpUseCase } from "../../../application/useCase/auth/IVerifyOtp";
 import { ISignUpSendOtpUseCase } from "../../../application/useCase/auth/user/ISignUpSendOtp";
 import { emailSchema } from "../../../shared/validations/emailValidator";
@@ -11,9 +11,10 @@ import { ITokenCreationUseCase } from "../../../application/useCase/auth/ITokenC
 import { UserRole } from "../../../domain/enum/userEnums";
 import { setRefreshTokenCookie } from "../../../shared/utils/setRefreshTokenCookie";
 import { IUserLoginUseCase } from "../../../application/useCase/auth/user/IUserLoginUseCase";
-import { success } from "zod";
 import { loginSchema } from "../../../shared/validations/loginValidator";
-
+import { ResponseHelper } from "../../../shared/utils/responseHelper";
+import { ITokenInvalidationUseCase } from "../../../application/useCase/auth/ITokenInvalidationUseCase";
+import { clearRefreshTokenCookie } from "../../../shared/utils/clearRefreshTokenCookie";
 
 
 export class UserAuthController {
@@ -23,10 +24,12 @@ export class UserAuthController {
         private _verifyOtpUseCase: IVerifyOtpUseCase,
         private _tokenCreationUseCase: ITokenCreationUseCase,
         private _userLoginUseCase: IUserLoginUseCase,
+        private _tokenInvalidationUseCase: ITokenInvalidationUseCase,
     ) { }
 
-    async signUpSendOtp(req: Request, res: Response): Promise<void> {
+    async signUpSendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+
             const validateEmail = emailSchema.safeParse(req.body.email)
             if (!validateEmail) {
                 throw new Error(Errors.INVALID_EMAIL)
@@ -34,24 +37,24 @@ export class UserAuthController {
 
             await this._sendOtpUseCase.signUpSendOtp(validateEmail.data!)
 
-            res.status(HTTPStatus.OK).json({ message: MESSAGES.OTP.OTP_SUCCESSFULL })
+            ResponseHelper.success(res, MESSAGES.OTP.OTP_SUCCESSFULL, HTTPStatus.OK)
 
         } catch (error) {
-            console.log(error);
-            res.status(HTTPStatus.BAD_REQUEST).json({ messsage: Errors.OTP_ERROR, error });
+            next(error)
         }
     }
 
-    async registerUser(req: Request, res: Response): Promise<void> {
+    async registerUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+
             const userData = registerUserSchema.safeParse(req.body);
-            // console.log("userdata : ", userData);
+
             if (!userData.success) {
                 res.status(HTTPStatus.BAD_REQUEST).json({ message: Errors.INVALID_USERDATA });
                 return;
             }
 
-            const { email, name, password, phone, otp } = userData.data!;
+            const { email, name, password, phone, otp, role } = userData.data!;
             console.log("OTP:", otp)
 
             const verifiedOtp = await this._verifyOtpUseCase.verifyOtp(email, otp)
@@ -61,39 +64,33 @@ export class UserAuthController {
                 return;
             }
 
-
-
-            const user = await this._registerUseCase.createUser({ name, email, password, phone })
+            const user = await this._registerUseCase.createUser({ name, email, password, phone, role })
             const token = this._tokenCreationUseCase.createAccessTokenAndRefreshToken({
                 userId: user._id.toString(),
-                role: UserRole.USER,
+                role: role || UserRole.USER,
             })
-            console.log("token", token)
-            console.log("user after creating : ", user);
 
             setRefreshTokenCookie(res, token.refreshToken)
 
-            res.status(HTTPStatus.OK).json({
-                success: true,
-                message: "Signup successfull",
-                data: { user, accessToken: token.accessToken }
-            });
+            ResponseHelper.success(
+                res,
+                MESSAGES.USERS.REGISTER_SUCCESS,
+                { user, accessToken: token.accessToken },
+                HTTPStatus.OK
+            )
 
         } catch (error) {
-            res
-                .status(HTTPStatus.BAD_REQUEST)
-                .json({ success: false, message: error instanceof Error ? error.message : "Server Error" });
+            next(error)
         }
     }
 
-    async loginUser(req: Request, res: Response): Promise<void> {
+    async loginUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
 
             const { email, password } = loginSchema.parse(req.body)
-            console.log("email,password", email, password)
 
             const user = await this._userLoginUseCase.userLogin(email, password)
-            console.log(user)
+
 
             const token = this._tokenCreationUseCase.createAccessTokenAndRefreshToken({
                 userId: user._id.toString(),
@@ -103,20 +100,32 @@ export class UserAuthController {
 
             setRefreshTokenCookie(res, token.refreshToken)
 
-            res.status(HTTPStatus.OK).json({
-                success: true,
-                message: "Login successfull",
-                data: { user, accessToken: token.accessToken }
-            })
-
+            ResponseHelper.success(
+                res,
+                MESSAGES.USERS.LOGIN_SUCCESS,
+                { user, accessToken: token.accessToken },
+                HTTPStatus.OK
+            );
 
         } catch (error) {
-            res.status(HTTPStatus.BAD_REQUEST).json({
-                message: Errors.INVALID_CREDENTIALS,
-                error: error instanceof Error ? error.message : "Error while validating user",
-            });
+            next(error)
         }
     }
 
-    
+
+    async handleLogout(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            
+            const refreshToken = req.cookies.RefreshToken;
+            
+
+            await this._tokenInvalidationUseCase.refreshToken(refreshToken)
+
+            clearRefreshTokenCookie(res)
+
+            ResponseHelper.success(res, MESSAGES.USERS.LOGOUT_SUCCESS, HTTPStatus.OK)
+        } catch (error) {
+            next(error);
+        }
+    }
 }

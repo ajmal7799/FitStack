@@ -16,13 +16,13 @@ const initialState: UserAuthData = {
     email: "",
     phone: "",
     isActive: true,
-    role: "User",
-    updatedAt: new Date().toISOString(),
+    role: "",
+    updatedAt: "",
     accessToken: ""
 };
 
 const userAuthDataSlice = createSlice({
-    name: 'UserAuthData',
+    name: 'authData',
     initialState,
     reducers: {
       setData: (state, action: PayloadAction<UserAuthData>) => {

@@ -1,4 +1,4 @@
-import LoginForm, {type LoginFormData} from "../../components/auth/loginForm";
+import LoginForm, { type LoginFormData } from "../../components/auth/loginForm";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useUserLogin } from "../../hooks/AuthHooks";
@@ -13,16 +13,32 @@ const UserLoginPage = () => {
 
     const handleUserLogin = (values: LoginFormData) => {
         console.log("Login values:", values);
-        toast.success("Login successful!!");
+
         login(values, {
-            onSuccess: (res:any) => {
-                console.log("login successfull , ", res.data);
-                dispatch(setData(res.data))
-                navigate('/home')
+            onSuccess: (res: any) => {
+                dispatch(setData({
+                    name: res.data.user.name,
+                    email: res.data.user.email,
+                    phone: res.data.user.phone,
+                    isActive: res.data.user.isActive,
+                    role: res.data.user.role,
+                    updatedAt: res.data.user.updatedAt,
+                    accessToken: res.data.accessToken,
+                }))
+
+                const role = res.data.user.role
+                if (role === "trainer") {
+                    navigate("/trainer/home")
+                } else {
+                    navigate('/home')  
+                }
+
+                toast.success(res.message);
             },
-            onError: (err) => {
-                 toast.error("Invalid email or password");
-                console.log("Error while login ,", err)
+            onError: (err: any) => {
+             
+                toast.error(err.response.data.message || "invalid email and password");
+                console.log("Error while login,", err);
             }
         })
     };

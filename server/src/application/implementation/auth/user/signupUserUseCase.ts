@@ -5,7 +5,7 @@ import { UserMapper } from "../../../mappers/userMappers";
 import { User } from "../../../../domain/entities/user/userEntities";
 import { USER_ERRORS } from "../../../../shared/constants/error";
 import { ICreateUserUseCase } from "../../../useCase/auth/user/ICreateUserUseCase";
-
+import { AlreadyExisitingExecption } from "../../../constants/exceptions";
 
 
 export class RegisterUserUseCase implements ICreateUserUseCase {
@@ -18,7 +18,7 @@ export class RegisterUserUseCase implements ICreateUserUseCase {
         const { email, password } = data;
         const existingUser = await this._userRepository.findByEmail(email)
         if (existingUser) {
-            throw new Error(USER_ERRORS.USER_ALREADY_EXISTS)
+            throw new AlreadyExisitingExecption(USER_ERRORS.USER_ALREADY_EXISTS)
         }
         const hashedPassword = await this._hashService.hashPassword(password)
         const userEntity = UserMapper.toEntity({

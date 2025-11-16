@@ -13,7 +13,9 @@ import { JWTService } from "../../services/jwtService";
 import { TokenCreationUseCase } from "../../../application/implementation/auth/tokenCreationUseCase";
 import { UserLoginUseCase } from "../../../application/implementation/auth/user/loginUserUseCase";
 import { AuthMiddleware } from "../../../interfaceAdapters/middleware/authMiddleware";
-
+import { AdminLoginUseCase } from "../../../application/implementation/auth/admin/AdminLoginUseCase";
+import { AdminAuthController } from "../../../interfaceAdapters/controller/auth/adminAuthController";
+import { TokenInvalidationUseCase } from "../../../application/implementation/auth/tokenInvalidationUseCase";
 
 
 
@@ -38,7 +40,8 @@ const userSendOtpUseCase = new SignUpSendOtpUseCase(
 const verifyOtpUseCase = new VerifyOtpUseCase(cacheStorage)
 const tokenCreationUseCase = new TokenCreationUseCase(jwtService)
 const userLoginUseCase = new UserLoginUseCase(userRepository,hashService)
-
+const adminLoginUseCase = new AdminLoginUseCase(userRepository,hashService)
+const tokenValidationUseCase = new TokenInvalidationUseCase(jwtService,cacheStorage)
 
 
 
@@ -49,6 +52,14 @@ export const userAuthController = new UserAuthController(
     verifyOtpUseCase,
     tokenCreationUseCase,
     userLoginUseCase,
+    tokenValidationUseCase,
  
 )
+
+
+export const adminAuthController = new AdminAuthController(adminLoginUseCase,tokenCreationUseCase)
+
+/// Middleware
 export const authMiddleware = new AuthMiddleware(jwtService,cacheStorage)
+
+

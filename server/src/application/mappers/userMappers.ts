@@ -14,9 +14,9 @@ export class UserMapper {
             email: dto.email,
             password: dto.password,
             phone: dto.phone,
-            role: UserRole.USER,
+            role: dto.role,
             isActive: true,
-            profileCompleted: false,
+            // profileCompleted: false,
         }
     }
 
@@ -28,19 +28,17 @@ export class UserMapper {
             phone: user.phone,
             role: user.role,
             isActive: true,
-            profileImage: user.profileImage,
-            dateOfBirth: user.dateOfBirth,
-            gender: user.gender,
-            height: user.height,
-            weight: user.weight,
-            targetWeight: user.targetWeight,
-            fitnessGoal: user.fitnessGoal,
-            experienceLevel: user.experienceLevel,
-            preferredWorkoutType: user.preferredWorkoutType,
-            medicalConditions: user.medicalConditions,
-            dietPreference: user.dietPreference,
-            waterIntakeGoal: user.waterIntakeGoal,
-            profileCompleted: user.profileCompleted,
+            
+        }
+    }
+
+    static toLoginAdminResponse(user:User) : LoginUserDTO {
+        return {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            isActive: true,
         }
     }
 
@@ -53,19 +51,19 @@ export class UserMapper {
             phone: doc.phone,
             role: doc.role,
             isActive: doc.isActive !== undefined ? doc.isActive : true,
-            profileImage: doc.profileImage,
-            dateOfBirth: doc.dateOfBirth,
-            gender: doc.gender,
-            height: doc.height,
-            weight: doc.weight,
-            targetWeight: doc.targetWeight,
-            fitnessGoal: doc.fitnessGoal,
-            experienceLevel: doc.experienceLevel,
-            preferredWorkoutType: doc.preferredWorkoutType,
-            medicalConditions: doc.medicalConditions,
-            dietPreference: doc.dietPreference,
-            waterIntakeGoal: doc.waterIntakeGoal,
-            profileCompleted: doc.profileCompleted || false,
+            // profileImage: doc.profileImage,
+            // dateOfBirth: doc.dateOfBirth,
+            // gender: doc.gender,
+            // height: doc.height,
+            // weight: doc.weight,
+            // targetWeight: doc.targetWeight,
+            // fitnessGoal: doc.fitnessGoal,
+            // experienceLevel: doc.experienceLevel,
+            // preferredWorkoutType: doc.preferredWorkoutType,
+            // medicalConditions: doc.medicalConditions,
+            // dietPreference: doc.dietPreference,
+            // waterIntakeGoal: doc.waterIntakeGoal,
+            // profileCompleted: doc.profileCompleted || false,
         }
     }
 }

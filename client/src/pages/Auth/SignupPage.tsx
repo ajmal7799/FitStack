@@ -1,10 +1,13 @@
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import SignupForm, { type SignupFormValues } from "../../components/auth/signUpForm";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import type { SignupPayload } from "../../types/AuthPayloads";
 import OTPModal from "../../components/modals/OtpModal";
 import { useUserSignup, useUserVerifyOtp } from "../../hooks/AuthHooks";
+import { useDispatch } from "react-redux";
+import { setData } from "../../redux/slice/userSlice/authDataSlice";
+// import { AxiosError } from "axios"
 
 export default function UserSignUpPage() {
 
@@ -13,46 +16,71 @@ export default function UserSignUpPage() {
     const { mutate: signup } = useUserSignup();
     const { mutate: verifyOtp } = useUserVerifyOtp()
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+
+    const [searchParams] = useSearchParams();
+    const role = searchParams.get('role') || 'user';
 
     const handleUserSignup = (values: SignupFormValues) => {
+
+
         const payload = {
             name: values.name,
             email: values.email,
             password: values.password,
-            phone: values.phone
+            phone: values.phone,
+            role: role
         }
 
         signup(payload, {
-            onSuccess: (res:any) => {
-               toast.success("Signup successful! Please verify OTP.");
+            onSuccess: (res: any) => {
+                toast.success("Signup successful! Please verify OTP.");
                 setUserData(payload)
                 if (res.message === "Otp sent successfully") {
                     setOtpModalOpen(true)
                 }
             },
-            onError: (err) => {
-                toast.error("Signup failed. Try again.");
-                console.log("Signup error:", err);
-                // toast.error((err as Error).message || "Something went wrong!");
+            onError: (err: any) => {
+                toast.error(err.response.data.message)
             },
         })
     }
     const handleVerifyOtp = (otp: string) => {
-        console.log(userData)
+        // console.log(userData)
         verifyOtp(
             { otp, values: userData },
             {
-                onSuccess: (res:any) => {
+                onSuccess: (res: any) => {
                     if (res.success) {
                         toast.success("OTP verified successfully!");
                         console.log("Otp verified succesfully , :", res.data);
                         setOtpModalOpen(false);
-                    }
-                    navigate('/home')
 
-                }, onError: (err:any) => {
-                    toast.error("Invalid OTP. Try again.");
-                    console.error("Error while verifying otp ", err);
+
+                        dispatch(setData({
+                            name: res.data.user.name,
+                            email: res.data.user.email,
+                            phone: res.data.user.phone,
+                            isActive: res.data.user.isActive,
+                            role: res.data.user.role,
+                            updatedAt: res.data.user.updatedAt,
+                            accessToken: res.data.accessToken,
+                        }));
+                       
+
+                        if (userData.role === "trainer") {
+                            navigate("/trainer/home")
+                        } else {
+                            navigate("/home")
+                        }
+                    }
+
+
+                }, onError: (err: any) => {
+                    // if (err instanceof Error) {
+                    toast.error(err.response.data.message)
+                    // }
                 }
             }
         )
@@ -63,9 +91,11 @@ export default function UserSignUpPage() {
             <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8">
                 {/* Header */}
                 <div className="text-center mb-6">
-                    <h1 className="text-3xl font-bold text-gray-800">Create Your Account</h1>
+                    <h1 className="text-3xl font-bold text-gray-800">
+                        Create Your {role.charAt(0).toUpperCase() + role.slice(1)} Account
+                    </h1>
                     <p className="text-gray-500 mt-2">
-                        Sign up to get started with our awesome platform
+                        Sign up to get started as a {role}
                     </p>
                 </div>
 

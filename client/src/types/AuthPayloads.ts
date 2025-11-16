@@ -2,7 +2,9 @@ export type SignupPayload = {
   name: string;
   email: string;
   password: string;
-  phone: string
+  phone: string;
+  role?: string;
+  
 };
 
 export type OtpPayload = {
@@ -10,7 +12,7 @@ export type OtpPayload = {
   otp: string;
 };
 
-export type LoginPayload = {
+export type LoginPayload = { 
   email: string;
-  password: string;
+  password: string;   
 };

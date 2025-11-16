@@ -26,15 +26,32 @@ export const Errors = {
   TOKEN_DATA_MISSING: "Token data is missing",
   INVALID_LOGIN_TYPE: "Invalid login type",
   PASSWORD_NOT_MATCHING: "Password not matching",
-  UPDATE_FAILED : "Update failed"
+  UPDATE_FAILED: "Update failed",
+  ACCESS_TOKEN_MISSING: "Access Token missing !",
+  REFRESH_TOKEN_MISSING: "Refresh Token missing !",
+  ACCESS_TOKEN_CREATION_FAILED: "Failed to create access token",
+  REFRESH_TOKEN_CREATION_FAILED: "Failed to create refresh token",
+  ACCESS_TOKEN_SECRETKEY_MISSING: "Access token secret key not found",
+  REFRESH_TOKEN_SECRETKEY_MISSING: "Refresh token secret key not found",
 };
 
 export const USER_ERRORS = {
-  USER_ALREADY_EXISTS: "User with this email already exists",
+  USER_ALREADY_EXISTS: "This email is already registered. Please log in instead.",
   USER_INACTIVE: "User is inactive",
   USER_BLOCKED: "User is blocked ",
   USER_NOT_FOUND: "User not found !",
   USER_INVALIDATION: "Error while validating user !",
   NO_USERS_FOUND: "No users found",
-  UPDATE_FAILED : "Update failed"
+  UPDATE_FAILED: "Update failed"
+};
+
+
+export const TRAINER_ERRORS = {
+  TRAINER_ALREADY_EXISTS: "Trainer already exists",
+  INVESTOR_BLOKED: "Investor is blocked",
+};
+
+
+export const ADMIN_ERRORS = {
+  ADMIN_SIGNUP_NOT_ALLOWED: "You are not allowed to register as admin."
 };

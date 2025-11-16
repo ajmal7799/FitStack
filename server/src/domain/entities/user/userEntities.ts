@@ -10,25 +10,25 @@ export interface User {
     role: UserRole;
     isActive?: boolean;
 
-    // Basic Info
-     profileImage?: string;
-    dateOfBirth?: Date;
-    gender?: UserGender;
-    height?: number;
-    weight?: number;
-    targetWeight?: number;
+    // // Basic Info
+    //  profileImage?: string;
+    // dateOfBirth?: Date;
+    // gender?: UserGender;
+    // height?: number;
+    // weight?: number;
+    // targetWeight?: number;
 
-    // Fitness Info
-    fitnessGoal?: FitnessGoal;
-    experienceLevel?: ExperienceLevel;
-     preferredWorkoutType?: WorkoutType[];
+    // // Fitness Info
+    // fitnessGoal?: FitnessGoal;
+    // experienceLevel?: ExperienceLevel;
+    //  preferredWorkoutType?: WorkoutType[];
 
-    // Health & Diet
-    medicalConditions?: string[];
-    dietPreference?: DietPreference;
+    // // Health & Diet
+    // medicalConditions?: string[];
+    // dietPreference?: DietPreference;
 
-    // Goals & Tracking
-    waterIntakeGoal?: number;
+    // // Goals & Tracking
+    // waterIntakeGoal?: number;
 
-    profileCompleted: boolean;
+    // profileCompleted: boolean;
 }

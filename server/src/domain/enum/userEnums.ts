@@ -1,7 +1,7 @@
 export enum UserRole {
-    USER = "USER",
-    ADMIN = "ADMIN",
-    TRAINER = "TRAINER",
+    USER = "user",
+    ADMIN = "admin",
+    TRAINER = "trainer",
 }
 
 export enum UserGender {
@@ -15,7 +15,7 @@ export enum FitnessGoal {
     BUILD_MUSCLE = "build_muscle",
     MAINTAIN_FITNESS = "maintain_fitness",
     IMPROVE_ENDURANCE = "improve_endurance",
-    FLEXIBILITY = "flexibility",
+    FLEXIBILITY = "flexibility", 
     GENERAL_HEALTH = "general_health"
 }
 

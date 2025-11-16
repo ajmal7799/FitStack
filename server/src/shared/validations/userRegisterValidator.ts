@@ -1,5 +1,6 @@
 import z from "zod";
 import { emailSchema } from "./emailValidator";
+import { UserRole } from "../../domain/enum/userEnums";
 
 export const registerUserSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -8,5 +9,5 @@ export const registerUserSchema = z.object({
   phone: z.string()
     .regex(/^\d{10}$/, "Phone number must be 10 digits"),
   otp: z.string().min(6),
-  // role: z.enum(UserRole),
+  role: z.enum(UserRole),
 });

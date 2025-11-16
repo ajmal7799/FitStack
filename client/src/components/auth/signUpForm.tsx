@@ -119,7 +119,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                 {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
             </div>
 
-            {/* Confirm Password */}
+            {/* Confirm Password */}    
             <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700">
                     Confirm Password

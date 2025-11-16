@@ -6,6 +6,7 @@ import { IOtpService } from "../../../../domain/interfaces/services/IOtp/IOtp";
 import { ISignUpSendOtpUseCase } from "../../../useCase/auth/user/ISignUpSendOtp";
 import { USER_ERRORS } from "../../../../shared/constants/error";
 import { IKeyValueTTLCaching } from "../../../../domain/interfaces/services/ICache/IKeyValueTTLCaching";
+import { AlreadyExisitingExecption } from "../../../constants/exceptions";
 
 
 export class SignUpSendOtpUseCase implements ISignUpSendOtpUseCase {
@@ -32,7 +33,7 @@ export class SignUpSendOtpUseCase implements ISignUpSendOtpUseCase {
     async signUpSendOtp(email: string): Promise<void> {
         const existingEmail = await this._userRepository.findByEmail(email);
         if (existingEmail) {
-            throw new Error(USER_ERRORS.USER_ALREADY_EXISTS)
+            throw new AlreadyExisitingExecption(USER_ERRORS.USER_ALREADY_EXISTS)
         }
 
         const OTP = this._otpService.generateOtp();

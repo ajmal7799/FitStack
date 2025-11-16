@@ -12,7 +12,7 @@ const loginSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 type LoginFormProps = {
-  onSubmit: (values: LoginFormData) => void;
+  onSubmit: (values: LoginFormData) => void; 
 };
 
 export default function LoginForm({ onSubmit }: LoginFormProps) {
