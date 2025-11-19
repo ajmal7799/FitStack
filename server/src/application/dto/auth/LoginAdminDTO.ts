@@ -1,4 +1,4 @@
-import { UserRole } from "../../../domain/enum/userEnums";
+import { UserRole,UserStatus } from "../../../domain/enum/userEnums";
 
 export interface LoginAdminResponseDTO {
     _id: string;
@@ -6,5 +6,5 @@ export interface LoginAdminResponseDTO {
     email: string;
     phone?: string;
     role: UserRole;
-    isActive: boolean;
+    isActive: UserStatus;
 }

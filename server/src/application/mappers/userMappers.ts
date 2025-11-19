@@ -1,9 +1,10 @@
 import { User } from "../../domain/entities/user/userEntities";
-import { UserRole } from "../../domain/enum/userEnums";
+import { UserRole,UserStatus } from "../../domain/enum/userEnums";
 import { IUserModel } from "../../infrastructure/database/models/userModel";
 import { CreateUserDTO } from "../dto/auth/createUserDTO";
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 import { LoginUserDTO } from "../dto/auth/LoginUserDTO";
+import { UserDTO } from "../dto/user/userDTO";
 
 export class UserMapper {
 
@@ -15,8 +16,20 @@ export class UserMapper {
             password: dto.password,
             phone: dto.phone,
             role: dto.role,
-            isActive: true,
+            isActive: UserStatus.ACTIVE,
             // profileCompleted: false,
+        }
+    }
+
+    static toDTO(entity: User) : UserDTO {
+        return {
+            _id: entity._id,
+            name: entity.name,
+            email: entity.email,
+            phone: entity.phone,
+            role: entity.role,
+            isActive: entity.isActive,
+            
         }
     }
 
@@ -27,7 +40,7 @@ export class UserMapper {
             email: user.email,
             phone: user.phone,
             role: user.role,
-            isActive: true,
+            isActive: user.isActive,
             
         }
     }
@@ -38,7 +51,19 @@ export class UserMapper {
             name: user.name,
             email: user.email,
             role: user.role,
-            isActive: true,
+            isActive: user.isActive,
+        }
+    }
+
+    static toMongooseDocument(user: User) {
+        return {
+            _id: new mongoose.Types.ObjectId(user._id),
+            name: user.name,
+            email: user.email,
+            password: user.password,
+            phone: user.phone,
+            role: user.role,
+            isActive: user.isActive,
         }
     }
 
@@ -50,7 +75,7 @@ export class UserMapper {
             password: doc.password,
             phone: doc.phone,
             role: doc.role,
-            isActive: doc.isActive !== undefined ? doc.isActive : true,
+            isActive: doc.isActive || UserStatus.ACTIVE,
             // profileImage: doc.profileImage,
             // dateOfBirth: doc.dateOfBirth,
             // gender: doc.gender,

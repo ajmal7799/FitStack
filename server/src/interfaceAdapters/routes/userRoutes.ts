@@ -19,6 +19,10 @@ export class User_Router {
             userAuthController.registerUser(req, res, next)
         })
 
+         this._route.post("/resend-otp", (req: Request, res: Response, next: NextFunction) =>
+      userAuthController.resendOtp(req, res, next)
+    );
+
         this._route.post("/login",(req: Request, res: Response, next: NextFunction) => {
             userAuthController.loginUser(req, res, next)
         })

@@ -2,7 +2,12 @@ import { CONFIG } from "../config/config";
 import { IJWTService } from "../../domain/interfaces/services/IJWTService";
 import { JWTPayloadType } from "../../domain/types/JWTPayloadTypes";
 import { verify, sign } from 'jsonwebtoken'
-import { decode } from "punycode";
+import {
+    TokenExpiredException,
+    TokenMissingException,
+    InvalidDataException,
+} from "../../application/constants/exceptions"
+import { Errors } from "../../shared/constants/error";
 
 export class JWTService implements IJWTService {
     createAccessToken(payload: JWTPayloadType): string {
@@ -10,7 +15,13 @@ export class JWTService implements IJWTService {
         if (!SecreteKey) {
             throw new Error("Access Token Secrete Key Not Found")
         }
-        return sign(payload, SecreteKey, { expiresIn: "15m" })
+
+        try {
+            return sign(payload, SecreteKey, { expiresIn: "15m" })
+        } catch (error) {
+            throw new InvalidDataException(Errors.ACCESS_TOKEN_CREATION_FAILED);
+        }
+
     }
 
 
@@ -20,20 +31,31 @@ export class JWTService implements IJWTService {
             throw new Error("Access Token Secrete Key Not Found")
         }
 
-        return sign(payload, SecreteKey, { expiresIn: "7d" })
+        try {
+            return sign(payload, SecreteKey, { expiresIn: "7d" })
+        } catch (error) {
+            throw new InvalidDataException(Errors.REFRESH_TOKEN_CREATION_FAILED);
+        }
+
     }
 
 
     verifyAccessToken(token: string): JWTPayloadType | null {
         const SecreteKey = CONFIG.JWT_SECRET
         if (!SecreteKey) {
-            throw new Error("Access Token Secrete Key Not Found")
+            throw new TokenMissingException(Errors.ACCESS_TOKEN_SECRETKEY_MISSING);
         }
-        verify(token, SecreteKey, (err, decoded) => {
-            if (err) return null
+
+        if (!token) {
+            throw new TokenMissingException(Errors.ACCESS_TOKEN_MISSING);
+        }
+
+        try {
+           const decoded =  verify(token,SecreteKey)
             return decoded as JWTPayloadType
-        })
-        return null
+        } catch (error) {
+            throw new TokenExpiredException(Errors.TOKEN_EXPIRED)
+        }
 
     }
 
@@ -43,11 +65,11 @@ export class JWTService implements IJWTService {
             throw new Error("Access Token Secrete Key Not Found")
         }
         try {
-            const decode = verify(token,SecreteKey) as JWTPayloadType;
+            const decode = verify(token, SecreteKey) as JWTPayloadType;
             return decode
-            
+
         } catch (error) {
-            return null
+             throw new TokenExpiredException(Errors.TOKEN_EXPIRED)
         }
     }
 }

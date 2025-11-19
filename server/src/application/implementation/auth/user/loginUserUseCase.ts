@@ -4,6 +4,7 @@ import { Errors, USER_ERRORS } from "../../../../shared/constants/error";
 import { LoginUserDTO } from "../../../dto/auth/LoginUserDTO";
 import { UserMapper } from "../../../mappers/userMappers";
 import { IUserLoginUseCase } from "../../../useCase/auth/user/IUserLoginUseCase";
+import { UserStatus } from "../../../../domain/enum/userEnums";
 import {
     InvalidDataException,
     IsBlockedExecption,
@@ -27,9 +28,11 @@ export class UserLoginUseCase implements IUserLoginUseCase {
             throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND)
         }
         
-        if (!user.isActive) {
+        if (user.isActive == UserStatus.BLOCKED) {
             throw new IsBlockedExecption(USER_ERRORS.USER_BLOCKED)
         }
+
+        
 
         const verifyPassword = await this._hashService.comparePassword(password,user.password)
         

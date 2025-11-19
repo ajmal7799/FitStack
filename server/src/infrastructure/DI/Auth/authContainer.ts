@@ -16,6 +16,7 @@ import { AuthMiddleware } from "../../../interfaceAdapters/middleware/authMiddle
 import { AdminLoginUseCase } from "../../../application/implementation/auth/admin/AdminLoginUseCase";
 import { AdminAuthController } from "../../../interfaceAdapters/controller/auth/adminAuthController";
 import { TokenInvalidationUseCase } from "../../../application/implementation/auth/tokenInvalidationUseCase";
+import { ResendOtpUseCase } from "../../../application/implementation/auth/resendOtpUseCase";
 
 
 
@@ -42,7 +43,13 @@ const tokenCreationUseCase = new TokenCreationUseCase(jwtService)
 const userLoginUseCase = new UserLoginUseCase(userRepository,hashService)
 const adminLoginUseCase = new AdminLoginUseCase(userRepository,hashService)
 const tokenValidationUseCase = new TokenInvalidationUseCase(jwtService,cacheStorage)
-
+const resendOtpUseCase = new ResendOtpUseCase(
+     otpService,
+    otpContentGenerator,
+    emailService,
+    userRepository,
+    cacheStorage,
+)
 
 
 //Controller
@@ -53,6 +60,7 @@ export const userAuthController = new UserAuthController(
     tokenCreationUseCase,
     userLoginUseCase,
     tokenValidationUseCase,
+    resendOtpUseCase,
  
 )
 

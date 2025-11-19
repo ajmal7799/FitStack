@@ -1,14 +1,19 @@
-import { IBaseRepository } from "../../domain/interfaces/repositories/IBaseRepository";
-import { Model } from "mongoose";
+import { Model, Document } from "mongoose";
+import { email } from "zod";
 
-export abstract class BaseRepository<T> implements IBaseRepository<T> {
-    constructor (protected _model: Model<T>) {}
+export abstract class BaseRepository<TEntity, TModel extends Document> {
+    constructor(
+        protected _model: Model<TModel>,
+        private mapper: any
+    ) { }
 
-    async save(data:T): Promise<T> {
-        return (await this._model.create(data)) as T;
+    async save(data: TEntity): Promise<TEntity> {
+        const doc = this.mapper.toMongooseDocument(data);
+        const saved = await this._model.create(doc)
+        return this.mapper.fromMongooseDocument(saved)
     }
+    
 
-    async findById(id: string): Promise<T | null> {
-        return await this._model.findById(id)
-    }
+    
+
 }

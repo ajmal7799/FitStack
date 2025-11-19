@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import {
     UserGender,
     UserRole,
+    UserStatus,
     FitnessGoal,
     ExperienceLevel,
     DietPreference,
@@ -37,8 +38,9 @@ const userSchema = new mongoose.Schema(
             default: UserRole.USER
         },
         isActive: {
-            type: Boolean,
-            default: true,
+            type: String,
+            enum: Object.values(UserStatus),
+            default: UserStatus.ACTIVE,
         },
 
         // // Basic Info

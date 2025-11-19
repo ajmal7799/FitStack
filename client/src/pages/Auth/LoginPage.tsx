@@ -30,13 +30,13 @@ const UserLoginPage = () => {
                 if (role === "trainer") {
                     navigate("/trainer/home")
                 } else {
-                    navigate('/home')  
+                    navigate('/home')
                 }
 
                 toast.success(res.message);
             },
             onError: (err: any) => {
-             
+
                 toast.error(err.response.data.message || "invalid email and password");
                 console.log("Error while login,", err);
             }
@@ -51,7 +51,28 @@ const UserLoginPage = () => {
                 </h2>
 
                 {/* Reusable form */}
+                <br />
                 <LoginForm onSubmit={handleUserLogin} />
+
+               <div className="flex justify-center my-4">
+  <button
+    onClick={() => navigate("/")}
+    className="
+      px-6 py-2
+      bg-gray-200
+      text-gray-500
+      rounded-full
+      text-base
+      font-medium
+      shadow-none
+      border-0
+      hover:bg-gray-300
+      transition
+    "
+  >
+    Back to Home
+  </button>
+</div>
 
                 {/* Footer / Signup link */}
                 <p className="text-center text-gray-500 mt-6 text-sm">
@@ -63,13 +84,13 @@ const UserLoginPage = () => {
 
                 {/* Extra Options */}
                 <div className="flex justify-between text-sm mt-3">
-                    <label className="flex items-center gap-2">
+                    {/* <label className="flex items-center gap-2">
                         <input type="checkbox" className="h-4 w-4 text-indigo-600" />
                         Remember me
-                    </label>
-                    <a href="#" className="text-indigo-600 hover:underline">
+                    </label> */}
+                    {/* <a href="#" className="text-indigo-600 hover:underline">
                         Forgot password?
-                    </a>
+                    </a> */}
                 </div>
             </div>
         </div>
