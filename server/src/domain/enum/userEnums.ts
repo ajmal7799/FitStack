@@ -10,6 +10,13 @@ export enum UserGender {
     OTHER = "other"
 }
 
+
+export enum UserStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  BLOCKED = "BLOCKED",
+}
+
 export enum FitnessGoal {
     LOSE_WEIGHT = "lose_weight",
     BUILD_MUSCLE = "build_muscle",

@@ -2,6 +2,7 @@ import { Document, model } from "mongoose";
 import {
     UserGender,
     UserRole,
+    UserStatus,
     FitnessGoal,
     ExperienceLevel,
     DietPreference,
@@ -18,7 +19,7 @@ export interface IUserModel extends Document {
     phone?: string;
     password: string;
     role: UserRole;
-    isActive: boolean;
+    isActive: UserStatus;
 
     // Basic Info
     // profileImage?: string;

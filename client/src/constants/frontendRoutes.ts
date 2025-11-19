@@ -16,7 +16,8 @@ export const FRONTEND_ROUTES = {
     ADMIN: {
         LOGIN: "/login",
         DASHBOARD: "/dashboard",
-        USERS: "/users"
+        USERS: "/users",
+        TRAINER: "/trainers"
     },
 
 

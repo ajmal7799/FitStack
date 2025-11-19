@@ -15,6 +15,8 @@ import { loginSchema } from "../../../shared/validations/loginValidator";
 import { ResponseHelper } from "../../../shared/utils/responseHelper";
 import { ITokenInvalidationUseCase } from "../../../application/useCase/auth/ITokenInvalidationUseCase";
 import { clearRefreshTokenCookie } from "../../../shared/utils/clearRefreshTokenCookie";
+import { InvalidDataException } from "../../../application/constants/exceptions";
+import { IResendOtpUseCase } from "../../../application/useCase/auth/IResendOtp";
 
 
 export class UserAuthController {
@@ -25,6 +27,7 @@ export class UserAuthController {
         private _tokenCreationUseCase: ITokenCreationUseCase,
         private _userLoginUseCase: IUserLoginUseCase,
         private _tokenInvalidationUseCase: ITokenInvalidationUseCase,
+        private _resendOtpUseCase: IResendOtpUseCase
     ) { }
 
     async signUpSendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -84,6 +87,26 @@ export class UserAuthController {
         }
     }
 
+
+    async resendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            console.log("resendotp")
+            const validatedEmail = emailSchema.safeParse(req.body.email);
+
+            if (validatedEmail.error) {
+                throw new InvalidDataException(Errors.INVALID_EMAIL);
+            }
+
+            await this._resendOtpUseCase.resendOtp(validatedEmail.data)
+
+            ResponseHelper.success(res, MESSAGES.OTP.RESEND_OTP_SUCCESSFULL, HTTPStatus.OK)
+
+        } catch (error) {
+            next(error)
+        }
+
+    }
+
     async loginUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
 
@@ -115,9 +138,9 @@ export class UserAuthController {
 
     async handleLogout(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            
+
             const refreshToken = req.cookies.RefreshToken;
-            
+
 
             await this._tokenInvalidationUseCase.refreshToken(refreshToken)
 
