@@ -1,6 +1,7 @@
-import { User } from "../../entities/user/userEntities";
-import { IBaseRepository } from "./IBaseRepository";
-import { UserStatus } from "../../enum/userEnums";
+import { User } from '../../entities/user/userEntities';
+import { IBaseRepository } from './IBaseRepository';
+import { UserStatus } from '../../enum/userEnums';
+
 
 export interface IUserRepository extends IBaseRepository<User>{
     findByEmail(email:string) : Promise<User | null>;
@@ -9,4 +10,6 @@ export interface IUserRepository extends IBaseRepository<User>{
     updateStatus(userId: string, status: UserStatus): Promise<User | null>;
     findAllTrainer(skip?: number, limit?: number, status?: string, search?: string): Promise<User[]>;
     countTrainer(status?: string, search?: string): Promise<number>;
+    findByIdAndUpdatePassword(email: string, hashedPassword: string): Promise<void>;
+    googleSignUp(user: User): Promise<string>;
 }

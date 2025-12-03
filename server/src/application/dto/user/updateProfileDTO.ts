@@ -1,4 +1,4 @@
-import { UserGender, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType } from "../../../domain/enum/userEnums";
+import { UserGender, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType } from '../../../domain/enum/userEnums';
 
 export interface UpdateProfileDTO {
     profileImage?: string;

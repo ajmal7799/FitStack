@@ -1,7 +1,7 @@
-import nodemailer from "nodemailer";
-import { IEmailService } from "../../../domain/interfaces/services/Email/IEmailService";
-import { CONFIG } from "../../config/config";
-import { IBaseEmailTemplate } from "../../../domain/interfaces/services/Email/IBaseEmailTemplate";
+import nodemailer from 'nodemailer';
+import { IEmailService } from '../../../domain/interfaces/services/Email/IEmailService';
+import { CONFIG } from '../../config/config';
+import { IBaseEmailTemplate } from '../../../domain/interfaces/services/Email/IBaseEmailTemplate';
 
 
 export class EmailService implements IEmailService {
@@ -10,20 +10,20 @@ export class EmailService implements IEmailService {
     constructor() {
         this._transporter = nodemailer.createTransport(
             {
-                service: "gmail",
+                service: 'gmail',
                 auth: {
                     user: CONFIG.GOOGLE_MAIL,
-                    pass: CONFIG.GOOGLE_APP_PASSWORD
-                }
+                    pass: CONFIG.GOOGLE_APP_PASSWORD,
+                },
             },
             {
-                from: CONFIG.GOOGLE_MAIL
-            }
+                from: CONFIG.GOOGLE_MAIL,
+            },
         );
         this._transporter
             .verify()
-            .then(() => console.log("Gmail connection established "))
-            .catch((err) => console.log("Gmail connection failed", err))
+            .then(() => console.log('Gmail connection established '))
+            .catch((err) => console.log('Gmail connection failed', err));
     }
 
     async sendEmail(email: Required<IBaseEmailTemplate>): Promise<void> {
@@ -32,11 +32,11 @@ export class EmailService implements IEmailService {
             await this._transporter.sendMail({
                 to: email.receiverEmail,
                 subject: email.subject,
-                html: email.content
-            })
+                html: email.content,
+            });
 
         } catch (error) {
-            console.error("Error while sending email : ", error);
+            console.error('Error while sending email : ', error);
             throw error;
         }
     }

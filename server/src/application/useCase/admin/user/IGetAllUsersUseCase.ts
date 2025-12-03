@@ -1,4 +1,4 @@
-import { UserDTO } from "../../../dto/user/userDTO";
+import { UserDTO } from '../../../dto/user/userDTO';
 
 export interface IGetAllUsersUseCase {
   getAllUser(

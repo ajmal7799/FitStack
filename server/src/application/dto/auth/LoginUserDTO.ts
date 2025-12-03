@@ -1,4 +1,4 @@
-import { UserRole, UserStatus, UserGender, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType } from "../../../domain/enum/userEnums";
+import { UserRole, UserStatus, UserGender, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType } from '../../../domain/enum/userEnums';
 
 export interface LoginUserDTO {
     _id: string;
@@ -7,4 +7,6 @@ export interface LoginUserDTO {
     phone?: string;
     role: UserRole;
     isActive: UserStatus;
+    verificationCheck?: boolean
+    
 }

@@ -1,12 +1,12 @@
-import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
-import { IKeyValueTTLCaching } from "../../../domain/interfaces/services/ICache/IKeyValueTTLCaching";
-import { IEmailContentGenerator } from "../../../domain/interfaces/services/Email/IEmailContentGenerator";
-import { IEmailService } from "../../../domain/interfaces/services/Email/IEmailService";
-import { IOtpEmailTemplate } from "../../../domain/interfaces/services/Email/IOtpEmailTemplate";
-import { IOtpService } from "../../../domain/interfaces/services/IOtp/IOtp";
-import { IResendOtpUseCase } from "../../useCase/auth/IResendOtp";
-import { USER_ERRORS } from "../../../shared/constants/error";
-import { AlreadyExisitingExecption } from "../../constants/exceptions";
+import { IUserRepository } from '../../../domain/interfaces/repositories/IUserRepository';
+import { IKeyValueTTLCaching } from '../../../domain/interfaces/services/ICache/IKeyValueTTLCaching';
+import { IEmailContentGenerator } from '../../../domain/interfaces/services/Email/IEmailContentGenerator';
+import { IEmailService } from '../../../domain/interfaces/services/Email/IEmailService';
+import { IOtpEmailTemplate } from '../../../domain/interfaces/services/Email/IOtpEmailTemplate';
+import { IOtpService } from '../../../domain/interfaces/services/IOtp/IOtp';
+import { IResendOtpUseCase } from '../../useCase/auth/IResendOtp';
+import { USER_ERRORS } from '../../../shared/constants/error';
+import { AlreadyExisitingExecption } from '../../constants/exceptions';
 
 export class ResendOtpUseCase implements IResendOtpUseCase {
     private _otpService: IOtpService;
@@ -20,7 +20,7 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
         otpTemplateGenerator: IEmailContentGenerator,
         emailService: IEmailService,
         userRepository: IUserRepository,
-        cacheStorage: IKeyValueTTLCaching
+        cacheStorage: IKeyValueTTLCaching,
     ) {
         this._otpService = otpService;
         this._otpTemplateGenerator = otpTemplateGenerator;
@@ -30,17 +30,17 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
     }
 
     async resendOtp(email: string): Promise<void> {
-        const existingUser = await this._userRepository.findByEmail(email)
+        const existingUser = await this._userRepository.findByEmail(email);
 
         if (existingUser) {
-            throw new AlreadyExisitingExecption(USER_ERRORS.USER_ALREADY_EXISTS)
+            throw new AlreadyExisitingExecption(USER_ERRORS.USER_ALREADY_EXISTS);
         }
 
         const OTP = this._otpService.generateOtp();
         console.log(`RESENT-OTP : ${OTP} and email: ${email}`);
         const emailTemplate: IOtpEmailTemplate = {
             receiverEmail: email,
-            subject: "Your FitStack OTP",
+            subject: 'Your FitStack OTP',
             otp: OTP,
         };
 

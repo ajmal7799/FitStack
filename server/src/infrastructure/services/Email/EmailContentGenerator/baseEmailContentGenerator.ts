@@ -1,6 +1,6 @@
 export abstract class BaseEmailContentGenerator {
-  generateHeader(): string {
-    return `
+    generateHeader(): string {
+        return `
       <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb; padding:40px 0;">
         <tr>
           <td align="center">
@@ -20,10 +20,10 @@ export abstract class BaseEmailContentGenerator {
         </tr>
       </table>
     `;
-  }
+    }
 
-  generateFooter(): string {
-    return `
+    generateFooter(): string {
+        return `
       <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb; border-top:1px solid #e5e7eb; padding:20px 0;">
         <tr>
           <td align="center">
@@ -44,10 +44,10 @@ export abstract class BaseEmailContentGenerator {
         </tr>
       </table>
     `;
-  }
+    }
 
-  htmlWrapper(body: string): string {
-    return `
+    htmlWrapper(body: string): string {
+        return `
       <!DOCTYPE html>
       <html>
         <head>
@@ -62,5 +62,5 @@ export abstract class BaseEmailContentGenerator {
         </body>
       </html>
     `;
-  }
+    }
 }

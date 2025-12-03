@@ -1,13 +1,14 @@
-import { UserGender, UserRole, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType,UserStatus } from "../../enum/userEnums";
+import { UserGender, UserRole, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType,UserStatus } from '../../enum/userEnums';
 export interface User {
-    _id: string;
+    _id?: string;
 
     // Auth fields
     name: string;
     email: string;
     phone?: string;
-    password: string;
+    password?: string;
     role: UserRole;
+    googleId?: string;
     isActive: UserStatus;
 
     // // Basic Info

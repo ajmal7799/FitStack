@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import Table from "../../components/table/Table";
 import Pagination from "../../components/pagination/Pagination";
-import { useGetAllTrainers, useUpdateTrainerStatus } from "../../hooks/AuthHooks";
+import { useGetAllTrainers, useUpdateTrainerStatus } from "../../hooks/Auth/AuthHooks";
 import toast from "react-hot-toast";
 import { X } from "lucide-react";
 import StatusChangeModal from "../../components/modals/StatusChangeModal";
@@ -244,7 +244,8 @@ const TrainersListing: React.FC = () => {
 					{isLoading ? (
 						<div className="py-10 text-center text-gray-500">Loading users...</div>
 					) : isError ? (
-						<div className="py-10 text-center text-red-500">Failed to load users.</div>
+						// <div className="py-10 text-center text-red-500">Failed to load users.</div>
+						<div className="py-10 text-center text-gray-500">No users found.</div>
 					) : formattedUsers.length === 0 ? (
 						<div className="py-10 text-center text-gray-500">No users found.</div>
 					) : (

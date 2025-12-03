@@ -1,12 +1,12 @@
-import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { IEmailContentGenerator } from "../../../../domain/interfaces/services/Email/IEmailContentGenerator";
-import { IEmailService } from "../../../../domain/interfaces/services/Email/IEmailService";
-import { IOtpEmailTemplate } from "../../../../domain/interfaces/services/Email/IOtpEmailTemplate";
-import { IOtpService } from "../../../../domain/interfaces/services/IOtp/IOtp";
-import { ISignUpSendOtpUseCase } from "../../../useCase/auth/user/ISignUpSendOtp";
-import { USER_ERRORS } from "../../../../shared/constants/error";
-import { IKeyValueTTLCaching } from "../../../../domain/interfaces/services/ICache/IKeyValueTTLCaching";
-import { AlreadyExisitingExecption } from "../../../constants/exceptions";
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { IEmailContentGenerator } from '../../../../domain/interfaces/services/Email/IEmailContentGenerator';
+import { IEmailService } from '../../../../domain/interfaces/services/Email/IEmailService';
+import { IOtpEmailTemplate } from '../../../../domain/interfaces/services/Email/IOtpEmailTemplate';
+import { IOtpService } from '../../../../domain/interfaces/services/IOtp/IOtp';
+import { ISignUpSendOtpUseCase } from '../../../useCase/auth/user/ISignUpSendOtp';
+import { USER_ERRORS } from '../../../../shared/constants/error';
+import { IKeyValueTTLCaching } from '../../../../domain/interfaces/services/ICache/IKeyValueTTLCaching';
+import { AlreadyExisitingExecption } from '../../../constants/exceptions';
 
 
 export class SignUpSendOtpUseCase implements ISignUpSendOtpUseCase {
@@ -14,33 +14,33 @@ export class SignUpSendOtpUseCase implements ISignUpSendOtpUseCase {
     private _otpTemplateGenerator: IEmailContentGenerator;
     private _emailService: IEmailService;
     private _userRepository: IUserRepository;
-    private _cacheStorage: IKeyValueTTLCaching
+    private _cacheStorage: IKeyValueTTLCaching;
 
     constructor(
         otpService: IOtpService,
         otpTemplateGenerator: IEmailContentGenerator,
         emailService: IEmailService,
         userRepository: IUserRepository,
-        cacheStorage : IKeyValueTTLCaching
+        cacheStorage : IKeyValueTTLCaching,
     ) {
-        this._otpService = otpService
-        this._otpTemplateGenerator = otpTemplateGenerator
-        this._emailService = emailService
-        this._userRepository = userRepository
-        this._cacheStorage = cacheStorage
+        this._otpService = otpService;
+        this._otpTemplateGenerator = otpTemplateGenerator;
+        this._emailService = emailService;
+        this._userRepository = userRepository;
+        this._cacheStorage = cacheStorage;
     }
 
     async signUpSendOtp(email: string): Promise<void> {
         const existingEmail = await this._userRepository.findByEmail(email);
         if (existingEmail) {
-            throw new AlreadyExisitingExecption(USER_ERRORS.USER_ALREADY_EXISTS)
+            throw new AlreadyExisitingExecption(USER_ERRORS.USER_ALREADY_EXISTS);
         }
 
         const OTP = this._otpService.generateOtp();
         console.log(`OTP : ${OTP} and email: ${email}`);
         const emailTemplate: IOtpEmailTemplate = {
             receiverEmail: email,
-            subject: "Your FitStack OTP",
+            subject: 'Your FitStack OTP',
             otp: OTP,
         };
 

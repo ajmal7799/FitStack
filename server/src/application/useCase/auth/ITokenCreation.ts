@@ -1,4 +1,4 @@
-import { JWTPayloadType } from "../../../domain/types/JWTPayloadTypes";
+import { JWTPayloadType } from '../../../domain/types/JWTPayloadTypes';
 
 export interface ITokenCreationUseCase {
     createAccessTokenAndRefreshToken(payload: JWTPayloadType) : {

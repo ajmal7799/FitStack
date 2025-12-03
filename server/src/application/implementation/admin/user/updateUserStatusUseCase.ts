@@ -1,9 +1,9 @@
-import { UserStatus } from "../../../../domain/enum/userEnums";
-import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { IUpdateUserStatusUseCase } from "../../../useCase/admin/user/IUpdateUserStatusUseCase";
-import { USER_ERRORS } from "../../../../shared/constants/error";
-import { NotFoundException } from "../../../constants/exceptions";
-import { UserDTO } from "../../../dto/user/userDTO";
+import { UserStatus } from '../../../../domain/enum/userEnums';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { IUpdateUserStatusUseCase } from '../../../useCase/admin/user/IUpdateUserStatusUseCase';
+import { USER_ERRORS } from '../../../../shared/constants/error';
+import { NotFoundException } from '../../../constants/exceptions';
+import { UserDTO } from '../../../dto/user/userDTO';
 
 
 export class UpdateUserStatusUseCase implements IUpdateUserStatusUseCase {
@@ -13,11 +13,11 @@ export class UpdateUserStatusUseCase implements IUpdateUserStatusUseCase {
         const newStatus = currentStatus === UserStatus.ACTIVE ? UserStatus.BLOCKED : UserStatus.ACTIVE;
         
 
-        const updatedUser = await this._userRepository.updateStatus(userId, newStatus)
+        const updatedUser = await this._userRepository.updateStatus(userId, newStatus);
         
-        if (!updatedUser) throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND)
+        if (!updatedUser) throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
 
-        return { user: updatedUser as UserDTO }
+        return { user: updatedUser as UserDTO };
 
     }
 }

@@ -1,5 +1,5 @@
-import { IEmailContentGenerator } from "../../../../domain/interfaces/services/Email/IEmailContentGenerator";
-import { BaseEmailContentGenerator } from "./baseEmailContentGenerator";
+import { IEmailContentGenerator } from '../../../../domain/interfaces/services/Email/IEmailContentGenerator';
+import { BaseEmailContentGenerator } from './baseEmailContentGenerator';
 
 export class OtpEmailContentGenerator extends BaseEmailContentGenerator implements IEmailContentGenerator {
     generateTemplate(otp: string): string {

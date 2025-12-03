@@ -1,0 +1,81 @@
+import { HTTPStatus } from '../../../../shared/constants/httpStatus';
+import { MESSAGES } from '../../../../shared/constants/messages';
+import { ResponseHelper } from '../../../../shared/utils/responseHelper';
+import { InvalidDataException, NotFoundException } from '../../../../application/constants/exceptions';
+import { NextFunction, Request, Response } from 'express';
+import { createSubscriptionSchema } from '../../../../shared/validations/subscription/subscriptionValidator';
+import { Errors, SUBSCRIPTION_ERRORS } from '../../../../shared/constants/error';
+import { ICreateSubscription } from '../../../../application/useCase/admin/subscription/ICreateSubscription';
+import { IGetAllSubscription } from '../../../../application/useCase/admin/subscription/IGetAllSubscription';
+import { IUpdateSubscriptionStatus } from '../../../../application/useCase/admin/subscription/IUpdateSubscriptionStatus';
+export class AdminSubscriptionController {
+  constructor(
+    private _createSubscriptionUseCase: ICreateSubscription,
+    private _getAllSubscriptionUseCase: IGetAllSubscription,
+    private _updateSubscriptionStatusUseCase: IUpdateSubscriptionStatus
+  ) {}
+
+  // --------------------------------------------------
+  //              🛠 CREATE SUBSCRIPTION
+  // --------------------------------------------------
+
+  async addSubscriptionPlan(req: Request, res: Response, next: NextFunction) {
+    try {
+      const parseResult = createSubscriptionSchema.safeParse(req.body);
+
+      if (parseResult.error) {
+        throw new InvalidDataException(Errors.INVALID_DATA);
+      }
+
+      const subscription = await this._createSubscriptionUseCase.createSubscription(parseResult.data!);
+
+      ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_CREATE_SUCCESS, subscription, HTTPStatus.CREATED);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAllSubscriptionPlans(req: Request, res: Response, next: NextFunction) {
+    try {
+      // console.log("reached getAllSubscriptionPlans");
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const status = (req.query.status as string) || undefined;
+      const search = (req.query.search as string) || undefined;
+
+      if (page < 1 || limit < 1 || limit > 100) {
+        throw new InvalidDataException(Errors.INVALID_PAGINATION_PARAMETERS);
+      }
+
+      const result = await this._getAllSubscriptionUseCase.getAllSubscription(page, limit, status, search);
+
+      if (!result || result.subscriptions?.length === 0) {
+        throw new NotFoundException(SUBSCRIPTION_ERRORS.NO_SUBSCRIPTIONS_FOUND);
+      }
+
+      ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_GET_SUCCESS, { data: result }, HTTPStatus.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateSubscriptionStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id, status } = req.body;
+      if (!id || !status) {
+        throw new InvalidDataException(Errors.INVALID_DATA);
+      }
+
+      const subscription = await this._updateSubscriptionStatusUseCase.updateSubscriptionStatus(id, status);
+    //   console.log('subscription', subscription);
+      ResponseHelper.success(
+        res,
+        MESSAGES.SUBSCRIPTION.SUBSCRIPTION_UPDATE_STATUS_SUCCESS,
+        subscription,
+        HTTPStatus.OK
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+}

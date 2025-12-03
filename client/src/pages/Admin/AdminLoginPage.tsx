@@ -1,5 +1,5 @@
 import adminLoginImg from "../../assets/adminLoginImg.jpg"
-import { useAdminLogin } from '../../hooks/Auth/Admin/AdminAuthHooks'
+import { useAdminLogin } from "../../hooks/Auth/Admin/AdminAuthHooks";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { LoginPayload } from '../../types/AuthPayloads';
@@ -7,7 +7,6 @@ import toast from 'react-hot-toast';
 import { setData } from '../../redux/slice/userSlice/authDataSlice';
 // import  { AxiosError } from 'axios'; 
 import LoginForm from '../../components/auth/loginForm';
-
 
 const AdminLoginPage = () => {
   const { mutate: login } = useAdminLogin()
@@ -25,8 +24,9 @@ const AdminLoginPage = () => {
             phone: res.data.user.phone,
             isActive: res.data.user.isActive,
             role: res.data.user.role,
-            updatedAt: res.data.user.updatedAt,
+            updatedAt: res.data.user.updatedAt,  
             accessToken: res.data.accessToken,
+            verificationCheck: res.data.user.verificationCheck
           })
         );
         navigate("/admin/dashboard")
