@@ -1,5 +1,5 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-export const emailSchema = z.string().email("Invalid email address");
+export const emailSchema = z.string().email('Invalid email address');
 
 export type EmailDTO = z.infer<typeof emailSchema>;

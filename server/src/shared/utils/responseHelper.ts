@@ -1,5 +1,5 @@
-import { HTTPStatus } from "../constants/httpStatus";
-import { Response } from "express";
+import { HTTPStatus } from '../constants/httpStatus';
+import { Response } from 'express';
 
 
 interface ApiResponse<T> {
@@ -14,7 +14,7 @@ export class ResponseHelper {
         res: Response,
         message: string,
         data: T,
-        status: number = HTTPStatus.OK
+        status: number = HTTPStatus.OK,
     ): Response<ApiResponse<T>> {
         return res.status(status).json({
             success:true,
@@ -23,10 +23,10 @@ export class ResponseHelper {
         });
     }
 
-    static error (
+    static error(
         res: Response,
         message: string,
-        status: number = HTTPStatus.BAD_REQUEST
+        status: number = HTTPStatus.BAD_REQUEST,
     ): Response<ApiResponse<null>> {
         return res.status(status).json({
             success: false,

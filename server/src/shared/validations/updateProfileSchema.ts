@@ -1,19 +1,19 @@
-import { z } from "zod";
-import { UserGender, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType } from '../../domain/enum/userEnums'
+import { z } from 'zod';
+import { UserGender, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType } from '../../domain/enum/userEnums';
 
 export const updateProfileSchema = z.object({
     
     profileImage: z.string().url().optional(),
     
     dateOfBirth: z
-    .string()
-    .optional()
-    .transform((val) => (val ? new Date(val) : undefined)),
+        .string()
+        .optional()
+        .transform((val) => (val ? new Date(val) : undefined)),
     
     gender: z.enum([
         UserGender.MALE, 
         UserGender.FEMALE, 
-        UserGender.OTHER
+        UserGender.OTHER,
     ]).optional(),
     
     height: z.number().min(50).max(300).optional(), 
@@ -29,13 +29,13 @@ export const updateProfileSchema = z.object({
         FitnessGoal.MAINTAIN_FITNESS,
         FitnessGoal.IMPROVE_ENDURANCE,
         FitnessGoal.FLEXIBILITY,
-        FitnessGoal.GENERAL_HEALTH
+        FitnessGoal.GENERAL_HEALTH,
     ]).optional(),
     
     experienceLevel: z.enum([
         ExperienceLevel.BEGINNER,
         ExperienceLevel.INTERMEDIATE,
-        ExperienceLevel.ADVANCED
+        ExperienceLevel.ADVANCED,
     ]).optional(),
     
     preferredWorkoutType: z.array(z.enum([
@@ -48,7 +48,7 @@ export const updateProfileSchema = z.object({
         WorkoutType.BODYWEIGHT,
         WorkoutType.FUNCTIONAL,
         WorkoutType.SPORTS,
-        WorkoutType.MIXED
+        WorkoutType.MIXED,
     ])).optional(),
     
     
@@ -61,11 +61,11 @@ export const updateProfileSchema = z.object({
         DietPreference.KETO,
         DietPreference.PALEO,
         DietPreference.BALANCED,
-        DietPreference.OTHER
+        DietPreference.OTHER,
     ]).optional(),
     
   
-    waterIntakeGoal: z.number().min(0).max(20).optional() 
+    waterIntakeGoal: z.number().min(0).max(20).optional(), 
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

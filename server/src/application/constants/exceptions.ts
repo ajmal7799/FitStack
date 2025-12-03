@@ -1,12 +1,12 @@
 export class ApplicationException extends Error {
     constructor(message: string) {
-        super(message)
+        super(message);
     }
 }
 
 export class NotFoundException extends ApplicationException {
     constructor(message: string) {
-        super(message)
+        super(message);
     }
 }
 

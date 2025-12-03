@@ -1,14 +1,10 @@
-import { Document, model } from "mongoose";
+import { Document, model } from 'mongoose';
 import {
-    UserGender,
     UserRole,
     UserStatus,
-    FitnessGoal,
-    ExperienceLevel,
-    DietPreference,
-    WorkoutType
-} from "../../../domain/enum/userEnums";
-import userSchema from "../schema/userSchema";
+   
+} from '../../../domain/enum/userEnums';
+import userSchema from '../schema/userSchema';
 
 export interface IUserModel extends Document {
     _id: string;
@@ -21,7 +17,15 @@ export interface IUserModel extends Document {
     role: UserRole;
     isActive: UserStatus;
 
-    // Basic Info
+    
+}
+
+export const userModel = model<IUserModel>('User', userSchema);
+
+
+
+
+// Basic Info
     // profileImage?: string;
     // dateOfBirth?: Date;
     // gender?: UserGender;
@@ -47,6 +51,3 @@ export interface IUserModel extends Document {
     // // Timestamps (Document already provides these, but good to be explicit)
     // createdAt: Date;
     // updatedAt: Date;
-}
-
-export const userModel = model<IUserModel>("User", userSchema);

@@ -1,6 +1,6 @@
-import { Errors } from "../../shared/constants/error";
-import { HTTPStatus } from "../../shared/constants/httpStatus";
-import { ResponseHelper } from "../../shared/utils/responseHelper";
+import { Errors } from '../../shared/constants/error';
+import { HTTPStatus } from '../../shared/constants/httpStatus';
+import { ResponseHelper } from '../../shared/utils/responseHelper';
 import {
     AlreadyExisitingExecption,
     ApplicationException,
@@ -13,9 +13,9 @@ import {
     PasswordNotMatchingException,
     TokenExpiredException,
     TokenMissingException,
-} from "../../application/constants/exceptions";
+} from '../../application/constants/exceptions';
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 export const errorHandlingMiddleware = (
     err: Error,
@@ -23,7 +23,7 @@ export const errorHandlingMiddleware = (
     res: Response,
     next: NextFunction,
 ) => {
-    void next
+    void next;
     try {
         let statusCode = HTTPStatus.INTERNAL_SERVER_ERROR;
 
@@ -31,32 +31,32 @@ export const errorHandlingMiddleware = (
             if (err instanceof NotFoundException) {
                 statusCode = HTTPStatus.NOT_FOUND;
             } else if (err instanceof AlreadyExisitingExecption) {
-                statusCode = HTTPStatus.CONFLICT
+                statusCode = HTTPStatus.CONFLICT;
             } else if (err instanceof IsBlockedExecption) {
-                statusCode = HTTPStatus.FORBIDDEN
+                statusCode = HTTPStatus.FORBIDDEN;
             } else if (err instanceof InvalidOTPExecption ||
                 err instanceof OTPExpiredException ||
                 err instanceof DataMissingExecption ||
                 err instanceof PasswordNotMatchingException ||
                 err instanceof TokenMissingException ||
                 err instanceof InvalidDataException) {
-                statusCode = HTTPStatus.BAD_REQUEST
+                statusCode = HTTPStatus.BAD_REQUEST;
             } else if (err instanceof TokenExpiredException) {
-                statusCode = HTTPStatus.UNAUTHORIZED
+                statusCode = HTTPStatus.UNAUTHORIZED;
             }
         }
 
         ResponseHelper.error(
             res,
             err instanceof Error ? err.message : Errors.INTERNAL_SERVER_ERROR,
-            statusCode
+            statusCode,
         );
         console.log(err instanceof Error ? err.message : err);
 
     } catch (error) {
         console.log(error);
     }
-}
+};
 
 
 

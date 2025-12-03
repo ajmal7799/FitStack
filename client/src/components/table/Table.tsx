@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 interface header<data> {
     id: string;
     label: string;
-    render: (row: data) => React.ReactNode;
+    render: (row: data, index: number) => React.ReactNode;
 }
 
 interface propType<data> {
@@ -57,7 +57,7 @@ function Table<T extends { id?: string | number }>({ headers, data }: propType<T
                                             key={header.id}
                                             className="px-6 py-4 text-gray-800 whitespace-nowrap"
                                         >
-                                            {header.render(row)}
+                                            {header.render(row, index)}
                                         </td>
                                     ))}
                                 </motion.tr>

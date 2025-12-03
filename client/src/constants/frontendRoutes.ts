@@ -4,12 +4,18 @@ export const FRONTEND_ROUTES = {
     USER:{
         SIGNUP: "/signup",
         LOGIN: "/login",
+        FORGOTPASSWORD: "/forgot-password",
         HOME:"/home",
+        SUBSCRIPTION:"/subscription",
+        TRAINERS:"/trainers",
     },
 
 
     TRAINER:{
-        TRAINER_HOME:'/home',
+        TRAINER_DASHBOARD:'/dashboard',
+        TRAINER_VERIFICATION:'/verification',
+        TRAINER_PROFILE:'/profile',
+        TRAINER_GET_VERIFICATION:'/get-verification',
     },
 
 
@@ -17,8 +23,9 @@ export const FRONTEND_ROUTES = {
         LOGIN: "/login",
         DASHBOARD: "/dashboard",
         USERS: "/users",
-        TRAINER: "/trainers"
+        TRAINER: "/trainers",
+        VERIFICATION: "/verification",
+        VERIFICATION_DETAILS: "/verifications/:trainerId",
+        SUBSCRIPTION_PLAN: "/subscriptions",
     },
-
-
 }

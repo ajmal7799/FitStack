@@ -21,7 +21,7 @@ const AdminSidebar = () => {
     { id: "users", label: "Users", icon: Users, path: "/admin/users" },
     { id: "trainers", label: "Trainers", icon: Dumbbell, path: "/admin/trainers" },
     { id: "verification", label: "Verification", icon: CheckCircle, path: "/admin/verification" },
-    { id: "subscription", label: "Subscription", icon: CreditCard, path: "/admin/subscription" },
+    { id: "subscription", label: "Subscription", icon: CreditCard, path: "/admin/subscriptions" },
     { id: "session", label: "Session", icon: Calendar, path: "/admin/session" },
   ];
 

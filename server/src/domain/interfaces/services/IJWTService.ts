@@ -1,4 +1,4 @@
-import { JWTPayloadType } from "../../types/JWTPayloadTypes";
+import { JWTPayloadType } from '../../types/JWTPayloadTypes';
 
 export interface IJWTService {
     createAccessToken(payload: JWTPayloadType): string;

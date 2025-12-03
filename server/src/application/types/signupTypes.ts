@@ -1,4 +1,4 @@
-import { UserRole } from "../../domain/enum/userEnums";
+import { UserRole } from '../../domain/enum/userEnums';
 
 export interface ISignupInput {
     name: string;

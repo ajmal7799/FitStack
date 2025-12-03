@@ -7,14 +7,14 @@ export class KeyValueTTLCaching implements IKeyValueTTLCaching {
 
     constructor() {
         this._redisClient = createClient({
-            url: CONFIG.REDIS_URL || "redis://127.0.0.1:6379",
-        })
+            url: CONFIG.REDIS_URL || 'redis://127.0.0.1:6379',
+        });
 
-        this._redisClient.on("error", (err) =>
-            console.error("Error occured on redis database : ", err)
+        this._redisClient.on('error', (err) =>
+            console.error('Error occured on redis database : ', err),
         );
-        this._redisClient.on("connect", () => console.log("Redis Connected Successfully "));
-        this._redisClient.on("ready", () => console.log("Redis Client Ready"));
+        this._redisClient.on('connect', () => console.log('Redis Connected Successfully '));
+        this._redisClient.on('ready', () => console.log('Redis Client Ready'));
     }
 
     async connect() {

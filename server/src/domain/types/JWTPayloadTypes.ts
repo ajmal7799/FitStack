@@ -1,4 +1,4 @@
-import { UserRole } from "../enum/userEnums";
+import { UserRole } from '../enum/userEnums';
 
 export type JWTPayloadType = {
   userId: string;

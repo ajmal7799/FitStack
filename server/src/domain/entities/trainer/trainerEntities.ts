@@ -1,12 +1,12 @@
-import { UserRole } from "../../enum/userEnums";
 
 export interface Trainer {
-    _id: string;
-    // Auth fields
-    name: string;
-    email: string;
-    phone?: string;
-    password: string;
-    role: UserRole;
-    isActive?: boolean;
+    id: string;
+    trainerId: string; 
+    
+    qualification: string;
+    specialisation: string;  
+    experience: number;
+    about: string;
+    // certifications: string[];
+    isVerified: boolean;
 }

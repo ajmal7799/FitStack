@@ -6,7 +6,9 @@ import PrivateRoute from '../components/protectedComponents/PrivateRoute';
 import PublicRoute from '../components/protectedComponents/PublicRoute';
 import UsersListing from "../pages/Admin/UsersListing";
 import TrainersListing from "../pages/Admin/TrainerListing";
-
+import VerificationPage from "../pages/Admin/VerificationPage";
+import VerificationDetailsPage from "../pages/Admin/VerificationDetailsPage";
+import SubscriptionPlan from "../pages/Admin/SubscriptionPlan/SubscriptionPlan";
 const AdminRoutes = () => {
 
     return (
@@ -15,6 +17,10 @@ const AdminRoutes = () => {
             <Route path={FRONTEND_ROUTES.ADMIN.DASHBOARD} element={<PrivateRoute > <AdminDashboardPage /> </PrivateRoute>} />
             <Route path={FRONTEND_ROUTES.ADMIN.USERS} element={<PrivateRoute> <UsersListing/> </PrivateRoute>} />
             <Route path={FRONTEND_ROUTES.ADMIN.TRAINER} element={<PrivateRoute> <TrainersListing/> </PrivateRoute>} />
+            <Route path={FRONTEND_ROUTES.ADMIN.VERIFICATION} element={<PrivateRoute> <VerificationPage/> </PrivateRoute>} />
+            <Route path={FRONTEND_ROUTES.ADMIN.VERIFICATION_DETAILS} element={<PrivateRoute> <VerificationDetailsPage/> </PrivateRoute>} />
+            {/* subscription plan */}
+             <Route path={FRONTEND_ROUTES.ADMIN.SUBSCRIPTION_PLAN} element={<PrivateRoute> <SubscriptionPlan/> </PrivateRoute>} />
         </Routes>
     )
 }

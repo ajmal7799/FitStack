@@ -4,11 +4,12 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 interface UserAuthData {
     name: string;
     email: string;
-    phone: string;
+    phone?: string;
     isActive: boolean;
     role: string;
-    updatedAt: string;
+    updatedAt?: string;
     accessToken: string;
+    verificationCheck: boolean
 }
 
 const initialState: UserAuthData = {
@@ -18,7 +19,8 @@ const initialState: UserAuthData = {
     isActive: true,
     role: "",
     updatedAt: "",
-    accessToken: ""
+    accessToken: "",
+    verificationCheck: false
 };
 
 const userAuthDataSlice = createSlice({

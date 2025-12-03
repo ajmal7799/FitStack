@@ -1,6 +1,6 @@
-import { IJWTService } from "../../../domain/interfaces/services/IJWTService";
-import { ITokenCreationUseCase } from "../../useCase/auth/ITokenCreation";
-import { JWTPayloadType } from "../../../domain/types/JWTPayloadTypes";
+import { IJWTService } from '../../../domain/interfaces/services/IJWTService';
+import { ITokenCreationUseCase } from '../../useCase/auth/ITokenCreation';
+import { JWTPayloadType } from '../../../domain/types/JWTPayloadTypes';
 
 
 export class TokenCreationUseCase implements ITokenCreationUseCase {
@@ -11,9 +11,9 @@ export class TokenCreationUseCase implements ITokenCreationUseCase {
         refreshToken: string;
     } {
 
-        const accessToken = this._JWTService.createAccessToken(payload)
-        const refreshToken = this._JWTService.createRefreshToken(payload)
+        const accessToken = this._JWTService.createAccessToken(payload);
+        const refreshToken = this._JWTService.createRefreshToken(payload);
 
-        return { accessToken, refreshToken }
+        return { accessToken, refreshToken };
     }
 }

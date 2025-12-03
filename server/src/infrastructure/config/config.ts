@@ -9,4 +9,10 @@ export const CONFIG = {
     GOOGLE_APP_PASSWORD: process.env.GOOGLE_APP_PASSWORD,
     REDIS_URL: process.env.REDIS_URL,
     JWT_SECRET: process.env.JWT_SECRET,
-}
+    AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+    AWS_REGION: process.env.AWS_REGION,
+    S3_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECERT: process.env.GOOGLE_CLIENT_SECERT
+};

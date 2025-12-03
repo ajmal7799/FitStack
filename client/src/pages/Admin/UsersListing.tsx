@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import Table from "../../components/table/Table";
 import Pagination from "../../components/pagination/Pagination";
-import { useGetAllUsers, useUpdateUserStatus } from "../../hooks/AuthHooks";
+import { useGetAllUsers, useUpdateUserStatus } from "../../hooks/Auth/AuthHooks";
 import toast from "react-hot-toast";
 
 import { X } from "lucide-react";

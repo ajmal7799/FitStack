@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { clearData } from '../../redux/slice/userSlice/authDataSlice';
 import toast from 'react-hot-toast';
 import { useDispatch } from "react-redux";
-import { useLogout } from '../../hooks/AuthHooks';
+import { useLogout } from '../../hooks/Auth/AuthHooks';
 
 
 const AdminHeader = () => {

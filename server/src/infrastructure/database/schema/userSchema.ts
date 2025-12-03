@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import {
     UserGender,
     UserRole,
@@ -6,22 +6,22 @@ import {
     FitnessGoal,
     ExperienceLevel,
     DietPreference,
-    WorkoutType
-} from "../../../domain/enum/userEnums";
+    WorkoutType,
+} from '../../../domain/enum/userEnums';
 
 const userSchema = new mongoose.Schema(
     {
         // Auth fields
         name: {
             type: String,
-            required: true
+            required: true,
         },
         email: {
             type: String,
             required: true,
             unique: true,
             lowercase: true,
-            trim: true
+            trim: true,
         },
         phone: {
             type: String,
@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
         role: {
             type: String,
             enum: Object.values(UserRole),
-            default: UserRole.USER
+            default: UserRole.USER,
         },
         isActive: {
             type: String,
@@ -114,7 +114,7 @@ const userSchema = new mongoose.Schema(
         //     default: false
         // }
     },
-    { timestamps: true }
+    { timestamps: true },
 );
 
 export default userSchema;
