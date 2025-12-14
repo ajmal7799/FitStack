@@ -3,7 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import userAuthDataSlice from './slice/userSlice/authDataSlice';
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
-
+import { combineReducers } from "@reduxjs/toolkit";
 
 
 const persistConfig = {
@@ -12,16 +12,14 @@ const persistConfig = {
   whitelist: ["authData"],
 };
 
-// const rootReducer = combineReducers({
-//   authData: userAuthDataSlice,
-// });
+const rootReducer = combineReducers({
+  authData: userAuthDataSlice,  
+});
 
-const persistedReducer = persistReducer(persistConfig, userAuthDataSlice);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: {
-    authData: persistedReducer,
-  },
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({
       serializableCheck: {

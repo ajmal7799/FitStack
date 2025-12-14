@@ -1,53 +1,46 @@
 import { Document, model } from 'mongoose';
-import {
-    UserRole,
-    UserStatus,
-   
-} from '../../../domain/enum/userEnums';
+import { UserRole, UserStatus } from '../../../domain/enum/userEnums';
 import userSchema from '../schema/userSchema';
 
 export interface IUserModel extends Document {
-    _id: string;
+  _id: string;
 
-    // Auth fields
-    name: string;
-    email: string;
-    phone?: string;
-    password: string;
-    role: UserRole;
-    isActive: UserStatus;
-
-    
+  // Auth fields
+  name: string;
+  email: string;
+  phone?: string;
+  password: string;
+  role: UserRole;
+  isActive: UserStatus;
+  stripeCustomerId?: string;
+  activeMembershipId?: string;
 }
 
 export const userModel = model<IUserModel>('User', userSchema);
 
-
-
-
 // Basic Info
-    // profileImage?: string;
-    // dateOfBirth?: Date;
-    // gender?: UserGender;
-    // height?: number;
-    // weight?: number;
-    // targetWeight?: number;
+// profileImage?: string;
+// dateOfBirth?: Date;
+// gender?: UserGender;
+// height?: number;
+// weight?: number;
+// targetWeight?: number;
 
-    // // Fitness Info
-    // fitnessGoal?: FitnessGoal;
-    // experienceLevel?: ExperienceLevel;
-    // preferredWorkoutType?: WorkoutType[];
+// // Fitness Info
+// fitnessGoal?: FitnessGoal;
+// experienceLevel?: ExperienceLevel;
+// preferredWorkoutType?: WorkoutType[];
 
-    // // Health & Diet
-    // medicalConditions?: string[];
-    // dietPreference?: DietPreference;
+// // Health & Diet
+// medicalConditions?: string[];
+// dietPreference?: DietPreference;
 
-    // // Goals & Tracking
-    // waterIntakeGoal?: number;
+// // Goals & Tracking
+// waterIntakeGoal?: number;
 
-    // // Tracking
-    // profileCompleted: boolean;
+// // Tracking
+// profileCompleted: boolean;
 
-    // // Timestamps (Document already provides these, but good to be explicit)
-    // createdAt: Date;
-    // updatedAt: Date;
+// // Timestamps (Document already provides these, but good to be explicit)
+// createdAt: Date;
+// updatedAt: Date;

@@ -144,13 +144,14 @@ const SubscriptionPlans: React.FC = () => {
     }) => {
       createMutation.mutate(formData, {
         onSuccess: (res: any) => {
+          console.log("res",res);
           toast.success(res.message || "Plan created successfull");
           setIsCreateModalOpen(false);
           setPage(1);
           refetch();
         },
         onError: (err: any) => {
-          toast.error(err?.response?.message || "Failed to create plan");
+          toast.error(err.response.data?.message || "Failed to create plan");
         },
       });
     },
@@ -183,7 +184,7 @@ const SubscriptionPlans: React.FC = () => {
       {
         id: "duration",
         label: "Duration",
-        render: (row: TablePlan) => `${row.durationMonths} days`,
+        render: (row: TablePlan) => `${row.durationMonths} Month`,
       },
       {
         id: "description",
@@ -316,8 +317,8 @@ const SubscriptionPlans: React.FC = () => {
                 <div className="flex items-center justify-center py-20">
                   <div className="text-center">
                     <div className="text-6xl mb-4">⚠️</div>
-                    <p className="text-red-600 font-medium text-lg">
-                      Failed to load subscription plans.
+                    <p className="text-black-600 font-medium text-lg">
+                      No subscriptions plans found.
                     </p>
                     <button
                       onClick={() => refetch()}

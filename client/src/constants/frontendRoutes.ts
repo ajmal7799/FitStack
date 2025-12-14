@@ -8,6 +8,8 @@ export const FRONTEND_ROUTES = {
         HOME:"/home",
         SUBSCRIPTION:"/subscription",
         TRAINERS:"/trainers",
+        PAYMENT_SUCCESS:"/payment/success",
+        PAYMENT_CANCEL:"/plans",
     },
 
 

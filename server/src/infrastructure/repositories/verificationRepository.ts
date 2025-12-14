@@ -212,13 +212,15 @@ export class VerificationRepository
 
   async allVerifiedTrainer(
     skip?: number,
-    limit?: number
+    limit?: number,
+    search?: string
   ): Promise<{ trainer: Trainer; verification: TrainerVerification; user: User }[]> {
     const pipeline: PipelineStage[] = [];
 
     pipeline.push({
       $match: { verificationStatus: VerificationStatus.VERIFIED },
     });
+
 
     pipeline.push(
       {
@@ -241,6 +243,15 @@ export class VerificationRepository
       { $unwind: { path: '$userData', preserveNullAndEmptyArrays: true } }
     );
 
+    if( search) {
+      const matchStage: any = {};
+      matchStage.$or = [  
+        { 'userData.name': { $regex: search, $options: 'i' } }, 
+        { 'userData.email': { $regex: search, $options: 'i' } },
+      ];
+      pipeline.push({ $match: matchStage });
+    }
+
     if (skip) pipeline.push({ $skip: skip });
     if (limit) pipeline.push({ $limit: limit });
     const docs = await this._model.aggregate(pipeline).exec();
@@ -252,11 +263,37 @@ export class VerificationRepository
     }));
   }
 
-  async countVerifiedTrainer(): Promise<number> {
-     return await this._model.countDocuments({
-    verificationStatus: VerificationStatus.VERIFIED
-  });
-  }
+  async countVerifiedTrainer(search?: string): Promise<number> {
+
+    const initialMatch: any = { VerificationStatus: VerificationStatus.VERIFIED };
+
+   
+    const pipeline: PipelineStage[] = [];
+
+    
+    pipeline.push({ $match: initialMatch });
+
+    
+    if (search) {
+        const searchMatch: any = {
+            $or: [
+                { name: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
+            ],
+        };
+        
+        pipeline.push({ $match: searchMatch });
+    }
+
+    // 4. Use the $count stage for efficient counting in MongoDB.
+    pipeline.push({ $count: 'verifiedTrainerCount' });
+
+    
+    const result = await this._model.aggregate(pipeline).exec();
+
+  
+    return result.length > 0 ? result[0].verifiedTrainerCount : 0;
+}
 
 
 }

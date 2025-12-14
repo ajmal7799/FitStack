@@ -9,6 +9,10 @@ import PublicRoute from '../components/protectedComponents/PublicRoute'
 import ForgotPassword from '../pages/Auth/ForgotPassword'
 import SubscriptionPlans from '../pages/User/subscription'
 import TrainersPageListing from '../pages/User/Trainers'
+import SuccessPage from '../pages/User/SuccessPage'
+import PlansPage from '../pages/User/PlansPage'
+
+
 
 const UserRoutes = () => {
     return (
@@ -20,6 +24,10 @@ const UserRoutes = () => {
             <Route path={FRONTEND_ROUTES.USER.HOME} element={<PrivateRoute> < Home /> </PrivateRoute>} />
             <Route path={FRONTEND_ROUTES.USER.SUBSCRIPTION} element={<PrivateRoute> < SubscriptionPlans /> </PrivateRoute>} />
             <Route path={FRONTEND_ROUTES.USER.TRAINERS} element={<PrivateRoute> < TrainersPageListing /> </PrivateRoute>} />
+
+            <Route path={FRONTEND_ROUTES.USER.PAYMENT_SUCCESS} element={<PrivateRoute> < SuccessPage /> </PrivateRoute>} />
+            <Route path={FRONTEND_ROUTES.USER.PAYMENT_CANCEL} element={<PrivateRoute> < PlansPage /> </PrivateRoute>} />
+
 
         </Routes>
     )

@@ -12,4 +12,8 @@ export interface IUserRepository extends IBaseRepository<User>{
     countTrainer(status?: string, search?: string): Promise<number>;
     findByIdAndUpdatePassword(email: string, hashedPassword: string): Promise<void>;
     googleSignUp(user: User): Promise<string>;
+
+    updateStripeCustomerId(userId: string, stripeCustomerId: string): Promise<void>;
+
+    updateActiveMembershipId(userId: string, activeMembershipId: string | null): Promise<void>;
 }

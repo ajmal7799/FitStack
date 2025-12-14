@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useGetSubscriptionPlans } from "../../hooks/User/SubscriptionHooks";
+import { useGetSubscriptionPlans, useCheckoutSession } from "../../hooks/User/SubscriptionHooks";
 import Pagination from "../../components/pagination/Pagination";
 import Header from "../../components/user/Header";
 import Footer from "../../components/user/footer";
@@ -15,6 +15,7 @@ import {
   FiTrendingUp,
   FiActivity
 } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 interface SubscriptionPlan {
   _id: string;
@@ -28,11 +29,13 @@ interface SubscriptionPlan {
 const SubscriptionPlans: React.FC = () => {
   const [page, setPage] = useState(1);
   const limit = 3;
+  const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
 
   const { data, isLoading, isError, refetch } = useGetSubscriptionPlans(page, limit);
+  const { mutate: createCheckoutSession } = useCheckoutSession();
 
   // Normalize data structure
-   const plans: SubscriptionPlan[] = useMemo(() => {
+  const plans: SubscriptionPlan[] = useMemo(() => {
     const resp = data as any;
     return resp?.data?.data?.subscriptions || [];
   }, [data]);
@@ -42,8 +45,35 @@ const SubscriptionPlans: React.FC = () => {
     return resp?.data?.data?.totalPages || 1;
   }, [data]);
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
+  // Handle plan selection and checkout
+  const handleSelectPlan = (plan: SubscriptionPlan) => {
+    
+    if (processingPlanId === plan._id) return;
+    
+    setProcessingPlanId(plan._id);
+
+    createCheckoutSession(plan._id, {
+      onSuccess: (response:any) => {
+        // Extract session URL from response
+        const sessionUrl = response?.data?.data?.sessionUrl || response?.sessionUrl;
+        
+        if (sessionUrl) {
+          window.location.href = sessionUrl;
+        } else {
+          console.error("Session URL missing from response");
+          alert("Failed to initialize payment. Please try again.");
+          setProcessingPlanId(null);
+        }
+      },
+      onError: (error: any) => {
+        console.error("Checkout failed:", error);
+        const errorMessage = error?.response?.data?.message || 
+                           error?.message || 
+                           "Failed to create checkout session. Please try again.";
+        toast.error(errorMessage);
+        setProcessingPlanId(null);
+      }
+    });
   };
 
   // Common features for all plans
@@ -70,10 +100,8 @@ const SubscriptionPlans: React.FC = () => {
     return 'from-green-600 to-teal-600';
   };
 
-  const handleSelectPlan = (plan: SubscriptionPlan) => {
-    console.log("Selected plan:", plan);
-    // TODO: Navigate to payment/checkout
-    // navigate(`/checkout/${plan._id}`);
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
   };
 
   // Determine most popular plan (usually the middle-priced one)
@@ -139,6 +167,7 @@ const SubscriptionPlans: React.FC = () => {
               {plans.map((plan) => {
                 const isPopular = plan._id === mostPopularPlan;
                 const isActive = plan.isActive === "active";
+                const isPlanProcessing = processingPlanId === plan._id;
                 const features = getPlanFeatures();
                 const icon = getPlanIcon(plan.planName);
                 const colorGradient = getPlanColor(plan.planName);
@@ -188,7 +217,7 @@ const SubscriptionPlans: React.FC = () => {
                         <div className="flex items-center justify-center mt-2 text-gray-600 text-sm">
                           <FiClock className="mr-1" />
                           <span className="font-semibold">
-                            {plan.durationMonths} Days
+                            {plan.durationMonths} Month
                           </span>
                         </div>
                       </div>
@@ -209,14 +238,26 @@ const SubscriptionPlans: React.FC = () => {
                       {/* Purchase Button */}
                       <button
                         onClick={() => handleSelectPlan(plan)}
-                        disabled={!isActive}
+                        disabled={!isActive || isPlanProcessing}
                         className={`w-full py-3 rounded-full font-bold text-base transition-all duration-300 shadow-lg ${
-                          isActive
+                          isActive && !isPlanProcessing
                             ? `bg-gradient-to-r ${colorGradient} text-white hover:shadow-xl hover:scale-105`
                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                         }`}
                       >
-                        {isActive ? "Get Started Now" : "Unavailable"}
+                        {isPlanProcessing ? (
+                          <span className="flex items-center justify-center">
+                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing...
+                          </span>
+                        ) : isActive ? (
+                          "Get Started Now"
+                        ) : (
+                          "Unavailable"
+                        )}
                       </button>
 
                       {/* Trust Badge */}

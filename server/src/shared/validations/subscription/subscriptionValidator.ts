@@ -11,13 +11,11 @@ export const createSubscriptionSchema = z.object({
       message: "Price must be greater than 0"
     }),
 
-  durationMonths: z
-    .number()
-    .int("Duration must be an integer")
-    .refine((val) => val > 0, {
-      message: "Duration must be greater than 0"
-    }),
-
+durationMonths: z
+  .number()
+  .int("Duration must be a whole number")
+  .min(1, "Minimum duration is 1 month")
+  .max(36, "Maximum duration is 36 months"),
   description: z
     .string()
     .min(1, "Description is required")

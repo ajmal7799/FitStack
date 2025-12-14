@@ -28,7 +28,7 @@ export class AdminSubscriptionController {
       }
 
       const subscription = await this._createSubscriptionUseCase.createSubscription(parseResult.data!);
-
+      
       ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_CREATE_SUCCESS, subscription, HTTPStatus.CREATED);
     } catch (error) {
       next(error);

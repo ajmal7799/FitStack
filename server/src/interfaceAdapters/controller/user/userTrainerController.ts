@@ -15,12 +15,13 @@ export class UserTrainerController {
       
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const search = (req.query.search as string) || undefined;
 
       if (page < 1 || limit < 1 || limit > 100) {
         throw new InvalidDataException(Errors.INVALID_PAGINATION_PARAMETERS);
       }
 
-      const result = await this._getAllTrainerUseCase.getAllTrainer(page, limit);
+      const result = await this._getAllTrainerUseCase.getAllTrainer(page, limit, search);
 
       if (!result || result.verifications?.length === 0) {
         throw new NotFoundException(USER_ERRORS.NO_USERS_FOUND);
