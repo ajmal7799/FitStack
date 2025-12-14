@@ -10,7 +10,10 @@ const subscriptionSchema = z.object({
     .string()
     .min(3, "Plan name must be at least 3 characters")
     .max(50, "Plan name must be less than 50 characters")
-    .regex(/^[a-zA-Z0-9\s-]+$/, "Only letters, numbers, spaces and hyphens allowed"),
+    .regex(
+      /^[a-zA-Z0-9\s-]+$/,
+      "Only letters, numbers, spaces and hyphens allowed"
+    ),
 
   price: z
     .number()
@@ -20,14 +23,15 @@ const subscriptionSchema = z.object({
   durationMonths: z
     .number()
     .int("Duration must be a whole number")
-    .min(1, "Duration must be at least 1 day")
-    .max(3650, "Duration cannot exceed 3650 days (10 years)"),
+    .refine((val) => !Number.isNaN(val), {
+      message: "Duration is required",
+    })
+    .min(1, "Duration must be at least 1 month")
+    .max(36, "Duration cannot exceed 36 months"),
 
-  description: z
-    .string()
-    .min(1, "Description is required")
-    // .optional()
-    // .or(z.literal("")),
+  description: z.string().min(1, "Description is required"),
+  // .optional()
+  // .or(z.literal("")),
 });
 
 type FormData = z.infer<typeof subscriptionSchema>;
@@ -44,7 +48,12 @@ interface Props {
   isLoading?: boolean;
 }
 
-const CreateSubscriptionModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, isLoading }) => {
+const CreateSubscriptionModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  isLoading,
+}) => {
   const {
     register,
     handleSubmit,
@@ -95,8 +104,12 @@ const CreateSubscriptionModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, i
               <Sparkles className="text-white" size={24} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">Create Subscription Plan</h2>
-              <p className="text-indigo-100 text-sm mt-0.5">Add a new subscription tier</p>
+              <h2 className="text-2xl font-bold text-white">
+                Create Subscription Plan
+              </h2>
+              <p className="text-indigo-100 text-sm mt-0.5">
+                Add a new subscription tier
+              </p>
             </div>
           </div>
         </div>
@@ -158,22 +171,32 @@ const CreateSubscriptionModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, i
           <div>
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
               <Calendar size={16} className="text-indigo-600" />
-              Duration (Days)
+              Duration (Months)
             </label>
+
             <input
               type="number"
+              min={1}
+              max={36}
+              step={1}
               {...register("durationMonths", { valueAsNumber: true })}
               className={`w-full px-4 py-3 border-2 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-indigo-500/20 ${
                 errors.durationMonths
                   ? "border-red-300 focus:border-red-500"
                   : "border-gray-200 focus:border-indigo-500"
               }`}
-              placeholder="30"
+              placeholder="1"
             />
-            <p className="text-xs text-gray-500 mt-1.5">Common: 30 (monthly), 90 (quarterly), 365 (annual)</p>
+
+            <p className="text-xs text-gray-500 mt-1.5">
+              Allowed: 1 to 36 months. Examples: 1 (monthly), 3 (quarterly), 12
+              (yearly)
+            </p>
+
             {errors.durationMonths && (
               <p className="text-red-600 text-sm mt-1.5 flex items-center gap-1">
-                <span className="font-medium">⚠</span> {errors.durationMonths.message}
+                <span className="font-medium">⚠</span>
+                {errors.durationMonths.message}
               </p>
             )}
           </div>
@@ -181,7 +204,8 @@ const CreateSubscriptionModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, i
           {/* Description */}
           <div>
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-              Description <span className="text-gray-400 text-xs font-normal"></span>
+              Description{" "}
+              <span className="text-gray-400 text-xs font-normal"></span>
             </label>
             <textarea
               {...register("description")}
@@ -195,7 +219,8 @@ const CreateSubscriptionModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, i
             />
             {errors.description && (
               <p className="text-red-600 text-sm mt-1.5 flex items-center gap-1">
-                <span className="font-medium">⚠</span> {errors.description.message}
+                <span className="font-medium">⚠</span>{" "}
+                {errors.description.message}
               </p>
             )}
           </div>

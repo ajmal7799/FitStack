@@ -17,6 +17,7 @@ export class AuthMiddleware {
     verify = async(req: Request, res: Response, next: NextFunction) => {
 
         const header = req.header('Authorization');
+        
 
         if (!header?.startsWith('Bearer ')) {
             res.status(HTTPStatus.UNAUTHORIZED).json({ success: false, message: Errors.INVALID_TOKEN });
@@ -26,7 +27,7 @@ export class AuthMiddleware {
         const token = header.split(' ')[1];
 
         const decoded = this._jwtService.verifyAccessToken(token as string);
-
+        
 
 
         if (!decoded) {

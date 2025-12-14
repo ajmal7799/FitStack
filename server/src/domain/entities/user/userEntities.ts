@@ -10,6 +10,8 @@ export interface User {
     role: UserRole;
     googleId?: string;
     isActive: UserStatus;
+    stripeCustomerId?: string;
+    activeMembershipId?: string;
 
     // // Basic Info
     //  profileImage?: string;
@@ -27,9 +29,6 @@ export interface User {
     // // Health & Diet
     // medicalConditions?: string[];
     // dietPreference?: DietPreference;
-
-    // // Goals & Tracking
-    // waterIntakeGoal?: number;
 
     // profileCompleted: boolean;
 }

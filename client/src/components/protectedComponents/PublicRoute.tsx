@@ -18,7 +18,7 @@ const PublicRoute = ({ children }: PublicRouteProps) => {
     if (role === "admin") return <Navigate to="/admin/dashboard" replace />;
     if (role === "trainer"){
       if(verificationCheck) {
-        return <Navigate to="/trainer/dashboard" replace/>
+        return <Navigate to="/trainer/verification" replace/>
       }else {
         return <Navigate to="/trainer/verification" replace />;
       }

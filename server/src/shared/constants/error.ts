@@ -69,4 +69,7 @@ export const SUBSCRIPTION_ERRORS = {
     SUBSCRIPTION_ALREADY_EXISTS: 'Subscription  already exists',
     SUBSCRIPTION_UPDATE_FAILED: 'Subscription update failed',
     NO_SUBSCRIPTIONS_FOUND: 'No subscriptions found',
+    STRIPE_PRICE_ID_MISSING: 'Stripe Price ID is missing for the selected plan',
+    MISSING_METADATA: 'Missing metadata in webhook',
+    USER_ALREADY_HAS_ACTIVE_MEMBERSHIP: 'User already has an active membership',
 }

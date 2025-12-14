@@ -8,12 +8,12 @@ export class GetAllTrainerUseCase implements IGetAllTrainerUseCase {
         private _verificationRepository: IUpdateVerification
     ) { }
 
-    async getAllTrainer(page: number, limit: number): Promise<{ verifications: VerificationDTO[]; totalVerifications: number; totalPages: number; currentPage: number; }> {
+    async getAllTrainer(page: number, limit: number, search?: string): Promise<{ verifications: VerificationDTO[]; totalVerifications: number; totalPages: number; currentPage: number; }> {
          const skip = (page - 1) * limit;
 
          const [verifications, totalVerifications] = await Promise.all([
-             this._verificationRepository.allVerifiedTrainer(skip, limit),
-             this._verificationRepository.countVerifiedTrainer(),
+             this._verificationRepository.allVerifiedTrainer(skip, limit,search),
+             this._verificationRepository.countVerifiedTrainer(search),
          ]);
  
          const verificationDTOs = verifications.map(verification => VerificationMapper.toDTO(verification.verification, verification.trainer, verification.user));

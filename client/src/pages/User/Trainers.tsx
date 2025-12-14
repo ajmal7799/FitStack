@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/user/Header";
 import Footer from "../../components/user/footer";
@@ -15,6 +15,7 @@ import {
   FiMail,
   FiPhone,
 } from "react-icons/fi";
+import { X } from "lucide-react";
 
 interface Trainer {
   _id: string;
@@ -36,11 +37,19 @@ const TrainersPageListing: React.FC = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const limit = 9; // 9 trainers per page (3x3 grid)
+  
+  // Search state
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const { data, isLoading, isError, refetch } = useGetAllVerifiedTrainers(page, limit);
+  const { data, isLoading, isError, refetch } = useGetAllVerifiedTrainers(
+    page, 
+    limit,
+    debouncedSearch // Pass search parameter
+  );
 
   // Normalize data structure
-   const trainers: Trainer[] = useMemo(() => {
+  const trainers: Trainer[] = useMemo(() => {
     const resp = data as any;
     return resp?.data?.data?.verifications || [];
   }, [data]);
@@ -54,6 +63,23 @@ const TrainersPageListing: React.FC = () => {
     const resp = data as any;
     return resp?.data?.data.totalVerifications || 0;
   }, [data]);
+
+  // Search handlers
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  }, []);
+
+  const handleSearchClick = useCallback(() => {
+    setDebouncedSearch(searchInput.trim());
+    setPage(1);
+  }, [searchInput]);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchInput("");
+    setDebouncedSearch("");
+    setPage(1);
+  }, []);
+
   const handleViewProfile = (route: string) => {
     navigate(route);
   };
@@ -84,6 +110,38 @@ const TrainersPageListing: React.FC = () => {
               {totalTrainers} Verified Trainers Available
             </p>
           )}
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-8 max-w-2xl mx-auto">
+          <div className="flex gap-2 relative">
+            <input
+              type="text"
+              placeholder="Search trainers by name or email"
+              value={searchInput}
+              onChange={handleSearchChange}
+              onKeyDown={(e) => e.key === "Enter" && handleSearchClick()}
+              className="px-6 py-4 border-2 border-gray-300 rounded-full w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg shadow-lg"
+            />
+
+            {searchInput && (
+              <button
+                onClick={handleClearSearch}
+                className="absolute right-32 top-5 text-gray-500 hover:text-red-500 transition"
+                title="Clear search"
+              >
+                <X size={20} />
+              </button>
+            )}
+
+            <button
+              onClick={handleSearchClick}
+              disabled={isLoading}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-xl transition duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Search
+            </button>
+          </div>
         </div>
 
         {/* Loading State */}
@@ -248,16 +306,19 @@ const TrainersPageListing: React.FC = () => {
           <div className="bg-white rounded-3xl shadow-2xl p-16 text-center">
             <FiUser className="text-gray-300 text-8xl mx-auto mb-6" />
             <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              No Trainers Available
+              {debouncedSearch ? "No Trainers Found" : "No Trainers Available"}
             </h3>
             <p className="text-gray-600 text-lg mb-8">
-              We're currently onboarding amazing trainers. Check back soon!
+              {debouncedSearch 
+                ? `No trainers match your search "${debouncedSearch}". Try a different search term.`
+                : "We're currently onboarding amazing trainers. Check back soon!"
+              }
             </p>
             <button
-              onClick={() => refetch()}
+              onClick={() => debouncedSearch ? handleClearSearch() : refetch()}
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-2xl transition duration-300 font-bold text-lg"
             >
-              Refresh Trainers
+              {debouncedSearch ? "Clear Search" : "Refresh Trainers"}
             </button>
           </div>
         )}

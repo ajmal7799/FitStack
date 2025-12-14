@@ -5,7 +5,8 @@ import mongoose, { Mongoose } from 'mongoose';
 import { SubscriptionDTO } from "../dto/admin/subscription/subscriptionDTO";
 import { SubscriptionStatus } from "../../domain/enum/subscriptionStatus";
 
-export class SubscriptionMapper  {
+export class SubscriptionMapper  {
+    // 1. ⬆️ Mapping from Domain Entity to Mongoose Document (for saving/updating)
     static toMongooseDocument(subscription: Subscription) {
         return {
             planName: subscription.planName,
@@ -13,10 +14,13 @@ export class SubscriptionMapper  {
             durationMonths: subscription.durationMonths,
             description: subscription.description,
             isActive: subscription.isActive,
+            // 🔑 ADDED: Stripe IDs for persistence
+            stripeProductId: subscription.stripeProductId,
+            stripePriceId: subscription.stripePriceId,  
         };
     }
 
-    //toDomainEntity
+    // 2. ⬇️ Mapping from Mongoose Document to Domain Entity (for loading)
     static fromMongooseDocument(subscription: ISubscriptionModel) : Subscription {
         return {
             _id: subscription._id.toString(),
@@ -27,10 +31,14 @@ export class SubscriptionMapper  {
             isActive: subscription.isActive,
             createdAt: subscription.createdAt,
             updatedAt: subscription.updatedAt,
+            // 🔑 ADDED: Stripe IDs from the database to the domain entity
+            stripeProductId: subscription.stripeProductId,
+            stripePriceId: subscription.stripePriceId,
         };
     }
 
-    static toEntity(subscription: CreateSubscriptionDTO) : Subscription {
+    // 3. ➡️ Mapping from Create DTO to Domain Entity (for creation)
+    static toEntity(subscription: CreateSubscriptionDTO & { stripeProductId: string, stripePriceId: string }) : Subscription {
         return {
             _id: new mongoose.Types.ObjectId().toString(),
             planName: subscription.planName.trim().toUpperCase(),
@@ -40,7 +48,9 @@ export class SubscriptionMapper  {
             isActive: SubscriptionStatus.ACTIVE,
             createdAt: new Date(),
             updatedAt: new Date(),
-          
+            // 🔑 ADDED: Stripe IDs must be passed via the DTO during creation
+            stripeProductId: subscription.stripeProductId,
+            stripePriceId: subscription.stripePriceId,
         };
     }
 
@@ -52,6 +62,8 @@ export class SubscriptionMapper  {
             durationMonths: entity.durationMonths,
             description: entity.description,
             isActive: entity.isActive,
+            // Stripe IDs are usually not included in the simple DTO returned to the client
+            // If needed, they could be added here as well.
         };
     }
 }

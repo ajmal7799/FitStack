@@ -8,5 +8,7 @@ export interface Subscription {
     description: string,
     isActive: SubscriptionStatus,
     createdAt: Date,
-    updatedAt: Date
+    updatedAt: Date,
+    stripeProductId?: string,
+    stripePriceId?: string
 }

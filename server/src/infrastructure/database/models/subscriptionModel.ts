@@ -11,5 +11,7 @@ export interface ISubscriptionModel extends Document {
     isActive: SubscriptionStatus;
     createdAt: Date;
     updatedAt: Date;
+    stripeProductId: string; 
+    stripePriceId: string;
 }
 export const subscriptionModel = model<ISubscriptionModel>('Subscription', subscriptionSchema);

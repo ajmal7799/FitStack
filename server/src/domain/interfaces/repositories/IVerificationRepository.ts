@@ -11,6 +11,6 @@ export interface IUpdateVerification  {
     findVerificationByTrainerId(trainerId: string): Promise<{verification:TrainerVerification,trainer:Trainer,user:User} >;
     verifyTrainer(trainerId: string): Promise<TrainerVerification| null>;
     rejectTrainer(trainerId: string, rejectionReason: string): Promise<TrainerVerification| null>;
-    allVerifiedTrainer(skip?: number, limit?: number): Promise<{trainer: Trainer, verification: TrainerVerification, user: User}[]>
-    countVerifiedTrainer(): Promise<number>
+    allVerifiedTrainer(skip?: number, limit?: number, search?: string): Promise<{trainer: Trainer, verification: TrainerVerification, user: User}[]>
+    countVerifiedTrainer(search?: string): Promise<number>
 }

@@ -26,7 +26,16 @@ class ExpressApp {
                 credentials: true,
             }), 
         );
-        this._app.use(express.json());
+        
+        this._app.use((req, res, next) => {
+            if(req.originalUrl === "/stripe/webhook"){
+                next();
+            }else {
+                express.json()(req, res, next);
+            }
+        })
+
+        // this._app.use(express.json());
         this._app.use(cookieParser());
     }
 

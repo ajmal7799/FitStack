@@ -3,6 +3,9 @@ import { Request, Response, Router, NextFunction } from 'express';
 // import { userProfileController } from "../../infrastructure/DI/user/userContainer";
 import { userSubscriptionController } from '../../infrastructure/DI/user/userSubscription/userSubscriptionContainer';
 import { userTrainerController } from '../../infrastructure/DI/user/userTrainer/userTrainerContainer';
+import { authMiddleware } from '../../infrastructure/DI/Auth/authContainer';
+import express from 'express';
+
 export class User_Router {
     private _route: Router;
 
@@ -50,13 +53,22 @@ export class User_Router {
         // --------------------------------------------------
 
 
-        this._route.get("/subscriptions", (req: Request, res: Response, next: NextFunction) => {
+        this._route.get("/subscriptions",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
             userSubscriptionController.getAllSubscriptionPlans(req, res, next);
         });
 
-        this._route.get('/get-all-trainers', (req: Request, res: Response, next: NextFunction) => {
+        this._route.get('/get-all-trainers',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
             userTrainerController.getAllTrainer(req, res, next);
         });
+
+        this._route.post("/checkout-session",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userSubscriptionController.createCheckoutSession(req, res, next);
+        });
+
+        this._route.post("/stripe/webhook", express.raw({type: 'application/json'}), (req: Request, res: Response, next: NextFunction) => {
+            userSubscriptionController.handleStripeWebhook(req, res, next);
+        });
+        
 
         this._route.post('/logout',(req: Request, res: Response, next: NextFunction) => {
             userAuthController.handleLogout(req, res, next);

@@ -117,5 +117,13 @@ export class UserRepository extends BaseRepository<User, IUserModel> implements 
         return doc._id.toString();
     }
 
+    async updateStripeCustomerId(userId: string, stripeCustomerId: string): Promise<void> {
+         await this._model.findByIdAndUpdate(userId,{$set: {stripeCustomerId: stripeCustomerId}}, {new:true});
+    }
+
+    async updateActiveMembershipId(userId: string, activeMembershipId: string | null): Promise<void> {
+        
+        await this._model.findByIdAndUpdate(userId,{$set: {activeMembershipId: activeMembershipId}}, {new:true});
+    }
 
 }

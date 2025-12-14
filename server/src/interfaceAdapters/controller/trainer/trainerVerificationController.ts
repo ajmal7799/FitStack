@@ -26,6 +26,7 @@ export class TrainerVerificationController {
   async verifyTrainer(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const trainerId = (req as any).user?.userId;
+      
       const files = req.files as MulterFiles;
 
       const { qualification, specialisation, experience, about } = req.body;
@@ -73,7 +74,7 @@ export class TrainerVerificationController {
     try {
       
       const trainerId = (req as any).user?.userId;
-
+      
       if (!trainerId) {
         throw new DataMissingExecption(Errors.INVALID_DATA);
       }
