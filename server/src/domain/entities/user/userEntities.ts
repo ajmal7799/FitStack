@@ -1,4 +1,4 @@
-import { UserGender, UserRole, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType,UserStatus } from '../../enum/userEnums';
+import { UserRole,UserStatus } from '../../enum/userEnums';
 export interface User {
     _id?: string;
 
@@ -13,22 +13,4 @@ export interface User {
     stripeCustomerId?: string;
     activeMembershipId?: string;
 
-    // // Basic Info
-    //  profileImage?: string;
-    // dateOfBirth?: Date;
-    // gender?: UserGender;
-    // height?: number;
-    // weight?: number;
-    // targetWeight?: number;
-
-    // // Fitness Info
-    // fitnessGoal?: FitnessGoal;
-    // experienceLevel?: ExperienceLevel;
-    //  preferredWorkoutType?: WorkoutType[];
-
-    // // Health & Diet
-    // medicalConditions?: string[];
-    // dietPreference?: DietPreference;
-
-    // profileCompleted: boolean;
 }

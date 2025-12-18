@@ -18,5 +18,6 @@ export const CONFIG = {
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     FRONTEND_URL: process.env.FRONTEND_URL,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY
 
 };

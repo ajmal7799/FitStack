@@ -132,7 +132,7 @@ export class UserAuthController {
       const { email, password } = loginSchema.parse(req.body);
 
       const user = await this._userLoginUseCase.userLogin(email, password);
-
+      
       const token = this._tokenCreationUseCase.createAccessTokenAndRefreshToken({
         userId: user._id.toString(),
         role: UserRole.USER,

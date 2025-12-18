@@ -18,7 +18,7 @@ export class AuthMiddleware {
 
         const header = req.header('Authorization');
         
-
+        
         if (!header?.startsWith('Bearer ')) {
             res.status(HTTPStatus.UNAUTHORIZED).json({ success: false, message: Errors.INVALID_TOKEN });
             return;

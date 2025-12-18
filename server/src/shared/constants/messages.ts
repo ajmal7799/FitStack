@@ -13,6 +13,13 @@ export const MESSAGES = {
         GET_ALL_USERS: 'Fetched all users successfully',
         GET_ALL_INVESTORS: 'Fetched all trainer successfully',
         PROFILE_IMG_SUCCESS: 'Profile img successfully fetched',
+        PROFILE_CREATED_SUCCESSFULLY: 'User Profile created successfully',
+        WORKOUT_PLAN_CREATED_SUCCESSFULLY: 'Workout plan created successfully',
+        DIET_PLAN_CREATED_SUCCESSFULLY: 'Diet plan created successfully',
+        GET_WORKOUT_PLAN: 'Workout plan fetched successfully',
+        GET_DIET_PLAN: 'Diet plan fetched successfully',
+        GET_USER_PROFILE: 'User profile fetched successfully',
+        GET_USER_PERSONAL_INFO: 'User personal info fetched successfully',
     },
     Trainer: {
         VERIFICATION_SUBMITTED: 'Trainer verification submitted successfully.',

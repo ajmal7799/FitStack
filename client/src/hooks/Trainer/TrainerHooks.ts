@@ -6,11 +6,13 @@ import {
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 
+
 export const useSubmitTrainerVerification = () => {
   return useMutation({
     mutationFn: (formData: FormData) => submitTrainerVerification(formData),
   });
 };
+
 
 export const useGetTrainerProfile = () => {
   return useQuery({

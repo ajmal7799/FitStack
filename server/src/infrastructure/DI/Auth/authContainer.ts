@@ -25,6 +25,9 @@ import { TrainerRepository } from '../../repositories/trainerRepository';
 import { trainerModel } from '../../database/models/trainerModel';
 import { GoogleAuthService } from '../../services/googleAuthService';
 import { UserGoogleLoginUseCase } from '../../../application/implementation/auth/userGoogleLoginUseCase';
+import { UserProfileRepository } from '../../repositories/userProfileRepository';
+import { userProfileModel } from "../../database/models/userProfileModel";
+
 
 //Repositories & Services
 const userRepository = new UserRepository(userModel);
@@ -37,6 +40,8 @@ const jwtService = new JWTService();
 const tokenService = new TokenSerivce();
 const trainerRepository = new TrainerRepository(trainerModel);
 const googleAuthService = new GoogleAuthService();
+const userProfileRepository = new UserProfileRepository(userProfileModel);
+
 
 //UseCases
 const registerUserUseCase = new RegisterUserUseCase(userRepository, hashService);
@@ -49,7 +54,7 @@ const userSendOtpUseCase = new SignUpSendOtpUseCase(
 );
 const verifyOtpUseCase = new VerifyOtpUseCase(cacheStorage);
 const tokenCreationUseCase = new TokenCreationUseCase(jwtService);
-const userLoginUseCase = new UserLoginUseCase(userRepository,hashService,trainerRepository);
+const userLoginUseCase = new UserLoginUseCase(userRepository,hashService,trainerRepository,userProfileRepository);
 const adminLoginUseCase = new AdminLoginUseCase(userRepository,hashService);
 const tokenValidationUseCase = new TokenInvalidationUseCase(jwtService,cacheStorage);
 const resendOtpUseCase = new ResendOtpUseCase(

@@ -9,7 +9,8 @@ interface UserAuthData {
     role: string;
     updatedAt?: string;
     accessToken: string;
-    verificationCheck: boolean
+    verificationCheck: boolean;
+    userProfileCompleted: boolean;
 }
 
 const initialState: UserAuthData = {
@@ -20,7 +21,8 @@ const initialState: UserAuthData = {
     role: "",
     updatedAt: "",
     accessToken: "",
-    verificationCheck: false
+    verificationCheck: false,
+    userProfileCompleted: false,
 };
 
 const userAuthDataSlice = createSlice({

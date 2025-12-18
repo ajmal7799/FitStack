@@ -1,9 +1,11 @@
 import { userAuthController } from '../../infrastructure/DI/Auth/authContainer';
 import { Request, Response, Router, NextFunction } from 'express';
-// import { userProfileController } from "../../infrastructure/DI/user/userContainer";
 import { userSubscriptionController } from '../../infrastructure/DI/user/userSubscription/userSubscriptionContainer';
 import { userTrainerController } from '../../infrastructure/DI/user/userTrainer/userTrainerContainer';
+import { userProfileController } from '../../infrastructure/DI/user/userProfileContainer';
 import { authMiddleware } from '../../infrastructure/DI/Auth/authContainer';
+import { userGenerateWorkoutplanController,userGenerateDietplanController } from "../../infrastructure/DI/user/userAiIntegrationContainer";
+import { upload } from '../middleware/multer';
 import express from 'express';
 
 export class User_Router {
@@ -68,11 +70,60 @@ export class User_Router {
         this._route.post("/stripe/webhook", express.raw({type: 'application/json'}), (req: Request, res: Response, next: NextFunction) => {
             userSubscriptionController.handleStripeWebhook(req, res, next);
         });
+
+        // --------------------------------------------------
+        //              🛠 UserProfile Routes
+        // --------------------------------------------------
+
+
+        this._route.post("/profile",authMiddleware.verify,upload.fields([{name:"profileImage",maxCount:1}]), (req: Request, res: Response, next: NextFunction) => {
+            userProfileController.createUserProfile(req, res, next);
+        })
+
+
+        // --------------------------------------------------
+        //              🛠 USER GENERATE WORKOUT PLAN  & DIEET PLAN
+        // --------------------------------------------------
+
+        this._route.post('/generate-workout-plan',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userGenerateWorkoutplanController.handleGenerateWorkoutplan(req, res, next);
+        });
+
+        this._route.get("/get-workout-plan",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userGenerateWorkoutplanController.getWorkoutPlan(req, res, next);
+        });
+
+        this._route.post('/generate-diet-plan',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userGenerateDietplanController.handleDietPlan(req, res, next);
+        });
         
+        this._route.get("/get-diet-plan",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userGenerateDietplanController.getDietPlan(req, res, next);
+        });
+
+
+        // --------------------------------------------------
+        //              🛠 USER PROFILE DATA
+        // --------------------------------------------------
+
+
+        this._route.get('/profile',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
+            userProfileController.getUserProfile(req, res, next);
+        });
+
+        this._route.get("/personal-info",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userProfileController.getPersonalInfo(req, res, next);
+        });
+
+        // --------------------------------------------------
+        //              🛠 Logout 
+        // --------------------------------------------------
 
         this._route.post('/logout',(req: Request, res: Response, next: NextFunction) => {
             userAuthController.handleLogout(req, res, next);
         });
+
+
     }
 
     public get routes(): Router {

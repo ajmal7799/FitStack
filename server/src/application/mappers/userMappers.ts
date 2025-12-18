@@ -35,7 +35,7 @@ export class UserMapper {
     };
   }
 
-  static toLoginUserResponse(user: User, verificationCheck: boolean = true): LoginUserDTO {
+  static toLoginUserResponse(user: User, verificationCheck: boolean = true, userProfileCompleted: boolean = true): LoginUserDTO {
     return {
       _id: user._id!,
       name: user.name,
@@ -44,6 +44,7 @@ export class UserMapper {
       role: user.role,
       isActive: user.isActive,
       verificationCheck,
+      userProfileCompleted,
     };
   }
 
