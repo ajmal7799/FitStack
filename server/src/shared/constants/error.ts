@@ -48,6 +48,11 @@ export const USER_ERRORS = {
     USER_INVALIDATION: 'Error while validating user !',
     NO_USERS_FOUND: 'No users found',
     UPDATE_FAILED: 'Update failed',
+    USER_PROFILE_NOT_FOUND: 'Please complete your profile to continue.',
+    USER_GENERATE_WORKOUT_PLAN_FAILED: 'Error while generating workout plan !',
+    USER_GENERATE_DIET_PLAN_FAILED: 'Error while generating diet plan !',
+    USER_WORKOUT_PLAN_NOT_FOUND: 'Workout plan not found !',
+    USER_DIET_PLAN_NOT_FOUND: 'Diet plan not found !',
 };
 
 

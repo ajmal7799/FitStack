@@ -1,5 +1,4 @@
 import { Model, Document } from 'mongoose';
-import { email } from 'zod';
 
 export abstract class BaseRepository<TEntity, TModel extends Document> {
     constructor(

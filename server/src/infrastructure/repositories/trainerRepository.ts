@@ -8,33 +8,28 @@ import { TrainerVerification } from '../../domain/entities/trainer/verification'
 import { User } from '../../domain/entities/user/userEntities';
 import { PipelineStage } from 'mongoose';
 
-
 export class TrainerRepository extends BaseRepository<Trainer, ITrainerModel> implements ITrainerRepository {
-    constructor(protected _model: Model<ITrainerModel>) {
-        super(_model, TrainerMapper);
+  constructor(protected _model: Model<ITrainerModel>) {
+    super(_model, TrainerMapper);
     // Initialization code here
+  }
+
+  async profileCompletion(trainerId: string, data: Partial<Trainer>): Promise<Trainer | null> {
+    const updatedDoc = await this._model.findOneAndUpdate(
+      { trainerId: trainerId },
+      { $set: data },
+      { new: true, upsert: true },
+    );
+
+    if (!updatedDoc) return null;
+    return TrainerMapper.fromMongooseDocument(updatedDoc);
+  }
+
+  async findByTrainerId(trainerId: string): Promise<Trainer | null> {
+    const trainerDoc = await this._model.findOne({ trainerId: trainerId });
+    if (!trainerDoc) {
+      return null;
     }
-
-    async profileCompletion(trainerId: string, data: Partial<Trainer>): Promise<Trainer | null> {
-    
-        const updatedDoc = await this._model.findOneAndUpdate(
-            { trainerId: trainerId },
-            { $set: data },
-            { new: true, upsert: true },
-        );
-    
-        if (!updatedDoc) return null;
-        return TrainerMapper.fromMongooseDocument(updatedDoc);
-    }
-
-    async findByTrainerId(trainerId: string): Promise<Trainer | null> {
-        const trainerDoc = await this._model.findOne({ trainerId: trainerId });
-        if (!trainerDoc) {
-            return null;
-        }
-        return TrainerMapper.fromMongooseDocument(trainerDoc);
-    }
-
- 
-
+    return TrainerMapper.fromMongooseDocument(trainerDoc);
+  }
 }

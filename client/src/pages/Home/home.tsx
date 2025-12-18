@@ -7,6 +7,7 @@ import { useLogout } from "../../hooks/Auth/AuthHooks";
 import gymImage from "../../assets/gym.jpg";
 import gymarea from "../../assets/gymarea.jpg";
 import gymImage2 from "../../assets/gymImage2.jpg";
+import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 
 // Icon Imports
 import {
@@ -32,6 +33,7 @@ const Home = () => {
       onSuccess: () => {
         dispatch(clearData());
         toast.success("User logged out successfully");
+        window.location.reload();
         navigate("/admin/login");
       },
       onError: () => {
@@ -49,8 +51,11 @@ const Home = () => {
           <li className="hover:text-blue-700 cursor-pointer transition duration-300">
             Home
           </li>
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300">
-            Features
+          <li
+            className="hover:text-blue-700 cursor-pointer transition duration-300"
+            onClick={() => navigate(FRONTEND_ROUTES.USER.AI_WORKOUT)}
+          >
+            AI Diet & Work Out
           </li>
           <li
             className="hover:text-blue-700 cursor-pointer transition duration-300"
@@ -69,7 +74,10 @@ const Home = () => {
           {/* User Info & Logout */}
           <div className="flex items-center space-x-3">
             {/* Profile Icon */}
-            <div className="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
+            <div
+              className="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md cursor-pointer"
+              onClick={() => navigate("/profile")}
+            >
               {userData.name?.charAt(0).toUpperCase()}
             </div>
             <div className="hidden sm:block text-right">

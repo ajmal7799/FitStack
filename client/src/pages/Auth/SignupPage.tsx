@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { setData } from "../../redux/slice/userSlice/authDataSlice";
 import SignupImg from "../../assets/SignupImg.jpg";
 import { useGoogleLogin } from "@react-oauth/google";
+import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 
 export default function UserSignUpPage() {
 
@@ -56,7 +57,7 @@ export default function UserSignUpPage() {
                     if (res.success) {
                         toast.success("OTP verified successfully!");
                         setOtpModalOpen(false);
-
+                        console.log(res.data.user);
                         dispatch(setData({
                             name: res.data.user.name,
                             email: res.data.user.email,
@@ -66,12 +67,13 @@ export default function UserSignUpPage() {
                             updatedAt: res.data.user.updatedAt,
                             accessToken: res.data.accessToken,
                             verificationCheck: res.data.accessToken,
+                            userProfileCompleted: res.data.userProfileCompleted
                         }));
 
                         if (userData.role === "trainer") {
                             navigate("/trainer/verification");
                         } else {
-                            navigate("/home")
+                            navigate(FRONTEND_ROUTES.USER.ADD_PROFILE)
                         }
                     }
                 },
@@ -114,7 +116,8 @@ export default function UserSignUpPage() {
                             role: res.data.user.role,
                             isActive: res.data.user.status,
                             accessToken: res.data.accessToken,
-                            verificationCheck: res.data.user.verificationCheck
+                            verificationCheck: res.data.user.verificationCheck,
+                            userProfileCompleted: res.data.user.userProfileCompleted
                         })
                     );
 

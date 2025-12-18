@@ -3,7 +3,7 @@ import { MulterFiles } from '../../../domain/types/multerFilesType';
 import { multerFileToFileConverter } from '../../../shared/utils/fileConverter';
 import { Errors, TRAINER_ERRORS } from '../../../shared/constants/error';
 import { ResponseHelper } from '../../../shared/utils/responseHelper';
-import { SubmitTrainerVerificationRequest } from '../../../application/dto/trainer/trainerDTO';
+
 import { trainerVerificationSchema } from '../../../shared/validations/trainerVerificationValidator';
 import { DataMissingExecption, InvalidDataException } from '../../../application/constants/exceptions';
 import { IUpdateTrainers } from '../../../application/useCase/trainer/IUpdateTrainers';
@@ -12,6 +12,8 @@ import { ca, da } from 'zod/locales';
 import { HTTPStatus } from '../../../shared/constants/httpStatus';
 import { IGetProfileData } from '../../../application/useCase/trainer/IGetProfileData';
 import { IGetVerificationData } from '../../../application/useCase/trainer/IGetVerificationData';
+import { SubmitTrainerVerificationRequest } from '../../../application/dto/trainer/trainerDTO';
+
 
 export class TrainerVerificationController {
   constructor(
@@ -29,7 +31,7 @@ export class TrainerVerificationController {
       
       const files = req.files as MulterFiles;
 
-      const { qualification, specialisation, experience, about } = req.body;
+      const { qualification, specialisation, experience, about } = req.body;  
 
       const data: any = {
         trainerId,
@@ -38,6 +40,7 @@ export class TrainerVerificationController {
         experience,
         about,
       };
+      
       if (files['idCard']?.[0]) {
         data.idCard = multerFileToFileConverter(files['idCard'][0]); // array
       }
@@ -60,7 +63,8 @@ export class TrainerVerificationController {
         throw new InvalidDataException(TRAINER_ERRORS.TRAINER_VERIFICATION_FAILED);
       }
 
-      ResponseHelper.success(res, MESSAGES.Trainer.VERIFICATION_SUBMITTED, { data: verifiedTrainer }, HTTPStatus.OK);
+      ResponseHelper.success(res, MESSAGES.Trainer.VERIFICATION_SUBMITTED, { data: verifiedTrainer }, HTTPStatus.CREATED);
+      
     } catch (error) {
       next(error);
     }

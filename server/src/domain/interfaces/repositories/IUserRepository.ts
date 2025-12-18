@@ -1,7 +1,7 @@
 import { User } from '../../entities/user/userEntities';
 import { IBaseRepository } from './IBaseRepository';
 import { UserStatus } from '../../enum/userEnums';
-
+import { UserProfile } from '../../entities/user/userProfile';
 
 export interface IUserRepository extends IBaseRepository<User>{
     findByEmail(email:string) : Promise<User | null>;
@@ -12,8 +12,11 @@ export interface IUserRepository extends IBaseRepository<User>{
     countTrainer(status?: string, search?: string): Promise<number>;
     findByIdAndUpdatePassword(email: string, hashedPassword: string): Promise<void>;
     googleSignUp(user: User): Promise<string>;
+    
 
     updateStripeCustomerId(userId: string, stripeCustomerId: string): Promise<void>;
 
     updateActiveMembershipId(userId: string, activeMembershipId: string | null): Promise<void>;
+
+
 }

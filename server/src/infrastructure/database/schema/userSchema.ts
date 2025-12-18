@@ -1,12 +1,9 @@
 import mongoose from 'mongoose';
 import {
-  UserGender,
+ 
   UserRole,
   UserStatus,
-  FitnessGoal,
-  ExperienceLevel,
-  DietPreference,
-  WorkoutType,
+  
 } from '../../../domain/enum/userEnums';
 
 const userSchema = new mongoose.Schema(

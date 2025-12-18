@@ -28,13 +28,14 @@ const UserLoginPage = () => {
             role: res.data.user.role,
             updatedAt: res.data.user.updatedAt,
             accessToken: res.data.accessToken,
-            verificationCheck: res.data.user.verificationCheck
+            verificationCheck: res.data.user.verificationCheck,
+            userProfileCompleted: res.data.user.userProfileCompleted
             
           })
         );
 
         if (user.role === "trainer") {
-          if (user.verificationCheck) {
+          if (user.verificationCheck == true) {
             navigate("/trainer/dashboard");
           } else {
             navigate("/trainer/verification");
@@ -72,7 +73,7 @@ const UserLoginPage = () => {
             return;
           }
           toast.success(res.message);
-          console.log("data from backend during login : ", res.data.user)
+          
           dispatch(
              setData({
               // _id: res.data.user._id,
@@ -82,7 +83,8 @@ const UserLoginPage = () => {
               role: res.data.user.role,
               isActive: res.data.user.status,
               accessToken: res.data.accessToken,
-              verificationCheck: res.data.user.verificationCheck
+              verificationCheck: res.data.user.verificationCheck,
+              userProfileCompleted: res.data.user.userProfileCompleted
             })
           );
           // dispatch(setToken(res.data?.accessToken || ""));
