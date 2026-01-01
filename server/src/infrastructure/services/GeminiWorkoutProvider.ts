@@ -5,50 +5,50 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { WorkoutPlan } from '../../domain/entities/user/workoutPlanEntities';
 
 export class GeminiWorkoutProvider implements IWorkoutAIProvider {
-  private genAI: GoogleGenerativeAI;
-  constructor() {
-    const apiKey = CONFIG.GEMINI_API_KEY!;
-    this.genAI = new GoogleGenerativeAI(apiKey);
-  }
+    private _genAI: GoogleGenerativeAI;
+    constructor() {
+        const apiKey = CONFIG.GEMINI_API_KEY!;
+        this._genAI = new GoogleGenerativeAI(apiKey);
+    }
 
-  async generatePlan(profile: UserProfile): Promise<WorkoutPlan|null> {
+    async generatePlan(profile: UserProfile): Promise<WorkoutPlan|null> {
 
-    const model = this.genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash-lite',
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
-    });
+        const model = this._genAI.getGenerativeModel({
+            model: 'gemini-2.5-flash-lite',
+            generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
+        });
 
-    try {
-      const prompt = this.buildWorkoutPrompt(profile);
-      const result = await model.generateContent(prompt);
+        try {
+            const prompt = this.buildWorkoutPrompt(profile);
+            const result = await model.generateContent(prompt);
 
       
-      const response = await result.response;
-      const text = response.text();
-      return JSON.parse(text);
-    } catch (error) {
-      console.log('error', error);
-      return null;
+            const response = await result.response;
+            const text = response.text();
+            return JSON.parse(text);
+        } catch (error) {
+            console.log('error', error);
+            return null;
+        }
     }
-  }
 
-  private buildWorkoutPrompt(profile: UserProfile): string {
+    private buildWorkoutPrompt(profile: UserProfile): string {
     // Format medical conditions
-    const medicalConditions =
+        const medicalConditions =
       profile.medicalConditions && profile.medicalConditions.length > 0 ? profile.medicalConditions.join(', ') : 'none';
 
-    // Format preferred workout types
-    const preferredWorkoutTypes =
+        // Format preferred workout types
+        const preferredWorkoutTypes =
       profile.preferredWorkoutTypes && profile.preferredWorkoutTypes.length > 0
-        ? profile.preferredWorkoutTypes.map(type => `- ${type}`).join('\n')
-        : '- mixed';
+          ? profile.preferredWorkoutTypes.map(type => `- ${type}`).join('\n')
+          : '- mixed';
 
-    // Calculate weight change
-    const weightChange = profile.targetWeight - profile.weight;
-    const weightChangeAmount = Math.abs(weightChange).toFixed(1);
-    const weightChangeDirection = weightChange > 0 ? 'gain' : weightChange < 0 ? 'lose' : 'maintain';
+        // Calculate weight change
+        const weightChange = profile.targetWeight - profile.weight;
+        const weightChangeAmount = Math.abs(weightChange).toFixed(1);
+        const weightChangeDirection = weightChange > 0 ? 'gain' : weightChange < 0 ? 'lose' : 'maintain';
 
-    return `Generate a SAFE, REALISTIC, and STRUCTURED WEEKLY WORKOUT PLAN based strictly on the user profile below.
+        return `Generate a SAFE, REALISTIC, and STRUCTURED WEEKLY WORKOUT PLAN based strictly on the user profile below.
 
 DO NOT give medical advice.
 DO NOT include dangerous or extreme exercises.
@@ -189,70 +189,70 @@ IMPORTANT REMINDERS
 - Ensure all exercises are possible with available equipment at ${profile.workoutLocation}
 
 Generate the complete workout plan now in the exact JSON format specified above.`;
-  }
+    }
 
-  private getGoalSpecificGuidelines(goal: string): string {
-    const guidelines: Record<string, string> = {
-      'lose weight': `- Prioritize compound movements that burn more calories
+    private getGoalSpecificGuidelines(goal: string): string {
+        const guidelines: Record<string, string> = {
+            'lose weight': `- Prioritize compound movements that burn more calories
 - Include cardio intervals or HIIT components
 - Higher rep ranges (12-15+)
 - Shorter rest periods (30-60 seconds)
 - Circuit training can be effective
 - Focus on full-body workouts or upper/lower splits`,
 
-      'gain muscle': `- Focus on progressive overload with compound movements
+            'gain muscle': `- Focus on progressive overload with compound movements
 - Primary lifts: squats, deadlifts, bench press, rows, overhead press
 - Moderate to heavy weights with 6-12 rep range
 - Adequate rest between sets (90-120 seconds)
 - Use split routines: push/pull/legs or upper/lower
 - Include isolation exercises for targeted muscle growth`,
 
-      'maintain fitness': `- Balanced mix of strength and cardio
+            'maintain fitness': `- Balanced mix of strength and cardio
 - Full-body workouts 3-4 times per week
 - Varied rep ranges (6-15 reps)
 - Maintain current intensity and volume
 - Include flexibility work`,
 
-      'improve endurance': `- High rep ranges (15-20+)
+            'improve endurance': `- High rep ranges (15-20+)
 - Shorter rest periods (30-45 seconds)
 - Circuit training and supersets
 - Include cardio intervals between strength exercises
 - Focus on muscular endurance and stamina`,
 
-      flexibility: `- Dynamic stretching in warm-ups
+            flexibility: `- Dynamic stretching in warm-ups
 - Static stretching in cool-downs (hold 30-60 seconds)
 - Include yoga poses and mobility drills
 - Full range of motion in all exercises
 - Foam rolling and myofascial release`,
 
-      'general health': `- Well-rounded approach with variety
+            'general health': `- Well-rounded approach with variety
 - Mix of strength, cardio, and flexibility
 - Functional movements that improve daily activities
 - Moderate intensity, sustainable long-term
 - Include balance and coordination exercises`,
-    };
+        };
 
-    return guidelines[goal] || guidelines['general health'];
-  }
-
-  private getWorkoutTypeGuidelines(types: string[]): string {
-    const guidelines: Record<string, string> = {
-      strength: 'Focus on compound lifts, progressive overload, heavier weights with lower reps (6-12)',
-      cardio: 'Include running, cycling, HIIT, jump rope, or cardio machines. Aim for 20-30 minutes per session',
-      flexibility: 'Incorporate yoga flows, dynamic stretches, static holds, and mobility drills',
-      mixed: 'Combine strength training with cardio intervals and flexibility work for balanced fitness',
-    };
-
-    if (types.length === 1) {
-      return guidelines[types[0]] || guidelines['mixed'];
+        return guidelines[goal] || guidelines['general health'];
     }
 
-    return types.map(type => `- ${type}: ${guidelines[type] || 'Include varied exercises'}`).join('\n');
-  }
+    private getWorkoutTypeGuidelines(types: string[]): string {
+        const guidelines: Record<string, string> = {
+            strength: 'Focus on compound lifts, progressive overload, heavier weights with lower reps (6-12)',
+            cardio: 'Include running, cycling, HIIT, jump rope, or cardio machines. Aim for 20-30 minutes per session',
+            flexibility: 'Incorporate yoga flows, dynamic stretches, static holds, and mobility drills',
+            mixed: 'Combine strength training with cardio intervals and flexibility work for balanced fitness',
+        };
 
-  private getExperienceLevelDetails(level: string): string {
-    const details: Record<string, string> = {
-      beginner: `- Start with 3-4 workout days per week
+        if (types.length === 1) {
+            return guidelines[types[0]] || guidelines['mixed'];
+        }
+
+        return types.map(type => `- ${type}: ${guidelines[type] || 'Include varied exercises'}`).join('\n');
+    }
+
+    private getExperienceLevelDetails(level: string): string {
+        const details: Record<string, string> = {
+            beginner: `- Start with 3-4 workout days per week
 - Focus on bodyweight and machine exercises first
 - Learn proper form before adding weight
 - Rest periods: 90-120 seconds
@@ -261,7 +261,7 @@ Generate the complete workout plan now in the exact JSON format specified above.
 - Avoid advanced techniques (drop sets, supersets)
 - Progress slowly to prevent injury`,
 
-      intermediate: `- 4-5 workout days per week
+            intermediate: `- 4-5 workout days per week
 - Mix of free weights and machines
 - Can handle moderate volume and intensity
 - Rest periods: 60-90 seconds
@@ -270,7 +270,7 @@ Generate the complete workout plan now in the exact JSON format specified above.
 - Can incorporate supersets and compound sets
 - Ready for split routines`,
 
-      advanced: `- 5-6 workout days per week
+            advanced: `- 5-6 workout days per week
 - Heavy emphasis on free weights
 - High volume and intensity training
 - Rest periods: 45-60 seconds (adjust for heavy lifts)
@@ -278,8 +278,8 @@ Generate the complete workout plan now in the exact JSON format specified above.
 - 12-15 exercises per session
 - Can use advanced techniques: drop sets, rest-pause, tempo training
 - May benefit from periodization and deload weeks`,
-    };
+        };
 
-    return details[level] || details['beginner'];
-  }
+        return details[level] || details['beginner'];
+    }
 }

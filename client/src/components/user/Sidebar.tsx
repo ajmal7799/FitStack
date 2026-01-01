@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   User,
   FileText,
@@ -8,20 +8,26 @@ import {
   Menu,
   X,
   ArrowLeft,
-} from "lucide-react";
+  Crown,
+  Users
+} from 'lucide-react';
 
 const UserSidebar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const menuItems = [
-    { id: "profile", label: "My Profile", icon: User, path: "/profile" },
-    { id: "personal-info", label: "Personal Info", icon: FileText, path: "/profile/personal-info" },
-    { id: "chat", label: "Chat", icon: MessageCircle, path: "/chat" },
-    { id: "session", label: "Session", icon: Calendar, path: "/session" },
-    { id: "history", label: "History", icon: Calendar, path: "/history" },
-  ];
+const menuItems = [
+  { id: 'profile',       label: 'Personal Info',   icon: User,        path: '/profile' },
+  { id: 'personal-info', label: 'Body Metrics',    icon: FileText,    path: '/profile/personal-info' },
+  { id: 'subscription',  label: 'Subscription',    icon: Crown,       path: '/active-subscription' }, 
+  { id: 'trainer',        label: 'Trainer',       icon: Users,         path: '/selected-trainer' }, 
+  {id: "slots",          label: "Slots",            icon: Calendar,    path: "/slots-booking"},
+  { id: 'session',       label: 'Session',         icon: Calendar,    path: '/session' },
+  {id: 'session-history', label: 'Session History', icon: Calendar,    path: '/session-history'},
+  { id: 'chat',          label: 'Chat',            icon: MessageCircle, path: '/chat' },
+  // { id: 'history',       label: 'History',         icon: Calendar,    path: '/history' },
+];
 
   const activePath = location.pathname;
 
@@ -32,7 +38,7 @@ const UserSidebar = () => {
 
   const handleBackToHome = () => {
     setIsMobileMenuOpen(false);
-    navigate("/home");
+    navigate('/home');
   };
 
   return (
@@ -56,7 +62,7 @@ const UserSidebar = () => {
       {/* Sidebar */}
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-blue-900 to-blue-950 transform transition-transform duration-300 ease-in-out ${
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Back to Home Button */}
@@ -83,8 +89,8 @@ const UserSidebar = () => {
                     onClick={() => handleNavigation(item)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                       isActive
-                        ? "bg-blue-700 text-white shadow-lg"
-                        : "text-blue-200 hover:bg-blue-800 hover:text-white"
+                        ? 'bg-blue-700 text-white shadow-lg'
+                        : 'text-blue-200 hover:bg-blue-800 hover:text-white'
                     }`}
                   >
                     <Icon size={20} />

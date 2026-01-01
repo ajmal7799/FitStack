@@ -13,6 +13,7 @@ import {
     PasswordNotMatchingException,
     TokenExpiredException,
     TokenMissingException,
+    ConflictException
 } from '../../application/constants/exceptions';
 
 import { Request, Response, NextFunction } from 'express';
@@ -30,7 +31,7 @@ export const errorHandlingMiddleware = (
         if (err instanceof ApplicationException) {
             if (err instanceof NotFoundException) {
                 statusCode = HTTPStatus.NOT_FOUND;
-            } else if (err instanceof AlreadyExisitingExecption) {
+            } else if (err instanceof AlreadyExisitingExecption || err instanceof ConflictException) {
                 statusCode = HTTPStatus.CONFLICT;
             } else if (err instanceof IsBlockedExecption) {
                 statusCode = HTTPStatus.FORBIDDEN;

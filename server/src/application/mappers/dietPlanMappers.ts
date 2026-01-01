@@ -1,6 +1,6 @@
-import { DietPlan } from "../../domain/entities/user/dietPlanEntities";
-import { IDietPlanModel } from "../../infrastructure/database/models/dietPlanModel";
-import { DietPlanResponseDto } from "../dto/user/dietPlanDTO";
+import { DietPlan } from '../../domain/entities/user/dietPlanEntities';
+import { IDietPlanModel } from '../../infrastructure/database/models/dietPlanModel';
+import { DietPlanResponseDto } from '../dto/user/dietPlanDTO';
 
 export class DietPlanMapper {
     /**
@@ -16,46 +16,46 @@ export class DietPlanMapper {
                     breakfast: {
                         time: dayPlan.meals.breakfast.time,
                         items: dayPlan.meals.breakfast.items,
-                        calories: dayPlan.meals.breakfast.calories
+                        calories: dayPlan.meals.breakfast.calories,
                     },
                     midMorningSnack: {
                         time: dayPlan.meals.midMorningSnack.time,
                         items: dayPlan.meals.midMorningSnack.items,
-                        calories: dayPlan.meals.midMorningSnack.calories
+                        calories: dayPlan.meals.midMorningSnack.calories,
                     },
                     lunch: {
                         time: dayPlan.meals.lunch.time,
                         items: dayPlan.meals.lunch.items,
-                        calories: dayPlan.meals.lunch.calories
+                        calories: dayPlan.meals.lunch.calories,
                     },
                     eveningSnack: {
                         time: dayPlan.meals.eveningSnack.time,
                         items: dayPlan.meals.eveningSnack.items,
-                        calories: dayPlan.meals.eveningSnack.calories
+                        calories: dayPlan.meals.eveningSnack.calories,
                     },
                     dinner: {
                         time: dayPlan.meals.dinner.time,
                         items: dayPlan.meals.dinner.items,
-                        calories: dayPlan.meals.dinner.calories
-                    }
-                }
+                        calories: dayPlan.meals.dinner.calories,
+                    },
+                },
             })),
             nutritionGuidelines: {
                 dailyCalories: doc.nutritionGuidelines.dailyCalories,
                 proteinIntake: doc.nutritionGuidelines.proteinIntake,
                 hydration: doc.nutritionGuidelines.hydration,
                 macroBalance: doc.nutritionGuidelines.macroBalance,
-                mealTiming: doc.nutritionGuidelines.mealTiming
+                mealTiming: doc.nutritionGuidelines.mealTiming,
             },
             importantNotes: {
                 hydrationTips: doc.importantNotes.hydrationTips,
-                foodsToAvoid: doc.importantNotes.foodsToAvoid
+                foodsToAvoid: doc.importantNotes.foodsToAvoid,
             },
             weeklyGuidance: {
                 adherence: doc.weeklyGuidance.adherence,
                 adjustments: doc.weeklyGuidance.adjustments,
                 duration: doc.weeklyGuidance.duration,
-                progressTracking: doc.weeklyGuidance.progressTracking
+                progressTracking: doc.weeklyGuidance.progressTracking,
             },
             isActive: doc.isActive,
             
@@ -64,7 +64,7 @@ export class DietPlanMapper {
 
     static toResponseDTO(entity: DietPlan): DietPlanResponseDto {
         return {
-            id: entity.id || "",
+            id: entity.id || '',
             userId: entity.userId,
             weeklyDietPlan: entity.weeklyDietPlan.map(day => ({
                 day: day.day,
@@ -72,46 +72,46 @@ export class DietPlanMapper {
                     breakfast: {
                         time: day.meals.breakfast.time,
                         items: day.meals.breakfast.items,
-                        calories: day.meals.breakfast.calories
+                        calories: day.meals.breakfast.calories,
                     },
                     midMorningSnack: {
                         time: day.meals.midMorningSnack.time,
                         items: day.meals.midMorningSnack.items,
-                        calories: day.meals.midMorningSnack.calories
+                        calories: day.meals.midMorningSnack.calories,
                     },
                     lunch: {
                         time: day.meals.lunch.time,
                         items: day.meals.lunch.items,
-                        calories: day.meals.lunch.calories
+                        calories: day.meals.lunch.calories,
                     },
                     eveningSnack: {
                         time: day.meals.eveningSnack.time,
                         items: day.meals.eveningSnack.items,
-                        calories: day.meals.eveningSnack.calories
+                        calories: day.meals.eveningSnack.calories,
                     },
                     dinner: {
                         time: day.meals.dinner.time,
                         items: day.meals.dinner.items,
-                        calories: day.meals.dinner.calories
-                    }
-                }
+                        calories: day.meals.dinner.calories,
+                    },
+                },
             })),
             nutritionGuidelines: {
                 dailyCalories: entity.nutritionGuidelines.dailyCalories,
                 proteinIntake: entity.nutritionGuidelines.proteinIntake,
                 hydration: entity.nutritionGuidelines.hydration,
                 macroBalance: entity.nutritionGuidelines.macroBalance,
-                mealTiming: entity.nutritionGuidelines.mealTiming
+                mealTiming: entity.nutritionGuidelines.mealTiming,
             },
             importantNotes: {
                 hydrationTips: entity.importantNotes.hydrationTips,
-                foodsToAvoid: entity.importantNotes.foodsToAvoid
+                foodsToAvoid: entity.importantNotes.foodsToAvoid,
             },
             weeklyGuidance: {
                 adherence: entity.weeklyGuidance.adherence,
                 adjustments: entity.weeklyGuidance.adjustments,
                 duration: entity.weeklyGuidance.duration,
-                progressTracking: entity.weeklyGuidance.progressTracking
+                progressTracking: entity.weeklyGuidance.progressTracking,
             },
             isActive: entity.isActive,
             // Convert Date to ISO string for the frontend

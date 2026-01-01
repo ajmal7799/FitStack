@@ -1,5 +1,5 @@
-import { useState} from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState} from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -9,7 +9,7 @@ import {
   Calendar,
   Menu,
   X,
-} from "lucide-react";
+} from 'lucide-react';
 
 const AdminSidebar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -17,12 +17,12 @@ const AdminSidebar = () => {
   const location = useLocation(); // ✅ to detect current route
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
-    { id: "users", label: "Users", icon: Users, path: "/admin/users" },
-    { id: "trainers", label: "Trainers", icon: Dumbbell, path: "/admin/trainers" },
-    { id: "verification", label: "Verification", icon: CheckCircle, path: "/admin/verification" },
-    { id: "subscription", label: "Subscription", icon: CreditCard, path: "/admin/subscriptions" },
-    { id: "session", label: "Session", icon: Calendar, path: "/admin/session" },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
+    { id: 'users', label: 'Users', icon: Users, path: '/admin/users' },
+    { id: 'trainers', label: 'Trainers', icon: Dumbbell, path: '/admin/trainers' },
+    { id: 'verification', label: 'Verification', icon: CheckCircle, path: '/admin/verification' },
+    { id: 'subscription', label: 'Subscription', icon: CreditCard, path: '/admin/subscriptions' },
+    { id: 'session', label: 'Session', icon: Calendar, path: '/admin/session' },
   ];
 
   // ✅ Determine which item should be active based on the URL
@@ -54,7 +54,7 @@ const AdminSidebar = () => {
       {/* Sidebar */}
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-black transform transition-transform duration-300 ease-in-out ${
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Logo/Brand */}
@@ -75,8 +75,8 @@ const AdminSidebar = () => {
                     onClick={() => handleNavigation(item)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                       isActive
-                        ? "bg-gray-800 text-white"
-                        : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                        ? 'bg-gray-800 text-white'
+                        : 'text-gray-400 hover:bg-gray-900 hover:text-white'
                     }`}
                   >
                     <Icon size={20} />

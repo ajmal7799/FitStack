@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type { SignupPayload, LoginPayload } from "../../types/AuthPayloads";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import type { SignupPayload, LoginPayload } from '../../types/AuthPayloads';
 
 import {
   signupUser,
@@ -16,7 +16,7 @@ import {
   resetPassword,
   userGoogleLogin
 
-} from "../../service/Auth/AuthServices";
+} from '../../service/Auth/AuthServices';
 
 
 
@@ -37,8 +37,8 @@ export const useUserVerifyOtp = () => {
 export const useUserResendOtp = () => {
   return useMutation({
     mutationFn: (email: string) => userResendOtp(email)
-  })
-}
+  });
+};
 
 export const useUserLogin = () => {
   return useMutation({
@@ -47,10 +47,10 @@ export const useUserLogin = () => {
 };
 
 export const useForgotPassword = () => {
-    return useMutation({
-      mutationFn:(email: string) => forgotPassword(email)
-    })
-}
+  return useMutation({
+    mutationFn:(email: string) => forgotPassword(email)
+  });
+};
 
 export const useForgetPasswordVerifyOtp = () => {
   return useMutation({
@@ -75,13 +75,10 @@ export const useLogout = () => {
 
 
 export const useGetAllUsers = (page: number, limit: number, status?: string, search?: string) => {
-  // Temporary TS fix: cast options to any so 'keepPreviousData' is allowed
   return useQuery({
-    queryKey: ["users", page, limit, status, search],
+    queryKey: ['users', page, limit, status, search],
     queryFn: () => getAllUsers(page, limit, status, search),
-    keepPreviousData: true,
-    refetchInterval: 500, // poll every 5s (adjust as needed)
-  } as any);
+  });
 };
 
 
@@ -101,12 +98,10 @@ export const useUpdateUserStatus = () => {
 // admin trainer-management
 export const useGetAllTrainers = (page: number, limit: number, status?: string, search?: string) => {
   return useQuery({
-    queryKey: ["users", page, limit, status, search],
+    queryKey: ['users', page, limit, status, search],
     queryFn: () => getAllTrainers(page, limit, status, search),
-    keepPreviousData: true,
-    refetchInterval: 500, // poll every 5s (adjust as needed)
-  } as any);
-}
+  });
+};
 
 
 export const useUpdateTrainerStatus = () => {

@@ -8,7 +8,7 @@ import { defineConfig } from 'eslint/config';
 export default defineConfig([
     {
         files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
-        ignores: ["eslint.config.mjs"], 
+        ignores: ["eslint.config.mts"], 
         languageOptions: {
             parser: tseslint.parser,
             parserOptions: {
@@ -76,6 +76,7 @@ export default defineConfig([
             // --- TypeScript-specific ---
             '@typescript-eslint/explicit-function-return-type': 'off',
             '@typescript-eslint/no-non-null-assertion': 'off',
+             '@typescript-eslint/no-explicit-any': 'error',
         },
     },
 ]);

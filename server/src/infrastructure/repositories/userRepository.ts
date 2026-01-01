@@ -101,7 +101,15 @@ export class UserRepository extends BaseRepository<User, IUserModel> implements 
     await this._model.findByIdAndUpdate(userId, { $set: { activeMembershipId: activeMembershipId } }, { new: true });
   }
 
- 
+  async updateUserProfileImage(userId: string, profileImage: string): Promise<void> {
+    if (!profileImage) return;
+    await this._model.findByIdAndUpdate(userId, { $set: { profileImage: profileImage } });
+  }
 
+ async updateTrainerProfile(userId: string, profile: User): Promise<User | null> {
+    const updatedDoc = await this._model.findByIdAndUpdate(userId,{$set: profile},{new: true, upsert: true});
+    if (!updatedDoc) return null;
+    return UserMapper.fromMongooseDocument(updatedDoc);
+  }
 
 }

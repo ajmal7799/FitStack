@@ -1,4 +1,4 @@
-import { DietPlan } from "../../../domain/entities/user/dietPlanEntities";
+import { DietPlan } from '../../../domain/entities/user/dietPlanEntities';
 
 export interface MealDto {
   time: string;

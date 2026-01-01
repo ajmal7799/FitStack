@@ -1,4 +1,4 @@
-import { UserRole, UserStatus, } from '../../../domain/enum/userEnums';
+import { UserRole, UserStatus } from '../../../domain/enum/userEnums';
 
 export interface LoginUserDTO {
     _id: string;
@@ -9,5 +9,7 @@ export interface LoginUserDTO {
     isActive: UserStatus;
     verificationCheck?: boolean
     userProfileCompleted?: boolean
+    profileImage?: string
+    hasActiveSubscription?: boolean
     
 }

@@ -14,11 +14,11 @@ const TrainerHeader = () => {
     logout(undefined, {
       onSuccess: () => {
         dispatch(clearData());
-        toast.success("Trainer logged out successfully");
-        navigate("/login"); // or "/trainer/login" if you have a separate login page
+        toast.success('Trainer logged out successfully');
+        navigate('/login'); // or "/trainer/login" if you have a separate login page
       },
       onError: () => {
-        toast.error("Logout failed. Please try again.");
+        toast.error('Logout failed. Please try again.');
       },
     });
   };

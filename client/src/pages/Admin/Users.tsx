@@ -1,5 +1,5 @@
-import AdminSidebar from "../../components/admin/Sidebar";
-import AdminHeader from "../../components/admin/Header";
+import AdminSidebar from '../../components/admin/Sidebar';
+import AdminHeader from '../../components/admin/Header';
 
 const AdminUserPage = () => {
   return (

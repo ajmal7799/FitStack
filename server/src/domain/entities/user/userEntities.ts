@@ -12,5 +12,6 @@ export interface User {
     isActive: UserStatus;
     stripeCustomerId?: string;
     activeMembershipId?: string;
+    profileImage?: string,
 
 }

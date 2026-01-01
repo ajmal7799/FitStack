@@ -1,30 +1,30 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import toast from "react-hot-toast";
-import BackgroundImg from "../../assets/BackGroundImg.jpg";
-import { useSubmitTrainerVerification } from "../../hooks/Trainer/TrainerHooks";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import toast from 'react-hot-toast';
+import BackgroundImg from '../../assets/BackGroundImg.jpg';
+import { useSubmitTrainerVerification } from '../../hooks/Trainer/TrainerHooks';
+import { useNavigate } from 'react-router-dom';
 
 
 const step1Schema = z.object({
-  qualification: z.string().min(2, "Please enter your qualification"),
-  specialisation: z.string().min(2, "Please enter your specialisation"),
-  experience: z.coerce.number().min(0, "Experience must be 0 or more"),
-  about: z.string().min(20, "Tell us at least 20 characters about yourself"),
+  qualification: z.string().min(2, 'Please enter your qualification'),
+  specialisation: z.string().min(2, 'Please enter your specialisation'),
+  experience: z.coerce.number().min(0, 'Experience must be 0 or more'),
+  about: z.string().min(20, 'Tell us at least 20 characters about yourself'),
 });
 
 const step2Schema = z.object({
   idCard: z
     .instanceof(FileList)
-    .refine((files) => files?.length === 1, "Personal ID Card is required"),
+    .refine((files) => files?.length === 1, 'Personal ID Card is required'),
   educationCert: z
     .instanceof(FileList)
-    .refine((files) => files?.length === 1, "Education certificate is required"),
+    .refine((files) => files?.length === 1, 'Education certificate is required'),
   experienceCert: z
     .instanceof(FileList)
-    .refine((files) => files?.length === 1, "Experience proof is required"),
+    .refine((files) => files?.length === 1, 'Experience proof is required'),
 });
 
 type Step1Data = z.infer<typeof step1Schema>;
@@ -33,7 +33,7 @@ type Step2Data = z.infer<typeof step2Schema>;
 const TrainerVerification: React.FC = () => {
   const [step, setStep] = useState(1);
   const [step1Data, setStep1Data] = useState<Step1Data | null>(null);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   
   // React Query Mutation
   const { mutate: submitVerification, isPending } = useSubmitTrainerVerification();
@@ -73,28 +73,28 @@ const TrainerVerification: React.FC = () => {
     const formData = new FormData();
     
     // Add Step 1 text data
-    formData.append("qualification", step1Data.qualification);
-    formData.append("specialisation", step1Data.specialisation);
-    formData.append("experience", step1Data.experience.toString());
-    formData.append("about", step1Data.about);
+    formData.append('qualification', step1Data.qualification);
+    formData.append('specialisation', step1Data.specialisation);
+    formData.append('experience', step1Data.experience.toString());
+    formData.append('about', step1Data.about);
 
     // Add Step 2 files
-    formData.append("idCard", data.idCard[0]!);
-    formData.append("educationCert", data.educationCert[0]!);
-    formData.append("experienceCert", data.experienceCert[0]!);
+    formData.append('idCard', data.idCard[0]!);
+    formData.append('educationCert', data.educationCert[0]!);
+    formData.append('experienceCert', data.experienceCert[0]!);
      
     // Use React Query Mutation
     submitVerification(formData, {
       onSuccess: (res:any) => {
-       toast.success(res.message)
-       navigate("/trainer/dashboard");
+        toast.success(res.message);
+        navigate('/trainer/dashboard');
         setStep(3);
         reset1(); // Clear Step 1 form
         reset2(); // Clear Step 2 form
         
       },
       onError: (error: any) => {
-       toast.error(error.response.data?.message || "Submission failed");
+        toast.error(error.response.data?.message || 'Submission failed');
       },
     });
   };
@@ -123,7 +123,7 @@ const TrainerVerification: React.FC = () => {
             <div key={num} className="flex items-center">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm transition-all shadow-lg ${
-                  step >= num ? "bg-emerald-500" : "bg-gray-500"
+                  step >= num ? 'bg-emerald-500' : 'bg-gray-500'
                 }`}
               >
                 {num}
@@ -131,7 +131,7 @@ const TrainerVerification: React.FC = () => {
               {num < 3 && (
                 <div
                   className={`w-20 h-1 mx-3 transition-all ${
-                    step > num ? "bg-emerald-500" : "bg-gray-500"
+                    step > num ? 'bg-emerald-500' : 'bg-gray-500'
                   }`}
                 />
               )}
@@ -147,7 +147,7 @@ const TrainerVerification: React.FC = () => {
 
               <div>
                 <input
-                  {...register1("qualification")}
+                  {...register1('qualification')}
                   placeholder="Highest Qualification (e.g. B.P.Ed, NSCA-CPT)"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 text-base"
                 />
@@ -158,7 +158,7 @@ const TrainerVerification: React.FC = () => {
 
               <div>
                 <input
-                  {...register1("specialisation")}
+                  {...register1('specialisation')}
                   placeholder="Specialisation (e.g. Weight Loss, Yoga, Powerlifting)"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 text-base"
                 />
@@ -169,7 +169,7 @@ const TrainerVerification: React.FC = () => {
 
               <div>
                 <input
-                  {...register1("experience")}
+                  {...register1('experience')}
                   type="number"
                   placeholder="Years of Experience"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 text-base"
@@ -181,7 +181,7 @@ const TrainerVerification: React.FC = () => {
 
               <div>
                 <textarea
-                  {...register1("about")}
+                  {...register1('about')}
                   rows={4}
                   placeholder="About Me – your training style & achievements"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 text-base resize-none"
@@ -230,7 +230,7 @@ const TrainerVerification: React.FC = () => {
                       <p className="text-xs text-gray-500">Aadhaar, Passport, DL etc.</p>
                     </div>
                   </div>
-                  <input type="file" accept="image/*,.pdf" {...register2("idCard")} className="hidden" />
+                  <input type="file" accept="image/*,.pdf" {...register2('idCard')} className="hidden" />
                 </label>
                 {errors2.idCard && <p className="text-red-600 text-xs mt-1">{errors2.idCard.message}</p>}
               </div>
@@ -246,7 +246,7 @@ const TrainerVerification: React.FC = () => {
                     <p className="text-sm text-gray-600 group-hover:text-emerald-600 transition">Upload Degree / Diploma</p>
                     <p className="text-xs text-gray-500">JPG, PNG, PDF</p>
                   </div>
-                  <input type="file" accept="image/*,.pdf" {...register2("educationCert")} className="hidden" />
+                  <input type="file" accept="image/*,.pdf" {...register2('educationCert')} className="hidden" />
                 </label>
                 {errors2.educationCert && <p className="text-red-600 text-xs mt-1">{errors2.educationCert.message}</p>}
               </div>
@@ -262,7 +262,7 @@ const TrainerVerification: React.FC = () => {
                     <p className="text-sm text-gray-600 group-hover:text-emerald-600 transition">Upload Experience Letter</p>
                     <p className="text-xs text-gray-500">From previous gym/company</p>
                   </div>
-                  <input type="file" accept="image/*,.pdf" {...register2("experienceCert")} className="hidden" />
+                  <input type="file" accept="image/*,.pdf" {...register2('experienceCert')} className="hidden" />
                 </label>
                 {errors2.experienceCert && <p className="text-red-600 text-xs mt-1">{errors2.experienceCert.message}</p>}
               </div>
@@ -289,7 +289,7 @@ const TrainerVerification: React.FC = () => {
                       Submitting...
                     </span>
                   ) : (
-                    "Submit for Verification"
+                    'Submit for Verification'
                   )}
                 </button>
               </div>

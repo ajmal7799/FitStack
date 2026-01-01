@@ -2,7 +2,7 @@
 // import React from 'react';
 // Assuming you have FiInstagram, FiTwitter, FiFacebook from 'react-icons/fi' 
 // installed and imported for the social icons (or use your preferred icons).
-import { FiInstagram, FiTwitter, FiFacebook } from "react-icons/fi"; 
+import { FiInstagram, FiTwitter, FiFacebook } from 'react-icons/fi'; 
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

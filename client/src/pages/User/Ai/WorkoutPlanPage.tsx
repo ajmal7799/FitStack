@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Dumbbell, Heart, AlertCircle, Sparkles, RefreshCw, CheckCircle, Clock, Flame,Utensils } from 'lucide-react';
-import { useGetWorkoutPlan, useGenerateWorkoutPlan } from "../../../hooks/User/userServiceHooks";
+import { useGetWorkoutPlan, useGenerateWorkoutPlan } from '../../../hooks/User/userServiceHooks';
 import { useNavigate } from 'react-router-dom';
 // Import Header and Footer
 import Header from '../../../components/user/Header';
@@ -82,84 +82,84 @@ const AiWorkoutPlan: React.FC = () => {
   }
 
   // Error State (no plan yet or fetch error)
-if (isError || (!isLoading && data === null) || (!hasWorkoutPlan || !workoutPlan?.weeklyPlan || workoutPlan.weeklyPlan.length === 0)) {
-  return (
-    <>
-      <Header />
+  if (isError || (!isLoading && data === null) || (!hasWorkoutPlan || !workoutPlan?.weeklyPlan || workoutPlan.weeklyPlan.length === 0)) {
+    return (
+      <>
+        <Header />
 
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
+          <div className="max-w-7xl mx-auto">
 
-          {/* Navigation Buttons - Workout Plan (active) & Diet Plan */}
-          <div className="mb-8 flex justify-center gap-4">
-            <button className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg text-lg flex items-center gap-3">
-              <Dumbbell className="w-6 h-6" />
+            {/* Navigation Buttons - Workout Plan (active) & Diet Plan */}
+            <div className="mb-8 flex justify-center gap-4">
+              <button className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg text-lg flex items-center gap-3">
+                <Dumbbell className="w-6 h-6" />
               Workout Plan
-            </button>
-            <button
-              onClick={() => navigate('/ai-diet')}
-              className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-lg text-lg border-2 border-indigo-200 hover:border-indigo-400 transition flex items-center gap-3"
-            >
-              <Utensils className="w-6 h-6" />
-              Diet Plan
-            </button>
-          </div>
-
-          {/* Main Content Card */}
-          <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
-            <div className="bg-white rounded-2xl shadow-xl p-8 max-w-2xl w-full text-center">
-              <div className="bg-indigo-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                <Dumbbell className="w-12 h-12 text-indigo-600" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                {isError ? "Start Your Fitness Journey Today!" : "You Haven't Generated a Workout Plan Yet"}
-              </h2>
-              <p className="text-gray-600 mb-4 text-lg">
-                {isError
-                  ? "Every fitness journey begins with a single step. A well-structured workout plan is your roadmap to success."
-                  : "It looks like you don't have a workout plan yet. Let's create one!"
-                }
-              </p>
-              <p className="text-gray-500 mb-8">
-                Click the button below to generate a personalized AI-powered workout plan tailored specifically for your fitness goals.
-              </p>
-
-              <button
-                onClick={() => generatePlan()}
-                disabled={isGenerating}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition flex items-center gap-2 mx-auto text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <RefreshCw className="w-5 h-5 animate-spin" />
-                    Generating Your Plan...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    Generate Workout Plan
-                  </>
-                )}
               </button>
+              <button
+                onClick={() => navigate('/ai-diet')}
+                className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-lg text-lg border-2 border-indigo-200 hover:border-indigo-400 transition flex items-center gap-3"
+              >
+                <Utensils className="w-6 h-6" />
+              Diet Plan
+              </button>
+            </div>
 
-              {isGenerateError && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600">
-                    {(generateError as any)?.response?.data?.message ||
+            {/* Main Content Card */}
+            <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+              <div className="bg-white rounded-2xl shadow-xl p-8 max-w-2xl w-full text-center">
+                <div className="bg-indigo-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                  <Dumbbell className="w-12 h-12 text-indigo-600" />
+                </div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                  {isError ? 'Start Your Fitness Journey Today!' : "You Haven't Generated a Workout Plan Yet"}
+                </h2>
+                <p className="text-gray-600 mb-4 text-lg">
+                  {isError
+                    ? 'Every fitness journey begins with a single step. A well-structured workout plan is your roadmap to success.'
+                    : "It looks like you don't have a workout plan yet. Let's create one!"
+                  }
+                </p>
+                <p className="text-gray-500 mb-8">
+                Click the button below to generate a personalized AI-powered workout plan tailored specifically for your fitness goals.
+                </p>
+
+                <button
+                  onClick={() => generatePlan()}
+                  disabled={isGenerating}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition flex items-center gap-2 mx-auto text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                >
+                  {isGenerating ? (
+                    <>
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                    Generating Your Plan...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5" />
+                    Generate Workout Plan
+                    </>
+                  )}
+                </button>
+
+                {isGenerateError && (
+                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-600">
+                      {(generateError as any)?.response?.data?.message ||
                      (generateError as any)?.message ||
                      'Failed to generate workout plan. Please try again.'}
-                  </p>
-                </div>
-              )}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <Footer />
-    </>
-  );
-}
+        <Footer />
+      </>
+    );
+  }
 
   const currentDay = workoutPlan.weeklyPlan?.[selectedDay];
 
@@ -169,19 +169,19 @@ if (isError || (!isLoading && data === null) || (!hasWorkoutPlan || !workoutPlan
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
-             <div className="mb-8 flex justify-center gap-4">
-  <button className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg text-lg flex items-center gap-3">
-    <Dumbbell className="w-6 h-6" />
+          <div className="mb-8 flex justify-center gap-4">
+            <button className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg text-lg flex items-center gap-3">
+              <Dumbbell className="w-6 h-6" />
     Workout Plan
-  </button>
-  <button
-    onClick={() => navigate('/ai-diet')}
-    className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-lg text-lg border-2 border-indigo-200 hover:border-indigo-400 transition flex items-center gap-3"
-  >
-    <Utensils className="w-6 h-6" />
+            </button>
+            <button
+              onClick={() => navigate('/ai-diet')}
+              className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-lg text-lg border-2 border-indigo-200 hover:border-indigo-400 transition flex items-center gap-3"
+            >
+              <Utensils className="w-6 h-6" />
     Diet Plan
-  </button>
-</div>
+            </button>
+          </div>
           {/* Header Section inside content */}
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -258,8 +258,8 @@ if (isError || (!isLoading && data === null) || (!hasWorkoutPlan || !workoutPlan
                       day.isRestDay
                         ? 'bg-gray-100 border-2 border-gray-300'
                         : selectedDay === index
-                        ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg'
-                        : 'bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-400'
+                          ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg'
+                          : 'bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-400'
                     }`}
                   >
                     <div className="text-sm font-semibold mb-1">{day.day}</div>

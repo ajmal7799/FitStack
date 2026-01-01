@@ -1,4 +1,4 @@
-import { MembershipStatus } from "../../enum/membershipEnums";
+import { MembershipStatus } from '../../enum/membershipEnums';
 
 
 export interface Membership {

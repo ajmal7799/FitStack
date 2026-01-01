@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { adminAuthController, authMiddleware } from '../../infrastructure/DI/Auth/authContainer';
 import { adminUserController } from '../../infrastructure/DI/Admin/adminUserContainer';
 import { adminTrainerController } from '../../infrastructure/DI/Admin/adminTrainerContainer';
-import {adminVerificationController} from '../../infrastructure/DI/Admin/adminVerificationContainer'
+import { adminVerificationController } from '../../infrastructure/DI/Admin/adminVerificationContainer';
 import { adminSubscriptionController } from '../../infrastructure/DI/Admin/subscription/adminSubscriptionContainer';
 
 export class Admin_Routes {
@@ -46,31 +46,40 @@ export class Admin_Routes {
 
         this._route.get('/verifications/:trainerId', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
             adminVerificationController.getVerificationDetailsPage(req, res, next);
-        })
+        });
 
-        this._route.patch("/verifications/:trainerId/approve", authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+        this._route.patch('/verifications/:trainerId/approve', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
             adminVerificationController.approveVerification(req, res, next);
         });
 
-        this._route.patch("/verifications/:trainerId/reject", authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+        this._route.patch('/verifications/:trainerId/reject', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
             adminVerificationController.rejectVerification(req, res, next);
-        })
+        });
 
-    // --------------------------------------------------
-    //              🛠 SUBSCRIPTIONS
-    // --------------------------------------------------
+        // --------------------------------------------------
+        //              🛠 SUBSCRIPTIONS
+        // --------------------------------------------------
 
-        this._route.post("/subscription", authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+        this._route.post('/subscription', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
             adminSubscriptionController.addSubscriptionPlan(req, res, next);
         });
 
-        this._route.get("/subscriptions", authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+        this._route.get('/subscriptions', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
             adminSubscriptionController.getAllSubscriptionPlans(req, res, next);
-        })
+        });
 
-        this._route.patch("/subscriptions/update-status", authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+        this._route.patch('/subscriptions/update-status', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
             adminSubscriptionController.updateSubscriptionStatus(req, res, next);
-        })
+        });
+
+        this._route.get('/subscriptions/:subscriptionId', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+            adminSubscriptionController.getSubscriptionEditPage(req, res, next);
+        });
+
+        this._route.put("/subscriptions/:subscriptionId", authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+            adminSubscriptionController.updateSubscription(req, res, next);
+        });
+        
 
     }
 

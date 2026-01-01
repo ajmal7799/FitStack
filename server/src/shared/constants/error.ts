@@ -53,6 +53,15 @@ export const USER_ERRORS = {
     USER_GENERATE_DIET_PLAN_FAILED: 'Error while generating diet plan !',
     USER_WORKOUT_PLAN_NOT_FOUND: 'Workout plan not found !',
     USER_DIET_PLAN_NOT_FOUND: 'Diet plan not found !',
+    NO_ACTIVE_SUBSCRIPTION_FOUND: 'No active subscription found for this user',
+    TRAINER_ALREADY_SELECTED: "You already have an active trainer. Cancel your current trainer before selecting a new one.",
+    USER_NOT_SELECTED : 'User is not selected as trainer',
+    TRAINER_SELECT_NOT_FOUND : 'Please select to your trainer first',
+    TRAINER_SLOT_NOT_FOUND : 'This trainer is not available on this day.',
+    SLOT_NOT_FOUND : 'Slot not found',
+    CONNOT_BOOK_SLOT_THAT_ALREADY_PASSED : 'Cannot book a slot that has already passed',
+    YOUR_HAVE_ALREADY_BOOKED_A_SEESSION_FOR_THIS_DAY : 'You have already booked a session for this day',
+    THIS_SLOT_WAS_BOOKED_BY_ANOTHER_USER : 'This slot was just booked by someone else',
 };
 
 
@@ -61,7 +70,14 @@ export const TRAINER_ERRORS = {
     INVESTOR_BLOKED: 'Investor is blocked',
     TRAINER_VERIFICATION_FAILED : 'Trainer verification failed',
     TRAINER_VERIFICATION_NOT_FOUND : 'Trainer verification not found',
-     TRAINER_NOT_FOUND : 'Trainer not found',
+    TRAINER_NOT_FOUND : 'Trainer not found',
+    TRAINER_PROFILE_DATA_NOT_FOUND : 'Trainer profile data not found',
+    SLOT_ALREADY_EXISTS_IN_THAT_TIME : 'Slot already exists in that time',
+    SLOT_NOT_FOUND : 'Slot not found',
+    TRAINER_NOT_SELECTED_IN_THAT_TIME_SLOT : 'Trainer not selected in that time slot',
+    YOU_CAN_ONLY_DELETE_YOUR_OWN_SLOT : 'You can only delete your own slot',
+    SLOT_ALREADY_BOOKED : 'Cannot delete a slot that has already been booked by a user',
+    COULD_NOT_DELETE_SLOT :"Could not delete slot. It may have been booked just now."
 };
 
 
@@ -77,4 +93,4 @@ export const SUBSCRIPTION_ERRORS = {
     STRIPE_PRICE_ID_MISSING: 'Stripe Price ID is missing for the selected plan',
     MISSING_METADATA: 'Missing metadata in webhook',
     USER_ALREADY_HAS_ACTIVE_MEMBERSHIP: 'User already has an active membership',
-}
+};

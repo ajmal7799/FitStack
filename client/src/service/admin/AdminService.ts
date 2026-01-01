@@ -1,22 +1,22 @@
-import AxiosInstance from "../../axios/axios";
+import AxiosInstance from '../../axios/axios';
 
 export const getAllVerification = async (
-    page = 1,
-    limit = 10,
-    status?: string,
-    search?: string,
+  page = 1,
+  limit = 10,
+  status?: string,
+  search?: string,
 
 ) => {
-     const params = new URLSearchParams({
+  const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
   });
-  if(status) params.append("status",status);
-  if(search) params.append("search", search);
+  if(status) params.append('status',status);
+  if(search) params.append('search', search);
 
   const response = await AxiosInstance.get(`/admin/verification?${params.toString()}`);
-  return response.data
-}
+  return response.data;
+};
 
 export const getVerificationDetails = async (id: string) => {
   const response = await AxiosInstance.get(`/admin/verifications/${id}`);

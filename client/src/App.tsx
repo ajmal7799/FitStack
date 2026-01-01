@@ -1,7 +1,7 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
-import UserRoutes from "./routes/UserRoutes";
-import AdminRoutes from "./routes/AdminRoutes";
-import TrainerRoutes from "./routes/TrainerRoutes";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import UserRoutes from './routes/UserRoutes';
+import AdminRoutes from './routes/AdminRoutes';
+import TrainerRoutes from './routes/TrainerRoutes';
 
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

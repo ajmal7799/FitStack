@@ -1,16 +1,16 @@
-import { IVerificationRejectUseCase } from "../../../useCase/admin/verification/IVerificationRejectUseCase";
-import { NotFoundException } from "../../../constants/exceptions";
-import { TRAINER_ERRORS } from "../../../../shared/constants/error";
-import { IUpdateVerification } from "../../../../domain/interfaces/repositories/IVerificationRepository";
-import { VerificationRejectResponseDTO } from "../../../dto/verification/verificationRejectDTO";
+import { IVerificationRejectUseCase } from '../../../useCase/admin/verification/IVerificationRejectUseCase';
+import { NotFoundException } from '../../../constants/exceptions';
+import { TRAINER_ERRORS } from '../../../../shared/constants/error';
+import { IUpdateVerification } from '../../../../domain/interfaces/repositories/IVerificationRepository';
+import { VerificationRejectResponseDTO } from '../../../dto/verification/verificationRejectDTO';
 
 
 export class VerificationRejectUseCase implements IVerificationRejectUseCase {
     constructor(
-        private _verificationRepository: IUpdateVerification
+        private _verificationRepository: IUpdateVerification,
     ) {}
 
-  async execute(id: string, reason: string): Promise<VerificationRejectResponseDTO> {
+    async execute(id: string, reason: string): Promise<VerificationRejectResponseDTO> {
         const verification = await this._verificationRepository.findByTrainerId(id);
 
         if (!verification) {
@@ -26,8 +26,8 @@ export class VerificationRejectUseCase implements IVerificationRejectUseCase {
         return {
             id: trainerReject.id,
             verificationStatus: trainerReject.verificationStatus,
-            rejectionReason: trainerReject.rejectionReason || ""
-        }
+            rejectionReason: trainerReject.rejectionReason || '',
+        };
 
     }
 }

@@ -1,6 +1,6 @@
 import { ICreateUserProfileUseCase } from '../../useCase/user/ICreateUserProfileUseCase';
 import { UserProfile } from '../../../domain/entities/user/userProfile';
-import { createUserProfileRequest, createUserProfileResponse } from '../../dto/user/createUserProfileDTO';
+import { createUserProfileRequest,createUserProfileResponse } from '../../dto/user/profile/createUserBodyMetricsDTO';
 import { IUserRepository } from '../../../domain/interfaces/repositories/IUserRepository';
 import { NotFoundException } from '../../constants/exceptions';
 import { USER_ERRORS } from '../../../shared/constants/error';
@@ -9,62 +9,65 @@ import { StorageFolderNameEnums } from '../../../domain/enum/storageFolderNameEn
 import { IUserProfileRepository } from '../../../domain/interfaces/repositories/IUserProfileRepository';
 
 export class CreateUserProfileUseCase implements ICreateUserProfileUseCase {
-  constructor(
+    constructor(
     private _userRepository: IUserRepository,
     private _storageService: IStorageService,
-    private _userProfileRepository: IUserProfileRepository
-  ) {}
+    private _userProfileRepository: IUserProfileRepository,
+    
+    ) {}
 
-  async createUserProfile(data: createUserProfileRequest): Promise<createUserProfileResponse> {
-    const {
-      userId,
-      age,
-      gender,
-      height,
-      weight,
-      fitnessGoal,
-      targetWeight,
-      experienceLevel,
-      workoutLocation,
-      dietPreference,
-      preferredWorkoutTypes,
-      medicalConditions,
-      profileImage,
-    } = data;
+    async createUserProfile(data: createUserProfileRequest): Promise<createUserProfileResponse> {
+        const {
+            userId,
+            age,
+            gender,
+            height,
+            weight,
+            fitnessGoal,
+            targetWeight,
+            experienceLevel,
+            workoutLocation,
+            dietPreference,
+            preferredWorkoutTypes,
+            medicalConditions,
+        } = data;
 
-    const user = await this._userRepository.findById(userId);
+        const user = await this._userRepository.findById(userId);
 
-    if (!user) {
-      throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
-    }
+        if (!user) {
+            throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
+        }
    
-    let profileImageUrl: string | undefined;
+        let profileImageUrl: string | undefined;
 
-    if (profileImage) {
-      profileImageUrl = await this._storageService.upload(
-        profileImage,
-        StorageFolderNameEnums.USER_PROFILE_IMAGE + '/' + userId + Date.now()
-      );
+        // if (profileImage) {
+        //     profileImageUrl = await this._storageService.upload(
+        //         profileImage,
+        //         StorageFolderNameEnums.USER_PROFILE_IMAGE + '/' + userId + Date.now(),
+        //     );
+        //     await this._userRepository.updateUserProfileImage(userId, profileImageUrl);
+        // }
+       
+
+        const updateUserProfile = await this._userProfileRepository.createUserProfile(userId, {
+            age,
+            gender,
+            height,
+            weight,
+            fitnessGoal,
+            targetWeight,
+            experienceLevel,
+            workoutLocation,
+            dietPreference,
+            preferredWorkoutTypes,
+            medicalConditions,
+            profileCompleted: true,
+        });
+
+
+
+        return {
+            userProfile: updateUserProfile,
+        } as createUserProfileResponse;
     }
-
-    const updateUserProfile = await this._userProfileRepository.createUserProfile(userId, {
-      age,
-      gender,
-      height,
-      weight,
-      fitnessGoal,
-      targetWeight,
-      experienceLevel,
-      workoutLocation,
-      dietPreference,
-      preferredWorkoutTypes,
-      medicalConditions,
-      profileImage: profileImageUrl,
-      profileCompleted: true,
-    });
-
-    return {
-      userProfile: updateUserProfile,
-    } as createUserProfileResponse;
-  }
 }

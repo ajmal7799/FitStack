@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   createUserProfile,
   generateWorkoutPlan,
@@ -7,7 +7,12 @@ import {
   getDietPlan,
   getUserProfile,
   getPersonalInfo,
-} from "../../service/user/userService";
+  updateUserProfile,
+  updatePersonalInfo,
+  bookSlot,
+  getAvailableSlots
+} from '../../service/user/userService';
+import type { UserBodyMetricsPayload } from '../../types/UserBodyMetricsPayload';
 
 export const useCreateUserProfile = () => {
   return useMutation({
@@ -23,9 +28,9 @@ export const useGenerateWorkoutPlan = () => {
 
 export const useGetWorkoutPlan = () => {
   return useQuery({
-    queryKey: ["workoutPlan"],
+    queryKey: ['workoutPlan'],
     queryFn: getWorkoutPlan,
-   staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh
+    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh
     gcTime: 10 * 60 * 1000, // 10 minutes - cache time (formerly cacheTime)
     refetchOnMount: false, // Don't refetch when component mounts if data exists
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
@@ -37,7 +42,7 @@ export const useGetWorkoutPlan = () => {
 
 export const useGetDietPlan = () => {
   return useQuery({
-    queryKey: ["dietPlan", ],
+    queryKey: ['dietPlan', ],
     queryFn: getDietPlan,
     staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh
     gcTime: 10 * 60 * 1000, // 10 minutes - cache time (formerly cacheTime)
@@ -57,28 +62,53 @@ export const useGenerateDietPlan = () => {
 
 export const useGetUserProfile = () => {
   return useQuery({
-    queryKey: ["userProfile"],
+    queryKey: ['userProfile'],
     queryFn:getUserProfile,
-    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh
-    gcTime: 10 * 60 * 1000, // 10 minutes - cache time (formerly cacheTime)
-    refetchOnMount: false, // Don't refetch when component mounts if data exists
-    refetchOnWindowFocus: false, // Don't refetch when window regains focus
-    refetchOnReconnect: false, // Don't refetch on reconnect
-    retry: 1, 
   });
-}
+};
+
+export const useUpdateUserProfile = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) => updateUserProfile(formData),
+  });
+};
 
 
 export const useGetPersonalInfo = () => {
   return useQuery({
-    queryKey: ["personalInfo"],
+    queryKey: ['personalInfo'],
     queryFn:getPersonalInfo,
-    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh
-    gcTime: 10 * 60 * 1000, // 10 minutes - cache time (formerly cacheTime)
-    refetchOnMount: false, // Don't refetch when component mounts if data exists
-    refetchOnWindowFocus: false, // Don't refetch when window regains focus
-    refetchOnReconnect: false, // Don't refetch on reconnect
-    retry: 1,
-  })
+  });
+};
+
+
+export const useUpdatePersonalInfo = () => {
+  return useMutation({
+    mutationFn: (data: UserBodyMetricsPayload) => updatePersonalInfo(data),
+  });
+};
+
+
+
+export const useGetAvailableSlots = (date: string) => {
+  return useQuery({
+    queryKey: ['availableSlots', date], 
+    queryFn: () => getAvailableSlots(date),
+    
+    // This ensures the query only runs if a date is actually provided
+    enabled: !!date, 
+    
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 }
+
+
+export const useBookSlot = () => {
+  return useMutation({
+    mutationFn: (slotId: string) => bookSlot(slotId),
+  });
+}
+
 

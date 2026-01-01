@@ -14,7 +14,7 @@ export type GetTrainerVerification = {
   idCard: string;
   educationCert: string;
   experienceCert: string;
-  verificationStatus: "pending" | "approved" | "rejected";
+  verificationStatus: 'pending' | 'approved' | 'rejected';
   rejectionReason?: string | null;
 };
 
@@ -26,7 +26,7 @@ export type getAllVerification = {
   phone: string | null;
   qualification: string | null;
   specialisation: string | null;
-  status: "PENDING" | "VERIFIED" | "REJECTED";
+  status: 'PENDING' | 'VERIFIED' | 'REJECTED';
 };
 
 export type getVerificationDetails = {
@@ -44,6 +44,6 @@ export type getVerificationDetails = {
   idCard: string;
   educationCert: string;
   experienceCert: string;
-  verificationStatus: "pending" | "approved" | "rejected";
+  verificationStatus: 'pending' | 'approved' | 'rejected';
   rejectionReason?: string | null;
 };

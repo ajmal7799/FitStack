@@ -20,6 +20,8 @@ export const MESSAGES = {
         GET_DIET_PLAN: 'Diet plan fetched successfully',
         GET_USER_PROFILE: 'User profile fetched successfully',
         GET_USER_PERSONAL_INFO: 'User personal info fetched successfully',
+        USER_PROFILE_UPDATED_SUCCESSFULLY: 'User profile updated successfully',
+        SLOT_CREATED_SUCCESS: 'Slot created successfully.',
     },
     Trainer: {
         VERIFICATION_SUBMITTED: 'Trainer verification submitted successfully.',
@@ -28,15 +30,26 @@ export const MESSAGES = {
         VERIFICATION_DATA_SUCCESS: 'Trainer verification Data success',
         VERIFICATION_APPROVED: 'Trainer verification approved successfully.',
         VERIFICATION_REJECTED: 'Trainer verification rejected successfully.',
+        TRAINER_PROFILE_FETCHED: 'Trainer profile fetched successfully.',
+        TRAINER_PROFILE_UPDATED: 'Trainer profile updated successfully.',
+        TRAINER_DETAILS_SUCCESS: 'Trainer details fetched successfully.',
+        TRAINER_SELECTED_SUCCESS: 'Trainer selected successfully.',
+        GET_SELECTED_TRAINER: 'Selected trainer fetched successfully.',
+        SLOT_CREATED_SUCCESS: 'Slot created successfully.',
+        SLOTS_FETCHED_SUCCESS: 'Slots fetched successfully.',
+        TRAINER_NOT_SELECTED_IN_THAT_TIME_SLOT: 'Trainer not selected in that time slot',
+        SLOT_DELETED_SUCCESS: 'Slot deleted successfully.',
+        
+
         
 
     },
-      Admin: {
-        VERIFIED_USER: "User verified successfully by admin.",
-        BLOCKED_USER: "User blocked successfully.",
-        UNBLOCKED_USER: "User unblocked successfully.",
+    Admin: {
+        VERIFIED_USER: 'User verified successfully by admin.',
+        BLOCKED_USER: 'User blocked successfully.',
+        UNBLOCKED_USER: 'User unblocked successfully.',
         VERIFICAION_DATA_SUCCESS: 'Admin verification Data success',
-      },
+    },
 
     OTP: {
         OTP_SUCCESSFULL: 'Otp sent successfully',
@@ -51,5 +64,9 @@ export const MESSAGES = {
         SUBSCRIPTION_DELETE_SUCCESS: 'Subscription deleted successfully.',
         SUBSCRIPTION_GET_SUCCESS: 'Subscription fetched successfully.',
         SUBSCRIPTION_UPDATE_STATUS_SUCCESS: 'Subscription status updated successfully.',
-    }
+        SUBSCRIPTION_EDIT_PAGE_SUCCESS: "Subscription fetched successfully.",
+    },
+     REFRESH_TOKEN: {
+    REFRESH_SUCCESSFUL: "Successfully got a new accessToken",
+  },
 };

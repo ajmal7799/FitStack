@@ -8,42 +8,42 @@ import { IGenerateDietPlanUseCase } from '../../../application/useCase/user/IGen
 import { IGetDietPlanUseCase } from '../../../application/useCase/user/IGetDietPlanUseCase';
 
 export class UserGenerateDietPlanController {
-  constructor(
+    constructor(
     private _generateDietPlanUseCase: IGenerateDietPlanUseCase,
-    private _getDietPlanUseCase: IGetDietPlanUseCase
-  ) {}
+    private _getDietPlanUseCase: IGetDietPlanUseCase,
+    ) {}
 
-  async handleDietPlan(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = (req as any).user?.userId;
+    async handleDietPlan(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
 
-      if (!userId) {
-        throw new InvalidDataException(USER_ERRORS.NO_USERS_FOUND);
-      }
+            if (!userId) {
+                throw new InvalidDataException(USER_ERRORS.NO_USERS_FOUND);
+            }
 
-      const result = await this._generateDietPlanUseCase.generateDietPlan(userId);
+            const result = await this._generateDietPlanUseCase.generateDietPlan(userId);
       
 
-      ResponseHelper.success(res, MESSAGES.USERS.DIET_PLAN_CREATED_SUCCESSFULLY, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.USERS.DIET_PLAN_CREATED_SUCCESSFULLY, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  async getDietPlan(req: Request, res: Response, next: NextFunction) {
-    try {
+    async getDietPlan(req: Request, res: Response, next: NextFunction) {
+        try {
       
-      const userId = (req as any).user?.userId;
+            const userId = req.user?.userId;
 
-      if (!userId) {
-        throw new NotFoundException(USER_ERRORS.NO_USERS_FOUND);
-      }
-      const result = await this._getDietPlanUseCase.excute(userId);
+            if (!userId) {
+                throw new NotFoundException(USER_ERRORS.NO_USERS_FOUND);
+            }
+            const result = await this._getDietPlanUseCase.excute(userId);
       
-      ResponseHelper.success(res, MESSAGES.USERS.GET_DIET_PLAN, { result }, HTTPStatus.OK);
+            ResponseHelper.success(res, MESSAGES.USERS.GET_DIET_PLAN, { result }, HTTPStatus.OK);
 
-    } catch (error) {
-      next(error);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 }

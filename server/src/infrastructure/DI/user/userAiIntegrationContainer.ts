@@ -1,19 +1,19 @@
-import { UserGenerateWorkoutplanController } from "../../../interfaceAdapters/controller/user/userGenerateWorkoutplanController";
-import { UserProfileRepository } from "../../repositories/userProfileRepository";
-import { GeminiWorkoutProvider } from "../../services/GeminiWorkoutProvider";
-import { userProfileModel } from "../../database/models/userProfileModel";
-import { GenerateWorkoutPlanUseCase } from "../../../application/implementation/user/GenerateWorkoutPlanUseCase";
-import { WorkoutPlanRepository } from "../../repositories/workouPlanRepository";
-import { workoutPlanModel } from "../../database/models/workoutPlanModel";
-import { UserGenerateDietPlanController } from "../../../interfaceAdapters/controller/user/userGenerateDietPlanController";
-import { GenerateDietPlanUseCase } from "../../../application/implementation/user/GenerateDietPlanUseCase";
-import { GeminiDietProvider } from "../../services/GeminiDietPlanProvider";
-import { DietPlanRepository } from "../../repositories/dietPlanRepository";
-import { DietPlanModel } from "../../database/models/dietPlanModel";
-import { GetWorkoutPlanUseCase } from "../../../application/implementation/user/GetWorkoutPlanUseCase";
-import { UserRepository } from "../../repositories/userRepository";
-import { userModel } from "../../database/models/userModel";
-import { GetDietPlanUseCase } from "../../../application/implementation/user/GetDietPlanUseCase";
+import { UserGenerateWorkoutplanController } from '../../../interfaceAdapters/controller/user/userGenerateWorkoutplanController';
+import { UserProfileRepository } from '../../repositories/userProfileRepository';
+import { GeminiWorkoutProvider } from '../../services/GeminiWorkoutProvider';
+import { userProfileModel } from '../../database/models/userProfileModel';
+import { GenerateWorkoutPlanUseCase } from '../../../application/implementation/user/GenerateWorkoutPlanUseCase';
+import { WorkoutPlanRepository } from '../../repositories/workouPlanRepository';
+import { workoutPlanModel } from '../../database/models/workoutPlanModel';
+import { UserGenerateDietPlanController } from '../../../interfaceAdapters/controller/user/userGenerateDietPlanController';
+import { GenerateDietPlanUseCase } from '../../../application/implementation/user/GenerateDietPlanUseCase';
+import { GeminiDietProvider } from '../../services/GeminiDietPlanProvider';
+import { DietPlanRepository } from '../../repositories/dietPlanRepository';
+import { DietPlanModel } from '../../database/models/dietPlanModel';
+import { GetWorkoutPlanUseCase } from '../../../application/implementation/user/GetWorkoutPlanUseCase';
+import { UserRepository } from '../../repositories/userRepository';
+import { userModel } from '../../database/models/userModel';
+import { GetDietPlanUseCase } from '../../../application/implementation/user/GetDietPlanUseCase';
 
 // Repositories & Services
 const userProfileRepository = new UserProfileRepository(userProfileModel);
@@ -34,7 +34,7 @@ const getDietPlanUseCase = new GetDietPlanUseCase(userRepository, dietPlanReposi
 // controllers
 export const userGenerateWorkoutplanController = new UserGenerateWorkoutplanController( 
     generateWorkoutPlanUseCase,
-    getWorkoutPlanUseCase
+    getWorkoutPlanUseCase,
 
 );
 

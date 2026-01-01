@@ -1,4 +1,4 @@
-import { SubscriptionStatus } from "../../enum/subscriptionStatus"
+import { SubscriptionStatus } from '../../enum/subscriptionStatus';
 
 export interface Subscription {
     _id: string,
@@ -9,6 +9,6 @@ export interface Subscription {
     isActive: SubscriptionStatus,
     createdAt: Date,
     updatedAt: Date,
-    stripeProductId?: string,
+    stripeProductId?: string,   
     stripePriceId?: string
 }

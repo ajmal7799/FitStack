@@ -26,8 +26,8 @@ import { trainerModel } from '../../database/models/trainerModel';
 import { GoogleAuthService } from '../../services/googleAuthService';
 import { UserGoogleLoginUseCase } from '../../../application/implementation/auth/userGoogleLoginUseCase';
 import { UserProfileRepository } from '../../repositories/userProfileRepository';
-import { userProfileModel } from "../../database/models/userProfileModel";
-
+import { userProfileModel } from '../../database/models/userProfileModel';
+import { RefreshTokenUseCase } from '../../../application/implementation/auth/refreshTokenUseCase';
 
 //Repositories & Services
 const userRepository = new UserRepository(userModel);
@@ -80,7 +80,9 @@ const forgetPasswordResetPasswordUseCase = new ForgetPasswordResetPasswordUseCas
     hashService,
 );
 
-const googleAuthUseCase = new UserGoogleLoginUseCase(googleAuthService,userRepository);
+const googleAuthUseCase = new UserGoogleLoginUseCase(googleAuthService,userRepository,userProfileRepository);
+
+const refreshTokenUseCase = new RefreshTokenUseCase(jwtService);
 
 //Controller
 export const userAuthController = new UserAuthController(
@@ -96,6 +98,7 @@ export const userAuthController = new UserAuthController(
     forgetPasswordResetPasswordUseCase,
     googleAuthUseCase,
     jwtService,
+    refreshTokenUseCase
     
  
 );
@@ -104,6 +107,6 @@ export const userAuthController = new UserAuthController(
 export const adminAuthController = new AdminAuthController(adminLoginUseCase,tokenCreationUseCase);
 
 /// Middleware
-export const authMiddleware = new AuthMiddleware(jwtService,cacheStorage);
+export const authMiddleware = new AuthMiddleware(jwtService,cacheStorage,userRepository);
 
 

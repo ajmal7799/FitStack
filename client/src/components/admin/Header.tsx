@@ -2,28 +2,28 @@ import { LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { clearData } from '../../redux/slice/userSlice/authDataSlice';
 import toast from 'react-hot-toast';
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 import { useLogout } from '../../hooks/Auth/AuthHooks';
 
 
 const AdminHeader = () => {
 
-const dispatch = useDispatch()
-const navigate = useNavigate()
-const {mutate: logout} = useLogout()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const {mutate: logout} = useLogout();
 
   const handleLogout = () => {
     
     logout(undefined,{
       onSuccess: () => {
-        dispatch(clearData())
-        toast.success("Admin logged out successfully");
-        navigate("/login")
+        dispatch(clearData());
+        toast.success('Admin logged out successfully');
+        navigate('/login');
       },
       onError: () => {
-        toast.error("Logout failed. Please try again.");
+        toast.error('Logout failed. Please try again.');
       }
-    })
+    });
    
   };
 

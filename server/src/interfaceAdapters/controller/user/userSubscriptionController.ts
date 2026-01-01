@@ -7,16 +7,18 @@ import { Errors, SUBSCRIPTION_ERRORS } from '../../../shared/constants/error';
 import { IGetAllSubscriptionUser } from '../../../application/useCase/user/subscription/IGetAllSubscription';
 import { ICreateUserCheckoutSession } from '../../../application/useCase/user/subscription/ICreateUserCheckoutSession';
 import { IHandleWebhookUseCase } from '../../../application/useCase/user/subscription/IHandleWebhookUseCase';
-
+import { IActiveSubscriptionUseCase } from '../../../application/useCase/user/subscription/IActiveSubscriptionUseCase';
+import { USER_ERRORS } from '../../../shared/constants/error';
 export class UserSubscriptionController {
   constructor(
     private _getAllSubscriptionUseCase: IGetAllSubscriptionUser,
     private _createCheckoutSessionUseCase: ICreateUserCheckoutSession,
     private _handleWebhookUseCase: IHandleWebhookUseCase,
+    private _activeSubscriptionUseCase: IActiveSubscriptionUseCase
   ) {}
 
   // --------------------------------------------------
-  //              🛠 SHOW ALL SUBSCRIPTION PLAN 
+  //              🛠 SHOW ALL SUBSCRIPTION PLAN
   // --------------------------------------------------
 
   async getAllSubscriptionPlans(req: Request, res: Response, next: NextFunction) {
@@ -41,22 +43,21 @@ export class UserSubscriptionController {
   }
 
   // --------------------------------------------------
-  //              🛠 CHECKOUT SESSION "PAYMENT" 
+  //              🛠 CHECKOUT SESSION "PAYMENT"
   // --------------------------------------------------
 
   async createCheckoutSession(req: Request, res: Response, next: NextFunction) {
     try {
-      
-      const userId = (req as any).user?.userId;
+      const userId = req.user?.userId;
 
       const { planId } = req.body;
 
       if (!planId || !userId) {
         throw new InvalidDataException(Errors.INTERNAL_SERVER_ERROR);
       }
-     
+
       const result = await this._createCheckoutSessionUseCase.execute(planId, userId);
-      
+
       ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_GET_SUCCESS, { data: result }, HTTPStatus.OK);
     } catch (error) {
       next(error);
@@ -69,17 +70,29 @@ export class UserSubscriptionController {
 
   async handleStripeWebhook(req: Request, res: Response, next: NextFunction) {
     try {
-    
-    const event = req.body;
-    const signature = req.headers['stripe-signature'] as string;
- 
+      const event = req.body;
+      const signature = req.headers['stripe-signature'] as string;
 
       await this._handleWebhookUseCase.excute(Buffer.from(event), signature);
-
-      
     } catch (error) {
       next(error);
     }
   }
 
+  // --------------------------------------------------
+  //              🛠 SHOW ACTIVE SUBSCRIPTION
+  // --------------------------------------------------
+
+  async getActiveSubscription(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user?.userId;
+      if (!userId) {
+        throw new NotFoundException(USER_ERRORS.NO_USERS_FOUND);
+      }
+      const result = await this._activeSubscriptionUseCase.showActiveSubscription(userId!);
+      ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_GET_SUCCESS, { result }, HTTPStatus.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

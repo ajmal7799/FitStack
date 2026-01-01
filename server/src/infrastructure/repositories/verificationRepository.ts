@@ -2,11 +2,11 @@ import { BaseRepository } from './baseRepository';
 import { TrainerVerification } from '../../domain/entities/trainer/verification';
 import { IVerificationModel } from '../database/models/verificationModel';
 import { IUpdateVerification } from '../../domain/interfaces/repositories/IVerificationRepository';
-import { Model } from 'mongoose';
+import { Model, PipelineStage } from 'mongoose';
 import { VerificationMapper } from '../../application/mappers/verificationMappers';
 import { Trainer } from '../../domain/entities/trainer/trainerEntities';
 import { User } from '../../domain/entities/user/userEntities';
-import { PipelineStage } from 'mongoose';
+
 import { TrainerMapper } from '../../application/mappers/trainerMappers';
 import { UserMapper } from '../../application/mappers/userMappers';
 import { NotFoundException } from '../../application/constants/exceptions';
@@ -68,8 +68,8 @@ export class VerificationRepository
           as: 'userData',
         },
       },
-      { $unwind: { path: '$trainerData', preserveNullAndEmptyArrays: true } },
-      { $unwind: { path: '$userData', preserveNullAndEmptyArrays: true } }
+      { $unwind: '$trainerData' },
+      { $unwind: '$userData' }
     );
 
     const matchStage: any = {};
@@ -89,10 +89,11 @@ export class VerificationRepository
       pipeline.push({ $match: matchStage });
     }
 
-    if (skip) pipeline.push({ $skip: skip });
-    if (limit) pipeline.push({ $limit: limit });
+    if (skip !== undefined) pipeline.push({ $skip: skip });
+    if (limit !== undefined) pipeline.push({ $limit: limit });
 
     const docs = await this._model.aggregate(pipeline).exec();
+
     return docs.map(doc => ({
       verification: VerificationMapper.fromMongooseDocument(doc),
       trainer: TrainerMapper.fromMongooseDocument(doc.trainerData),
@@ -137,6 +138,7 @@ export class VerificationRepository
     pipeline.push({ $count: 'count' });
 
     const result = await this._model.aggregate(pipeline).exec();
+
     return result.length > 0 ? result[0].count : 0;
   }
 
@@ -221,7 +223,6 @@ export class VerificationRepository
       $match: { verificationStatus: VerificationStatus.VERIFIED },
     });
 
-
     pipeline.push(
       {
         $lookup: {
@@ -243,10 +244,10 @@ export class VerificationRepository
       { $unwind: { path: '$userData', preserveNullAndEmptyArrays: true } }
     );
 
-    if( search) {
+    if (search) {
       const matchStage: any = {};
-      matchStage.$or = [  
-        { 'userData.name': { $regex: search, $options: 'i' } }, 
+      matchStage.$or = [
+        { 'userData.name': { $regex: search, $options: 'i' } },
         { 'userData.email': { $regex: search, $options: 'i' } },
       ];
       pipeline.push({ $match: matchStage });
@@ -264,36 +265,25 @@ export class VerificationRepository
   }
 
   async countVerifiedTrainer(search?: string): Promise<number> {
-
     const initialMatch: any = { VerificationStatus: VerificationStatus.VERIFIED };
 
-   
     const pipeline: PipelineStage[] = [];
 
-    
     pipeline.push({ $match: initialMatch });
 
-    
     if (search) {
-        const searchMatch: any = {
-            $or: [
-                { name: { $regex: search, $options: 'i' } },
-                { email: { $regex: search, $options: 'i' } },
-            ],
-        };
-        
-        pipeline.push({ $match: searchMatch });
+      const searchMatch: any = {
+        $or: [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }],
+      };
+
+      pipeline.push({ $match: searchMatch });
     }
 
     // 4. Use the $count stage for efficient counting in MongoDB.
     pipeline.push({ $count: 'verifiedTrainerCount' });
 
-    
     const result = await this._model.aggregate(pipeline).exec();
 
-  
     return result.length > 0 ? result[0].verifiedTrainerCount : 0;
-}
-
-
+  }
 }

@@ -1,11 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
-import type { LoginPayload } from "../../../types/AuthPayloads";
-import { adminLogin } from "../../../service/Auth/AdminAuthServices";
+import { useMutation } from '@tanstack/react-query';
+import type { LoginPayload } from '../../../types/AuthPayloads';
+import { adminLogin } from '../../../service/Auth/AdminAuthServices';
 
 
 
 export const useAdminLogin = () => {
-    return useMutation({
-        mutationFn:(data:LoginPayload) => adminLogin(data)
-    })
-}
+  return useMutation({
+    mutationFn:(data:LoginPayload) => adminLogin(data)
+  });
+};

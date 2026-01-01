@@ -1,18 +1,23 @@
 import { HTTPStatus } from '../../../../shared/constants/httpStatus';
 import { MESSAGES } from '../../../../shared/constants/messages';
 import { ResponseHelper } from '../../../../shared/utils/responseHelper';
-import { InvalidDataException, NotFoundException } from '../../../../application/constants/exceptions';
+import { InvalidDataException, NotFoundException, DataMissingExecption } from '../../../../application/constants/exceptions';
 import { NextFunction, Request, Response } from 'express';
-import { createSubscriptionSchema } from '../../../../shared/validations/subscription/subscriptionValidator';
+import { createSubscriptionSchema,updateSubscriptionSchema } from '../../../../shared/validations/subscription/subscriptionValidator';
 import { Errors, SUBSCRIPTION_ERRORS } from '../../../../shared/constants/error';
 import { ICreateSubscription } from '../../../../application/useCase/admin/subscription/ICreateSubscription';
 import { IGetAllSubscription } from '../../../../application/useCase/admin/subscription/IGetAllSubscription';
 import { IUpdateSubscriptionStatus } from '../../../../application/useCase/admin/subscription/IUpdateSubscriptionStatus';
+import { IGetSubscriptionEdit } from '../../../../application/useCase/admin/subscription/IGetSubscriptionEdit';
+import { IUpdateSubscription } from '../../../../application/useCase/admin/subscription/IUpdateSubscription';
+
 export class AdminSubscriptionController {
   constructor(
     private _createSubscriptionUseCase: ICreateSubscription,
     private _getAllSubscriptionUseCase: IGetAllSubscription,
-    private _updateSubscriptionStatusUseCase: IUpdateSubscriptionStatus
+    private _updateSubscriptionStatusUseCase: IUpdateSubscriptionStatus,
+    private _getSubscriptionEditPageUseCase: IGetSubscriptionEdit,
+    private _updateSubscriptionUseCase: IUpdateSubscription
   ) {}
 
   // --------------------------------------------------
@@ -28,7 +33,7 @@ export class AdminSubscriptionController {
       }
 
       const subscription = await this._createSubscriptionUseCase.createSubscription(parseResult.data!);
-      
+
       ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_CREATE_SUCCESS, subscription, HTTPStatus.CREATED);
     } catch (error) {
       next(error);
@@ -67,13 +72,51 @@ export class AdminSubscriptionController {
       }
 
       const subscription = await this._updateSubscriptionStatusUseCase.updateSubscriptionStatus(id, status);
-    //   console.log('subscription', subscription);
+      //   console.log('subscription', subscription);
       ResponseHelper.success(
         res,
         MESSAGES.SUBSCRIPTION.SUBSCRIPTION_UPDATE_STATUS_SUCCESS,
         subscription,
         HTTPStatus.OK
       );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getSubscriptionEditPage(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { subscriptionId } = req.params;
+
+      if (!subscriptionId) {
+        throw new DataMissingExecption(Errors.INVALID_DATA);
+      }
+      
+      const subscription = await this._getSubscriptionEditPageUseCase.getSubscriptionEditPage(subscriptionId);
+
+      ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_EDIT_PAGE_SUCCESS, subscription, HTTPStatus.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateSubscription(req: Request, res: Response, next: NextFunction) {
+    try {
+      
+      const { subscriptionId } = req.params;
+
+      if (!subscriptionId) {
+        throw new DataMissingExecption(Errors.INVALID_DATA);
+      }
+
+      const parseResult = updateSubscriptionSchema.safeParse(req.body!);
+
+      if (parseResult.error) {
+        throw new InvalidDataException(Errors.INVALID_DATA);
+      }
+
+      const subscription = await this._updateSubscriptionUseCase.updateSubscription(subscriptionId, parseResult.data);
+      ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_UPDATE_SUCCESS, subscription, HTTPStatus.OK);
     } catch (error) {
       next(error);
     }

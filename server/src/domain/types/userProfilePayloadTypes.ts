@@ -1,6 +1,6 @@
-import { UserGender,DietPreference, ExperienceLevel,FitnessGoal,WorkoutLocation } from "../enum/userProfileEnums";
+import { UserGender,DietPreference, ExperienceLevel,FitnessGoal,WorkoutLocation } from '../enum/userProfileEnums';
 export type UserProfilePayload = {
-  userId: string;
+  userId?: string;
   age: number;
   gender: UserGender;
   height: number;

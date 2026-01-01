@@ -1,11 +1,11 @@
-import axios from "axios";
-import { store } from "../redux/store";
+import axios from 'axios';
+import { store } from '../redux/store';
 
 const AxiosInstance = axios.create({
-  baseURL:  "http://localhost:3000/",
+  baseURL:  import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -24,8 +24,8 @@ AxiosInstance.interceptors.request.use((config) => {
 
 
 AxiosInstance.interceptors.response.use(
-    (response) => response,
-    (error) => Promise.reject(error)
+  (response) => response,
+  (error) => Promise.reject(error)
 );
 
 

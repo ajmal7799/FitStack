@@ -23,10 +23,10 @@ export enum ExperienceLevel {
 
 
 export enum PreferredWorkoutType {
-    strength = "strength",
-  cardio = "cardio",
-  flexibility = "flexibility",
-  mixed = "mixed", 
+    strength = 'strength',
+  cardio = 'cardio',
+  flexibility = 'flexibility',
+  mixed = 'mixed', 
 }
 
 export enum DietPreference {

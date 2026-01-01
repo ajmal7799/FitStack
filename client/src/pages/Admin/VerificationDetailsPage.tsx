@@ -1,27 +1,27 @@
 // src/pages/admin/VerificationDetail.tsx
-import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import AdminSidebar from "../../components/admin/Sidebar";
-import AdminHeader from "../../components/admin/Header";
-import { useGetVerificationDetail } from "../../hooks/Admin/AdminHooks";
-import { toast } from "react-hot-toast";
+import { useParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import AdminSidebar from '../../components/admin/Sidebar';
+import AdminHeader from '../../components/admin/Header';
+import { useGetVerificationDetail } from '../../hooks/Admin/AdminHooks';
+import { toast } from 'react-hot-toast';
 import {
   useApproveVerification,
   useRejectVerification,
-} from "../../hooks/Admin/AdminHooks";
+} from '../../hooks/Admin/AdminHooks';
 
 const VerificationDetail = () => {
   const { trainerId } = useParams<{ trainerId: string }>();
   const navigate = useNavigate();
   const { data, isLoading, isError } = useGetVerificationDetail(trainerId!);
-  const { mutate: approveVerification, isPending: isApproving } =
+  const { mutate: approveVerification, isPending: isApproving, } =
     useApproveVerification();
   const { mutate: rejectVerification, isPending: isRejecting } =
     useRejectVerification();
 
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [rejectionNote, setRejectionNote] = useState("");
+  const [rejectionNote, setRejectionNote] = useState('');
 
   if (isLoading) {
     return (
@@ -62,26 +62,26 @@ const VerificationDetail = () => {
 
   // Normalize approved => verified
   let status = verificationStatus?.toLowerCase();
-  if (status === "approved") {
-    status = "verified";
+  if (status === 'approved') {
+    status = 'verified';
   }
 
   const handleApprove = async () => {
     approveVerification(trainerId!, {
       onSuccess: () => {
-        toast.success("Trainer approved successfully!");
+        toast.success('Trainer approved successfully!');
         navigate(-1);
       },
       onError: (error) => {
-        console.error("Error approving trainer:", error);
-        toast.error("Failed to approve trainer. Please try again.");
+        console.error('Error approving trainer:', error);
+        toast.error('Failed to approve trainer. Please try again.');
       },
     });
   };
 
   const handleReject = async () => {
     if (!rejectionNote.trim()) {
-      toast.error("Please provide a rejection reason");
+      toast.error('Please provide a rejection reason');
       return;
     }
 
@@ -89,14 +89,14 @@ const VerificationDetail = () => {
       { id: trainerId!, reason: rejectionNote },
       {
         onSuccess: () => {
-          toast.success("Trainer rejected successfully!");
+          toast.success('Trainer rejected successfully!');
           setShowRejectModal(false);
-          setRejectionNote("");
+          setRejectionNote('');
           navigate(-1);
         },
         onError: (error) => {
-          console.error("Error rejecting trainer:", error);
-          toast.error("Failed to reject trainer. Please try again.");
+          console.error('Error rejecting trainer:', error);
+          toast.error('Failed to reject trainer. Please try again.');
         },
       }
     );
@@ -150,7 +150,7 @@ const VerificationDetail = () => {
                         Phone:
                       </span>
                       <p className="flex-1 text-gray-900">
-                        {phone || "Not provided"}
+                        {phone || 'Not provided'}
                       </p>
                     </div>
                   </div>
@@ -167,14 +167,14 @@ const VerificationDetail = () => {
                         Qualification:
                       </span>
                       <p className="flex-1 text-gray-900">
-                        {qualification || "—"}
+                        {qualification || '—'}
                       </p>
                     </div>
                     <div className="flex gap-3">
                       <span className="font-semibold text-gray-700 w-32">
                         Specialisation:
                       </span>
-                      <p className="flex-1 text-gray-900">{specialisation || "—"}</p>
+                      <p className="flex-1 text-gray-900">{specialisation || '—'}</p>
                     </div>
                     <div className="flex gap-3">
                       <span className="font-semibold text-gray-700 w-32">
@@ -182,14 +182,14 @@ const VerificationDetail = () => {
                       </span>
                       <p className="flex-1 text-gray-900">
                         {experience
-                          ? `${experience} year${experience > 1 ? "s" : ""}`
-                          : "—"}
+                          ? `${experience} year${experience > 1 ? 's' : ''}`
+                          : '—'}
                       </p>
                     </div>
                     <div>
                       <span className="font-semibold text-gray-700">About:</span>
                       <p className="text-gray-600 mt-2 leading-relaxed">
-                        {about || "No description provided"}
+                        {about || 'No description provided'}
                       </p>
                     </div>
                   </div>
@@ -204,19 +204,19 @@ const VerificationDetail = () => {
                     <span className="font-semibold text-gray-700">Current Status:</span>
                     <span
                       className={`px-6 py-2 rounded-full text-white font-bold shadow-md ${
-                        status === "verified"
-                          ? "bg-green-600"
-                          : status === "rejected"
-                          ? "bg-red-600"
-                          : "bg-yellow-600"
+                        status === 'verified'
+                          ? 'bg-green-600'
+                          : status === 'rejected'
+                            ? 'bg-red-600'
+                            : 'bg-yellow-600'
                       }`}
                     >
-                      {status?.toUpperCase() || "PENDING"}
+                      {status?.toUpperCase() || 'PENDING'}
                     </span>
                   </div>
 
                   {/* Show rejection reason only if rejected */}
-                  {status === "rejected" && rejectionReason && (
+                  {status === 'rejected' && rejectionReason && (
                     <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r">
                       <p className="font-bold text-red-800">Rejection Reason:</p>
                       <p className="text-red-700 mt-2">{rejectionReason}</p>
@@ -225,14 +225,14 @@ const VerificationDetail = () => {
                 </div>
 
                 {/* Action Buttons */}
-                {status === "pending" && (
+                {status === 'pending' && (
                   <div className="flex gap-4">
                     <button
                       onClick={handleApprove}
                       disabled={isApproving || isRejecting}
                       className="flex-1 px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-bold rounded-xl shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     >
-                      {isApproving ? "Processing..." : "Approve Verification"}
+                      {isApproving ? 'Processing...' : 'Approve Verification'}
                     </button>
                     <button
                       onClick={() => setShowRejectModal(true)}
@@ -244,26 +244,26 @@ const VerificationDetail = () => {
                   </div>
                 )}
 
-                {status === "verified" && (
+                {status === 'verified' && (
                   <div className="flex gap-4">
                     <button
                       onClick={() => setShowRejectModal(true)}
                       disabled={isRejecting}
                       className="w-full px-8 py-4 bg-red-600 hover:bg-red-700 text-white text-lg font-bold rounded-xl shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     >
-                      {isRejecting ? "Processing..." : "Reject Verification"}
+                      {isRejecting ? 'Processing...' : 'Reject Verification'}
                     </button>
                   </div>
                 )}
 
-                {status === "rejected" && (
+                {status === 'rejected' && (
                   <div className="flex gap-4">
                     <button
                       onClick={handleApprove}
                       disabled={isApproving}
                       className="w-full px-8 py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-bold rounded-xl shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     >
-                      {isApproving ? "Processing..." : "Approve Verification"}
+                      {isApproving ? 'Processing...' : 'Approve Verification'}
                     </button>
                   </div>
                 )}
@@ -279,7 +279,7 @@ const VerificationDetail = () => {
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 shadow-sm">
                     <h3 className="font-bold mb-3 text-indigo-800">ID Card</h3>
                     {idCard ? (
-                      idCard.endsWith(".pdf") ? (
+                      idCard.endsWith('.pdf') ? (
                         <a
                           href={idCard}
                           target="_blank"
@@ -307,7 +307,7 @@ const VerificationDetail = () => {
                       Education Certificate
                     </h3>
                     {educationCert ? (
-                      educationCert.endsWith(".pdf") ? (
+                      educationCert.endsWith('.pdf') ? (
                         <a
                           href={educationCert}
                           target="_blank"
@@ -335,7 +335,7 @@ const VerificationDetail = () => {
                       Experience Certificate
                     </h3>
                     {experienceCert ? (
-                      experienceCert.endsWith(".pdf") ? (
+                      experienceCert.endsWith('.pdf') ? (
                         <a
                           href={experienceCert}
                           target="_blank"
@@ -396,7 +396,7 @@ const VerificationDetail = () => {
               <button
                 onClick={() => {
                   setShowRejectModal(false);
-                  setRejectionNote("");
+                  setRejectionNote('');
                 }}
                 className="text-gray-500 hover:text-gray-700 text-3xl font-bold"
               >
@@ -423,7 +423,7 @@ const VerificationDetail = () => {
               <button
                 onClick={() => {
                   setShowRejectModal(false);
-                  setRejectionNote("");
+                  setRejectionNote('');
                 }}
                 disabled={isRejecting}
                 className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
@@ -435,7 +435,7 @@ const VerificationDetail = () => {
                 disabled={isRejecting || !rejectionNote.trim()}
                 className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isRejecting ? "Rejecting..." : "Confirm Rejection"}
+                {isRejecting ? 'Rejecting...' : 'Confirm Rejection'}
               </button>
             </div>
           </div>

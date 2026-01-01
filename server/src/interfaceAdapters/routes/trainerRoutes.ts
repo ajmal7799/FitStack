@@ -1,6 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { trainerVerificationController } from '../../infrastructure/DI/Trainer/trainerVerificationContainer';
+import { trainerProfileController } from '../../infrastructure/DI/Trainer/trainerProfileContainer';
 import { authMiddleware } from '../../infrastructure/DI/Auth/authContainer';
+import { trainerSlotController } from '../../infrastructure/DI/Trainer/trainerSlotContainer';
 import { upload } from '../middleware/multer';
 
 export class Trainer_Routes {
@@ -26,11 +28,31 @@ export class Trainer_Routes {
         );
 
         this._route.get('/profile',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
-            trainerVerificationController.getProfilePage(req, res, next);
+            trainerProfileController.getProfilePage(req, res, next);
+        });
+
+        this._route.patch("/profile-update",authMiddleware.verify,upload.fields([{ name:'profileImage',maxCount:1 }])!,(req: Request, res: Response, next: NextFunction) => {
+            trainerProfileController.updateTrainerProfile(req, res, next);
         });
 
         this._route.get('/get-verification',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
             trainerVerificationController.getVerificationPage(req, res, next);
+        });
+
+        // --------------------------------------------------
+        //              🛠 SLOT 
+        // --------------------------------------------------
+
+        this._route.post('/slots',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
+            trainerSlotController.createSlot(req, res, next);
+        });
+
+        this._route.get('/get-slots',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
+            trainerSlotController.getAllSlots(req, res, next);
+        })
+
+        this._route.delete('/slots/:slotId',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
+            trainerSlotController.deleteSlot(req, res, next);
         })
 
     }

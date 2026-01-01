@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserGender, FitnessGoal, ExperienceLevel, DietPreference, WorkoutType } from '../../domain/enum/userEnums';
+import { UserGender,DietPreference,ExperienceLevel,FitnessGoal, PreferredWorkoutType,WorkoutLocation } from '../../domain/enum/userProfileEnums'; 
 
 export const updateProfileSchema = z.object({
     
@@ -39,16 +39,16 @@ export const updateProfileSchema = z.object({
     ]).optional(),
     
     preferredWorkoutType: z.array(z.enum([
-        WorkoutType.STRENGTH,
-        WorkoutType.CARDIO,
-        WorkoutType.HIIT,
-        WorkoutType.YOGA,
-        WorkoutType.PILATES,
-        WorkoutType.CROSSFIT,
-        WorkoutType.BODYWEIGHT,
-        WorkoutType.FUNCTIONAL,
-        WorkoutType.SPORTS,
-        WorkoutType.MIXED,
+        PreferredWorkoutType.strength,
+        PreferredWorkoutType.cardio,
+        PreferredWorkoutType.flexibility,
+        PreferredWorkoutType.mixed,
+        // WorkoutType.PILATES,
+        // WorkoutType.CROSSFIT,
+        // WorkoutType.BODYWEIGHT,
+        // WorkoutType.FUNCTIONAL,
+        // WorkoutType.SPORTS,
+        // WorkoutType.MIXED,
     ])).optional(),
     
     
@@ -57,10 +57,10 @@ export const updateProfileSchema = z.object({
     dietPreference: z.enum([
         DietPreference.VEGETARIAN,
         DietPreference.VEGAN,
-        DietPreference.NON_VEGETARIAN,
-        DietPreference.KETO,
-        DietPreference.PALEO,
-        DietPreference.BALANCED,
+        DietPreference.OMNIVORE,
+        // DietPreference.KETO,
+        // DietPreference.PALEO,
+        // DietPreference.BALANCED,
         DietPreference.OTHER,
     ]).optional(),
     

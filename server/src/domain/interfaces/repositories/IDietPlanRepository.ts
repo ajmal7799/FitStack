@@ -1,5 +1,5 @@
-import { IBaseRepository } from "./IBaseRepository";
-import { DietPlan } from "../../entities/user/dietPlanEntities";
+import { IBaseRepository } from './IBaseRepository';
+import { DietPlan } from '../../entities/user/dietPlanEntities';
 
 
 export interface IDietPlanRepository extends IBaseRepository<DietPlan> {

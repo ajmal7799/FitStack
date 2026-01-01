@@ -1,39 +1,44 @@
 // src/pages/admin/SubscriptionPlans.tsx
-import React, { useState, useCallback, useMemo } from "react";
-import Table from "../../../components/table/Table";
-import Pagination from "../../../components/pagination/Pagination";
-import toast from "react-hot-toast";
-import AdminSidebar from "../../../components/admin/Sidebar";
-import AdminHeader from "../../../components/admin/Header";
-import CreateSubscriptionModal from "../../../components/modals/AddSubscriptionModal";
-import ConfirmationModal from "../../../components/confirmModal/ConfirmationModal"; // Ensure this path is correct
-import { X } from "lucide-react";
+import React, { useState, useCallback, useMemo } from 'react';
+import Table from '../../../components/table/Table';
+import Pagination from '../../../components/pagination/Pagination';
+import toast from 'react-hot-toast';
+import AdminSidebar from '../../../components/admin/Sidebar';
+import AdminHeader from '../../../components/admin/Header';
+import CreateSubscriptionModal from '../../../components/modals/AddSubscriptionModal';
+import EditSubscriptionModal from '../../../components/modals/EditSubscriptionModal';
+import ConfirmationModal from '../../../components/confirmModal/ConfirmationModal';
+import { X, Edit2 } from 'lucide-react';
 import {
   useGetSubscriptionPlans,
-  useCreateSubscriptionPlan,
+  useCreateSubscriptionPlan,     
   useUpdateSubscriptionPlanStatus,
-} from "../../../hooks/Admin/SubscriptionHooks";
-import type { SubscriptionPlan } from "../../../types/subscriptionPlan";
+  useGetSubscriptionEditPage,
+  useUpdateSubscriptionPlan,
+} from '../../../hooks/Admin/SubscriptionHooks';
+import type { SubscriptionPlan } from '../../../types/subscriptionPlan';
 
 interface TablePlan extends SubscriptionPlan {
   id: string;
 }
 
 interface SelectedPlan {
-    id: string;
-    planName: string;
-    isActive: 'active' | 'inactive';
+  id: string;
+  planName: string;
+  isActive: 'active' | 'inactive';
 }
 
 const SubscriptionPlans: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
   
   // States for search and filter
-  const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState(""); 
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState(''); 
   
   // States for confirmation modal
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -43,12 +48,20 @@ const SubscriptionPlans: React.FC = () => {
   const { data, isLoading, isError, refetch } = useGetSubscriptionPlans(
     page,
     limit,
-    statusFilter, // Passed as the status filter
-    debouncedSearch // Passed as the search term
+    statusFilter,
+    debouncedSearch
   );
   
   const createMutation = useCreateSubscriptionPlan();
   const updateStatusMutation = useUpdateSubscriptionPlanStatus();
+  const updatePlanMutation = useUpdateSubscriptionPlan();
+
+  // Fetch subscription data for editing (only when editingPlanId is set)
+  const { 
+    data: editData, 
+    isLoading: isEditLoading,
+    // isError: isEditError 
+  } = useGetSubscriptionEditPage(editingPlanId || '');
 
   // Normalize data
   const plans: SubscriptionPlan[] = useMemo(() => {
@@ -70,6 +83,13 @@ const SubscriptionPlans: React.FC = () => {
     [plans]
   );
 
+  // Extract edit plan data
+  const editPlanData = useMemo(() => {
+    if (!editData) return null;
+    const resp = editData as any;
+    return resp?.data || null;
+  }, [editData]);
+
   // --- Search & Filter Handlers ---
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,33 +102,71 @@ const SubscriptionPlans: React.FC = () => {
   }, [searchInput]);
 
   const handleClearSearch = useCallback(() => {
-    setSearchInput("");
-    setDebouncedSearch("");
+    setSearchInput('');
+    setDebouncedSearch('');
     setPage(1);
   }, []);
   
   const handleStatusChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatusFilter(e.target.value);
-    setPage(1); // Reset to the first page when the filter changes
+    setPage(1);
   }, []);
+
+  // --- Edit Handlers ---
+
+  const handleEditClick = useCallback((plan: TablePlan) => {
+    setEditingPlanId(plan.id);
+    setIsEditModalOpen(true);
+  }, []);
+
+  const handleCloseEditModal = useCallback(() => {
+    setIsEditModalOpen(false);
+    setEditingPlanId(null);
+  }, []);
+
+  const handleUpdatePlan = useCallback(
+    (formData: {
+      planName: string;
+      price: number;
+      durationMonths: number;
+      description: string;
+    }) => {
+      if (!editingPlanId) return;
+
+      updatePlanMutation.mutate(
+        { id: editingPlanId, ...formData },
+        {
+          onSuccess: (res: any) => {
+            toast.success(res?.message || 'Plan updated successfully');
+            handleCloseEditModal();
+            refetch();
+          },
+          onError: (err: any) => {
+            toast.error(err?.response?.data?.message || 'Failed to update plan');
+          },
+        }
+      );
+    },
+    [editingPlanId, updatePlanMutation, refetch, handleCloseEditModal]
+  );
 
   // --- Status Toggle Handlers (using modal) ---
 
   const handleStatusToggle = useCallback(
     (plan: TablePlan) => {
-        setSelectedPlan({ 
-            id: plan.id, 
-            planName: plan.planName, 
-            isActive: plan.isActive as 'active' | 'inactive' 
-        });
-        setIsConfirmModalOpen(true);
+      setSelectedPlan({ 
+        id: plan.id, 
+        planName: plan.planName, 
+        isActive: plan.isActive as 'active' | 'inactive' 
+      });
+      setIsConfirmModalOpen(true);
     },
     []
   );
 
   const handleConfirmStatusChange = useCallback(
     (plan: SelectedPlan) => {
-      const newStatus = plan.isActive === "active" ? "inactive" : "active";
+      const newStatus = plan.isActive === 'active' ? 'inactive' : 'active';
 
       updateStatusMutation.mutate(
         { id: plan.id, status: newStatus },
@@ -116,7 +174,7 @@ const SubscriptionPlans: React.FC = () => {
           onSuccess: () => {
             toast.success(
               `Plan ${plan.planName} ${
-                newStatus === "active" ? "activated" : "deactivated"
+                newStatus === 'active' ? 'activated' : 'deactivated'
               } successfully`
             );
             refetch(); 
@@ -125,7 +183,7 @@ const SubscriptionPlans: React.FC = () => {
           },
           onError: (err: any) => {
             toast.error(
-              err?.response?.data?.message || "Failed to update status"
+              err?.response?.data?.message || 'Failed to update status'
             );
           },
         }
@@ -133,7 +191,6 @@ const SubscriptionPlans: React.FC = () => {
     },
     [updateStatusMutation, refetch]
   );
-  // ----------------------------------------
   
   const handleCreatePlan = useCallback(
     (formData: {
@@ -144,14 +201,13 @@ const SubscriptionPlans: React.FC = () => {
     }) => {
       createMutation.mutate(formData, {
         onSuccess: (res: any) => {
-          console.log("res",res);
-          toast.success(res.message || "Plan created successfull");
+          toast.success(res.message || 'Plan created successfully');
           setIsCreateModalOpen(false);
           setPage(1);
           refetch();
         },
         onError: (err: any) => {
-          toast.error(err.response.data?.message || "Failed to create plan");
+          toast.error(err.response.data?.message || 'Failed to create plan');
         },
       });
     },
@@ -161,20 +217,20 @@ const SubscriptionPlans: React.FC = () => {
   const headers = useMemo(
     () => [
       {
-        id: "index",
-        label: "#",
+        id: 'index',
+        label: '#',
         render: (_: any, index: number) => (page - 1) * limit + index + 1,
       },
       {
-        id: "planName",
-        label: "Plan Name",
+        id: 'planName',
+        label: 'Plan Name',
         render: (row: TablePlan) => (
           <span className="font-semibold text-gray-800">{row.planName}</span>
         ),
       },
       {
-        id: "price",
-        label: "Price",
+        id: 'price',
+        label: 'Price',
         render: (row: TablePlan) => (
           <span className="font-medium text-green-600">
             ${row.price.toFixed(2)}
@@ -182,24 +238,24 @@ const SubscriptionPlans: React.FC = () => {
         ),
       },
       {
-        id: "duration",
-        label: "Duration",
+        id: 'duration',
+        label: 'Duration',
         render: (row: TablePlan) => `${row.durationMonths} Month`,
       },
       {
-        id: "description",
-        label: "Description",
+        id: 'description',
+        label: 'Description',
         render: (row: TablePlan) => (
           <span className="text-gray-600 text-sm">
-            {row.description || "-"}
+            {row.description || '-'}
           </span>
         ),
       },
       {
-        id: "status",
-        label: "Status",
+        id: 'status',
+        label: 'Status',
         render: (row: TablePlan) => {
-          const isActive = row.isActive === "active";
+          const isActive = row.isActive === 'active';
 
           return (
             <button
@@ -207,17 +263,30 @@ const SubscriptionPlans: React.FC = () => {
               disabled={updateStatusMutation.isPending}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
                 isActive
-                  ? "bg-green-100 text-green-700 hover:bg-green-200"
-                  : "bg-red-100 text-red-700 hover:bg-red-200"
+                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                  : 'bg-red-100 text-red-700 hover:bg-red-200'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              {isActive ? "ACTIVE" : "INACTIVE"}
+              {isActive ? 'ACTIVE' : 'INACTIVE'}
             </button>
           );
         },
       },
+      {
+        id: 'actions',
+        label: 'Actions',
+        render: (row: TablePlan) => (
+          <button
+            onClick={() => handleEditClick(row)}
+            className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+            title="Edit Plan"
+          >
+            <Edit2 size={18} />
+          </button>
+        ),
+      },
     ],
-    [page, limit, handleStatusToggle, updateStatusMutation.isPending]
+    [page, limit, handleStatusToggle, handleEditClick, updateStatusMutation.isPending]
   );
 
   return (
@@ -263,7 +332,7 @@ const SubscriptionPlans: React.FC = () => {
                     placeholder="Search plans by name or description..."
                     value={searchInput}
                     onChange={handleSearchChange}
-                    onKeyDown={(e) => e.key === "Enter" && handleSearchClick()}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
                     className="px-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-indigo-400"
                   />
 
@@ -364,6 +433,16 @@ const SubscriptionPlans: React.FC = () => {
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreatePlan}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <EditSubscriptionModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onSubmit={handleUpdatePlan}
+        isLoading={updatePlanMutation.isPending}
+        initialData={editPlanData}
+        isLoadingData={isEditLoading}
       />
 
       {/* Confirmation/Status Change Modal */}
