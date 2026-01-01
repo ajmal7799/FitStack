@@ -1,8 +1,8 @@
-import AxiosInstance from "../../axios/axios";
-import type { SignupPayload, LoginPayload } from "../../types/AuthPayloads";
+import AxiosInstance from '../../axios/axios';
+import type { SignupPayload, LoginPayload } from '../../types/AuthPayloads';
 
 export const signupUser = async (data: SignupPayload) => {
-  const response = await AxiosInstance.post("/signup", data);
+  const response = await AxiosInstance.post('/signup', data);
   return response.data;
 };
 
@@ -14,8 +14,8 @@ export const userVerifyOtp = async ({
   otp: string;
   values: SignupPayload;
 }) => {
-  console.log(values, "values")
-  const response = await AxiosInstance.post("/verify-otp", {
+  
+  const response = await AxiosInstance.post('/verify-otp', {
     otp,
     ...values,
   });
@@ -23,7 +23,7 @@ export const userVerifyOtp = async ({
 };
 
 export const userResendOtp = async (email: string) => {
-  const response = await AxiosInstance.post("/resend-otp", {
+  const response = await AxiosInstance.post('/resend-otp', {
     email,
   });
   return response.data;
@@ -31,14 +31,14 @@ export const userResendOtp = async (email: string) => {
 
 
 export const loginUser = async (data: LoginPayload) => {
-  const response = await AxiosInstance.post("/login", data);
+  const response = await AxiosInstance.post('/login', data);
   return response.data;
 };
 
 export const forgotPassword = async (email: string) => {
-  const response = await AxiosInstance.post("/forgot-password",{email})
-  return response.data
-}
+  const response = await AxiosInstance.post('/forgot-password',{email});
+  return response.data;
+};
 
 export const forgetPaaswordVerifyOtp = async ({
   email,
@@ -47,9 +47,9 @@ export const forgetPaaswordVerifyOtp = async ({
   email:string;
   otp: string
 }) => {
-  const response = await AxiosInstance.post("/forget-password/verify-otp",{otp,email})
-  return response.data
-}
+  const response = await AxiosInstance.post('/forget-password/verify-otp',{otp,email});
+  return response.data;
+};
 
 export const resetPassword = async ({
   email,
@@ -60,17 +60,17 @@ export const resetPassword = async ({
   password: string,
   token:string
 }) => {
-  const response = await AxiosInstance.post("/forget-password/reset-password",{email,password,token})
-  return response.data  
+  const response = await AxiosInstance.post('/forget-password/reset-password',{email,password,token});
+  return response.data;  
 };
 
 
 
 
 export const logoutUser = async () => {
-  const response = await AxiosInstance.post("/logout")
-  return response.data
-}
+  const response = await AxiosInstance.post('/logout');
+  return response.data;
+};
 
 
 // Admin — Users
@@ -84,12 +84,12 @@ export const getAllUsers = async (
     page: String(page),
     limit: String(limit),
   });
-  if(status) params.append("status",status);
-  if(search) params.append("search", search);
+  if(status) params.append('status',status);
+  if(search) params.append('search', search);
 
   const response = await AxiosInstance.get(`/admin/users?${params.toString()}`);
-  return response.data
-}
+  return response.data;
+};
 
 export const updateUserStatus = async ({
   userId,
@@ -99,7 +99,7 @@ export const updateUserStatus = async ({
   currentStatus: string;
 }) => {
   const response = await AxiosInstance.post(
-  "/admin/users/update-status",
+    '/admin/users/update-status',
     {
       userId,
       currentStatus,
@@ -120,12 +120,12 @@ export const getAllTrainers = async (
     page: String(page),
     limit: String(limit),
   });
-  if(status) params.append("status",status);
-  if(search) params.append("search", search);
+  if(status) params.append('status',status);
+  if(search) params.append('search', search);
 
   const response = await AxiosInstance.get(`/admin/trainers?${params.toString()}`);
-  return response.data
-}
+  return response.data;
+};
 
 
 export const updateTrainerStatus = async ({
@@ -136,7 +136,7 @@ export const updateTrainerStatus = async ({
   currentStatus: string;
 }) => {
   const response = await AxiosInstance.post(
-  "/admin/trainers/update-status",
+    '/admin/trainers/update-status',
     {
       userId,
       currentStatus,
@@ -150,7 +150,7 @@ export const userGoogleLogin = async (data: {
   role: string;
 }) => {
   const response = await AxiosInstance.post(
-    "/google-login",
+    '/google-login',
     data
   );
   return response.data;

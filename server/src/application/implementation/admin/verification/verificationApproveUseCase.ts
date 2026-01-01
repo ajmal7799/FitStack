@@ -1,8 +1,8 @@
-import { IUpdateVerification } from "../../../../domain/interfaces/repositories/IVerificationRepository";
-import { IVerificationApproveUseCase } from "../../../useCase/admin/verification/IVerificationApproveUseCase";
-import { NotFoundException } from "../../../constants/exceptions";
-import { TRAINER_ERRORS } from "../../../../shared/constants/error";
-import { VerificationApproveResponseDTO } from "../../../dto/verification/verificationApproveDTO";
+import { IUpdateVerification } from '../../../../domain/interfaces/repositories/IVerificationRepository';
+import { IVerificationApproveUseCase } from '../../../useCase/admin/verification/IVerificationApproveUseCase';
+import { NotFoundException } from '../../../constants/exceptions';
+import { TRAINER_ERRORS } from '../../../../shared/constants/error';
+import { VerificationApproveResponseDTO } from '../../../dto/verification/verificationApproveDTO';
 
 export class VerificationApproveUseCase implements IVerificationApproveUseCase {
     constructor(
@@ -17,7 +17,7 @@ export class VerificationApproveUseCase implements IVerificationApproveUseCase {
             throw new NotFoundException(TRAINER_ERRORS.TRAINER_VERIFICATION_NOT_FOUND);
         }
 
-       let trainerVerification = await this._verificationRepository.verifyTrainer(trainerId);
+        const trainerVerification = await this._verificationRepository.verifyTrainer(trainerId);
 
         if (!trainerVerification) {
             throw new NotFoundException(TRAINER_ERRORS.TRAINER_VERIFICATION_NOT_FOUND);
@@ -25,8 +25,8 @@ export class VerificationApproveUseCase implements IVerificationApproveUseCase {
 
         return {
             id: trainerVerification.id,
-            verificationStatus: trainerVerification.verificationStatus
-        }
+            verificationStatus: trainerVerification.verificationStatus,
+        };
         
     }
 }

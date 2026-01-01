@@ -1,5 +1,4 @@
-import { SubmitTrainerVerificationRequest } from '../../dto/trainer/trainerDTO';
-import { TrainerVerificationResponse } from '../../dto/trainer/trainerDTO';
+import { SubmitTrainerVerificationRequest, TrainerVerificationResponse } from '../../dto/trainer/trainerDTO';
 import { IUpdateTrainers } from '../../useCase/trainer/IUpdateTrainers';
 import { NotFoundException } from '../../constants/exceptions';
 import { Errors,TRAINER_ERRORS } from '../../../shared/constants/error';

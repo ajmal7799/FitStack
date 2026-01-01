@@ -1,7 +1,7 @@
 import { IVerificationModel } from '../../infrastructure/database/models/verificationModel';
 import mongoose from 'mongoose';
 import { TrainerGetVerificationDTO } from '../dto/trainer/trainerGetVerificationDTO';
-import {VerificationDTO} from '../dto/verification/verificationDTO';
+import { VerificationDTO } from '../dto/verification/verificationDTO';
 import { VerificationStatus } from '../../domain/enum/verificationStatus';
 import { Trainer } from '../../domain/entities/trainer/trainerEntities';
 import { User } from '../../domain/entities/user/userEntities';
@@ -46,13 +46,14 @@ export class VerificationMapper {
         };
     }
 
-    static toDTO(verification: TrainerVerification, trainer: Trainer, user: User): VerificationDTO {
+    static  toDTO(verification: TrainerVerification, trainer: Trainer, user: User, profileImage?: string): VerificationDTO {
         return {
             trainerId: verification.trainerId,
             name: user.name,
             email: user.email,
-            qualification: trainer.qualification,
+            specialisation: trainer.specialisation,
             verificationStatus: verification.verificationStatus,
+            profileImage: profileImage  || undefined,
         };
     }
 
@@ -62,7 +63,7 @@ export class VerificationMapper {
             trainerId: verification.trainerId,
             name: user.name,
             email: user.email,
-            phone: user.phone ?? "",
+            phone: user.phone ?? '',
             about: trainer.about,
             experience: trainer.experience,
             qualification: trainer.qualification,

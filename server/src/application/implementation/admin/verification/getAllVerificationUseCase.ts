@@ -4,36 +4,37 @@ import { IUpdateVerification } from '../../../../domain/interfaces/repositories/
 import { VerificationMapper } from '../../../mappers/verificationMappers';
 
 export class GetAllVerificationUseCase implements IGetAllVerificationUseCase {
-  constructor(private _verificationRepository: IUpdateVerification) {}
+    constructor(private _verificationRepository: IUpdateVerification) {}
 
-  async getAllVerification(
-    page: number,
-    limit: number,
-    status?: string,
-    search?: string
-  ): Promise<{
+    async getAllVerification(
+        page: number,
+        limit: number,
+        status?: string,
+        search?: string,
+    ): Promise<{
     verifications: VerificationDTO[];
     totalVerifications: number;
     totalPages: number;
     currentPage: number;
   }> {
    
-    const skip = (page - 1) * limit;
-
-    const [verifications, totalVerifications] = await Promise.all([
-      this._verificationRepository.findAllVerification(skip, limit, status, search),
-      this._verificationRepository.countVerifications(status, search),
-    ]);
-
-    const verificationDTOs = verifications.map(verification =>
-      VerificationMapper.toDTO(verification.verification, verification.trainer, verification.user)
-    );
+        const skip = (page - 1) * limit;
     
-    return {
-      verifications: verificationDTOs,
-      totalVerifications,
-      totalPages: Math.ceil(totalVerifications / limit),
-      currentPage: page,
-    };
-  }
+        const [verifications, totalVerifications] = await Promise.all([
+            this._verificationRepository.findAllVerification(skip, limit, status, search),
+            this._verificationRepository.countVerifications(status, search),
+        ]);
+       
+        
+        const verificationDTOs = verifications.map(verification =>
+            VerificationMapper.toDTO(verification.verification, verification.trainer, verification.user),
+        );
+    
+        return {
+            verifications: verificationDTOs,
+            totalVerifications,
+            totalPages: Math.ceil(totalVerifications / limit),
+            currentPage: page,
+        };
+    }
 }

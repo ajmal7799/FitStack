@@ -1,6 +1,6 @@
-import { IWorkoutPlanModel } from "../../infrastructure/database/models/workoutPlanModel";
-import { WorkoutPlan } from "../../domain/entities/user/workoutPlanEntities";
-import { WorkoutPlanResponseDto } from "../dto/user/workoutPlanDTO";
+import { IWorkoutPlanModel } from '../../infrastructure/database/models/workoutPlanModel';
+import { WorkoutPlan } from '../../domain/entities/user/workoutPlanEntities';
+import { WorkoutPlanResponseDto } from '../dto/user/workoutPlanDTO';
 
 export class WorkoutPlanMapper {
     static fromMongooseDocument(doc: IWorkoutPlanModel): WorkoutPlan {
@@ -13,18 +13,18 @@ export class WorkoutPlanMapper {
                 isRestDay: day.isRestDay,
                 warmup: day.warmup ? {
                     duration: day.warmup.duration,
-                    exercises: day.warmup.exercises
+                    exercises: day.warmup.exercises,
                 } : undefined,
                 mainWorkout: day.mainWorkout.map(ex => ({
                     exerciseName: ex.exerciseName,
                     sets: ex.sets,
                     reps: ex.reps,
                     rest: ex.rest,
-                    notes: ex.notes
+                    notes: ex.notes,
                 })),
                 cooldown: day.cooldown ? {
                     duration: day.cooldown.duration,
-                    exercises: day.cooldown.exercises
+                    exercises: day.cooldown.exercises,
                 } : undefined,
             })),
             progressionaGuidelines: doc.progressionaGuidelines,
@@ -42,32 +42,32 @@ export class WorkoutPlanMapper {
         };
     }
 
-   static toResponseDto(entity: WorkoutPlan): WorkoutPlanResponseDto {
-    return {
-      id: entity.id || "",
-      userId: entity.userId,
-      weeklyPlan: entity.weeklyPlan.map(day => ({
-        day: day.day,
-        focus: day.focus,
-        isRestDay: day.isRestDay,
-        warmup: day.warmup,
-        mainWorkout: day.mainWorkout.map(ex => ({
-          exerciseName: ex.exerciseName,
-          sets: ex.sets,
-          reps: ex.reps,
-          rest: ex.rest,
-          notes: ex.notes
-        })),
-        cooldown: day.cooldown
-      })),
-      progressionGuidelines: entity.progressionaGuidelines, // Use the field from your entity
-      importantNotes: entity.importantNotes,
-      equipmentNeeded: entity.equipmentNeeded,
-      expectedResults: entity.expectedResults,
-      isActive: entity.isActive,
+    static toResponseDto(entity: WorkoutPlan): WorkoutPlanResponseDto {
+        return {
+            id: entity.id || '',
+            userId: entity.userId,
+            weeklyPlan: entity.weeklyPlan.map(day => ({
+                day: day.day,
+                focus: day.focus,
+                isRestDay: day.isRestDay,
+                warmup: day.warmup,
+                mainWorkout: day.mainWorkout.map(ex => ({
+                    exerciseName: ex.exerciseName,
+                    sets: ex.sets,
+                    reps: ex.reps,
+                    rest: ex.rest,
+                    notes: ex.notes,
+                })),
+                cooldown: day.cooldown,
+            })),
+            progressionGuidelines: entity.progressionaGuidelines, // Use the field from your entity
+            importantNotes: entity.importantNotes,
+            equipmentNeeded: entity.equipmentNeeded,
+            expectedResults: entity.expectedResults,
+            isActive: entity.isActive,
       
-      // Convert Date object to ISO string for consistent API response
-    //   createdAt: entity.createdAt ? new Date(entity.createdAt).toISOString() : new Date().toISOString()
-    };
-  }
+            // Convert Date object to ISO string for consistent API response
+            //   createdAt: entity.createdAt ? new Date(entity.createdAt).toISOString() : new Date().toISOString()
+        };
+    }
 }

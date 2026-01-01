@@ -1,4 +1,4 @@
-import { VerificationStatus } from "../../../domain/enum/verificationStatus";
+import { VerificationStatus } from '../../../domain/enum/verificationStatus';
 
 export interface VerificationDetailDTO {
     trainerId: string;

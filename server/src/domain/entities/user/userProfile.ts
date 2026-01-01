@@ -1,4 +1,4 @@
-import { UserGender, DietPreference,ExperienceLevel,FitnessGoal,PreferredWorkoutType,WorkoutLocation } from "../../enum/userProfileEnums";
+import { UserGender, DietPreference,ExperienceLevel,FitnessGoal,PreferredWorkoutType,WorkoutLocation } from '../../enum/userProfileEnums';
 
 export interface UserProfile {
     id: string,
@@ -7,7 +7,7 @@ export interface UserProfile {
     gender: UserGender,
     height: number,
     weight: number,
-    profileImage?: string,
+    
 
     fitnessGoal: FitnessGoal,
     targetWeight: number,

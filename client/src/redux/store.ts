@@ -1,15 +1,15 @@
 
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
 import userAuthDataSlice from './slice/userSlice/authDataSlice';
-import storage from "redux-persist/lib/storage";
-import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
-import { combineReducers } from "@reduxjs/toolkit";
+import storage from 'redux-persist/lib/storage';
+import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { combineReducers } from '@reduxjs/toolkit';
 
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   storage,
-  whitelist: ["authData"],
+  whitelist: ['authData'],
 };
 
 const rootReducer = combineReducers({

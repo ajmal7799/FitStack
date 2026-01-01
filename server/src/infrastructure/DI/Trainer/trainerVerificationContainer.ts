@@ -7,7 +7,7 @@ import { TrainerRepository } from '../../repositories/trainerRepository';
 import { trainerModel } from '../../database/models/trainerModel';
 import { VerificationRepository } from '../../repositories/verificationRepository';
 import { verificationModel } from '../../database/models/verificationModel';
-import { GetProfileData } from '../../../application/implementation/trainer/getProfileData';
+import { GetProfileData } from '../../../application/implementation/trainer/profile/getProfileData';
 import { GetVerificationData } from '../../../application/implementation/trainer/getVerificationData';
 
 //Repository & Service
@@ -26,18 +26,18 @@ const updateTrainerUseCase = new UpdateTrainer(
 );
 
 
-const getProfileData = new GetProfileData(
-    userRepository,
-    trainerRepository,
-    verificationRepository,
-);
+// const getProfileData = new GetProfileData(
+//     userRepository,
+//     trainerRepository,
+//     verificationRepository,
+// );
 
 const getVerificationData = new GetVerificationData(
     userRepository,
     verificationRepository,
-    storageSvc
+    storageSvc,
 );
 
 
 //controller
-export const trainerVerificationController = new TrainerVerificationController(updateTrainerUseCase, getProfileData,getVerificationData);
+export const trainerVerificationController = new TrainerVerificationController(updateTrainerUseCase,getVerificationData);

@@ -3,5 +3,6 @@ export type SubscriptionPlan = {
   price: number;                
   durationMonths: number;      
   description: string;
-  isActive: string;          
+  isActive: string;
+        
 }

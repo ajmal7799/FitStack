@@ -1,13 +1,13 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShieldOff, Unlock, XCircle } from "lucide-react";
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShieldOff, Unlock, XCircle } from 'lucide-react';
 
 interface PropType {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   name: string;
-  currentStatus: "ACTIVE" | "BLOCKED";
+  currentStatus: 'ACTIVE' | 'BLOCKED';
 }
 
 const StatusChangeModal: React.FC<PropType> = ({
@@ -17,7 +17,7 @@ const StatusChangeModal: React.FC<PropType> = ({
   name,
   currentStatus,
 }) => {
-  const isActive = currentStatus === "ACTIVE";
+  const isActive = currentStatus === 'ACTIVE';
 
   return (
     <AnimatePresence>
@@ -36,7 +36,7 @@ const StatusChangeModal: React.FC<PropType> = ({
             initial={{ opacity: 0, scale: 0.9, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
             onClick={(e) => e.stopPropagation()}
             className="bg-white p-8 rounded-2xl shadow-2xl w-[90%] max-w-sm text-center space-y-6 relative"
           >
@@ -52,9 +52,9 @@ const StatusChangeModal: React.FC<PropType> = ({
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 15 }}
               className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center shadow-inner ${
-                isActive ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"
+                isActive ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'
               }`}
             >
               {isActive ? (
@@ -86,11 +86,11 @@ const StatusChangeModal: React.FC<PropType> = ({
                 onClick={onConfirm}
                 className={`px-5 py-2.5 rounded-lg text-white font-medium shadow-md transition-all duration-200 ${
                   isActive
-                    ? "bg-red-600 hover:bg-red-700"
-                    : "bg-green-600 hover:bg-green-700"
+                    ? 'bg-red-600 hover:bg-red-700'
+                    : 'bg-green-600 hover:bg-green-700'
                 }`}
               >
-                {isActive ? "Block" : "Activate"}
+                {isActive ? 'Block' : 'Activate'}
               </motion.button>
             </div>
           </motion.div>

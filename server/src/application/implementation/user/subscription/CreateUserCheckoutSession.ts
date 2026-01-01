@@ -1,11 +1,11 @@
-import { IStripeCheckoutService } from "../../../../domain/interfaces/services/IStripeCheckoutService";
-import { ISubscriptionRepository } from "../../../../domain/interfaces/repositories/ISubscriptionRepository";
-import { NotFoundException } from "../../../constants/exceptions";
-import { SUBSCRIPTION_ERRORS, USER_ERRORS } from "../../../../shared/constants/error";
-import { CheckoutSessionDTO } from "../../../dto/user/subscription/checkoutSessionDTO";
-import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { User } from "../../../../domain/entities/user/userEntities";
-import { IStripeService } from "../../../../domain/interfaces/services/IStripeService";
+import { IStripeCheckoutService } from '../../../../domain/interfaces/services/IStripeCheckoutService';
+import { ISubscriptionRepository } from '../../../../domain/interfaces/repositories/ISubscriptionRepository';
+import { NotFoundException } from '../../../constants/exceptions';
+import { SUBSCRIPTION_ERRORS, USER_ERRORS } from '../../../../shared/constants/error';
+import { CheckoutSessionDTO } from '../../../dto/user/subscription/checkoutSessionDTO';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { User } from '../../../../domain/entities/user/userEntities';
+import { IStripeService } from '../../../../domain/interfaces/services/IStripeService';
 
 export class CreateUserCheckoutSession {
     constructor(
@@ -51,10 +51,10 @@ export class CreateUserCheckoutSession {
         }
 
         const user =  await this._userRepository.findById(userId);
-        if(!user){
+        if (!user){
             throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
         }
-        if(user.activeMembershipId) {
+        if (user.activeMembershipId) {
             throw new NotFoundException(SUBSCRIPTION_ERRORS.USER_ALREADY_HAS_ACTIVE_MEMBERSHIP);
         }
 

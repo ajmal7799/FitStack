@@ -1,10 +1,10 @@
-import { useState } from "react";
-import TrainerSidebar from "../../components/trainer/Sidebar";
-import TrainerHeader from "../../components/trainer/Header";
-import { useGetTrainerVerification } from "../../hooks/Trainer/TrainerHooks";
-import { X, ZoomIn, FileText, AlertCircle } from "lucide-react";
+import { useState } from 'react';
+import TrainerSidebar from '../../components/trainer/Sidebar';
+import TrainerHeader from '../../components/trainer/Header';
+import { useGetTrainerVerification } from '../../hooks/Trainer/TrainerHooks';
+import { X, ZoomIn, FileText, AlertCircle } from 'lucide-react';
 // import type{ GetTrainerVerification } from "../../types/TrainerVerificationPayload";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const TrainerGetVerification = () => {
   const { data: trainer, isLoading, isError } = useGetTrainerVerification();
@@ -53,9 +53,9 @@ const TrainerGetVerification = () => {
   }: any = trainer;
 
   const statusColors: Record<string, string> = {
-    pending: "bg-yellow-900/30 text-yellow-300 border border-yellow-800",
-    approved: "bg-green-900/30 text-green-300 border border-green-800",
-    rejected: "bg-red-900/30 text-red-300 border border-red-800",
+    pending: 'bg-yellow-900/30 text-yellow-300 border border-yellow-800',
+    approved: 'bg-green-900/30 text-green-300 border border-green-800',
+    rejected: 'bg-red-900/30 text-red-300 border border-red-800',
   };
 
   return (
@@ -81,7 +81,7 @@ const TrainerGetVerification = () => {
                   {verificationStatus.charAt(0).toUpperCase() +
                     verificationStatus.slice(1)}
                 </span>
-                {verificationStatus === "pending" && (
+                {verificationStatus === 'pending' && (
                   <p className="text-gray-400">
                     Your application is under review. We'll notify you soon.
                   </p>
@@ -90,7 +90,7 @@ const TrainerGetVerification = () => {
             </div>
 
             {/* Rejection Reason */}
-            {verificationStatus === "rejected" && rejectionReason && (
+            {verificationStatus === 'rejected' && rejectionReason && (
               <>
                 <div className="mb-8 p-6 bg-red-900/20 border border-red-800 rounded-xl flex items-start gap-4">
                   <AlertCircle
@@ -110,7 +110,7 @@ const TrainerGetVerification = () => {
                 <div className="flex justify-end mb-8">
                   <button
                     onClick={() => {
-                      navigate("/trainer/verification");
+                      navigate('/trainer/verification');
                     }}
                     className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition"
                   >

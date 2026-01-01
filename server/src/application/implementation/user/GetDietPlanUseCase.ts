@@ -7,24 +7,24 @@ import { DietPlanMapper } from '../../mappers/dietPlanMappers';
 import { DietPlanResponseDto } from '../../dto/user/dietPlanDTO';
 
 export class GetDietPlanUseCase implements IGetDietPlanUseCase {
-  constructor(
+    constructor(
     private _userRepository: IUserRepository,
-    private _dietPlanRepository: IDietPlanRepository
-) {}
+    private _dietPlanRepository: IDietPlanRepository,
+    ) {}
 
-  async excute(userId: string): Promise<DietPlanResponseDto> {
-    const user = await this._userRepository.findById(userId);
+    async excute(userId: string): Promise<DietPlanResponseDto> {
+        const user = await this._userRepository.findById(userId);
 
-    if (!user) {
-      throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
+        if (!user) {
+            throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
+        }
+
+        const dietPlan = await this._dietPlanRepository.findByUserId(userId);
+
+        if (!dietPlan) {
+            throw new NotFoundException(USER_ERRORS.USER_DIET_PLAN_NOT_FOUND);
+        }
+
+        return DietPlanMapper.toResponseDTO(dietPlan);
     }
-
-    const dietPlan = await this._dietPlanRepository.findByUserId(userId);
-
-    if (!dietPlan) {
-      throw new NotFoundException(USER_ERRORS.USER_DIET_PLAN_NOT_FOUND);
-    }
-
-    return DietPlanMapper.toResponseDTO(dietPlan);
-  }
 }

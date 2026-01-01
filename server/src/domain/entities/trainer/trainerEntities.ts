@@ -7,6 +7,5 @@ export interface Trainer {
     specialisation: string;  
     experience: number;
     about: string;
-    // certifications: string[];
     isVerified: boolean;
 }

@@ -12,11 +12,10 @@ export interface IUserRepository extends IBaseRepository<User>{
     countTrainer(status?: string, search?: string): Promise<number>;
     findByIdAndUpdatePassword(email: string, hashedPassword: string): Promise<void>;
     googleSignUp(user: User): Promise<string>;
+    updateUserProfileImage(userId: string, profileImage: string): Promise<void>;
+    updateTrainerProfile(userId: string, profile: User): Promise<User | null>;
     
-
     updateStripeCustomerId(userId: string, stripeCustomerId: string): Promise<void>;
 
     updateActiveMembershipId(userId: string, activeMembershipId: string | null): Promise<void>;
-
-
 }

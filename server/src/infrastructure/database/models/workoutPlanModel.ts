@@ -42,4 +42,4 @@ export interface IWorkoutPlanModel extends Document {
     createdAt: Date;
 }
 
-export const workoutPlanModel = model<IWorkoutPlanModel>("WorkoutPlan", WorkoutPlanSchema);
+export const workoutPlanModel = model<IWorkoutPlanModel>('WorkoutPlan', WorkoutPlanSchema);

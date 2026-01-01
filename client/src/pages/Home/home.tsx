@@ -1,13 +1,13 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { type Rootstate } from "../../redux/store";
-import { clearData } from "../../redux/slice/userSlice/authDataSlice";
-import toast from "react-hot-toast";
-import { useLogout } from "../../hooks/Auth/AuthHooks";
-import gymImage from "../../assets/gym.jpg";
-import gymarea from "../../assets/gymarea.jpg";
-import gymImage2 from "../../assets/gymImage2.jpg";
-import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { type Rootstate } from '../../redux/store';
+import { clearData } from '../../redux/slice/userSlice/authDataSlice';
+import toast from 'react-hot-toast';
+import { useLogout } from '../../hooks/Auth/AuthHooks';
+import gymImage from '../../assets/gym.jpg';
+import gymarea from '../../assets/gymarea.jpg';
+import gymImage2 from '../../assets/gymImage2.jpg';
+import { FRONTEND_ROUTES } from '../../constants/frontendRoutes';
 
 // Icon Imports
 import {
@@ -20,7 +20,7 @@ import {
   FiCheckCircle,
   FiStar,
   FiLogOut,
-} from "react-icons/fi";
+} from 'react-icons/fi';
 
 const Home = () => {
   const userData = useSelector((state: Rootstate) => state.authData);
@@ -32,12 +32,12 @@ const Home = () => {
     logout(undefined, {
       onSuccess: () => {
         dispatch(clearData());
-        toast.success("User logged out successfully");
+        toast.success('User logged out successfully');
         window.location.reload();
-        navigate("/admin/login");
+        navigate('/admin/login');
       },
       onError: () => {
-        toast.error("Logout failed. Please try again.");
+        toast.error('Logout failed. Please try again.');
       },
     });
   };
@@ -59,12 +59,14 @@ const Home = () => {
           </li>
           <li
             className="hover:text-blue-700 cursor-pointer transition duration-300"
-            onClick={() => navigate("/subscription")} // Add this onClick
+            onClick={() => navigate('/subscription')} // Add this onClick
           >
             Subscription
           </li>
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300">
+          <li className="hover:text-blue-700 cursor-pointer transition duration-300" 
+            onClick={() => navigate('/trainers')}>
             Trainers
+            
           </li>
           <li className="hover:text-blue-700 cursor-pointer transition duration-300">
             Reviews
@@ -76,7 +78,7 @@ const Home = () => {
             {/* Profile Icon */}
             <div
               className="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md cursor-pointer"
-              onClick={() => navigate("/profile")}
+              onClick={() => navigate('/profile')}
             >
               {userData.name?.charAt(0).toUpperCase()}
             </div>
@@ -101,7 +103,7 @@ const Home = () => {
       <section className="relative flex flex-col md:flex-row items-center justify-between pt-16 pb-24 px-6 md:px-12 bg-gray-50">
         <div className="md:w-1/2 mb-10 md:mb-0 text-center md:text-left">
           <p className="text-sm font-semibold text-blue-600 mb-2 uppercase tracking-wider">
-            Welcome Back, {userData.name?.split(" ")[0]}!
+            Welcome Back, {userData.name?.split(' ')[0]}!
           </p>
           <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 leading-tight text-gray-900">
             <span className="text-blue-700">AI-Powered</span> Fitness. <br />
@@ -114,13 +116,13 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
             <button
               className="bg-blue-700 text-white text-base font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-blue-800 transition duration-300 transform hover:scale-[1.02]"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate('/dashboard')}
             >
               Go to Dashboard
             </button>
             <button
               className="bg-green-500 text-white text-base font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-green-600 transition duration-300 transform hover:scale-[1.02]"
-              onClick={() => navigate("/trainers")}
+              onClick={() => navigate('/trainers')}
             >
               View Trainers
             </button>
@@ -228,7 +230,7 @@ const Home = () => {
             </ul>
             <button
               className="mt-10 bg-green-500 text-gray-900 text-base font-semibold px-8 py-3 rounded-full hover:bg-green-400 transition duration-300 shadow-xl"
-              onClick={() => navigate("/trainers")}
+              onClick={() => navigate('/trainers')}
             >
               Meet Our Trainers <FiArrowRight className="inline ml-2" />
             </button>
@@ -262,7 +264,7 @@ const Home = () => {
               🌟 Limited Time Offer
             </div>
             <h2 className="text-4xl lg:text-5xl font-extrabold mb-6 text-gray-900 leading-tight">
-              Ready to Unlock Your{" "}
+              Ready to Unlock Your{' '}
               <span className="text-blue-700">Full Potential?</span>
             </h2>
             <p className="text-lg text-gray-600 mb-8">
@@ -302,13 +304,13 @@ const Home = () => {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => navigate("/subscription")}
+                onClick={() => navigate('/subscription')}
                 className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-lg font-bold px-8 py-4 rounded-full shadow-2xl hover:from-blue-700 hover:to-blue-800 transition duration-300 transform hover:scale-105"
               >
                 Upgrade to Premium
               </button>
               <button
-                onClick={() => navigate("/subscription")}
+                onClick={() => navigate('/subscription')}
                 className="border-2 border-blue-700 text-blue-700 text-lg font-semibold px-8 py-4 rounded-full hover:bg-blue-50 transition duration-300"
               >
                 Learn More

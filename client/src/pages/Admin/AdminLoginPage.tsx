@@ -1,7 +1,7 @@
-import adminLoginImg from "../../assets/adminLoginImg.jpg"
-import { useAdminLogin } from "../../hooks/Auth/Admin/AdminAuthHooks";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import adminLoginImg from '../../assets/adminLoginImg.jpg';
+import { useAdminLogin } from '../../hooks/Auth/Admin/AdminAuthHooks';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import type { LoginPayload } from '../../types/AuthPayloads';
 import toast from 'react-hot-toast';
 import { setData } from '../../redux/slice/userSlice/authDataSlice';
@@ -9,14 +9,14 @@ import { setData } from '../../redux/slice/userSlice/authDataSlice';
 import LoginForm from '../../components/auth/loginForm';
 
 const AdminLoginPage = () => {
-  const { mutate: login } = useAdminLogin()
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const { mutate: login } = useAdminLogin();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleAdminLogin = (values: LoginPayload) => {
     login(values, {
       onSuccess: (res: any) => {
-        toast.success("Login Successful");
+        toast.success('Login Successful');
         dispatch(
           setData({
             name: res.data.user.name,
@@ -26,19 +26,20 @@ const AdminLoginPage = () => {
             role: res.data.user.role,
             updatedAt: res.data.user.updatedAt,  
             accessToken: res.data.accessToken,
-            verificationCheck: res.data.user.verificationCheck
+            verificationCheck: res.data.user.verificationCheck,
+            userProfileCompleted: res.data.user.userProfileCompleted
           })
         );
-        navigate("/admin/dashboard")
+        navigate('/admin/dashboard');
       },
 
       onError: (err: any) => {
         toast.error(err.response.data.message);
-        console.log("Error while login ,", err)
+        console.log('Error while login ,', err);
       }
-    })
+    });
 
-  }
+  };
 
   return (
     <div className="min-h-screen flex bg-gray-100">
@@ -72,9 +73,9 @@ const AdminLoginPage = () => {
         />
       </div>
     </div>
-  )
+  );
 
-}
+};
 
 
-export default AdminLoginPage
+export default AdminLoginPage;

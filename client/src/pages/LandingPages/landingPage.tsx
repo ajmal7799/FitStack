@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router-dom";
-import gymImage from "../../assets/gym.jpg";
-import gymarea from "../../assets/gymarea.jpg";
+import { useNavigate } from 'react-router-dom';
+import gymImage from '../../assets/gym.jpg';
+import gymarea from '../../assets/gymarea.jpg';
 // NOTE: I've removed the redundant duplicate code block at the end of your request.
 
 // --- Icon Imports (Assuming you have 'react-icons' installed) ---
@@ -13,21 +13,21 @@ import {
   FiArrowRight,
   FiCheckCircle,
   FiStar,
-} from "react-icons/fi";
+} from 'react-icons/fi';
 
 const LandingPage = () => {
   const navigate = useNavigate();
 
   const handleUserSignup = () => {
-    navigate("/signup?role=user");
+    navigate('/signup?role=user');
   };
 
   const handleTrainerSignup = () => {
-    navigate("/signup?role=trainer");
+    navigate('/signup?role=trainer');
   };
 
   const handleLogin = () => {
-    navigate("/login");
+    navigate('/login');
   };
 
   return (
@@ -47,11 +47,11 @@ const LandingPage = () => {
           </li>
           <li className="hover:text-blue-700 cursor-pointer transition duration-300">
             Pricing
-          </li>{" "}
+          </li>{' '}
           {/* Added Navigation */}
           <li className="hover:text-blue-700 cursor-pointer transition duration-300">
             Reviews
-          </li>{" "}
+          </li>{' '}
           {/* Added Navigation */}
         </ul>
         <div className="flex items-center space-x-4">
@@ -72,55 +72,46 @@ const LandingPage = () => {
 
       {/* 🌟 Hero Section - Professional & Focused */}
       <section className="relative flex flex-col md:flex-row items-center justify-between pt-16 pb-24 px-6 md:px-12 bg-gray-50">
-               {" "}
+        {' '}
         <div className="md:w-1/2 mb-10 md:mb-0 text-center md:text-left">
-                   {" "}
+          {' '}
           <p className="text-sm font-semibold text-blue-600 mb-2 uppercase tracking-wider">
-                        Your Personal Fitness Evolution          {" "}
-          </p>
-                   {" "}
+           Your Personal Fitness Evolution {' '}
+          </p>{' '}
           <h2 className="text-5xl lg:text-6xl font-extrabold mb-6 leading-tight text-gray-900">
-                        <span className="text-blue-700">AI-Powered</span>{" "}
-            Fitness. <br />
-            Coached by Experts.          {" "}
-          </h2>
-                   {" "}
+            <span className="text-blue-700">AI-Powered</span> Fitness. <br />
+            Coached by Experts.{' '}
+          </h2>{' '}
           <p className="text-lg text-gray-600 max-w-lg mb-10">
-                        FitStack combines cutting-edge AI with elite human
-            coaching to deliver truly personalized workout and diet plans.      
-               {" "}
+             FitStack combines cutting-edge AI with elite human
+            coaching to deliver truly personalized workout and diet plans.{' '}
           </p>
-                    {/* Landing Page Call-to-Action Buttons */}         {" "}
+          {/* Landing Page Call-to-Action Buttons */}{' '}
           <div className="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-                       {" "}
+            {' '}
             <button
               className="bg-blue-700 text-white text-base font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-blue-800 transition duration-300 transform hover:scale-[1.02]"
               onClick={handleUserSignup}
             >
-                            Start Your Free Trial            {" "}
-            </button>
-                       {" "}
+            Start Your Free Trial{' '}
+            </button>{' '}
             <button
               className="bg-green-500 text-white text-base font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-green-600 transition duration-300 transform hover:scale-[1.02]"
               onClick={handleTrainerSignup}
             >
-                            Join as Trainer            {" "}
-            </button>
-                     {" "}
-          </div>
-                 {" "}
+    Join as Trainer{' '}
+            </button>{' '}
+          </div>{' '}
         </div>
-                {/* Hero Image - Using one of the imported images */}       {" "}
+        {/* Hero Image - Using one of the imported images */}{' '}
         <div className="md:w-1/2 flex justify-center">
-                   {" "}
+          {' '}
           <img
             src={gymImage}
             alt="Modern gym interior"
             className="rounded-3xl shadow-2xl object-cover max-h-[500px] w-full md:w-auto"
-          />
-                 {" "}
-        </div>
-             {" "}
+          />{' '}
+        </div>{' '}
       </section>
 
       {/* 🚀 Feature Showcase: AI & Plans */}
@@ -219,7 +210,7 @@ const LandingPage = () => {
             </ul>
             <button
               className="mt-10 bg-green-500 text-gray-900 text-base font-semibold px-8 py-3 rounded-full hover:bg-green-400 transition duration-300 shadow-xl"
-              onClick={() => navigate("/trainers")}
+              onClick={() => navigate('/trainers')}
             >
               Meet Our Trainers <FiArrowRight className="inline ml-2" />
             </button>

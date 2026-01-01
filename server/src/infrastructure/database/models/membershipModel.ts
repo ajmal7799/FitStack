@@ -5,7 +5,7 @@ import { MembershipStatus } from '../../../domain/enum/membershipEnums';
 export interface IMembershipModel extends Document {
     _id: Types.ObjectId;
     userId: string;
-    planId: string; 
+    planId: Types.ObjectId; 
     stripeCustomerId: string; 
     stripeSubscriptionId: string; 
     status: MembershipStatus;

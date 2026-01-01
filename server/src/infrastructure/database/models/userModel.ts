@@ -14,6 +14,7 @@ export interface IUserModel extends Document {
   isActive: UserStatus;
   stripeCustomerId?: string;
   activeMembershipId?: string;
+  profileImage?: string;
 }
 
 export const userModel = model<IUserModel>('User', userSchema);

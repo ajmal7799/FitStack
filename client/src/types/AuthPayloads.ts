@@ -22,7 +22,7 @@ export interface User {
   name: string;
   email: string;
   phone: string
-  isActive: "ACTIVE" | "BLOCKED";
+  isActive: 'ACTIVE' | 'BLOCKED';
 }
 
 export interface IUserPagination {

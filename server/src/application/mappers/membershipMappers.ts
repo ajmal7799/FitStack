@@ -1,9 +1,9 @@
-import { Membership } from "../../domain/entities/membership/MembershipEntity";
-import { IMembershipModel } from "../../infrastructure/database/models/membershipModel";
+import { Membership } from '../../domain/entities/membership/MembershipEntity';
+import { IMembershipModel } from '../../infrastructure/database/models/membershipModel';
 import mongoose, { Mongoose } from 'mongoose';
-import { MembershipStatus } from "../../domain/enum/membershipEnums";
+import { MembershipStatus } from '../../domain/enum/membershipEnums';
 
-export class MembershipMapper  {
+export class MembershipMapper {
 
     static toMongooseDocument(membership: Membership) {
         return {
@@ -26,7 +26,7 @@ export class MembershipMapper  {
             status: doc.status as MembershipStatus,
             currentPeriodEnd: doc.currentPeriodEnd,
             createdAt: doc.createdAt,
-            updatedAt: doc.updatedAt
+            updatedAt: doc.updatedAt,
         };
     }
 

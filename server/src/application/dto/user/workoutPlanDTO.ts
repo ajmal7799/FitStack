@@ -1,4 +1,4 @@
-import { WorkoutPlan } from "../../../domain/entities/user/workoutPlanEntities";
+import { WorkoutPlan } from '../../../domain/entities/user/workoutPlanEntities';
 
 export interface ExerciseDto {
   exerciseName: string;

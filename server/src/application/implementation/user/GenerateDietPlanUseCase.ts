@@ -7,35 +7,35 @@ import { IDietPlanRepository } from '../../../domain/interfaces/repositories/IDi
 import { CreatedietPlanDTO } from '../../dto/user/dietPlanDTO';
 
 export class GenerateDietPlanUseCase implements IGenerateDietPlanUseCase {
-  constructor(
+    constructor(
     private _userProfileRepository: IUserProfileRepository,
     private _dietPlanProviderService: IDietPlanProvider,
     private _dietPlanRepository: IDietPlanRepository,
-  ) {}
+    ) {}
 
-  async generateDietPlan(userId: string): Promise<CreatedietPlanDTO> {
+    async generateDietPlan(userId: string): Promise<CreatedietPlanDTO> {
 
-    const userProfile = await this._userProfileRepository.findByUserId(userId);
+        const userProfile = await this._userProfileRepository.findByUserId(userId);
 
-    if (!userProfile) {
-      throw new NotFoundException(USER_ERRORS.USER_PROFILE_NOT_FOUND);
+        if (!userProfile) {
+            throw new NotFoundException(USER_ERRORS.USER_PROFILE_NOT_FOUND);
+        }
+
+        const plan = await this._dietPlanProviderService.generateDietPlan(userProfile);
+
+        if (!plan) {
+            throw new InvalidDataException(USER_ERRORS.USER_GENERATE_DIET_PLAN_FAILED);
+        }
+
+        const dietPlan = await this._dietPlanRepository.saveDietPlan(userId, plan);
+
+        if (!dietPlan) {
+            throw new InvalidDataException(USER_ERRORS.USER_GENERATE_DIET_PLAN_FAILED);
+        }
+
+        return {
+            dietPlan,
+        } as CreatedietPlanDTO;
+
     }
-
-    const plan = await this._dietPlanProviderService.generateDietPlan(userProfile);
-
-    if (!plan) {
-      throw new InvalidDataException(USER_ERRORS.USER_GENERATE_DIET_PLAN_FAILED);
-    }
-
-    const dietPlan = await this._dietPlanRepository.saveDietPlan(userId, plan);
-
-    if (!dietPlan) {
-      throw new InvalidDataException(USER_ERRORS.USER_GENERATE_DIET_PLAN_FAILED);
-    }
-
-    return {
-      dietPlan
-    } as CreatedietPlanDTO
-
-  }
 }

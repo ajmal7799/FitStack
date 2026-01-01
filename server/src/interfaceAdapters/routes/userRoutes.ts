@@ -1,12 +1,14 @@
-import { userAuthController } from '../../infrastructure/DI/Auth/authContainer';
-import { Request, Response, Router, NextFunction } from 'express';
+import express, { Router, type Request, type Response, type NextFunction } from 'express';
+
+import { userAuthController,authMiddleware } from '../../infrastructure/DI/Auth/authContainer';
+
 import { userSubscriptionController } from '../../infrastructure/DI/user/userSubscription/userSubscriptionContainer';
 import { userTrainerController } from '../../infrastructure/DI/user/userTrainer/userTrainerContainer';
 import { userProfileController } from '../../infrastructure/DI/user/userProfileContainer';
-import { authMiddleware } from '../../infrastructure/DI/Auth/authContainer';
-import { userGenerateWorkoutplanController,userGenerateDietplanController } from "../../infrastructure/DI/user/userAiIntegrationContainer";
+import { userBookingSlotController } from '../../infrastructure/DI/user/userBookingSlotContainer';
+import { userGenerateWorkoutplanController,userGenerateDietplanController } from '../../infrastructure/DI/user/userAiIntegrationContainer';
 import { upload } from '../middleware/multer';
-import express from 'express';
+
 
 export class User_Router {
     private _route: Router;
@@ -55,30 +57,52 @@ export class User_Router {
         // --------------------------------------------------
 
 
-        this._route.get("/subscriptions",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+        this._route.get('/subscriptions',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
             userSubscriptionController.getAllSubscriptionPlans(req, res, next);
         });
+
+        this._route.get("/active-subscription",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userSubscriptionController.getActiveSubscription(req, res, next);
+        });
+
+        this._route.post('/checkout-session',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userSubscriptionController.createCheckoutSession(req, res, next);
+        });
+
+        this._route.post('/stripe/webhook', express.raw({ type: 'application/json' }), (req: Request, res: Response, next: NextFunction) => {
+            userSubscriptionController.handleStripeWebhook(req, res, next);
+        });
+
+
+        // --------------------------------------------------
+        //              🛠 USER SIDE TRAINERS
+        // --------------------------------------------------
 
         this._route.get('/get-all-trainers',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
             userTrainerController.getAllTrainer(req, res, next);
         });
 
-        this._route.post("/checkout-session",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
-            userSubscriptionController.createCheckoutSession(req, res, next);
+        this._route.get('/get-trainer-details/:trainerId',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userTrainerController.getTrainerDetails(req, res, next);
         });
 
-        this._route.post("/stripe/webhook", express.raw({type: 'application/json'}), (req: Request, res: Response, next: NextFunction) => {
-            userSubscriptionController.handleStripeWebhook(req, res, next);
+        this._route.post('/select-trainer',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userTrainerController.selectTrainer(req, res, next);
         });
+
+        this._route.get("/get-selected-trainer",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userTrainerController.getSelectedTrainer(req, res, next);
+        });
+
 
         // --------------------------------------------------
         //              🛠 UserProfile Routes
         // --------------------------------------------------
 
 
-        this._route.post("/profile",authMiddleware.verify,upload.fields([{name:"profileImage",maxCount:1}]), (req: Request, res: Response, next: NextFunction) => {
+        this._route.post('/profile',authMiddleware.verify,upload.fields([{ name:'profileImage',maxCount:1 }]), (req: Request, res: Response, next: NextFunction) => {
             userProfileController.createUserProfile(req, res, next);
-        })
+        });
 
 
         // --------------------------------------------------
@@ -89,7 +113,7 @@ export class User_Router {
             userGenerateWorkoutplanController.handleGenerateWorkoutplan(req, res, next);
         });
 
-        this._route.get("/get-workout-plan",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+        this._route.get('/get-workout-plan',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
             userGenerateWorkoutplanController.getWorkoutPlan(req, res, next);
         });
 
@@ -97,7 +121,7 @@ export class User_Router {
             userGenerateDietplanController.handleDietPlan(req, res, next);
         });
         
-        this._route.get("/get-diet-plan",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+        this._route.get('/get-diet-plan',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
             userGenerateDietplanController.getDietPlan(req, res, next);
         });
 
@@ -111,9 +135,30 @@ export class User_Router {
             userProfileController.getUserProfile(req, res, next);
         });
 
-        this._route.get("/personal-info",authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
-            userProfileController.getPersonalInfo(req, res, next);
+        this._route.patch("/profile-update",authMiddleware.verify,upload.fields([{ name:'profileImage',maxCount:1 }])!,(req: Request, res: Response, next: NextFunction) => {
+            userProfileController.updateUserProfile(req, res, next);
         });
+
+        this._route.get('/personal-info',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userProfileController.getBodyMetrics(req, res, next);
+        });
+
+        this._route.patch('/personal-info-update',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userProfileController.updateBodyMetrics(req, res, next);
+        });
+
+        // --------------------------------------------------
+        //              🛠 BOOKING MANAGEMENT
+        // --------------------------------------------------
+
+        this._route.get('/get-available-slots',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userBookingSlotController.getAvailableSlots(req, res, next);
+        });
+
+        this._route.patch('/book-slot/:slotId',authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+            userBookingSlotController.bookSlot(req, res, next);
+        });
+
 
         // --------------------------------------------------
         //              🛠 Logout 

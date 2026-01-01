@@ -1,4 +1,4 @@
-import { SubscriptionStatus } from "../../../../domain/enum/subscriptionStatus";
+import { SubscriptionStatus } from '../../../../domain/enum/subscriptionStatus';
 
 export interface SubscriptionDTO {
     _id: string;
@@ -7,4 +7,11 @@ export interface SubscriptionDTO {
     durationMonths: number;
     description: string;
     isActive: SubscriptionStatus;
+}
+
+
+export interface ShowAcivePlanResponse {
+    name:string;
+    email:string;
+    phone: number;
 }

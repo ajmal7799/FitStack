@@ -1,6 +1,6 @@
-import TrainerSidebar from "../../components/trainer/Sidebar";
-import TrainerHeader from "../../components/trainer/Header";
-import { Calendar, DollarSign, MessageCircle, Users, TrendingUp, Clock } from "lucide-react";
+import TrainerSidebar from '../../components/trainer/Sidebar';
+import TrainerHeader from '../../components/trainer/Header';
+import { Calendar, DollarSign, MessageCircle, Users, TrendingUp, Clock } from 'lucide-react';
 
 const TrainerDashboard = () => {
   return (
@@ -86,7 +86,7 @@ const TrainerDashboard = () => {
                         </div>
                       </div>
                       <span className="text-sm text-gray-400">
-                        {i === 1 ? "10:00 AM" : i === 2 ? "02:30 PM" : "05:00 PM"}
+                        {i === 1 ? '10:00 AM' : i === 2 ? '02:30 PM' : '05:00 PM'}
                       </span>
                     </div>
                   ))}
@@ -106,7 +106,7 @@ const TrainerDashboard = () => {
                       <span>28 / 35</span>
                     </div>
                     <div className="w-full bg-gray-800 rounded-full h-2">
-                      <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style={{ width: "80%" }}></div>
+                      <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style={{ width: '80%' }}></div>
                     </div>
                   </div>
                   <div>
@@ -115,7 +115,7 @@ const TrainerDashboard = () => {
                       <span>94%</span>
                     </div>
                     <div className="w-full bg-gray-800 rounded-full h-2">
-                      <div className="bg-green-500 h-2 rounded-full" style={{ width: "94%" }}></div>
+                      <div className="bg-green-500 h-2 rounded-full" style={{ width: '94%' }}></div>
                     </div>
                   </div>
                 </div>

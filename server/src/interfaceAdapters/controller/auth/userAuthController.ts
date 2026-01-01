@@ -25,6 +25,7 @@ import { forgetPasswordResetPasswordSchema } from '../../../shared/validations/f
 import { googleLoginSchema } from '../../../shared/validations/googleLoginValidator';
 import { IGoogleLoginUseCase } from '../../../application/useCase/auth/IGoogleLoginUseCase';
 import { IJWTService } from '../../../domain/interfaces/services/IJWTService';
+import { IRefreshTokenUseCase } from '../../../application/useCase/auth/IRefreshToken';
 
 export class UserAuthController {
   constructor(
@@ -39,7 +40,8 @@ export class UserAuthController {
     private _forgetPasswordVerifyOtpUseCase: IForgetPasswordVerifyOtp,
     private _forgetPasswordResetPasswordUseCase: IForgetPasswordResetPassword,
     private _googleLoginUseCase: IGoogleLoginUseCase,
-    private _jwtService: IJWTService
+    private _jwtService: IJWTService,
+    private _tokenRefreshUseCase: IRefreshTokenUseCase
   ) {}
 
   // --------------------------------------------------
@@ -132,7 +134,7 @@ export class UserAuthController {
       const { email, password } = loginSchema.parse(req.body);
 
       const user = await this._userLoginUseCase.userLogin(email, password);
-      
+
       const token = this._tokenCreationUseCase.createAccessTokenAndRefreshToken({
         userId: user._id.toString(),
         role: UserRole.USER,
@@ -215,7 +217,6 @@ export class UserAuthController {
 
   async googleLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        
       const loginData = googleLoginSchema.safeParse(req.body);
 
       if (!loginData.success) {
@@ -245,6 +246,20 @@ export class UserAuthController {
     } catch (error) {
       next(error);
     }
+  }
+
+  // --------------------------------------------------
+  //              🛠 HANDLE REFRESH TOKEN
+  // --------------------------------------------------
+
+  async handleRefreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      const accessToken = await this._tokenRefreshUseCase.refresh(refreshToken);
+      res
+        .status(HTTPStatus.OK)
+        .json({ success: true, message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL, accessToken });
+    } catch (error) {}
   }
 
   // --------------------------------------------------

@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useMemo } from "react";
-import Table from "../../components/table/Table";
-import Pagination from "../../components/pagination/Pagination";
-import { useGetAllVerifications } from "../../hooks/Admin/AdminHooks";
-import { Link } from "react-router-dom";
-import AdminSidebar from "../../components/admin/Sidebar";
-import AdminHeader from "../../components/admin/Header";
+import React, { useState, useCallback, useMemo } from 'react';
+import Table from '../../components/table/Table';
+import Pagination from '../../components/pagination/Pagination';
+import { useGetAllVerifications } from '../../hooks/Admin/AdminHooks';
+import { Link } from 'react-router-dom';
+import AdminSidebar from '../../components/admin/Sidebar';
+import AdminHeader from '../../components/admin/Header'; 
 
 // Define the type properly at the top
 export type GetAllVerification = {
@@ -13,7 +13,7 @@ export type GetAllVerification = {
   name: string;
   email: string;
   qualification: string | null;
-  verificationStatus: "pending" | "verified" | "rejected";
+  verificationStatus: 'pending' | 'verified' | 'rejected';
 };
 
 // Use the type directly — no need to extend
@@ -22,9 +22,9 @@ type VerificationRow = GetAllVerification;
 const VerificationListing: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-  const [statusFilter, setStatusFilter] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
   const { data, isLoading, isError } = useGetAllVerifications(
     page,
@@ -54,8 +54,8 @@ const VerificationListing: React.FC = () => {
   }, [searchInput]);
 
   const handleClearSearch = useCallback(() => {
-    setSearchInput("");
-    setDebouncedSearch("");
+    setSearchInput('');
+    setDebouncedSearch('');
     setPage(1);
   }, []);
 
@@ -70,27 +70,27 @@ const VerificationListing: React.FC = () => {
   const headers = useMemo(
     () => [
       {
-        id: "index",
-        label: "#",
+        id: 'index',
+        label: '#',
         render: (_row: VerificationRow, index: number) => (page - 1) * limit + index + 1,
       },
       //  { id: "id", label: "ID", render: (row: GetAllVerification,) => <span>{row.id}</span> },
-      { id: "name",      label: "Name",          render: (row: VerificationRow) => row.name || "-" },
-      { id: "email",     label: "Email",         render: (row: VerificationRow) => row.email },
+      { id: 'name',      label: 'Name',          render: (row: VerificationRow) => row.name || '-' },
+      { id: 'email',     label: 'Email',         render: (row: VerificationRow) => row.email },
       // { id: "phone",     label: "Phone",         render: (row: VerificationRow) => row.phone || "-" },
-      { id: "qualification", label: "Qualification", render: (row: VerificationRow) => row.qualification || "-" },
+      { id: 'qualification', label: 'Qualification', render: (row: VerificationRow) => row.qualification || '-' },
       // { id: "specialisation", label: "Specialisation", render: (row: VerificationRow) => row.specialisation || "-" },
       {
-        id: "status",
-        label: "Status",
+        id: 'status',
+        label: 'Status',
         render: (row: VerificationRow) => (
           <span
             className={`px-4 py-2 rounded-full text-xs font-bold ${
-              row.verificationStatus === "verified"
-                ? "bg-green-100 text-green-800"
-                : row.verificationStatus === "rejected"
-                ? "bg-red-100 text-red-800"
-                : "bg-yellow-100 text-yellow-800"
+              row.verificationStatus === 'verified'
+                ? 'bg-green-100 text-green-800'
+                : row.verificationStatus === 'rejected'
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-yellow-100 text-yellow-800'
             }`}
           >
             {row.verificationStatus}
@@ -98,8 +98,8 @@ const VerificationListing: React.FC = () => {
         ),
       },
       {
-        id: "actions",
-        label: "Actions",
+        id: 'actions',
+        label: 'Actions',
         render: (row: VerificationRow) => (
           <Link
             to={`/admin/verifications/${row.trainerId}`}
@@ -132,7 +132,7 @@ const VerificationListing: React.FC = () => {
                   placeholder="Search by name or email..."
                   value={searchInput}
                   onChange={handleSearchChange}
-                  onKeyDown={(e) => e.key === "Enter" && handleSearchClick()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
                   className="px-4 py-2 border border-gray-300 rounded-lg flex-1 focus:ring-2 focus:ring-indigo-500"
                 />
                 {searchInput && (

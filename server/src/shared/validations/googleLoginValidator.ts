@@ -1,15 +1,15 @@
 
-import { UserRole } from "../../domain/enum/userEnums";
-import { Errors } from "../constants/error";
-import z from "zod";
+import { UserRole } from '../../domain/enum/userEnums';
+import { Errors } from '../constants/error';
+import z from 'zod';
 
 export const googleLoginSchema = z.object({
-  authorizationCode: z.string({ error: Errors.AUTHENTICATION_CODE_MISSING }),
-  role: z
-    .enum(UserRole, {
-      error: Errors.INVALID_ROLE,
-    })
-    .refine((role) => role !== UserRole.ADMIN, {
-      error: "admin signup error",
-    }),
+    authorizationCode: z.string({ error: Errors.AUTHENTICATION_CODE_MISSING }),
+    role: z
+        .enum(UserRole, {
+            error: Errors.INVALID_ROLE,
+        })
+        .refine((role) => role !== UserRole.ADMIN, {
+            error: 'admin signup error',
+        }),
 });

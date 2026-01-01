@@ -11,29 +11,31 @@ interface UserAuthData {
     accessToken: string;
     verificationCheck: boolean;
     userProfileCompleted: boolean;
+    hasActiveSubscription: boolean;
 }
 
 const initialState: UserAuthData = {
-    name: "",
-    email: "",
-    phone: "",
-    isActive: true,
-    role: "",
-    updatedAt: "",
-    accessToken: "",
-    verificationCheck: false,
-    userProfileCompleted: false,
+  name: '',
+  email: '',
+  phone: '',
+  isActive: true,
+  role: '',
+  updatedAt: '',
+  accessToken: '',
+  verificationCheck: false,
+  userProfileCompleted: false,
+  hasActiveSubscription: false,
 };
 
 const userAuthDataSlice = createSlice({
-    name: 'authData',
-    initialState,
-    reducers: {
-      setData: (state, action: PayloadAction<UserAuthData>) => {
-        return {...action.payload};
-      },
-      clearData: ()=> initialState,
-    },    
+  name: 'authData',
+  initialState,
+  reducers: {
+    setData: (state, action: PayloadAction<UserAuthData>) => {
+      return {...action.payload};
+    },
+    clearData: ()=> initialState,
+  },    
 });
 
 export const { setData,clearData } = userAuthDataSlice.actions;

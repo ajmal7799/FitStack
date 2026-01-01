@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, UtensilsCrossed, Heart, Sparkles, RefreshCw, CheckCircle, Clock, Flame, Dumbbell, Droplets, Apple } from 'lucide-react';
-import { useGetDietPlan, useGenerateDietPlan } from "../../../hooks/User/userServiceHooks";
+import { useGetDietPlan, useGenerateDietPlan } from '../../../hooks/User/userServiceHooks';
 import Header from '../../../components/user/Header';
 import Footer from '../../../components/user/footer';
 import { useNavigate } from 'react-router-dom';

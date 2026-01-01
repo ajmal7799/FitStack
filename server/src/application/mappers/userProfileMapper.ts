@@ -1,6 +1,6 @@
-import { IUserProfileModel } from "../../infrastructure/database/models/userProfileModel";
-import { UserProfile } from "../../domain/entities/user/userProfile";
-import { userProfileGetVerficationDTO } from "../dto/user/createUserProfileDTO";
+import { IUserProfileModel } from '../../infrastructure/database/models/userProfileModel';
+import { UserProfile } from '../../domain/entities/user/userProfile';
+import { userProfileGetVerficationDTO } from '../dto/user/profile/createUserBodyMetricsDTO';
 import mongoose from 'mongoose';
 
 export class UserProfileMapper {
@@ -12,7 +12,7 @@ export class UserProfileMapper {
             gender: doc.gender,
             height: doc.height,
             weight: doc.weight,
-            profileImage: doc.profileImage ,
+           
             fitnessGoal: doc.fitnessGoal,
             targetWeight: doc.targetWeight,
             dietPreference: doc.dietPreference,
@@ -20,9 +20,9 @@ export class UserProfileMapper {
             workoutLocation: doc.workoutLocation,
             preferredWorkoutTypes: doc.preferredWorkoutTypes,
             medicalConditions: doc.medicalConditions,
-            profileCompleted: doc.profileCompleted
+            profileCompleted: doc.profileCompleted,
          
-        }
+        };
     }
 
     static mapToGetUserProfileDTO(doc: UserProfile): userProfileGetVerficationDTO {
@@ -32,7 +32,6 @@ export class UserProfileMapper {
             gender: doc.gender,
             height: doc.height,
             weight: doc.weight,
-            profileImage: doc.profileImage ,
             fitnessGoal: doc.fitnessGoal,
             targetWeight: doc.targetWeight,
             dietPreference: doc.dietPreference,
@@ -41,6 +40,6 @@ export class UserProfileMapper {
             preferredWorkoutTypes: doc.preferredWorkoutTypes,
             medicalConditions: doc.medicalConditions,
             profileCompleted: doc.profileCompleted,
-        }
+        };
     }
 }

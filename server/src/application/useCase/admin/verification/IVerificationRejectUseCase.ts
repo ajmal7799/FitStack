@@ -1,4 +1,4 @@
-import { VerificationRejectResponseDTO } from "../../../dto/verification/verificationRejectDTO";
+import { VerificationRejectResponseDTO } from '../../../dto/verification/verificationRejectDTO';
 
 export interface IVerificationRejectUseCase {
     execute(id: string, reason: string): Promise<VerificationRejectResponseDTO>;
