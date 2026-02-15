@@ -33,7 +33,7 @@ export class TrainerRepository extends BaseRepository<Trainer, ITrainerModel> im
         return TrainerMapper.fromMongooseDocument(trainerDoc);
     }
 
-   async updateTrainerProfile(trainerId: string, profile: Trainer): Promise<Trainer | null> {
+    async updateTrainerProfile(trainerId: string, profile: Trainer): Promise<Trainer | null> {
         const updatedDoc = await this._model.findOneAndUpdate(
             { _id: trainerId },
             { $set: profile },

@@ -18,4 +18,6 @@ export interface IUserRepository extends IBaseRepository<User>{
     updateStripeCustomerId(userId: string, stripeCustomerId: string): Promise<void>;
 
     updateActiveMembershipId(userId: string, activeMembershipId: string | null): Promise<void>;
+    updateUser(user: User): Promise<void>;
+    findNonSubscribedUsers(): Promise<User[]>;
 }

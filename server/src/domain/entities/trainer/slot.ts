@@ -1,4 +1,5 @@
 
+import { SlotStatus } from "../../enum/SlotEnums";
 export interface Slot {
     _id: string;
     trainerId: string;
@@ -6,4 +7,7 @@ export interface Slot {
     endTime: Date;
     isBooked: boolean;
     bookedBy?: string | null; 
-}
+    slotStatus: SlotStatus;
+    cancellationReason?: string | null;
+    canceldAt?: Date | null;
+}   

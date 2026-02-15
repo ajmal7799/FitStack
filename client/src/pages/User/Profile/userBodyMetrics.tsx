@@ -87,7 +87,7 @@ const PersonalInfo: React.FC = () => {
     );
   }
 
-  const InfoCard = ({ icon, label, value, accent = "blue" }: { icon: React.ReactNode, label: string, value: string | number, accent?: string }) => {
+  const InfoCard = ({ icon, label, value, accent = 'blue' }: { icon: React.ReactNode, label: string, value: string | number, accent?: string }) => {
     const bgColors: Record<string, string> = {
       blue: 'bg-blue-50',
       purple: 'bg-purple-50',

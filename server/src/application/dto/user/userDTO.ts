@@ -1,4 +1,4 @@
-import { UserRole,UserStatus, } from '../../../domain/enum/userEnums';
+import { UserRole,UserStatus } from '../../../domain/enum/userEnums';
 
 export interface UserDTO {
     _id: string;

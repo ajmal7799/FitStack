@@ -71,7 +71,7 @@ export class UserMapper {
             isActive: user.isActive,
             stripeCustomerId: user.stripeCustomerId,
             activeMembershipId: user.activeMembershipId,
-            profileImage: user.profileImage
+            profileImage: user.profileImage,
         };
     }
 

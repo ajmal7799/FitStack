@@ -13,7 +13,8 @@ import {
     PasswordNotMatchingException,
     TokenExpiredException,
     TokenMissingException,
-    ConflictException
+    ConflictException,
+    UnauthorizedException
 } from '../../application/constants/exceptions';
 
 import { Request, Response, NextFunction } from 'express';
@@ -42,7 +43,7 @@ export const errorHandlingMiddleware = (
                 err instanceof TokenMissingException ||
                 err instanceof InvalidDataException) {
                 statusCode = HTTPStatus.BAD_REQUEST;
-            } else if (err instanceof TokenExpiredException) {
+            } else if (err instanceof TokenExpiredException || err instanceof UnauthorizedException) {
                 statusCode = HTTPStatus.UNAUTHORIZED;
             }
         }

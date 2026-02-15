@@ -59,6 +59,7 @@ export default function UserSignUpPage() {
             setOtpModalOpen(false);
             console.log(res.data.user);
             dispatch(setData({
+              _id: res.data.user._id,
               name: res.data.user.name,
               email: res.data.user.email,
               phone: res.data.user.phone,
@@ -67,7 +68,8 @@ export default function UserSignUpPage() {
               updatedAt: res.data.user.updatedAt,
               accessToken: res.data.accessToken,
               verificationCheck: res.data.accessToken,
-              userProfileCompleted: res.data.userProfileCompleted
+              userProfileCompleted: res.data.userProfileCompleted,
+              hasActiveSubscription: res.data.user.hasActiveSubscription
             }));
 
             if (userData.role === 'trainer') {
@@ -110,6 +112,7 @@ export default function UserSignUpPage() {
                     
           dispatch(
             setData({
+              _id: res.data.user._id,
               name: res.data.user.name,
               email: res.data.user.email,
               phone: res.data.user.phone,
@@ -117,7 +120,8 @@ export default function UserSignUpPage() {
               isActive: res.data.user.status,
               accessToken: res.data.accessToken,
               verificationCheck: res.data.user.verificationCheck,
-              userProfileCompleted: res.data.user.userProfileCompleted
+              userProfileCompleted: res.data.user.userProfileCompleted,
+              hasActiveSubscription: res.data.user.hasActiveSubscription
             })
           );
 

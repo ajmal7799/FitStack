@@ -14,276 +14,276 @@ import { TRAINER_ERRORS } from '../../shared/constants/error';
 import { VerificationStatus } from '../../domain/enum/verificationStatus';
 
 export class VerificationRepository
-  extends BaseRepository<TrainerVerification, IVerificationModel>
-  implements IUpdateVerification
+    extends BaseRepository<TrainerVerification, IVerificationModel>
+    implements IUpdateVerification
 {
-  constructor(protected _model: Model<IVerificationModel>) {
-    super(_model, VerificationMapper);
-  }
-
-  async updateTrainerVerification(
-    trainerId: string,
-    data: Partial<TrainerVerification>
-  ): Promise<TrainerVerification | null> {
-    const updatedDoc = await this._model.findOneAndUpdate(
-      { trainerId: trainerId },
-      { $set: data },
-      { new: true, upsert: true }
-    );
-    if (!updatedDoc) return null;
-    return VerificationMapper.fromMongooseDocument(updatedDoc);
-  }
-
-  async findByTrainerId(trainerId: string): Promise<TrainerVerification | null> {
-    const verificationDoc = await this._model.findOne({ trainerId: trainerId });
-
-    if (!verificationDoc) {
-      return null;
+    constructor(protected _model: Model<IVerificationModel>) {
+        super(_model, VerificationMapper);
     }
 
-    return VerificationMapper.fromMongooseDocument(verificationDoc);
-  }
-
-  async findAllVerification(
-    skip?: number,
-    limit?: number,
-    status?: string,
-    search?: string
-  ): Promise<{ verification: TrainerVerification; trainer: Trainer; user: User }[]> {
-    const pipeline: PipelineStage[] = [];
-    pipeline.push(
-      {
-        $lookup: {
-          from: 'trainers',
-          localField: 'trainerId',
-          foreignField: 'trainerId',
-          as: 'trainerData',
-        },
-      },
-      {
-        $lookup: {
-          from: 'users',
-          let: { trainerIdStr: '$trainerId' },
-          pipeline: [{ $match: { $expr: { $eq: [{ $toString: '$_id' }, '$$trainerIdStr'] } } }],
-          as: 'userData',
-        },
-      },
-      { $unwind: '$trainerData' },
-      { $unwind: '$userData' }
-    );
-
-    const matchStage: any = {};
-
-    if (status) {
-      matchStage.verificationStatus = status;
+    async updateTrainerVerification(
+        trainerId: string,
+        data: Partial<TrainerVerification>,
+    ): Promise<TrainerVerification | null> {
+        const updatedDoc = await this._model.findOneAndUpdate(
+            { trainerId: trainerId },
+            { $set: data },
+            { new: true, upsert: true },
+        );
+        if (!updatedDoc) return null;
+        return VerificationMapper.fromMongooseDocument(updatedDoc);
     }
 
-    if (search) {
-      matchStage.$or = [
-        { 'userData.name': { $regex: search, $options: 'i' } },
-        { 'userData.email': { $regex: search, $options: 'i' } },
-      ];
+    async findByTrainerId(trainerId: string): Promise<TrainerVerification | null> {
+        const verificationDoc = await this._model.findOne({ trainerId: trainerId });
+
+        if (!verificationDoc) {
+            return null;
+        }
+
+        return VerificationMapper.fromMongooseDocument(verificationDoc);
     }
 
-    if (Object.keys(matchStage).length > 0) {
-      pipeline.push({ $match: matchStage });
-    }
-
-    if (skip !== undefined) pipeline.push({ $skip: skip });
-    if (limit !== undefined) pipeline.push({ $limit: limit });
-
-    const docs = await this._model.aggregate(pipeline).exec();
-
-    return docs.map(doc => ({
-      verification: VerificationMapper.fromMongooseDocument(doc),
-      trainer: TrainerMapper.fromMongooseDocument(doc.trainerData),
-      user: UserMapper.fromMongooseDocument(doc.userData),
-    }));
-  }
-
-  async countVerifications(status?: string, search?: string, extraQuery: any = {}): Promise<number> {
-    const pipeline: PipelineStage[] = [];
-
-    const matchStage: any = { ...extraQuery };
-
-    if (status) matchStage.verificationStatus = status;
-
-    pipeline.push(
-      {
-        $lookup: {
-          from: 'users',
-          let: { trainerIdStr: '$trainerId' },
-          pipeline: [
+    async findAllVerification(
+        skip?: number,
+        limit?: number,
+        status?: string,
+        search?: string,
+    ): Promise<{ verification: TrainerVerification; trainer: Trainer; user: User }[]> {
+        const pipeline: PipelineStage[] = [];
+        pipeline.push(
             {
-              $match: {
-                $expr: { $eq: [{ $toString: '$_id' }, '$$trainerIdStr'] },
-              },
+                $lookup: {
+                    from: 'trainers',
+                    localField: 'trainerId',
+                    foreignField: 'trainerId',
+                    as: 'trainerData',
+                },
             },
-          ],
-          as: 'userData',
-        },
-      },
-      { $unwind: { path: '$userData', preserveNullAndEmptyArrays: true } }
-    );
-
-    if (search) {
-      matchStage.$or = [
-        { 'userData.name': { $regex: search, $options: 'i' } },
-        { 'userData.email': { $regex: search, $options: 'i' } },
-      ];
-    }
-
-    pipeline.push({ $match: matchStage });
-
-    pipeline.push({ $count: 'count' });
-
-    const result = await this._model.aggregate(pipeline).exec();
-
-    return result.length > 0 ? result[0].count : 0;
-  }
-
-  async findVerificationByTrainerId(
-    trainerId: string
-  ): Promise<{ verification: TrainerVerification; trainer: Trainer; user: User }> {
-    const pipeline: PipelineStage[] = [];
-
-    pipeline.push({
-      $match: { trainerId },
-    });
-    pipeline.push({
-      $lookup: {
-        from: 'trainers',
-        localField: 'trainerId',
-        foreignField: 'trainerId',
-        as: 'trainerData',
-      },
-    });
-
-    // Lookup user
-    pipeline.push({
-      $lookup: {
-        from: 'users',
-        let: { trainerIdStr: '$trainerId' },
-        pipeline: [
-          {
-            $match: {
-              $expr: { $eq: [{ $toString: '$_id' }, '$$trainerIdStr'] },
+            {
+                $lookup: {
+                    from: 'users',
+                    let: { trainerIdStr: '$trainerId' },
+                    pipeline: [{ $match: { $expr: { $eq: [{ $toString: '$_id' }, '$$trainerIdStr'] } } }],
+                    as: 'userData',
+                },
             },
-          },
-        ],
-        as: 'userData',
-      },
-    });
+            { $unwind: '$trainerData' },
+            { $unwind: '$userData' },
+        );
 
-    pipeline.push(
-      { $unwind: { path: '$trainerData', preserveNullAndEmptyArrays: true } },
-      { $unwind: { path: '$userData', preserveNullAndEmptyArrays: true } }
-    );
-    const docs = await this._model.aggregate(pipeline).exec();
-    if (!docs || docs.length === 0) {
-      throw new NotFoundException(TRAINER_ERRORS.TRAINER_VERIFICATION_NOT_FOUND);
-    }
-    const doc = docs[0];
+        const matchStage: any = {};
 
-    return {
-      verification: VerificationMapper.fromMongooseDocument(doc),
-      trainer: TrainerMapper.fromMongooseDocument(doc.trainerData),
-      user: UserMapper.fromMongooseDocument(doc.userData),
-    };
-  }
+        if (status) {
+            matchStage.verificationStatus = status;
+        }
 
-  async verifyTrainer(trainerId: string): Promise<TrainerVerification | null> {
-    const updatedDoc = await this._model.findOneAndUpdate(
-      { trainerId: trainerId },
-      { $set: { verificationStatus: VerificationStatus.VERIFIED, rejectionReason: null } },
-      { new: true, upsert: true }
-    );
-    if (!updatedDoc) return null;
-    return VerificationMapper.fromMongooseDocument(updatedDoc);
-  }
+        if (search) {
+            matchStage.$or = [
+                { 'userData.name': { $regex: search, $options: 'i' } },
+                { 'userData.email': { $regex: search, $options: 'i' } },
+            ];
+        }
 
-  async rejectTrainer(trainerId: string, rejectionReason: string): Promise<TrainerVerification | null> {
-    const updatedDoc = await this._model.findOneAndUpdate(
-      { trainerId: trainerId },
-      { $set: { verificationStatus: VerificationStatus.REJECTED, rejectionReason: rejectionReason } },
-      { new: true, upsert: true }
-    );
-    if (!updatedDoc) return null;
-    return VerificationMapper.fromMongooseDocument(updatedDoc);
-  }
+        if (Object.keys(matchStage).length > 0) {
+            pipeline.push({ $match: matchStage });
+        }
 
-  async allVerifiedTrainer(
-    skip?: number,
-    limit?: number,
-    search?: string
-  ): Promise<{ trainer: Trainer; verification: TrainerVerification; user: User }[]> {
-    const pipeline: PipelineStage[] = [];
+        if (skip !== undefined) pipeline.push({ $skip: skip });
+        if (limit !== undefined) pipeline.push({ $limit: limit });
 
-    pipeline.push({
-      $match: { verificationStatus: VerificationStatus.VERIFIED },
-    });
+        const docs = await this._model.aggregate(pipeline).exec();
 
-    pipeline.push(
-      {
-        $lookup: {
-          from: 'trainers',
-          localField: 'trainerId',
-          foreignField: 'trainerId',
-          as: 'trainerData',
-        },
-      },
-      {
-        $lookup: {
-          from: 'users',
-          let: { trainerIdStr: '$trainerId' },
-          pipeline: [{ $match: { $expr: { $eq: [{ $toString: '$_id' }, '$$trainerIdStr'] } } }],
-          as: 'userData',
-        },
-      },
-      { $unwind: { path: '$trainerData', preserveNullAndEmptyArrays: true } },
-      { $unwind: { path: '$userData', preserveNullAndEmptyArrays: true } }
-    );
-
-    if (search) {
-      const matchStage: any = {};
-      matchStage.$or = [
-        { 'userData.name': { $regex: search, $options: 'i' } },
-        { 'userData.email': { $regex: search, $options: 'i' } },
-      ];
-      pipeline.push({ $match: matchStage });
+        return docs.map(doc => ({
+            verification: VerificationMapper.fromMongooseDocument(doc),
+            trainer: TrainerMapper.fromMongooseDocument(doc.trainerData),
+            user: UserMapper.fromMongooseDocument(doc.userData),
+        }));
     }
 
-    if (skip) pipeline.push({ $skip: skip });
-    if (limit) pipeline.push({ $limit: limit });
-    const docs = await this._model.aggregate(pipeline).exec();
+    async countVerifications(status?: string, search?: string, extraQuery: any = {}): Promise<number> {
+        const pipeline: PipelineStage[] = [];
 
-    return docs.map(doc => ({
-      verification: VerificationMapper.fromMongooseDocument(doc),
-      trainer: TrainerMapper.fromMongooseDocument(doc.trainerData),
-      user: UserMapper.fromMongooseDocument(doc.userData),
-    }));
-  }
+        const matchStage: any = { ...extraQuery };
 
-  async countVerifiedTrainer(search?: string): Promise<number> {
-    const initialMatch: any = { VerificationStatus: VerificationStatus.VERIFIED };
+        if (status) matchStage.verificationStatus = status;
 
-    const pipeline: PipelineStage[] = [];
+        pipeline.push(
+            {
+                $lookup: {
+                    from: 'users',
+                    let: { trainerIdStr: '$trainerId' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: [{ $toString: '$_id' }, '$$trainerIdStr'] },
+                            },
+                        },
+                    ],
+                    as: 'userData',
+                },
+            },
+            { $unwind: { path: '$userData', preserveNullAndEmptyArrays: true } },
+        );
 
-    pipeline.push({ $match: initialMatch });
+        if (search) {
+            matchStage.$or = [
+                { 'userData.name': { $regex: search, $options: 'i' } },
+                { 'userData.email': { $regex: search, $options: 'i' } },
+            ];
+        }
 
-    if (search) {
-      const searchMatch: any = {
-        $or: [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }],
-      };
+        pipeline.push({ $match: matchStage });
 
-      pipeline.push({ $match: searchMatch });
+        pipeline.push({ $count: 'count' });
+
+        const result = await this._model.aggregate(pipeline).exec();
+
+        return result.length > 0 ? result[0].count : 0;
     }
 
-    // 4. Use the $count stage for efficient counting in MongoDB.
-    pipeline.push({ $count: 'verifiedTrainerCount' });
+    async findVerificationByTrainerId(
+        trainerId: string,
+    ): Promise<{ verification: TrainerVerification; trainer: Trainer; user: User }> {
+        const pipeline: PipelineStage[] = [];
 
-    const result = await this._model.aggregate(pipeline).exec();
+        pipeline.push({
+            $match: { trainerId },
+        });
+        pipeline.push({
+            $lookup: {
+                from: 'trainers',
+                localField: 'trainerId',
+                foreignField: 'trainerId',
+                as: 'trainerData',
+            },
+        });
 
-    return result.length > 0 ? result[0].verifiedTrainerCount : 0;
-  }
+        // Lookup user
+        pipeline.push({
+            $lookup: {
+                from: 'users',
+                let: { trainerIdStr: '$trainerId' },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: { $eq: [{ $toString: '$_id' }, '$$trainerIdStr'] },
+                        },
+                    },
+                ],
+                as: 'userData',
+            },
+        });
+
+        pipeline.push(
+            { $unwind: { path: '$trainerData', preserveNullAndEmptyArrays: true } },
+            { $unwind: { path: '$userData', preserveNullAndEmptyArrays: true } },
+        );
+        const docs = await this._model.aggregate(pipeline).exec();
+        if (!docs || docs.length === 0) {
+            throw new NotFoundException(TRAINER_ERRORS.TRAINER_VERIFICATION_NOT_FOUND);
+        }
+        const doc = docs[0];
+
+        return {
+            verification: VerificationMapper.fromMongooseDocument(doc),
+            trainer: TrainerMapper.fromMongooseDocument(doc.trainerData),
+            user: UserMapper.fromMongooseDocument(doc.userData),
+        };
+    }
+
+    async verifyTrainer(trainerId: string): Promise<TrainerVerification | null> {
+        const updatedDoc = await this._model.findOneAndUpdate(
+            { trainerId: trainerId },
+            { $set: { verificationStatus: VerificationStatus.VERIFIED, rejectionReason: null } },
+            { new: true, upsert: true },
+        );
+        if (!updatedDoc) return null;
+        return VerificationMapper.fromMongooseDocument(updatedDoc);
+    }
+
+    async rejectTrainer(trainerId: string, rejectionReason: string): Promise<TrainerVerification | null> {
+        const updatedDoc = await this._model.findOneAndUpdate(
+            { trainerId: trainerId },
+            { $set: { verificationStatus: VerificationStatus.REJECTED, rejectionReason: rejectionReason } },
+            { new: true, upsert: true },
+        );
+        if (!updatedDoc) return null;
+        return VerificationMapper.fromMongooseDocument(updatedDoc);
+    }
+
+    async allVerifiedTrainer(
+        skip?: number,
+        limit?: number,
+        search?: string,
+    ): Promise<{ trainer: Trainer; verification: TrainerVerification; user: User }[]> {
+        const pipeline: PipelineStage[] = [];
+
+        pipeline.push({
+            $match: { verificationStatus: VerificationStatus.VERIFIED },
+        });
+
+        pipeline.push(
+            {
+                $lookup: {
+                    from: 'trainers',
+                    localField: 'trainerId',
+                    foreignField: 'trainerId',
+                    as: 'trainerData',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    let: { trainerIdStr: '$trainerId' },
+                    pipeline: [{ $match: { $expr: { $eq: [{ $toString: '$_id' }, '$$trainerIdStr'] } } }],
+                    as: 'userData',
+                },
+            },
+            { $unwind: { path: '$trainerData', preserveNullAndEmptyArrays: true } },
+            { $unwind: { path: '$userData', preserveNullAndEmptyArrays: true } },
+        );
+
+        if (search) {
+            const matchStage: any = {};
+            matchStage.$or = [
+                { 'userData.name': { $regex: search, $options: 'i' } },
+                { 'userData.email': { $regex: search, $options: 'i' } },
+            ];
+            pipeline.push({ $match: matchStage });
+        }
+
+        if (skip) pipeline.push({ $skip: skip });
+        if (limit) pipeline.push({ $limit: limit });
+        const docs = await this._model.aggregate(pipeline).exec();
+
+        return docs.map(doc => ({
+            verification: VerificationMapper.fromMongooseDocument(doc),
+            trainer: TrainerMapper.fromMongooseDocument(doc.trainerData),
+            user: UserMapper.fromMongooseDocument(doc.userData),
+        }));
+    }
+
+    async countVerifiedTrainer(search?: string): Promise<number> {
+        const initialMatch: any = { verificationStatus: VerificationStatus.VERIFIED };
+
+        const pipeline: PipelineStage[] = [];
+
+        pipeline.push({ $match: initialMatch });
+
+        if (search) {
+            const searchMatch: any = {
+                $or: [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }],
+            };
+
+            pipeline.push({ $match: searchMatch });
+        }
+        
+        // 4. Use the $count stage for efficient counting in MongoDB.
+        pipeline.push({ $count: 'verifiedTrainerCount' });
+        
+        const result = await this._model.aggregate(pipeline).exec();
+        console.log(result);
+        return result.length > 0 ? result[0].verifiedTrainerCount : 0;
+    }
 }

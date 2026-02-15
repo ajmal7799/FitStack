@@ -1,4 +1,4 @@
-import AxiosInstance from '../../../axios/axios';
+import AxiosInstance from '../../axios/axios';
 
 
 export const getVerifiedTrainers = async (page=1,limit=10,search?:string) => {

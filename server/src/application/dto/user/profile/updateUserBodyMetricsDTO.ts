@@ -1,5 +1,5 @@
-import { UserGender,DietPreference,ExperienceLevel,FitnessGoal,WorkoutLocation,PreferredWorkoutType } from "../../../../domain/enum/userProfileEnums";
-import { UserProfile } from "../../../../domain/entities/user/userProfile";
+import { UserGender,DietPreference,ExperienceLevel,FitnessGoal,WorkoutLocation,PreferredWorkoutType } from '../../../../domain/enum/userProfileEnums';
+import { UserProfile } from '../../../../domain/entities/user/userProfile';
 
 export interface updateUserBodyMetricsRequestDTO {
    age?: number,

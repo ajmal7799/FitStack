@@ -28,6 +28,7 @@ import { UserGoogleLoginUseCase } from '../../../application/implementation/auth
 import { UserProfileRepository } from '../../repositories/userProfileRepository';
 import { userProfileModel } from '../../database/models/userProfileModel';
 import { RefreshTokenUseCase } from '../../../application/implementation/auth/refreshTokenUseCase';
+import { ChangePasswordUseCase } from '../../../application/implementation/auth/changePasswordUseCase';
 
 //Repositories & Services
 const userRepository = new UserRepository(userModel);
@@ -83,6 +84,7 @@ const forgetPasswordResetPasswordUseCase = new ForgetPasswordResetPasswordUseCas
 const googleAuthUseCase = new UserGoogleLoginUseCase(googleAuthService,userRepository,userProfileRepository);
 
 const refreshTokenUseCase = new RefreshTokenUseCase(jwtService);
+const changePasswordUseCase = new ChangePasswordUseCase(userRepository,hashService);
 
 //Controller
 export const userAuthController = new UserAuthController(
@@ -98,8 +100,8 @@ export const userAuthController = new UserAuthController(
     forgetPasswordResetPasswordUseCase,
     googleAuthUseCase,
     jwtService,
-    refreshTokenUseCase
-    
+    refreshTokenUseCase,
+    changePasswordUseCase
  
 );
 

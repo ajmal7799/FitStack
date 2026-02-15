@@ -10,7 +10,11 @@ import {
   updateUserProfile,
   updatePersonalInfo,
   bookSlot,
-  getAvailableSlots
+  getAvailableSlots,
+  changePassword,
+  getBookedSlots,
+  getBookedSlotDetails,
+  cancelBookedSlot
 } from '../../service/user/userService';
 import type { UserBodyMetricsPayload } from '../../types/UserBodyMetricsPayload';
 
@@ -96,19 +100,47 @@ export const useGetAvailableSlots = (date: string) => {
     queryFn: () => getAvailableSlots(date),
     
     // This ensures the query only runs if a date is actually provided
-    enabled: !!date, 
+    // enabled: !!date, 
     
-    retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    // retry: false,
+    // refetchOnWindowFocus: false,
+    // staleTime: 5 * 60 * 1000, // 5 minutes
   });
-}
+};
 
 
 export const useBookSlot = () => {
   return useMutation({
     mutationFn: (slotId: string) => bookSlot(slotId),
   });
-}
+};
 
+
+
+export const useChangePassword = () => {
+  return useMutation({
+    mutationFn: (data: { oldPassword: string; newPassword: string; }) => changePassword(data),
+  });
+};
+
+
+export const useGetBookedSlots = (page: number, limit: number) => {
+  return useQuery({
+    queryKey: ['bookedSlots', page, limit], 
+    queryFn: () => getBookedSlots(page, limit),
+  });
+};
+
+export const useGetBookedSlotDetails = (slotId: string) => {
+  return useQuery({
+    queryKey: ['bookedSlotDetails', slotId],
+    queryFn: () => getBookedSlotDetails(slotId),
+})
+};
+
+export const useCancelBookedSlot = () => {
+  return useMutation({
+    mutationFn: (data: { slotId: string; reason: string }) => cancelBookedSlot(data.slotId, data.reason),
+  });
+};
 

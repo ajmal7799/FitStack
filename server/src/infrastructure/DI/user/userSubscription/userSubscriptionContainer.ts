@@ -10,6 +10,8 @@ import { HandleWebhookUseCase } from '../../../../application/implementation/use
 import { MembershipRepository } from '../../../repositories/membershipRepository';
 import { membershipModel } from '../../../database/models/membershipModel';
 import { ActiveSubscriptionUseCase } from '../../../../application/implementation/user/subscription/ActiveSubscriptionUseCase';
+import { NonSubscribedUsersUseCase } from '../../../../application/implementation/user/subscription/NonSubscribedUsersUseCase';
+
 
 // repository & service
 const subscriptionRepository = new SubscriptionRepository(subscriptionModel);
@@ -22,6 +24,8 @@ const getAllSubscriptionUseCase = new GetAllSubscriptionUser(subscriptionReposit
 const createUserCheckoutSessionUseCase = new CreateUserCheckoutSession(subscriptionRepository,userRepository, stripeService, stripeService);
 const webhookHandler = new HandleWebhookUseCase(userRepository, stripeService, membershipRepository);
 const activeSubscriptionUseCase = new ActiveSubscriptionUseCase(subscriptionRepository, userRepository,membershipRepository);
+const nonSubscribedUsersUseCase = new NonSubscribedUsersUseCase(userRepository);
+
 
 // controller
-export const userSubscriptionController = new UserSubscriptionController(getAllSubscriptionUseCase, createUserCheckoutSessionUseCase, webhookHandler, activeSubscriptionUseCase);
+export const userSubscriptionController = new UserSubscriptionController(getAllSubscriptionUseCase, createUserCheckoutSessionUseCase, webhookHandler, activeSubscriptionUseCase, nonSubscribedUsersUseCase  );

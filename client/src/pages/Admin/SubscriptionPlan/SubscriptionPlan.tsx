@@ -233,7 +233,7 @@ const SubscriptionPlans: React.FC = () => {
         label: 'Price',
         render: (row: TablePlan) => (
           <span className="font-medium text-green-600">
-            ${row.price.toFixed(2)}
+            {row.price.toFixed(2)}
           </span>
         ),
       },

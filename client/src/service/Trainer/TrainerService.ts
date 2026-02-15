@@ -48,3 +48,23 @@ export const deleteSlots = async (slotId: string) => {
   const response = await AxiosInstance.delete(`/trainer/slots/${slotId}`);
   return response.data;
 };
+
+export const CreateRecurringSlot = async (data: string | string[]) => {
+  const response = await AxiosInstance.post('/trainer/recurring-slots', data);
+  return response.data;
+};
+
+
+export const getBookedSlots = async (page: number, limit: number) => {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+  const response = await AxiosInstance.get(`/trainer/booked-slots?${params.toString()}`);
+  return response.data;
+}
+
+export const getBookedSlotDetails = async (slotId: string) => {
+  const response = await AxiosInstance.get(`/trainer/booked-slots/${slotId}`);
+  return response.data;
+}

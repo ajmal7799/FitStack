@@ -26,9 +26,10 @@ import { googleLoginSchema } from '../../../shared/validations/googleLoginValida
 import { IGoogleLoginUseCase } from '../../../application/useCase/auth/IGoogleLoginUseCase';
 import { IJWTService } from '../../../domain/interfaces/services/IJWTService';
 import { IRefreshTokenUseCase } from '../../../application/useCase/auth/IRefreshToken';
+import { IChangePasswordUseCase } from '../../../application/useCase/auth/IChangePasswordUseCase';
 
 export class UserAuthController {
-  constructor(
+    constructor(
     private _registerUseCase: ICreateUserUseCase,
     private _sendOtpUseCase: ISignUpSendOtpUseCase,
     private _verifyOtpUseCase: IVerifyOtpUseCase,
@@ -41,242 +42,272 @@ export class UserAuthController {
     private _forgetPasswordResetPasswordUseCase: IForgetPasswordResetPassword,
     private _googleLoginUseCase: IGoogleLoginUseCase,
     private _jwtService: IJWTService,
-    private _tokenRefreshUseCase: IRefreshTokenUseCase
-  ) {}
+    private _tokenRefreshUseCase: IRefreshTokenUseCase,
+    private _changePasswordUseCase: IChangePasswordUseCase,
+    ) {}
 
-  // --------------------------------------------------
-  //               SINGUP SEND OTP
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //               SINGUP SEND OTP
+    // --------------------------------------------------
 
-  async signUpSendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const validateEmail = emailSchema.safeParse(req.body.email);
-      if (!validateEmail) {
-        throw new Error(Errors.INVALID_EMAIL);
-      }
+    async signUpSendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            
+            const validateEmail = emailSchema.safeParse(req.body.email);
+            if (!validateEmail) {
+                throw new Error(Errors.INVALID_EMAIL);
+            }
 
-      await this._sendOtpUseCase.signUpSendOtp(validateEmail.data!);
+            await this._sendOtpUseCase.signUpSendOtp(validateEmail.data!);
 
-      ResponseHelper.success(res, MESSAGES.OTP.OTP_SUCCESSFULL, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.OTP.OTP_SUCCESSFULL, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //               REGISTER USER
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //               REGISTER USER
+    // --------------------------------------------------
 
-  async registerUser(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userData = registerUserSchema.safeParse(req.body);
+    async registerUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userData = registerUserSchema.safeParse(req.body);
 
-      if (!userData.success) {
-        res.status(HTTPStatus.BAD_REQUEST).json({ message: Errors.INVALID_USERDATA });
-        return;
-      }
+            if (!userData.success) {
+                res.status(HTTPStatus.BAD_REQUEST).json({ message: Errors.INVALID_USERDATA });
+                return;
+            }
 
-      const { email, name, password, phone, otp, role } = userData.data!;
-      console.log('OTP:', otp);
+            const { email, name, password, phone, otp, role } = userData.data!;
+            console.log('OTP:', otp);
 
-      const verifiedOtp = await this._verifyOtpUseCase.verifyOtp(email, otp);
+            const verifiedOtp = await this._verifyOtpUseCase.verifyOtp(email, otp);
 
-      if (!verifiedOtp) {
-        res.status(HTTPStatus.BAD_REQUEST).json({ message: Errors.OTP_VERIFICATION_FAILED });
-        return;
-      }
+            if (!verifiedOtp) {
+                res.status(HTTPStatus.BAD_REQUEST).json({ message: Errors.OTP_VERIFICATION_FAILED });
+                return;
+            }
 
-      const user = await this._registerUseCase.createUser({ name, email, password, phone, role });
-      const token = this._tokenCreationUseCase.createAccessTokenAndRefreshToken({
-        userId: user._id!.toString(),
-        role: UserRole.USER,
-      });
+            const user = await this._registerUseCase.createUser({ name, email, password, phone, role });
+            const token = this._tokenCreationUseCase.createAccessTokenAndRefreshToken({
+                userId: user._id!.toString(),
+                role: UserRole.USER,
+            });
 
-      setRefreshTokenCookie(res, token.refreshToken);
+            setRefreshTokenCookie(res, token.refreshToken);
 
-      ResponseHelper.success(
-        res,
-        MESSAGES.USERS.REGISTER_SUCCESS,
-        { user, accessToken: token.accessToken },
-        HTTPStatus.OK
-      );
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(
+                res,
+                MESSAGES.USERS.REGISTER_SUCCESS,
+                { user, accessToken: token.accessToken },
+                HTTPStatus.OK,
+            );
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //               RESEND OTP
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //               RESEND OTP
+    // --------------------------------------------------
 
-  async resendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const validatedEmail = emailSchema.safeParse(req.body.email);
+    async resendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const validatedEmail = emailSchema.safeParse(req.body.email);
 
-      if (validatedEmail.error) {
-        throw new InvalidDataException(Errors.INVALID_EMAIL);
-      }
+            if (validatedEmail.error) {
+                throw new InvalidDataException(Errors.INVALID_EMAIL);
+            }
 
-      await this._resendOtpUseCase.resendOtp(validatedEmail.data);
+            await this._resendOtpUseCase.resendOtp(validatedEmail.data);
 
-      ResponseHelper.success(res, MESSAGES.OTP.RESEND_OTP_SUCCESSFULL, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.OTP.RESEND_OTP_SUCCESSFULL, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //               LOGIN USER
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //               LOGIN USER
+    // --------------------------------------------------
 
-  async loginUser(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const { email, password } = loginSchema.parse(req.body);
+    async loginUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { email, password } = loginSchema.parse(req.body);
 
-      const user = await this._userLoginUseCase.userLogin(email, password);
+            const user = await this._userLoginUseCase.userLogin(email, password);
 
-      const token = this._tokenCreationUseCase.createAccessTokenAndRefreshToken({
-        userId: user._id.toString(),
-        role: UserRole.USER,
-      });
+            const token = this._tokenCreationUseCase.createAccessTokenAndRefreshToken({
+                userId: user._id.toString(),
+                role: UserRole.USER,
+            });
 
-      setRefreshTokenCookie(res, token.refreshToken);
+            setRefreshTokenCookie(res, token.refreshToken);
 
-      ResponseHelper.success(
-        res,
-        MESSAGES.USERS.LOGIN_SUCCESS,
-        { user, accessToken: token.accessToken },
-        HTTPStatus.OK
-      );
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(
+                res,
+                MESSAGES.USERS.LOGIN_SUCCESS,
+                { user, accessToken: token.accessToken },
+                HTTPStatus.OK,
+            );
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 FORGET PASSWORD SENT OTP
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 FORGET PASSWORD SENT OTP
+    // --------------------------------------------------
 
-  async forgetPasswordSentOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const validateEmail = emailSchema.safeParse(req.body.email);
+    async forgetPasswordSentOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const validateEmail = emailSchema.safeParse(req.body.email);
 
-      if (validateEmail.error) {
-        throw new InvalidDataException(Errors.INVALID_EMAIL);
-      }
+            if (validateEmail.error) {
+                throw new InvalidDataException(Errors.INVALID_EMAIL);
+            }
 
-      await this._forgetPasswordUseCase.sendOtp(validateEmail.data!);
-      ResponseHelper.success(res, MESSAGES.OTP.OTP_SUCCESSFULL, HTTPStatus.OK);
-    } catch (error) {
-      console.log('err', error);
-      next(error);
+            await this._forgetPasswordUseCase.sendOtp(validateEmail.data!);
+            ResponseHelper.success(res, MESSAGES.OTP.OTP_SUCCESSFULL, HTTPStatus.OK);
+        } catch (error) {
+            console.log('err', error);
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 FORGET PASSWORD VERIFY OTP
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 FORGET PASSWORD VERIFY OTP
+    // --------------------------------------------------
 
-  async forgetPasswordVerifyOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const data = forgetPasswordVerifyOtpSchema.safeParse(req.body);
-      if (!data.success) {
-        throw new InvalidDataException(Errors.INVALID_DATA);
-      }
+    async forgetPasswordVerifyOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const data = forgetPasswordVerifyOtpSchema.safeParse(req.body);
+            if (!data.success) {
+                throw new InvalidDataException(Errors.INVALID_DATA);
+            }
 
-      const token = await this._forgetPasswordVerifyOtpUseCase.verifyOtp(data.data!);
+            const token = await this._forgetPasswordVerifyOtpUseCase.verifyOtp(data.data!);
 
-      ResponseHelper.success(res, MESSAGES.OTP.OTP_VERIFIED_SUCCESSFULL, token, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.OTP.OTP_VERIFIED_SUCCESSFULL, token, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 FORGET PASSWORD RESET PASSWORD
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 FORGET PASSWORD RESET PASSWORD
+    // --------------------------------------------------
 
-  async forgetPasswordResetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const data = forgetPasswordResetPasswordSchema.safeParse(req.body);
-      if (!data.success) {
-        throw new InvalidDataException(Errors.INVALID_DATA);
-      }
+    async forgetPasswordResetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const data = forgetPasswordResetPasswordSchema.safeParse(req.body);
+            if (!data.success) {
+                throw new InvalidDataException(Errors.INVALID_DATA);
+            }
 
-      await this._forgetPasswordResetPasswordUseCase.resetPassword(data.data!);
+            await this._forgetPasswordResetPasswordUseCase.resetPassword(data.data!);
 
-      ResponseHelper.success(res, MESSAGES.USERS.PASSWORD_RESET_SUCCESSFULLY, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.USERS.PASSWORD_RESET_SUCCESSFULLY, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 GOOGLE LOGIN
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 GOOGLE LOGIN
+    // --------------------------------------------------
 
-  async googleLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const loginData = googleLoginSchema.safeParse(req.body);
+    async googleLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const loginData = googleLoginSchema.safeParse(req.body);
 
-      if (!loginData.success) {
-        throw new InvalidDataException(loginData.error.message || Errors.INVALID_DATA);
-      }
+            if (!loginData.success) {
+                throw new InvalidDataException(loginData.error.message || Errors.INVALID_DATA);
+            }
 
-      const responseDTO = await this._googleLoginUseCase.execute(loginData.data);
+            const responseDTO = await this._googleLoginUseCase.execute(loginData.data);
 
-      const accessToken = await this._jwtService.createAccessToken({
-        userId: responseDTO._id,
-        role: responseDTO.role,
-      });
+            const accessToken = await this._jwtService.createAccessToken({
+                userId: responseDTO._id,
+                role: responseDTO.role,
+            });
 
-      const refreshToken = await this._jwtService.createRefreshToken({
-        userId: responseDTO._id,
-        role: responseDTO.role,
-      });
+            const refreshToken = await this._jwtService.createRefreshToken({
+                userId: responseDTO._id,
+                role: responseDTO.role,
+            });
 
-      setRefreshTokenCookie(res, refreshToken);
+            setRefreshTokenCookie(res, refreshToken);
 
-      ResponseHelper.success(
-        res,
-        MESSAGES.USERS.LOGIN_SUCCESS,
-        { user: responseDTO, accessToken: accessToken },
-        HTTPStatus.OK
-      );
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(
+                res,
+                MESSAGES.USERS.LOGIN_SUCCESS,
+                { user: responseDTO, accessToken: accessToken },
+                HTTPStatus.OK,
+            );
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 HANDLE REFRESH TOKEN
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 HANDLE REFRESH TOKEN
+    // --------------------------------------------------
 
-  async handleRefreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const refreshToken = req.cookies.refreshToken;
-      const accessToken = await this._tokenRefreshUseCase.refresh(refreshToken);
-      res
-        .status(HTTPStatus.OK)
-        .json({ success: true, message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL, accessToken });
-    } catch (error) {}
-  }
-
-  // --------------------------------------------------
-  //              🛠 LOGOUT
-  // --------------------------------------------------
-
-  async handleLogout(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const refreshToken = req.cookies.RefreshToken;
-
-      await this._tokenInvalidationUseCase.refreshToken(refreshToken);
-
-      clearRefreshTokenCookie(res);
-
-      ResponseHelper.success(res, MESSAGES.USERS.LOGOUT_SUCCESS, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+    async handleRefreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const refreshToken = req.cookies.refreshToken;
+            const accessToken = await this._tokenRefreshUseCase.refresh(refreshToken);
+            res
+                .status(HTTPStatus.OK)
+                .json({ success: true, message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL, accessToken });
+        } catch (error) {}
     }
-  }
+
+
+    // --------------------------------------------------
+    //              🛠 PASSWORD CHANGE
+    // --------------------------------------------------
+
+
+    async handlePasswordChange(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            console.log("reached here");    
+            const userId = req.user?.userId;
+            const { oldPassword, newPassword } = req.body;
+
+            if (!userId || !oldPassword || !newPassword) {
+                throw new InvalidDataException(Errors.INVALID_DATA);
+            }
+
+            await this._changePasswordUseCase.changePassword(userId, oldPassword, newPassword);
+
+            ResponseHelper.success(res, MESSAGES.USERS.PASSWORD_CHANGE_SUCCESSFULLY, HTTPStatus.OK);
+            
+        } catch (error) {
+            next(error);
+        }
+    }
+
+
+
+
+    // --------------------------------------------------
+    //              🛠 LOGOUT
+    // --------------------------------------------------
+
+    async handleLogout(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const refreshToken = req.cookies.RefreshToken;
+
+            await this._tokenInvalidationUseCase.refreshToken(refreshToken);
+
+            clearRefreshTokenCookie(res);
+
+            ResponseHelper.success(res, MESSAGES.USERS.LOGOUT_SUCCESS, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
+    }
 }

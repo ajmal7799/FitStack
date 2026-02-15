@@ -1,10 +1,10 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { getVerifiedTrainers } from "../../service/user/subscription/TrainersService";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getVerifiedTrainers } from '../../service/user/TrainersService';
 import {
   getTrainerDetails,
   selectTrainer,
   getSelectedTrainer,
-} from "../../service/user/userService";
+} from '../../service/user/userService';
 
 export const useGetAllVerifiedTrainers = (
   page: number,
@@ -12,7 +12,7 @@ export const useGetAllVerifiedTrainers = (
   search?: string
 ) => {
   return useQuery({
-    queryKey: ["trainer", page, limit, search],
+    queryKey: ['trainer', page, limit, search],
     queryFn: () => getVerifiedTrainers(page, limit, search),
     // keepPreviousData: true,
     // refetchInterval: 500,
@@ -20,10 +20,10 @@ export const useGetAllVerifiedTrainers = (
 };
 
 export const useGetTrainerDetails = (id: string) => {
-  console.log("🔵 Hook called with ID:", id);
+  console.log('🔵 Hook called with ID:', id);
 
   return useQuery({
-    queryKey: ["trainerDetails", id],
+    queryKey: ['trainerDetails', id],
     queryFn: async () => {
       const result = await getTrainerDetails(id);
       return result;
@@ -42,7 +42,7 @@ export const useSelectTrainer = () => {
 
 export const useGetSelectedTrainer = () => {
   return useQuery({
-    queryKey: ["selectedTrainer"],
+    queryKey: ['selectedTrainer'],
     queryFn: getSelectedTrainer,
     retry: false,
     refetchOnWindowFocus: false, // 👈 Prevent refetching when switching tabs

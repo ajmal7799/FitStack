@@ -13,7 +13,7 @@ export class GetProfileData implements IGetProfileData {
         private _userRepository: IUserRepository,
         private _trainerRepository: ITrainerRepository,
         private _verificationRepository: IUpdateVerification,
-        private _storageService: IStorageService
+        private _storageService: IStorageService,
     ) {}
 
     async getProfileData(id: string): Promise<TrainerProfileDTO> {

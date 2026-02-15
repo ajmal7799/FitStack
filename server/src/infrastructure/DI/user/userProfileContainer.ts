@@ -39,5 +39,5 @@ export const userProfileController = new UserProfileController(
     getProfileUseCase,
     getProfileInfoUseCase,
     updateUserProfileUseCase,
-    updateUserBodyMetricsUseCase
+    updateUserBodyMetricsUseCase,
 );

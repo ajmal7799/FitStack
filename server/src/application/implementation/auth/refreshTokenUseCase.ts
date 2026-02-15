@@ -1,22 +1,22 @@
-import { IRefreshTokenUseCase } from "../../useCase/auth/IRefreshToken";
-import { IJWTService } from "../../../domain/interfaces/services/IJWTService";
-import { Errors } from "../../../shared/constants/error";
+import { IRefreshTokenUseCase } from '../../useCase/auth/IRefreshToken';
+import { IJWTService } from '../../../domain/interfaces/services/IJWTService';
+import { Errors } from '../../../shared/constants/error';
 
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
-  constructor(private _jwtService: IJWTService) {}
+    constructor(private _jwtService: IJWTService) {}
 
-  async refresh(token: string): Promise<string> {
-    const decoded = this._jwtService.verifyRefreshToken(token);
+    async refresh(token: string): Promise<string> {
+        const decoded = this._jwtService.verifyRefreshToken(token);
 
-    if (!decoded) {
-      throw new Error(Errors.REFRESH_TOKEN_EXPIRED);
+        if (!decoded) {
+            throw new Error(Errors.REFRESH_TOKEN_EXPIRED);
+        }
+
+        const accessToken = this._jwtService.createAccessToken({
+            userId: decoded.userId,
+            role: decoded.role,
+        });
+
+        return accessToken;
     }
-
-    const accessToken = this._jwtService.createAccessToken({
-      userId: decoded.userId,
-      role: decoded.role,
-    });
-
-    return accessToken;
-  }
 }

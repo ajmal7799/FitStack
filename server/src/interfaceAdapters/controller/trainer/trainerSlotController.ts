@@ -11,12 +11,20 @@ import { ICreateSlotUseCase } from '../../../application/useCase/trainer/slot/IC
 import { IGetAllSlotsUseCase } from '../../../application/useCase/trainer/slot/IGetAllSlotsUseCase';
 import { NotFoundException } from '../../../application/constants/exceptions';
 import { IDeleteSlotUseCase } from '../../../application/useCase/trainer/slot/IDeleteSlotUseCase';
+import { recurringSlotSchema } from '../../../shared/validations/recurringSlotValidatior';
+import { IRecurringSlotUseCase } from '../../../application/useCase/trainer/slot/IRecurringSlotUseCase';
+import { IBookedSlotsUseCase } from '../../../application/useCase/trainer/slot/IBookedSlotsUseCase';
+import { IBookedSlotDetailsUseCase } from '../../../application/useCase/trainer/slot/IBookedSlotDetailsUseCase';
 
 export class TrainerSlotController {
   constructor(
     private _createSlotUseCase: ICreateSlotUseCase,
     private _getAllSlotsUseCase: IGetAllSlotsUseCase,
-    private _deleteSlotUseCase: IDeleteSlotUseCase
+    private _deleteSlotUseCase: IDeleteSlotUseCase,
+    private _recurringSlotUseCase: IRecurringSlotUseCase,
+    private _bookedSlotsUseCase: IBookedSlotsUseCase,
+    private _bookedSlotDetailsUseCase: IBookedSlotDetailsUseCase
+
   ) {}
   // --------------------------------------------------
   //              🛠 CREATE SLOTS
@@ -24,13 +32,12 @@ export class TrainerSlotController {
 
   async createSlot(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      
       const user = req.user?.userId;
 
       if (!user) {
         throw new DataMissingExecption(Errors.INVALID_DATA);
       }
-      
+
       const parseResult = slotCreationSchema.safeParse(req.body);
 
       if (parseResult.error) {
@@ -65,13 +72,11 @@ export class TrainerSlotController {
 
       const result = await this._getAllSlotsUseCase.getAllSlots(trainerId, page, limit, status);
 
-      if (!result || !result.slots || result.slots.length === 0 ) {
+      if (!result || !result.slots || result.slots.length === 0) {
         ResponseHelper.success(res, MESSAGES.Trainer.SLOTS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
       }
 
-
       ResponseHelper.success(res, MESSAGES.Trainer.SLOTS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
-
     } catch (error) {
       next(error);
     }
@@ -93,6 +98,62 @@ export class TrainerSlotController {
 
       await this._deleteSlotUseCase.deleteSlot(slotId, trainerId);
       ResponseHelper.success(res, MESSAGES.Trainer.SLOT_DELETED_SUCCESS, HTTPStatus.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // --------------------------------------------------
+  //              🛠 RECURRING SLOT CREATION
+  // --------------------------------------------------
+
+  async createRecurringSlot(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const trainerId = req.user?.userId;
+
+      if (!trainerId) {
+        throw new DataMissingExecption(Errors.INVALID_DATA);
+      }
+
+      const parseResult = recurringSlotSchema.safeParse(req.body);
+
+      if (parseResult.error) {
+        throw new InvalidDataException(Errors.INVALID_DATA);
+      }
+
+      const result = await this._recurringSlotUseCase.createRecurringSlot(trainerId, parseResult.data);
+      ResponseHelper.success(res, MESSAGES.Trainer.SLOT_CREATED_SUCCESS, { result }, HTTPStatus.CREATED);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getBookedSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const trainerId = req.user?.userId;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      if (!trainerId) {
+        throw new DataMissingExecption(Errors.INVALID_DATA);
+      }
+      const result = await this._bookedSlotsUseCase.getBookedSlots(trainerId, page, limit);
+      ResponseHelper.success(res, MESSAGES.Trainer.BOOKED_SLOTS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getBookedSlotDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const trainerId = req.user?.userId;
+      const { slotId } = req.params;
+
+      if (!trainerId  || !slotId) {
+        throw new DataMissingExecption(Errors.INVALID_DATA);
+      } 
+      
+      const result = await this._bookedSlotDetailsUseCase.getBookedSlotDetails(trainerId, slotId);
+      ResponseHelper.success(res, MESSAGES.Trainer.BOOKED_SLOT_DETAILS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
     } catch (error) {
       next(error);
     }

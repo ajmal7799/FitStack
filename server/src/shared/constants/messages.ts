@@ -8,7 +8,6 @@ export const MESSAGES = {
         ACCOUNT_VERIFIED: 'Account verified successfully.',
         PASSWORD_RESET_SUCCESSFULLY: 'Password reset successfully',
         LOUTGOUT_SUCCESSFUL: 'Logged out successfully ',
-        // DELETED: "User deleted successfully.",
         STATUS_UPDATED_SUCCESSFULLY: 'User status updated successfully ',
         GET_ALL_USERS: 'Fetched all users successfully',
         GET_ALL_INVESTORS: 'Fetched all trainer successfully',
@@ -22,6 +21,10 @@ export const MESSAGES = {
         GET_USER_PERSONAL_INFO: 'User personal info fetched successfully',
         USER_PROFILE_UPDATED_SUCCESSFULLY: 'User profile updated successfully',
         SLOT_CREATED_SUCCESS: 'Slot created successfully.',
+        PASSWORD_CHANGE_SUCCESSFULLY: 'Password changed successfully.',
+        BOOKED_SLOTS_FETCHED_SUCCESS: 'Booked slots fetched successfully.',
+        BOOKED_SLOT_DETAILS_FETCHED_SUCCESS: 'Booked slot details fetched successfully.',
+        BOOKED_SLOT_CANCELLED_SUCCESS: ' slot cancelled successfully.',
     },
     Trainer: {
         VERIFICATION_SUBMITTED: 'Trainer verification submitted successfully.',
@@ -39,10 +42,8 @@ export const MESSAGES = {
         SLOTS_FETCHED_SUCCESS: 'Slots fetched successfully.',
         TRAINER_NOT_SELECTED_IN_THAT_TIME_SLOT: 'Trainer not selected in that time slot',
         SLOT_DELETED_SUCCESS: 'Slot deleted successfully.',
-        
-
-        
-
+        BOOKED_SLOTS_FETCHED_SUCCESS: 'Booked slots fetched successfully.',
+        BOOKED_SLOT_DETAILS_FETCHED_SUCCESS: 'Booked slot details fetched successfully.',
     },
     Admin: {
         VERIFIED_USER: 'User verified successfully by admin.',
@@ -64,9 +65,17 @@ export const MESSAGES = {
         SUBSCRIPTION_DELETE_SUCCESS: 'Subscription deleted successfully.',
         SUBSCRIPTION_GET_SUCCESS: 'Subscription fetched successfully.',
         SUBSCRIPTION_UPDATE_STATUS_SUCCESS: 'Subscription status updated successfully.',
-        SUBSCRIPTION_EDIT_PAGE_SUCCESS: "Subscription fetched successfully.",
+        SUBSCRIPTION_EDIT_PAGE_SUCCESS: 'Subscription fetched successfully.',
     },
-     REFRESH_TOKEN: {
-    REFRESH_SUCCESSFUL: "Successfully got a new accessToken",
-  },
+    REFRESH_TOKEN: {
+        REFRESH_SUCCESSFUL: 'Successfully got a new accessToken',
+    },
+
+    CHAT: {
+        INITIATE_CHAT_SUCCESS: 'Chat initiated successfully.',
+        MESSAGES_FETCHED_SUCCESS: 'Messages fetched successfully.',
+        MESSAGE_SENT_SUCCESS: 'Message sent successfully.',
+        MARK_AS_READ_SUCCESS: 'Message marked as read successfully.',
+        DELETE_MESSAGE_SUCCESS: 'Message deleted successfully.',
+    },
 };

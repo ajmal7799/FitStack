@@ -29,6 +29,6 @@ export const adminSubscriptionController = new AdminSubscriptionController(
     getAllSubscriptionUseCase,
     updateSubscriptionStatusUseCase,
     getSubscriptionEditPageUseCase,
-    updateSubscriptionUseCase
+    updateSubscriptionUseCase,
     
 );

@@ -5,8 +5,11 @@ import {
   updateProfilePage,
   createSlot,
   getSlots,
-  deleteSlots
-} from "../../service/Trainer/TrainerService";
+  deleteSlots,
+  CreateRecurringSlot,
+  getBookedSlots,
+  getBookedSlotDetails
+} from '../../service/Trainer/TrainerService';
 
 import { useMutation, useQuery, QueryClient,useQueryClient } from '@tanstack/react-query';
 
@@ -18,7 +21,7 @@ export const useSubmitTrainerVerification = () => {
 
 export const useGetTrainerProfile = () => {
   return useQuery({
-    queryKey: ["trainerProfile"],
+    queryKey: ['trainerProfile'],
     queryFn: getProfilePage,
   });
 };
@@ -31,7 +34,7 @@ export const useUpdateTrainerProfile = () => {
 
 export const useGetTrainerVerification = () => {
   return useQuery({
-    queryKey: ["trainerVerification"],
+    queryKey: ['trainerVerification'],
     queryFn: getVerificationPage,
     keepPreviousData: true,
     refetchInterval: 500,
@@ -49,18 +52,20 @@ const queryClient = new QueryClient();
 export const useCreateSlot = () => {
   return useMutation({
     mutationFn: (startTime: string) => createSlot(startTime),
-     onSuccess: () => {
+    onSuccess: () => {
       // Invalidate and refetch slots query
-      queryClient.invalidateQueries({ queryKey: ["trainerSlots"] });
+      queryClient.invalidateQueries({ queryKey: ['trainerSlots'] });
       // Call custom onSuccess if provided
       options?.onSuccess?.();
     },
   });
 };
 
+
+
 export const useGetSlots = (page: number, limit: number, status?: string,) => {
   return useQuery({
-    queryKey: ["trainerSlots", page, limit, status,],
+    queryKey: ['trainerSlots', page, limit, status,],
     queryFn: () =>  getSlots(page, limit, status),
     retry: false,
     refetchOnWindowFocus: false, // 👈 Prevent refetching when switching tabs
@@ -76,10 +81,30 @@ export const useDeleteSlots = (options?: { onSuccess?: () => void }) => {
     mutationFn: (slotId: string) => deleteSlots(slotId),
     onSuccess: () => {
       // 1. Refresh the list so the deleted slot disappears
-      queryClient.invalidateQueries({ queryKey: ["trainerSlots"] });
+      queryClient.invalidateQueries({ queryKey: ['trainerSlots'] });
       
       // 2. Run the custom success logic (like showing a toast)
       options?.onSuccess?.();
     },
+  });
+};
+
+export const useCreateRecurringSlot = () => {
+  return useMutation({
+    mutationFn: (data: string | string[]) => CreateRecurringSlot( data),
+  });
+};
+
+export const useGetBookedSlots = (page: number, limit: number) => {
+  return useQuery({
+    queryKey: ['bookedSlots', page, limit],
+    queryFn: () => getBookedSlots(page, limit),
+  });
+};
+
+export const useGetBookedSlotDetails = (slotId: string) => {
+  return useQuery({
+    queryKey: ['bookedSlotDetails', slotId],
+    queryFn: () => getBookedSlotDetails(slotId),
   });
 };

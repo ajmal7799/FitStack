@@ -5,18 +5,18 @@ import { NotFoundException } from '../../../constants/exceptions';
 import { SUBSCRIPTION_ERRORS } from '../../../../shared/constants/error';
 
 export class GetSubscriptionEditPage implements IGetSubscriptionEdit {
-  constructor(
-    private _subscriptionRepository: ISubscriptionRepository
-) {}
+    constructor(
+    private _subscriptionRepository: ISubscriptionRepository,
+    ) {}
 
-  async getSubscriptionEditPage(id: string): Promise<SubscriptionDTO> {
+    async getSubscriptionEditPage(id: string): Promise<SubscriptionDTO> {
 
-    const subscription = await this._subscriptionRepository.findById(id);
+        const subscription = await this._subscriptionRepository.findById(id);
 
-    if (!subscription) {
-      throw new NotFoundException(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND);
-    }
+        if (!subscription) {
+            throw new NotFoundException(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND);
+        }
     
-    return subscription as SubscriptionDTO;
-  }
+        return subscription as SubscriptionDTO;
+    }
 }

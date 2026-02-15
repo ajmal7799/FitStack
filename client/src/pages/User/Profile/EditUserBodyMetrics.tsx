@@ -112,22 +112,22 @@ const UserBodyMetricsEditPage = () => {
   });
 
   useEffect(() => {
-  if (info) {
-    reset({
-      age: info.age ?? 0,
-      gender: info.gender as 'male' | 'female' | 'other',
-      height: info.height ?? 0,
-      weight: info.weight ?? 0,
-      fitnessGoal: info.fitnessGoal as BodyMetricsFormData['fitnessGoal'],
-      experienceLevel: info.experienceLevel as BodyMetricsFormData['experienceLevel'],
-      targetWeight: info.targetWeight ?? 0,
-      preferredWorkoutTypes: info.preferredWorkoutTypes ?? [],
-      workoutLocation: info.workoutLocation as 'gym' | 'home',
-      dietPreference: info.dietPreference ? (info.dietPreference as BodyMetricsFormData['dietPreference']) : undefined,
-      medicalConditions: info.medicalConditions?.join(', ') ?? '',
-    });
-  }
-}, [info, reset]);
+    if (info) {
+      reset({
+        age: info.age ?? 0,
+        gender: info.gender as 'male' | 'female' | 'other',
+        height: info.height ?? 0,
+        weight: info.weight ?? 0,
+        fitnessGoal: info.fitnessGoal as BodyMetricsFormData['fitnessGoal'],
+        experienceLevel: info.experienceLevel as BodyMetricsFormData['experienceLevel'],
+        targetWeight: info.targetWeight ?? 0,
+        preferredWorkoutTypes: info.preferredWorkoutTypes ?? [],
+        workoutLocation: info.workoutLocation as 'gym' | 'home',
+        dietPreference: info.dietPreference ? (info.dietPreference as BodyMetricsFormData['dietPreference']) : undefined,
+        medicalConditions: info.medicalConditions?.join(', ') ?? '',
+      });
+    }
+  }, [info, reset]);
 
   const onSubmit = (values: BodyMetricsFormData) => {
     const payload: UserBodyMetricsPayload = {

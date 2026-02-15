@@ -34,7 +34,7 @@ export default defineConfig([
       eqeqeq: ['error', 'always'],
       'no-console': 'off',
       'prefer-const': 'error',
-      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 ])

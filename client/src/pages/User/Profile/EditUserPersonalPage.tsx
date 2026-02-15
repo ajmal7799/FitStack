@@ -1,26 +1,26 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { ArrowLeft, Loader2 } from "lucide-react";
-import toast from "react-hot-toast";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 // Components
-import UserSidebar from "../../../components/user/Sidebar";
-import Header from "../../../components/user/Header";
+import UserSidebar from '../../../components/user/Sidebar';
+import Header from '../../../components/user/Header';
 
 // Hooks
 import {
   useGetUserProfile,
   useUpdateUserProfile,
-} from "../../../hooks/User/userServiceHooks";
+} from '../../../hooks/User/userServiceHooks';
 
 // ── Validation Schema ────────────────────────────────────────────────
 const userProfileSchema = z.object({
-  name: z.string().min(3, "Name must be at least 3 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  phone: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+  name: z.string().min(3, 'Name must be at least 3 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  phone: z.string().regex(/^\d{10}$/, 'Phone number must be exactly 10 digits'),
   profileImage: z.any().optional(), // we'll handle FileList manually
 });
 
@@ -69,9 +69,9 @@ const EditUserPersonalPage = () => {
   } = useForm<UserProfileFormData>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
+      name: '',
+      email: '',
+      phone: '',
       profileImage: undefined,
     },
   });
@@ -80,36 +80,36 @@ const EditUserPersonalPage = () => {
   useEffect(() => {
     if (profile) {
       reset({
-        name: profile.name ?? "",
-        email: profile.email ?? "",
-        phone: profile.phone ?? "",
+        name: profile.name ?? '',
+        email: profile.email ?? '',
+        phone: profile.phone ?? '',
         profileImage: undefined, // file inputs cannot be pre-filled for security
       });
     }
   }, [profile, reset]);
 
-  const profileImageFile = watch("profileImage") as FileList | undefined;
+  const profileImageFile = watch('profileImage') as FileList | undefined;
 
   const onSubmit = (values: UserProfileFormData) => {
     const formData = new FormData();
 
     // Only append fields that exist / were changed
-    if (values.name) formData.append("name", values.name);
-    if (values.email) formData.append("email", values.email);
-    if (values.phone) formData.append("phone", values.phone);
+    if (values.name) formData.append('name', values.name);
+    if (values.email) formData.append('email', values.email);
+    if (values.phone) formData.append('phone', values.phone);
 
     // File upload
     if (values.profileImage instanceof FileList && values.profileImage[0]) {
-      formData.append("profileImage", values.profileImage[0]);
+      formData.append('profileImage', values.profileImage[0]);
     }
 
     mutate(formData, {
       onSuccess: () => {
-        toast.success("Profile updated successfully!");
-        navigate("/profile");
+        toast.success('Profile updated successfully!');
+        navigate('/profile');
       },
       onError: (err: any) => {
-        toast.error(err?.response?.data?.message || "Failed to update profile");
+        toast.error(err?.response?.data?.message || 'Failed to update profile');
       },
     });
   };
@@ -142,7 +142,7 @@ const EditUserPersonalPage = () => {
             {/* Header + Back */}
             <div className="mb-8 flex items-center gap-4">
               <button
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate('/profile')}
                 className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 <ArrowLeft size={16} />
@@ -171,7 +171,7 @@ const EditUserPersonalPage = () => {
                         className="h-full w-full object-cover"
                         onError={(e) => {
                           e.currentTarget.src =
-                            "https://via.placeholder.com/128?text=No+Image";
+                            'https://via.placeholder.com/128?text=No+Image';
                         }}
                       />
                     ) : (
@@ -193,7 +193,7 @@ const EditUserPersonalPage = () => {
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        {...register("profileImage")}
+                        {...register('profileImage')}
                       />
                     </label>
                     <p className="text-sm text-gray-500">PNG, JPG, max 5MB</p>
@@ -217,7 +217,7 @@ const EditUserPersonalPage = () => {
                 <input
                   id="name"
                   type="text"
-                  {...register("name")}
+                  {...register('name')}
                   className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm"
                 />
                 {errors.name && (
@@ -238,7 +238,7 @@ const EditUserPersonalPage = () => {
                 <input
                   id="email"
                   type="email"
-                  {...register("email")}
+                  {...register('email')}
                   className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm"
                 />
                 {errors.email && (
@@ -259,7 +259,7 @@ const EditUserPersonalPage = () => {
                 <input
                   id="phone"
                   type="tel"
-                  {...register("phone")}
+                  {...register('phone')}
                   placeholder="10-digit number"
                   className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm"
                 />

@@ -76,7 +76,7 @@ export class Admin_Routes {
             adminSubscriptionController.getSubscriptionEditPage(req, res, next);
         });
 
-        this._route.put("/subscriptions/:subscriptionId", authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+        this._route.put('/subscriptions/:subscriptionId', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
             adminSubscriptionController.updateSubscription(req, res, next);
         });
         
