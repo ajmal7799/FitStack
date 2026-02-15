@@ -1,4 +1,4 @@
-import { UpdateTrainerProfileDTO, UpdateTrainerProfileResponseDTO } from "../../../dto/trainer/profile/updateTrainerProfileDTO";
+import { UpdateTrainerProfileDTO, UpdateTrainerProfileResponseDTO } from '../../../dto/trainer/profile/updateTrainerProfileDTO';
 
 
 export interface IUpdateTrainerProfileUseCase {

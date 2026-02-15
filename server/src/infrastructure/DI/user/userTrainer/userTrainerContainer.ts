@@ -20,20 +20,20 @@ const trainerRepository = new TrainerRepository(trainerModel);
 const trainerSelectRepository = new TrainerSelectRepository(trainerSelectModel);
 
 // useCases
-const getAllTrainerUseCase = new GetAllTrainerUseCase(verificationRepository, storageService);
+const getAllTrainerUseCase = new GetAllTrainerUseCase(verificationRepository, storageService, userRepository);
 const getTrainerDetailsUseCase = new GetTrainerDetailsUseCase(trainerRepository, userRepository, storageService);
 const selectTrainer = new TrainerSelectUseCase(trainerSelectRepository, userRepository);
 const getSelectedTrainer = new GetSelectedTrainerUseCase(
-  trainerSelectRepository,
-  userRepository,
-  storageService,
-  trainerRepository
+    trainerSelectRepository,
+    userRepository,
+    storageService,
+    trainerRepository,
 );
 
 // controllers
 export const userTrainerController = new UserTrainerController(
-  getAllTrainerUseCase,
-  getTrainerDetailsUseCase,
-  selectTrainer,
-  getSelectedTrainer
+    getAllTrainerUseCase,
+    getTrainerDetailsUseCase,
+    selectTrainer,
+    getSelectedTrainer,
 );

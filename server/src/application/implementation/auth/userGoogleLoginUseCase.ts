@@ -9,7 +9,7 @@ export class UserGoogleLoginUseCase implements IGoogleLoginUseCase {
     constructor(
         private _googleAuthService: IGoogleAuthService,
         private _userRepository: IUserRepository,
-        private _userProfileRepository: IUserProfileRepository
+        private _userProfileRepository: IUserProfileRepository,
     ) {}
 
     async execute({ authorizationCode, role }: IGoogleLoginRequestDTO): Promise<IGoogleLoginResponseDTO> {
@@ -29,15 +29,15 @@ export class UserGoogleLoginUseCase implements IGoogleLoginUseCase {
             const id = await this._userRepository.googleSignUp(user);
             user._id = id;
         }
-         let userProfile: boolean = true;
+        let userProfile: boolean = true;
 
-        if(user.role === UserRole.USER) {
+        if (user.role === UserRole.USER) {
             const profile = await this._userProfileRepository.findByUserId(user._id!);
-            if(!profile) {
+            if (!profile) {
                 userProfile = false;
-            }else if(profile.profileCompleted === true) {
+            } else if (profile.profileCompleted === true) {
                 userProfile = true;
-            }else {
+            } else {
                 userProfile = false;
             }
         }

@@ -58,7 +58,7 @@ export const getPersonalInfo = async () => {
 export const updatePersonalInfo = async (data: UserBodyMetricsPayload) => {
   const response = await AxiosInstance.patch('/personal-info-update', data);
   return response.data;
-}
+};
 
 
 export const getTrainerDetails = async (id: string) => {
@@ -69,28 +69,59 @@ export const getTrainerDetails = async (id: string) => {
     
     throw error;
   }
-}
+};
 
 export const selectTrainer = async (trainerId: string) => {
-    const response = await AxiosInstance.post('/select-trainer', { trainerId });
-    return response.data;
-}
+  const response = await AxiosInstance.post('/select-trainer', { trainerId });
+  return response.data;
+};
 
 export const getSelectedTrainer = async () => {
-    const response = await AxiosInstance.get('/get-selected-trainer');
-    return response.data;
-}
+  const response = await AxiosInstance.get('/get-selected-trainer');
+  return response.data;
+};
 
 export const getAvailableSlots = async (date: string) => {
-    const response = await AxiosInstance.get('/get-available-slots/',{
-      params: {
-        date
-      }
-    });
-    return response.data;
-}
+  const response = await AxiosInstance.get('/get-available-slots/',{
+    params: {
+      date
+    }
+  });
+  return response.data;
+};
 
 export const bookSlot = async (slotId: string) => {
-    const response = await AxiosInstance.patch(`/book-slot/${slotId}`);
-    return response.data;
+  const response = await AxiosInstance.patch(`/book-slot/${slotId}`);
+  return response.data;
+};
+
+export const changePassword = async (data: {
+  oldPassword: string;
+  newPassword: string;
+}) => {
+  const response = await AxiosInstance.patch('/change-password', data);
+  return response.data;
+};
+
+
+export const getBookedSlots = async (page = 1, limit = 10) => {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+  const response = await AxiosInstance.get(`/booked-slots?${params.toString()}`);
+  return response.data;
+};
+
+
+export const getBookedSlotDetails = async (slotId: string) => {
+  const response = await AxiosInstance.get(`/booked-slots/${slotId}`);
+  return response.data;
 }
+
+
+export const cancelBookedSlot = async (slotId: string, reason: string) => {
+  const response = await AxiosInstance.patch(`/booked-slots/${slotId}/cancel`, { reason });
+  return response.data;
+};
+  

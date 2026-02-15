@@ -160,38 +160,38 @@ const UserProfile: React.FC = () => {
 
             {/* Profile Details Card */}
             <div className="relative">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                <User size={24} className="text-blue-600" />
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                  <User size={24} className="text-blue-600" />
                 Personal Information
-              </h2>
+                </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
-                    <User size={16} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
+                      <User size={16} />
                     Full Name
-                  </label>
-                  <p className="text-lg text-gray-900 font-medium">{userProfile.name}</p>
-                </div>
+                    </label>
+                    <p className="text-lg text-gray-900 font-medium">{userProfile.name}</p>
+                  </div>
 
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
-                    <Mail size={16} />
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
+                      <Mail size={16} />
                     Email Address
-                  </label>
-                  <p className="text-lg text-gray-900 font-medium break-all">{userProfile.email}</p>
-                </div>
+                    </label>
+                    <p className="text-lg text-gray-900 font-medium break-all">{userProfile.email}</p>
+                  </div>
 
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
-                    <Phone size={16} />
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
+                      <Phone size={16} />
                     Phone Number
-                  </label>
-                  <p className="text-lg text-gray-900 font-medium">{userProfile.phone}</p>
-                </div>
+                    </label>
+                    <p className="text-lg text-gray-900 font-medium">{userProfile.phone}</p>
+                  </div>
 
-                {/* <div className="space-y-2">
+                  {/* <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
                     <CheckCircle size={16} />
                     Verification Status
@@ -208,14 +208,14 @@ const UserProfile: React.FC = () => {
                     </span>
                   </div>
                 </div> */}
+                </div>
               </div>
-            </div>
-            <br />
-            <br />
-            <button className="absolute -bottom-4 right-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition" onClick={()=> navigate(FRONTEND_ROUTES.USER.PROFOILE_EDIT)}>
+              <br />
+              <br />
+              <button className="absolute -bottom-4 right-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition" onClick={()=> navigate(FRONTEND_ROUTES.USER.PROFOILE_EDIT)}>
     Update Profile
-  </button>
-  </div>
+              </button>
+            </div>
           </div>
         </main>
       </div>

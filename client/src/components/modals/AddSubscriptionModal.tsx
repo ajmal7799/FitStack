@@ -1,35 +1,35 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { X, DollarSign, Calendar, FileText, Sparkles } from 'lucide-react';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { X, Calendar, FileText, Sparkles } from "lucide-react";
 
 // Zod validation schema
 const subscriptionSchema = z.object({
   planName: z
     .string()
-    .min(3, 'Plan name must be at least 3 characters')
-    .max(50, 'Plan name must be less than 50 characters')
+    .min(3, "Plan name must be at least 3 characters")
+    .max(50, "Plan name must be less than 50 characters")
     .regex(
       /^[a-zA-Z0-9\s-]+$/,
-      'Only letters, numbers, spaces and hyphens allowed'
+      "Only letters, numbers, spaces and hyphens allowed"
     ),
 
   price: z
     .number()
-    .min(0.01, 'Price must be at least $0.01')
-    .max(999999, 'Price cannot exceed $999,999'),
+    .min(0.01, "Price must be at least $0.01")
+    .max(999999, "Price cannot exceed $999,999"),
 
   durationMonths: z
     .number()
-    .int('Duration must be a whole number')
+    .int("Duration must be a whole number")
     .refine((val) => !Number.isNaN(val), {
-      message: 'Duration is required',
+      message: "Duration is required",
     })
-    .min(1, 'Duration must be at least 1 month')
-    .max(36, 'Duration cannot exceed 36 months'),
+    .min(1, "Duration must be at least 1 month")
+    .max(36, "Duration cannot exceed 36 months"),
 
-  description: z.string().min(1, 'Description is required'),
+  description: z.string().min(1, "Description is required"),
   // .optional()
   // .or(z.literal("")),
 });
@@ -61,12 +61,12 @@ const CreateSubscriptionModal: React.FC<Props> = ({
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(subscriptionSchema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
-      planName: '',
+      planName: "",
       price: undefined,
       durationMonths: undefined,
-      description: '',
+      description: "",
     },
   });
 
@@ -123,13 +123,13 @@ const CreateSubscriptionModal: React.FC<Props> = ({
               Plan Name
             </label>
             <input
-              {...register('planName')}
+              {...register("planName")}
               className={`w-full px-4 py-3 border-2 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-indigo-500/20 ${
                 errors.planName
-                  ? 'border-red-300 focus:border-red-500'
-                  : 'border-gray-200 focus:border-indigo-500'
+                  ? "border-red-300 focus:border-red-500"
+                  : "border-gray-200 focus:border-indigo-500"
               }`}
-              placeholder="e.g., Pro Monthly, Enterprise Annual"
+              placeholder="Plan name"
             />
             {errors.planName && (
               <p className="text-red-600 text-sm mt-1.5 flex items-center gap-1">
@@ -141,23 +141,23 @@ const CreateSubscriptionModal: React.FC<Props> = ({
           {/* Price */}
           <div>
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-              <DollarSign size={16} className="text-indigo-600" />
-              Price (USD)
+              {/* <DollarSign size={16} className="text-indigo-600" /> */}
+              Price
             </label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
-                $
+                {/* $ */}
               </span>
               <input
                 type="number"
                 step="0.01"
-                {...register('price', { valueAsNumber: true })}
+                {...register("price", { valueAsNumber: true })}
                 className={`w-full pl-8 pr-4 py-3 border-2 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-indigo-500/20 ${
                   errors.price
-                    ? 'border-red-300 focus:border-red-500'
-                    : 'border-gray-200 focus:border-indigo-500'
+                    ? "border-red-300 focus:border-red-500"
+                    : "border-gray-200 focus:border-indigo-500"
                 }`}
-                placeholder="29.99"
+                placeholder="0.00"
               />
             </div>
             {errors.price && (
@@ -179,18 +179,17 @@ const CreateSubscriptionModal: React.FC<Props> = ({
               min={1}
               max={36}
               step={1}
-              {...register('durationMonths', { valueAsNumber: true })}
+              {...register("durationMonths", { valueAsNumber: true })}
               className={`w-full px-4 py-3 border-2 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-indigo-500/20 ${
                 errors.durationMonths
-                  ? 'border-red-300 focus:border-red-500'
-                  : 'border-gray-200 focus:border-indigo-500'
+                  ? "border-red-300 focus:border-red-500"
+                  : "border-gray-200 focus:border-indigo-500"
               }`}
               placeholder="1"
             />
 
             <p className="text-xs text-gray-500 mt-1.5">
-              Allowed: 1 to 36 months. Examples: 1 (monthly), 3 (quarterly), 12
-              (yearly)
+              Enter number of months
             </p>
 
             {errors.durationMonths && (
@@ -204,22 +203,22 @@ const CreateSubscriptionModal: React.FC<Props> = ({
           {/* Description */}
           <div>
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-              Description{' '}
+              Description{" "}
               <span className="text-gray-400 text-xs font-normal"></span>
             </label>
             <textarea
-              {...register('description')}
+              {...register("description")}
               rows={3}
               className={`w-full px-4 py-3 border-2 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-indigo-500/20 resize-none ${
                 errors.description
-                  ? 'border-red-300 focus:border-red-500'
-                  : 'border-gray-200 focus:border-indigo-500'
+                  ? "border-red-300 focus:border-red-500"
+                  : "border-gray-200 focus:border-indigo-500"
               }`}
-              placeholder="Unlimited projects, priority support, advanced analytics..."
+              placeholder="Brief plan Description"
             />
             {errors.description && (
               <p className="text-red-600 text-sm mt-1.5 flex items-center gap-1">
-                <span className="font-medium">⚠</span>{' '}
+                <span className="font-medium">⚠</span>{" "}
                 {errors.description.message}
               </p>
             )}
@@ -246,7 +245,7 @@ const CreateSubscriptionModal: React.FC<Props> = ({
                   Creating...
                 </span>
               ) : (
-                'Create Plan'
+                "Create Plan"
               )}
             </button>
           </div>

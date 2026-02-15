@@ -3,14 +3,17 @@ import { IGetAllTrainerUseCase } from '../../../useCase/user/trainer/IGetAllTrai
 import { IUpdateVerification } from '../../../../domain/interfaces/repositories/IVerificationRepository';
 import { VerificationMapper } from '../../../mappers/verificationMappers';
 import { IStorageService } from '../../../../domain/interfaces/services/IStorage/IStorageService';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
 
 export class GetAllTrainerUseCase implements IGetAllTrainerUseCase {
     constructor(
         private _verificationRepository: IUpdateVerification,
         private _storageService: IStorageService,
+        private _userRepository: IUserRepository,
     ) { }
 
-    async getAllTrainer(page: number, limit: number, search?: string): Promise<{ verifications: VerificationDTO[]; totalVerifications: number; totalPages: number; currentPage: number; }> {
+    async getAllTrainer(page: number, limit: number, search?: string, userId?: string): Promise<{ verifications: VerificationDTO[]; totalVerifications: number; totalPages: number; currentPage: number; hasActiveSubscription: boolean }> {
+        const user = await this._userRepository.findById(userId!);
         const skip = (page - 1) * limit;
 
         const [verifications, totalVerifications] = await Promise.all([
@@ -19,16 +22,19 @@ export class GetAllTrainerUseCase implements IGetAllTrainerUseCase {
         ]);
         
         
+        
         const verificationDTOs = await Promise.all(
-            verifications.map(async (verification) => {
+            verifications.map(async(verification) => {
                 let profileImageUrl = verification.user.profileImage;
-                if(profileImageUrl) {
+                if (profileImageUrl) {
                     profileImageUrl = await this._storageService.createSignedUrl(profileImageUrl, 60 * 5);
                 }
                 return VerificationMapper.toDTO(verification.verification, verification.trainer, verification.user, profileImageUrl);
-            })
+            }),
         );
-        
+        let hasActiveSubscription: boolean = false;
+
+     hasActiveSubscription = user ? user.activeMembershipId ? true : false : false;
 
          
         return {
@@ -36,6 +42,7 @@ export class GetAllTrainerUseCase implements IGetAllTrainerUseCase {
             totalVerifications,
             totalPages: Math.ceil(totalVerifications / limit),
             currentPage: page,
+            hasActiveSubscription
         };
 
     }

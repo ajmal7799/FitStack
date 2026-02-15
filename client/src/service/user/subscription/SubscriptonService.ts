@@ -17,6 +17,6 @@ export const checkoutSession = async (planId: string) => {
 
 
 export const getActiveSubscription = async (): Promise<ActiveSubscriptionResponse> => {
-  const response = await AxiosInstance.get<ActiveSubscriptionResponse>("/active-subscription");
+  const response = await AxiosInstance.get<ActiveSubscriptionResponse>('/active-subscription');
   return response.data;
 };

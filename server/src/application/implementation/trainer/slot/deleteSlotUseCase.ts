@@ -1,7 +1,7 @@
-import { IDeleteSlotUseCase } from "../../../useCase/trainer/slot/IDeleteSlotUseCase";
-import { ISlotRepository } from "../../../../domain/interfaces/repositories/ISlotRepository";
-import { InvalidDataException, IsBlockedExecption, NotFoundException } from "../../../constants/exceptions";
-import { TRAINER_ERRORS } from "../../../../shared/constants/error";
+import { IDeleteSlotUseCase } from '../../../useCase/trainer/slot/IDeleteSlotUseCase';
+import { ISlotRepository } from '../../../../domain/interfaces/repositories/ISlotRepository';
+import { InvalidDataException, IsBlockedExecption, NotFoundException } from '../../../constants/exceptions';
+import { TRAINER_ERRORS } from '../../../../shared/constants/error';
 
 export class DeleteSlotUseCase implements IDeleteSlotUseCase {
     constructor(private _slotRepository: ISlotRepository) {}
@@ -16,10 +16,10 @@ export class DeleteSlotUseCase implements IDeleteSlotUseCase {
             throw new IsBlockedExecption(TRAINER_ERRORS.YOU_CAN_ONLY_DELETE_YOUR_OWN_SLOT);
         }
 
-        if(slot.isBooked) {
+        if (slot.isBooked) {
             throw new InvalidDataException(TRAINER_ERRORS.SLOT_ALREADY_BOOKED);
         }
 
         await this._slotRepository.deleteById(slotId);
-   }    
+    }    
 }

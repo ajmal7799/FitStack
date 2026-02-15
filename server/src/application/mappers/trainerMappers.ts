@@ -60,7 +60,7 @@ export class TrainerMapper {
             qualification: trainer.qualification,
             specialisation: trainer.specialisation, 
             experience: trainer.experience,
-            about: trainer.about 
+            about: trainer.about, 
         };
     }
 

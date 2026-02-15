@@ -1,5 +1,5 @@
 
-import { MembershipStatus } from "../../../../domain/enum/membershipEnums";
+import { MembershipStatus } from '../../../../domain/enum/membershipEnums';
 export interface ActiveSubscriptionPlanResponseDTO {
     membershipId: string;
     userId: string;

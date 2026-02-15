@@ -33,8 +33,8 @@ export class StripeService implements IStripeService, IStripeCheckoutService {
     async updateProduct(productId: string, data: {name?: string, description?: string}): Promise<void> {
         await stripe.products.update(productId,{
             name: data.name,
-            description: data.description
-        })
+            description: data.description,
+        });
     }
 
 

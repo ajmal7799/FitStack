@@ -21,6 +21,7 @@ const UserLoginPage = () => {
         
         dispatch(
           setData({
+            _id: res.data.user._id,
             name: res.data.user.name,
             email: res.data.user.email,
             phone: res.data.user.phone,
@@ -90,14 +91,14 @@ const UserLoginPage = () => {
             })
           );
           if (res.data.user.role === 'trainer') {
-          if (res.data.user.verificationCheck === true) {
-            navigate('/trainer/dashboard');
+            if (res.data.user.verificationCheck === true) {
+              navigate('/trainer/dashboard');
+            } else {
+              navigate('/trainer/verification');
+            }
           } else {
-            navigate('/trainer/verification');
+            navigate('/home');
           }
-        } else {
-          navigate('/home');
-        }
           // dispatch(setToken(res.data?.accessToken || ""));
 
         },

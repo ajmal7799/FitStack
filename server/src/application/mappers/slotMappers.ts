@@ -12,8 +12,11 @@ export class SlotMapper {
             startTime: slot.startTime,
             endTime: slot.endTime,
             isBooked: slot.isBooked,
-            bookedBy: slot.bookedBy
-        }
+            bookedBy: slot.bookedBy,
+            slotStatus: slot.slotStatus,
+            cancellationReason: slot.cancellationReason,
+            canceldAt: slot.canceldAt,
+        };
     }
 
     static fromMongooseDocument(slot : ISlotModel) : Slot {
@@ -23,8 +26,11 @@ export class SlotMapper {
             startTime: slot.startTime,
             endTime: slot.endTime,
             isBooked: slot.isBooked,
-            bookedBy: slot.bookedBy ? slot.bookedBy.toString() : null
-        }
+            bookedBy: slot.bookedBy ? slot.bookedBy.toString() : null,
+            slotStatus: slot.slotStatus,
+            cancellationReason: slot.cancellationReason,
+            canceldAt: slot.canceldAt,
+        };
     }
 
     static toEntity(slot : CreateSlotDTO) : Slot {
@@ -34,8 +40,11 @@ export class SlotMapper {
             startTime: slot.startTime,
             endTime: slot.endTime,
             isBooked: slot.isBooked,
-            bookedBy: slot.bookedBy
-        }
+            bookedBy: slot.bookedBy,
+            slotStatus: slot.slotStatus,
+            cancellationReason: slot.cancellationReason,
+            canceldAt: slot.canceldAt,
+        };
     }
 
 }

@@ -1,6 +1,6 @@
 
 
-import { TrainerSelectionStatus } from "../../enum/trainerSelectionEnums";
+import { TrainerSelectionStatus } from '../../enum/trainerSelectionEnums';
 
 export interface TrainerSelection {
     id: string;

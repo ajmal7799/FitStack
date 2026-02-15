@@ -1,13 +1,15 @@
-import { useState, useMemo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "../../../components/user/Header";
-import Footer from "../../../components/user/footer";
-import Pagination from "../../../components/pagination/Pagination";
-import { useGetAllVerifiedTrainers } from "../../../hooks/User/TrainerHooks";
-import { Link } from "react-router-dom";
+import { useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '../../../components/user/Header';
+import Footer from '../../../components/user/footer';
+import Pagination from '../../../components/pagination/Pagination';
+import { useGetAllVerifiedTrainers } from '../../../hooks/User/TrainerHooks';
+import { Link } from 'react-router-dom';
 // import { FRONTEND_ROUTES } from "../../../constants/frontendRoutes";
+import { updateHasActiveSubscription } from '../../../redux/slice/userSlice/authDataSlice';
+import { useDispatch } from 'react-redux';
 
-import type React from "react";
+import type React from 'react';
 import {
   FiStar,
   FiMapPin,
@@ -17,8 +19,8 @@ import {
   FiCheckCircle,
   FiMail,
   FiPhone,
-} from "react-icons/fi";
-import { X } from "lucide-react";
+} from 'react-icons/fi';
+import { X } from 'lucide-react';
 
 interface Trainer {
   trainerId: string;
@@ -39,11 +41,13 @@ interface Trainer {
 const TrainersPageListing: React.FC = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const limit = 9; // 9 trainers per page (3x3 grid)
+  const limit = 3; // 9 trainers per page (3x3 grid)
+  const dispatch = useDispatch();
+
 
   // Search state
-  const [searchInput, setSearchInput] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
   const { data, isLoading, isError, refetch } = useGetAllVerifiedTrainers(
     page,
@@ -56,7 +60,7 @@ const TrainersPageListing: React.FC = () => {
     const resp = data as any;
     return resp?.data?.data?.verifications || [];
   }, [data]);
-  console.log("Trainers Data:", trainers);
+  console.log('Trainers Data:', trainers);
 
   const totalPages = useMemo(() => {
     const resp = data as any;
@@ -67,6 +71,17 @@ const TrainersPageListing: React.FC = () => {
     const resp = data as any;
     return resp?.data?.data.totalVerifications || 0;
   }, [data]);
+
+  const hasAcitveSubscription = useMemo(() => {
+    const resp = data as any;
+    return resp?.data?.data.hasActiveSubscription || false;
+  }, [data]);
+
+  if (hasAcitveSubscription) {
+    dispatch(updateHasActiveSubscription(true));
+  }
+
+
 
   // Search handlers
   const handleSearchChange = useCallback(
@@ -82,8 +97,8 @@ const TrainersPageListing: React.FC = () => {
   }, [searchInput]);
 
   const handleClearSearch = useCallback(() => {
-    setSearchInput("");
-    setDebouncedSearch("");
+    setSearchInput('');
+    setDebouncedSearch('');
     setPage(1);
   }, []);
 
@@ -128,7 +143,7 @@ const TrainersPageListing: React.FC = () => {
               placeholder="Search trainers by name or email"
               value={searchInput}
               onChange={handleSearchChange}
-              onKeyDown={(e) => e.key === "Enter" && handleSearchClick()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
               className="px-6 py-4 border-2 border-gray-300 rounded-full w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg shadow-lg"
             />
 
@@ -184,134 +199,140 @@ const TrainersPageListing: React.FC = () => {
         {!isLoading && !isError && trainers.length > 0 && (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {trainers.map((trainer) => (
-                 console.log('Trainer ID:', trainer.trainerId),
-                <div
-                  key={trainer.trainerId}
-                  className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden"
-                >
-                  {/* Trainer Image/Avatar */}
-                  <div className="relative h-56 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                    {trainer.profileImage ? (
-                      <img
-                        src={trainer.profileImage}
-                        alt={trainer.name}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                      />
-                    ) : (
-                      <div className="text-white text-6xl font-bold">
-                        {trainer.name?.charAt(0).toUpperCase()}
+              {trainers.map(
+                (trainer) => (
+                  console.log('Trainer ID:', trainer.trainerId),
+                  (
+                    <div
+                      key={trainer.trainerId}
+                      className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden"
+                    >
+                      {/* Trainer Image/Avatar */}
+                      <div className="relative h-56 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        {trainer.profileImage ? (
+                          <img
+                            src={trainer.profileImage}
+                            alt={trainer.name}
+                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                          />
+                        ) : (
+                          <div className="text-white text-6xl font-bold">
+                            {trainer.name?.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        {/* Verified Badge */}
+                        {trainer.isVerified && (
+                          <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center shadow-lg">
+                            <FiCheckCircle className="mr-1" /> Verified
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {/* Verified Badge */}
-                    {trainer.isVerified && (
-                      <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center shadow-lg">
-                        <FiCheckCircle className="mr-1" /> Verified
-                      </div>
-                    )}
-                  </div>
 
-                  <div className="p-6">
-                    {/* Trainer Name */}
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      {trainer.name}
-                    </h3>
+                      <div className="p-6">
+                        {/* Trainer Name */}
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                          {trainer.name}
+                        </h3>
 
-                    {/* Specialization */}
-                    {/* {trainer.specialisation && (
+                        {/* Specialization */}
+                        {/* {trainer.specialisation && (
                       <p className="text-blue-600 font-semibold text-sm mb-3 flex items-center">
                         <FiAward className="mr-1" />
                         {trainer.specialisation}
                       </p>
                     )} */}
 
-                    {/* Specialisation */}
-                    {trainer.specialisation && (
-                      <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 mb-3">
-                        <p className="text-xs text-purple-600 font-semibold mb-1 uppercase">
-                          Specialization
-                        </p>
-                        <p className="text-sm text-gray-700 font-medium">
-                          {trainer.specialisation}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Contact Information */}
-                    <div className="space-y-2 mb-4">
-                      {/* Email */}
-                      <div className="flex items-center text-gray-600 text-sm">
-                        <FiMail className="text-blue-600 mr-2 flex-shrink-0" />
-                        <span className="truncate">{trainer.email}</span>
-                      </div>
-
-                      {/* Phone */}
-                      {trainer.phone && (
-                        <div className="flex items-center text-gray-600 text-sm">
-                          <FiPhone className="text-green-600 mr-2 flex-shrink-0" />
-                          <span>{trainer.phone}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Trainer Stats */}
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      {/* Experience */}
-                      {trainer.experience && (
-                        <div className="bg-gray-50 rounded-lg p-3 text-center">
-                          <FiClock className="text-blue-600 mx-auto mb-1" />
-                          <p className="text-xs text-gray-500">Experience</p>
-                          <p className="font-bold text-gray-900">
-                            {trainer.experience} Years
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Rating */}
-                      {trainer.rating && (
-                        <div className="bg-gray-50 rounded-lg p-3 text-center">
-                          <FiStar className="text-yellow-500 mx-auto mb-1" />
-                          <p className="text-xs text-gray-500">Rating</p>
-                          <p className="font-bold text-gray-900">
-                            {trainer.rating}/5.0
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Location */}
-                      {trainer.location && (
-                        <div className="bg-gray-50 rounded-lg p-3 text-center col-span-2">
-                          <div className="flex items-center justify-center text-gray-700">
-                            <FiMapPin className="text-blue-600 mr-1" />
-                            <p className="text-sm font-semibold">
-                              {trainer.location}
+                        {/* Specialisation */}
+                        {trainer.specialisation && (
+                          <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 mb-3">
+                            <p className="text-xs text-purple-600 font-semibold mb-1 uppercase">
+                              Specialization
+                            </p>
+                            <p className="text-sm text-gray-700 font-medium">
+                              {trainer.specialisation}
                             </p>
                           </div>
+                        )}
+
+                        {/* Contact Information */}
+                        <div className="space-y-2 mb-4">
+                          {/* Email */}
+                          <div className="flex items-center text-gray-600 text-sm">
+                            <FiMail className="text-blue-600 mr-2 flex-shrink-0" />
+                            <span className="truncate">{trainer.email}</span>
+                          </div>
+
+                          {/* Phone */}
+                          {trainer.phone && (
+                            <div className="flex items-center text-gray-600 text-sm">
+                              <FiPhone className="text-green-600 mr-2 flex-shrink-0" />
+                              <span>{trainer.phone}</span>
+                            </div>
+                          )}
                         </div>
-                      )}
+
+                        {/* Trainer Stats */}
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          {/* Experience */}
+                          {trainer.experience && (
+                            <div className="bg-gray-50 rounded-lg p-3 text-center">
+                              <FiClock className="text-blue-600 mx-auto mb-1" />
+                              <p className="text-xs text-gray-500">
+                                Experience
+                              </p>
+                              <p className="font-bold text-gray-900">
+                                {trainer.experience} Years
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Rating */}
+                          {trainer.rating && (
+                            <div className="bg-gray-50 rounded-lg p-3 text-center">
+                              <FiStar className="text-yellow-500 mx-auto mb-1" />
+                              <p className="text-xs text-gray-500">Rating</p>
+                              <p className="font-bold text-gray-900">
+                                {trainer.rating}/5.0
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Location */}
+                          {trainer.location && (
+                            <div className="bg-gray-50 rounded-lg p-3 text-center col-span-2">
+                              <div className="flex items-center justify-center text-gray-700">
+                                <FiMapPin className="text-blue-600 mr-1" />
+                                <p className="text-sm font-semibold">
+                                  {trainer.location}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Subscription Required Notice */}
+                        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-5 text-center shadow-sm">
+                          <p className="text-base font-semibold text-gray-900 mb-3">
+                            🔒 Want to train with {trainer.name?.split(' ')[0]}?
+                          </p>
+
+                          <p className="text-sm text-gray-600 mb-4">
+                            Click to see full profile and choose this trainer if
+                            it's the right fit for you.
+                          </p>
+
+                          <Link
+                            to={`/trainers/details/${trainer.trainerId}`}
+                            className="w-full max-w-xs mx-auto py-2.5 px-6 bg-blue-600 text-white rounded-full font-semibold text-sm hover:bg-blue-700 hover:shadow-md transition duration-300 inline-block text-center"
+                          >
+                            View Details & Choose Trainer
+                          </Link>
+                        </div>
+                      </div>
                     </div>
-
-                    {/* Subscription Required Notice */}
-                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-5 text-center shadow-sm">
-                      <p className="text-base font-semibold text-gray-900 mb-3">
-                        🔒 Want to train with {trainer.name?.split(" ")[0]}?
-                      </p>
-
-                      <p className="text-sm text-gray-600 mb-4">
-                        Click to see full profile and choose this trainer if
-                        it's the right fit for you.
-                      </p>
-
-   <Link
-  to={`/trainers/details/${trainer.trainerId}`}
-  className="w-full max-w-xs mx-auto py-2.5 px-6 bg-blue-600 text-white rounded-full font-semibold text-sm hover:bg-blue-700 hover:shadow-md transition duration-300 inline-block text-center"
->
-  View Details & Choose Trainer
-</Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  )
+                )
+              )}
             </div>
 
             {/* Pagination */}
@@ -330,7 +351,7 @@ const TrainersPageListing: React.FC = () => {
           <div className="bg-white rounded-3xl shadow-2xl p-16 text-center">
             <FiUser className="text-gray-300 text-8xl mx-auto mb-6" />
             <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              {debouncedSearch ? "No Trainers Found" : "No Trainers Available"}
+              {debouncedSearch ? 'No Trainers Found' : 'No Trainers Available'}
             </h3>
             <p className="text-gray-600 text-lg mb-8">
               {debouncedSearch
@@ -343,7 +364,7 @@ const TrainersPageListing: React.FC = () => {
               }
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-2xl transition duration-300 font-bold text-lg"
             >
-              {debouncedSearch ? "Clear Search" : "Refresh Trainers"}
+              {debouncedSearch ? 'Clear Search' : 'Refresh Trainers'}
             </button>
           </div>
         )}
@@ -351,7 +372,7 @@ const TrainersPageListing: React.FC = () => {
         {/* Why Choose Our Trainers Section */}
         <div className="mt-16 bg-white rounded-3xl shadow-2xl p-12">
           <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-12">
-            Why Choose Our{" "}
+            Why Choose Our{' '}
             <span className="text-blue-600">Certified Trainers</span>
           </h2>
           <div className="grid md:grid-cols-4 gap-8">
@@ -404,7 +425,7 @@ const TrainersPageListing: React.FC = () => {
             personalized fitness journey!
           </p>
           <button
-            onClick={() => handleViewProfile("/subscription")}
+            onClick={() => handleViewProfile('/subscription')}
             className="bg-white text-blue-600 font-bold px-10 py-4 rounded-full hover:bg-gray-100 transition duration-300 shadow-xl text-lg"
           >
             View Subscription Plans

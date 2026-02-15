@@ -1,4 +1,4 @@
-
+import { SlotStatus } from "../../../../domain/enum/SlotEnums";
 
 export interface CreateSlotDTO {
     _id: string;
@@ -7,4 +7,7 @@ export interface CreateSlotDTO {
     endTime: Date;
     isBooked: boolean;
     bookedBy?: string | null;
+    slotStatus: SlotStatus;
+    cancellationReason?: string | null;
+    canceldAt?: Date | null;
 }

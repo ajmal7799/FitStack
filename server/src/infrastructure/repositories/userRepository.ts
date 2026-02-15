@@ -11,105 +11,119 @@ import { UserProfile } from '../../domain/entities/user/userProfile';
 import { UserProfileMapper } from '../../application/mappers/userProfileMapper';
 
 export class UserRepository extends BaseRepository<User, IUserModel> implements IUserRepository {
-  constructor(protected _model: Model<IUserModel>) {
-    super(_model, UserMapper);
-  }
-
-  async findByEmail(email: string): Promise<User | null> {
-    const doc = await this._model.findOne({ email });
-    if (!doc) return null;
-
-    return UserMapper.fromMongooseDocument(doc);
-  }
-
-  async findAllUsers(skip = 0, limit = 10, isActive?: string, search?: string): Promise<User[]> {
-    const query: any = { role: UserRole.USER };
-
-    if (isActive) {
-      query.isActive = isActive;
+    constructor(protected _model: Model<IUserModel>) {
+        super(_model, UserMapper);
     }
 
-    if (search) {
-      query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }];
+    async findByEmail(email: string): Promise<User | null> {
+        const doc = await this._model.findOne({ email });
+        if (!doc) return null;
+
+        return UserMapper.fromMongooseDocument(doc);
     }
 
-    const docs = await this._model.find(query).skip(skip).limit(limit).sort({ createdAt: -1 });
+    async findAllUsers(skip = 0, limit = 10, isActive?: string, search?: string): Promise<User[]> {
+        const query: any = { role: UserRole.USER };
 
-    return docs.map(doc => UserMapper.fromMongooseDocument(doc));
-  }
+        if (isActive) {
+            query.isActive = isActive;
+        }
 
-  async countUsers(isActive?: string, search?: string, extraQuery: any = {}): Promise<number> {
-    const query: any = { ...extraQuery, role: UserRole.USER };
+        if (search) {
+            query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }];
+        }
 
-    if (isActive) query.isActive = isActive;
+        const docs = await this._model.find(query).skip(skip).limit(limit).sort({ createdAt: -1 });
 
-    if (search) {
-      query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }];
+        return docs.map(doc => UserMapper.fromMongooseDocument(doc));
     }
 
-    return await this._model.countDocuments(query);
-  }
+    async countUsers(isActive?: string, search?: string, extraQuery: any = {}): Promise<number> {
+        const query: any = { ...extraQuery, role: UserRole.USER };
 
-  async updateStatus(userId: string, isActive: UserStatus): Promise<User | null> {
-    const updatedDoc = await this._model.findByIdAndUpdate(userId, { isActive }, { new: true });
+        if (isActive) query.isActive = isActive;
 
-    if (!updatedDoc) return null;
-    return UserMapper.fromMongooseDocument(updatedDoc);
-  }
+        if (search) {
+            query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }];
+        }
 
-  async findAllTrainer(skip = 0, limit = 10, isActive?: string, search?: string): Promise<User[]> {
-    const query: any = { role: UserRole.TRAINER };
-
-    if (isActive) {
-      query.isActive = isActive;
+        return await this._model.countDocuments(query);
     }
 
-    if (search) {
-      query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }];
+    async updateStatus(userId: string, isActive: UserStatus): Promise<User | null> {
+        const updatedDoc = await this._model.findByIdAndUpdate(userId, { isActive }, { new: true });
+
+        if (!updatedDoc) return null;
+        return UserMapper.fromMongooseDocument(updatedDoc);
     }
 
-    const docs = await this._model.find(query).skip(skip).limit(limit).sort({ createdAt: -1 });
+    async findAllTrainer(skip = 0, limit = 10, isActive?: string, search?: string): Promise<User[]> {
+        const query: any = { role: UserRole.TRAINER };
 
-    return docs.map(doc => UserMapper.fromMongooseDocument(doc));
-  }
+        if (isActive) {
+            query.isActive = isActive;
+        }
 
-  async countTrainer(isActive?: string, search?: string, extraQuery: any = {}): Promise<number> {
-    const query: any = { ...extraQuery, role: UserRole.TRAINER };
+        if (search) {
+            query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }];
+        }
 
-    if (isActive) query.isActive = isActive;
+        const docs = await this._model.find(query).skip(skip).limit(limit).sort({ createdAt: -1 });
 
-    if (search) {
-      query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }];
+        return docs.map(doc => UserMapper.fromMongooseDocument(doc));
     }
 
-    return await this._model.countDocuments(query);
-  }
-  async findByIdAndUpdatePassword(email: string, hashedPassword: string): Promise<void> {
-    await this._model.updateOne({ email }, { $set: { password: hashedPassword } });
-  }
+    async countTrainer(isActive?: string, search?: string, extraQuery: any = {}): Promise<number> {
+        const query: any = { ...extraQuery, role: UserRole.TRAINER };
 
-  async googleSignUp(user: User): Promise<string> {
-    const doc = await this._model.create(user);
-    return doc._id.toString();
-  }
+        if (isActive) query.isActive = isActive;
 
-  async updateStripeCustomerId(userId: string, stripeCustomerId: string): Promise<void> {
-    await this._model.findByIdAndUpdate(userId, { $set: { stripeCustomerId: stripeCustomerId } }, { new: true });
-  }
+        if (search) {
+            query.$or = [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }];
+        }
 
-  async updateActiveMembershipId(userId: string, activeMembershipId: string | null): Promise<void> {
-    await this._model.findByIdAndUpdate(userId, { $set: { activeMembershipId: activeMembershipId } }, { new: true });
-  }
+        return await this._model.countDocuments(query);
+    }
+    async findByIdAndUpdatePassword(email: string, hashedPassword: string): Promise<void> {
+        await this._model.updateOne({ email }, { $set: { password: hashedPassword } });
+    }
 
-  async updateUserProfileImage(userId: string, profileImage: string): Promise<void> {
-    if (!profileImage) return;
-    await this._model.findByIdAndUpdate(userId, { $set: { profileImage: profileImage } });
-  }
+    async googleSignUp(user: User): Promise<string> {
+        const doc = await this._model.create(user);
+        return doc._id.toString();
+    }
 
- async updateTrainerProfile(userId: string, profile: User): Promise<User | null> {
-    const updatedDoc = await this._model.findByIdAndUpdate(userId,{$set: profile},{new: true, upsert: true});
-    if (!updatedDoc) return null;
-    return UserMapper.fromMongooseDocument(updatedDoc);
-  }
+    async updateStripeCustomerId(userId: string, stripeCustomerId: string): Promise<void> {
+        await this._model.findByIdAndUpdate(userId, { $set: { stripeCustomerId: stripeCustomerId } }, { new: true });
+    }
+
+    async updateActiveMembershipId(userId: string, activeMembershipId: string | null): Promise<void> {
+        await this._model.findByIdAndUpdate(userId, { $set: { activeMembershipId: activeMembershipId } }, { new: true });
+    }
+
+    async updateUserProfileImage(userId: string, profileImage: string): Promise<void> {
+        if (!profileImage) return;
+        await this._model.findByIdAndUpdate(userId, { $set: { profileImage: profileImage } });
+    }
+
+    async updateTrainerProfile(userId: string, profile: User): Promise<User | null> {
+        const updatedDoc = await this._model.findByIdAndUpdate(userId,{ $set: profile },{ new: true, upsert: true });
+        if (!updatedDoc) return null;
+        return UserMapper.fromMongooseDocument(updatedDoc);
+    }
+
+  async updateUser(user: User): Promise<void> {
+        await this._model.findByIdAndUpdate(user._id, { $set: user }, { new: true });
+    }
+
+   async findNonSubscribedUsers(): Promise<User[]> {
+       const docs = await this._model.find({
+            role: UserRole.USER,
+            activeMembershipId: { $exists: false }
+        });
+        return docs.map(doc => UserMapper.fromMongooseDocument(doc));
+    }
+    
+    
 
 }

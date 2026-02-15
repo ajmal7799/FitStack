@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   User,
@@ -9,7 +9,8 @@ import {
   Calendar,
   Menu,
   X,
-} from 'lucide-react';
+  Lock,
+} from "lucide-react";
 
 const TrainerSidebar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -17,13 +18,55 @@ const TrainerSidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/trainer/dashboard' },
-    { id: 'myProfile', label: 'My Profile', icon: User, path: '/trainer/profile' },
-    { id: 'verification', label: 'Verification', icon: CheckCircle, path: '/trainer/get-verification' },
-    {id: "slots", label: "Slots", icon: Calendar, path: "/trainer/slot"}, 
-    { id: 'myChat', label: 'My Chat', icon: MessageCircle, path: '/trainer/chat' },
-    { id: 'earnings', label: 'My Earnings', icon: DollarSign, path: '/trainer/earnings' },
-    { id: 'sessionHistory', label: 'Session History', icon: Calendar, path: '/trainer/sessions' },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: LayoutDashboard,
+      path: "/trainer/dashboard",
+    },
+    {
+      id: "myProfile",
+      label: "My Profile",
+      icon: User,
+      path: "/trainer/profile",
+    },
+    {
+      id: "verification",
+      label: "Verification",
+      icon: CheckCircle,
+      path: "/trainer/get-verification",
+    },
+    { id: "slots", label: "Slots", icon: Calendar, path: "/trainer/slot" },
+    {
+      id: "upcomingSlots",
+      label: "Session",
+      icon: Calendar,
+      path: "/trainer/upcoming-slots",
+    },
+    {
+      id: "myChat",
+      label: "My Chat",
+      icon: MessageCircle,
+      path: "/trainer/chat",
+    },
+    {
+      id: "earnings",
+      label: "My Earnings",
+      icon: DollarSign,
+      path: "/trainer/earnings",
+    },
+    {
+      id: "sessionHistory",
+      label: "Session History",
+      icon: Calendar,
+      path: "/trainer/sessions",
+    },
+    {
+      id: "change-password",
+      label: "Change Password",
+      icon: Lock, // Standard icon for security
+      path: "/trainer/change-password",
+    },
   ];
 
   const activePath = location.pathname;
@@ -54,7 +97,9 @@ const TrainerSidebar = () => {
       {/* Sidebar */}
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-black transform transition-transform duration-300 ease-in-out ${
-          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          isMobileMenuOpen
+            ? "translate-x-0"
+            : "-translate-x-full lg:translate-x-0"
         }`}
       >
         {/* Logo/Brand */}
@@ -75,8 +120,8 @@ const TrainerSidebar = () => {
                     onClick={() => handleNavigation(item)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                       isActive
-                        ? 'bg-gray-800 text-white'
-                        : 'text-gray-400 hover:bg-gray-900 hover:text-white'
+                        ? "bg-gray-800 text-white"
+                        : "text-gray-400 hover:bg-gray-900 hover:text-white"
                     }`}
                   >
                     <Icon size={20} />

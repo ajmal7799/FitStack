@@ -7,6 +7,8 @@ import { Model } from 'mongoose';
 import { FilterQuery, SortOrder } from 'mongoose';
 import { ConflictException } from '../../application/constants/exceptions';
 import { TRAINER_ERRORS } from '../../shared/constants/error';
+import { create } from 'domain';
+import { SlotStatus } from '../../domain/enum/SlotEnums';
 
 export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements ISlotRepository {
   constructor(protected _model: Model<ISlotModel>) {
@@ -27,7 +29,7 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
 
   async findAllSlots(trainerId: string, skip: number, limit: number, status?: string): Promise<Slot[]> {
     const now = new Date();
-    let query: FilterQuery<ISlotModel> = { trainerId };
+    const query: FilterQuery<ISlotModel> = { trainerId };
     let sort: { [key: string]: SortOrder } = { startTime: -1 };
 
     switch (status) {
@@ -55,7 +57,7 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
   }
   async countSlots(trainerId: string, status?: string): Promise<number> {
     const now = new Date();
-    let query: FilterQuery<ISlotModel> = { trainerId };
+    const query: FilterQuery<ISlotModel> = { trainerId };
     switch (status) {
       case 'upcoming':
         query.startTime = { $gt: now };
@@ -104,44 +106,99 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
     return slots.map(slot => SlotMapper.fromMongooseDocument(slot));
   }
 
- async checkUserBookingForDay(userId: string, startTime: Date, endTime: Date): Promise<boolean> {
+  async checkUserBookingForDay(userId: string, startTime: Date, endTime: Date): Promise<boolean> {
     const count = await this._model.countDocuments({
       bookedBy: userId,
       startTime: {
         $gte: new Date(startTime),
-        $lte: new Date(endTime)
-      }
-    })
-    return count > 0
+        $lte: new Date(endTime),
+      },
+    });
+    return count > 0;
   }
 
- async updateSlotBooking(slotId: string, userId: string): Promise<Slot | null> {
+  async updateSlotBooking(slotId: string, userId: string): Promise<Slot | null> {
     const updateDoc = await this._model.findOneAndUpdate(
       {
         _id: slotId,
-        isBooked: false
+        isBooked: false,
       },
       {
         $set: {
           isBooked: true,
-          bookedBy: userId
-        }
+          bookedBy: userId,
+          slotStatus: SlotStatus.BOOKED,
+        },
       },
       {
-        new: true
+        new: true,
       }
-    )
+    );
     if (!updateDoc) {
-      return null
+      return null;
     }
-    return SlotMapper.fromMongooseDocument(updateDoc)
+    return SlotMapper.fromMongooseDocument(updateDoc);
   }
 
- async deleteById(slotId: string): Promise<void> {
+  async deleteById(slotId: string): Promise<void> {
     const result = await this._model.deleteOne({ _id: slotId, isBooked: false });
-    if(!result) {
+    if (!result) {
       throw new ConflictException(TRAINER_ERRORS.COULD_NOT_DELETE_SLOT);
     }
   }
 
+  async createMany(slots: Partial<Slot>[]): Promise<Slot[]> {
+    const createdDocs = await this._model.insertMany(slots);
+    return createdDocs.map(doc => {
+      const plainDoc = doc.toObject() as unknown as ISlotModel;
+      return SlotMapper.fromMongooseDocument(plainDoc);
+    });
+  }
+
+  async findAllBookedSlotsByUserId(userId: string, skip: number = 0, limit: number = 5): Promise<Slot[]> {
+    const query: FilterQuery<ISlotModel> = {
+      bookedBy: userId,
+      startTime: {$gt:new Date() }
+      // isBooked: true,
+    };
+
+    const slots = await this._model.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
+
+    return slots.map(slot => SlotMapper.fromMongooseDocument(slot));
+  }
+
+
+  async countBookedSlotsByUserId(userId: string): Promise<number> {
+    return await this._model.countDocuments({
+      bookedBy: userId,
+      // isBooked: true
+    });
+  }
+
+  async updateSlotStatus(slotId: string, data: Partial<Slot>): Promise<void> {
+    await this._model.findByIdAndUpdate(slotId, {
+      $set: {
+        // isBooked: data.isBooked,
+        // bookedBy: data.bookedBy,
+        slotStatus: data.slotStatus,
+        cancellationReason: data.cancellationReason,
+      },
+    });
+  }
+
+  async findTrainerSessions(trainerId: string, skip = 0, limit = 5): Promise<Slot[]> {
+    const query: FilterQuery<ISlotModel> = {
+      trainerId: trainerId,
+      isBooked: true,
+      startTime: { $gt: new Date() },
+      
+    };
+    const slots = await this._model.find(query).sort({ startTime: -1 }).skip(skip).limit(limit);
+
+    return slots.map(slot => SlotMapper.fromMongooseDocument(slot));
+  }
+
+  async countTrainerSessions(trainerId: string): Promise<number> {
+    return await this._model.countDocuments({ trainerId, isBooked: true, startTime: { $gt: new Date() } });
+  }
 }

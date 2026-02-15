@@ -31,7 +31,7 @@ export class Trainer_Routes {
             trainerProfileController.getProfilePage(req, res, next);
         });
 
-        this._route.patch("/profile-update",authMiddleware.verify,upload.fields([{ name:'profileImage',maxCount:1 }])!,(req: Request, res: Response, next: NextFunction) => {
+        this._route.patch('/profile-update',authMiddleware.verify,upload.fields([{ name:'profileImage',maxCount:1 }])!,(req: Request, res: Response, next: NextFunction) => {
             trainerProfileController.updateTrainerProfile(req, res, next);
         });
 
@@ -47,13 +47,25 @@ export class Trainer_Routes {
             trainerSlotController.createSlot(req, res, next);
         });
 
+        this._route.post('/recurring-slots',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
+            trainerSlotController.createRecurringSlot(req, res, next);
+        });
+
         this._route.get('/get-slots',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
             trainerSlotController.getAllSlots(req, res, next);
-        })
+        });
 
         this._route.delete('/slots/:slotId',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
             trainerSlotController.deleteSlot(req, res, next);
-        })
+        });
+
+        this._route.get('/booked-slots',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {
+            trainerSlotController.getBookedSlots(req, res, next);
+        });
+
+        this._route.get('/booked-slots/:slotId',authMiddleware.verify,(req: Request, res: Response, next: NextFunction) => {    
+            trainerSlotController.getBookedSlotDetails(req, res, next);
+        });
 
     }
 

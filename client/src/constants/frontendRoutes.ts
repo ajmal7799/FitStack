@@ -8,7 +8,7 @@ export const FRONTEND_ROUTES = {
     HOME:'/home',
     SUBSCRIPTION:'/subscription',
 
-    TRAINER_DETAILS: "/trainers/details/:trainerId",
+    TRAINER_DETAILS: '/trainers/details/:trainerId',
     TRAINERS:'/trainers',
     SELECTED_TRAINER:'/selected-trainer',
 
@@ -21,8 +21,14 @@ export const FRONTEND_ROUTES = {
     PROFOILE_EDIT:'/profile-edit',
     PROFILE_PERSONAL_INFO:'/profile/personal-info',
     PROFILE_PERSONAL_INFO_EDIT:'/profile/personal-info-edit',
+    CHANGE_PASSWORD:'/change-password',
     ACTIVE_SUBSCRIPTION:'/active-subscription',
+
     SLOT_BOOKING:'/slots-booking',
+    SLOT_BOOKED:'/sessions',
+    SLOT_BOOKED_DETAILS:'/sessions/:slotId',
+
+    CHAT:'/chat',
   },
 
 
@@ -32,7 +38,13 @@ export const FRONTEND_ROUTES = {
     TRAINER_PROFILE:'/profile',
     TRAINER_PROFILE_EDIT:'/profile-edit',
     TRAINER_GET_VERIFICATION:'/get-verification',
+
     TRAINER_SLOT:'/slot',
+    TRAINER_UPCOMING_SLOTS:'/upcoming-slots',
+    TRAINER_UPCOMING_SLOT_DETAILS:'/upcoming-slots/:slotId',
+
+    TRAINER_CHAT:'/chat',
+    TRAINER_CHANGE_PASSWORD:'/change-password',
   },
 
 

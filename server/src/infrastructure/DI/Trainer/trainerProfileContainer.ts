@@ -21,7 +21,7 @@ const getProfileData = new GetProfileData(
     userRepository,
     trainerRepository,
     verificationRepository,
-    storageSvc
+    storageSvc,
 );
 
 const updateProfile = new UpdateTrainerProfileUseCase(userRepository, trainerRepository,storageSvc);

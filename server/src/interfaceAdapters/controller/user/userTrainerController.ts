@@ -10,81 +10,88 @@ import { ITrainerSelectUseCase } from '../../../application/useCase/user/trainer
 import { IGetSelectedTrainer } from '../../../application/useCase/user/trainer/IGetSelectedTrainer';
 
 export class UserTrainerController {
-  constructor(
+    constructor(
     private _getAllTrainerUseCase: IGetAllTrainerUseCase,
     private _getTrainerDetailsUseCase: IGetTrainerDetailsUseCase,
     private _trainerSelectUseCase: ITrainerSelectUseCase,
-    private _getSelectedTrainerUseCase: IGetSelectedTrainer
-  ) {}
-  async getAllTrainer(req: Request, res: Response, next: NextFunction) {
-    try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-      const search = (req.query.search as string) || undefined;
+    private _getSelectedTrainerUseCase: IGetSelectedTrainer,
+    ) {}
+    async getAllTrainer(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            if (!userId) {
+                throw new InvalidDataException(Errors.INVALID_DATA);
+            }
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const search = (req.query.search as string) || undefined;
+            
+            
 
-      if (page < 1 || limit < 1 || limit > 100) {
-        throw new InvalidDataException(Errors.INVALID_PAGINATION_PARAMETERS);
-      }
+            if (page < 1 || limit < 1 || limit > 100) {
+                throw new InvalidDataException(Errors.INVALID_PAGINATION_PARAMETERS);
+            }
 
-      const result = await this._getAllTrainerUseCase.getAllTrainer(page, limit, search);
+            const result = await this._getAllTrainerUseCase.getAllTrainer(page, limit, search, userId);
+            
 
-      if (!result || result.verifications?.length === 0) {
-        throw new NotFoundException(USER_ERRORS.NO_USERS_FOUND);
-      }
-      ResponseHelper.success(res, MESSAGES.Trainer.VERIFICATION_DATA_SUCCESS, { data: result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            if (!result || result.verifications?.length === 0) {
+                throw new NotFoundException(USER_ERRORS.NO_USERS_FOUND);
+            }
+            ResponseHelper.success(res, MESSAGES.Trainer.VERIFICATION_DATA_SUCCESS, { data: result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  async getTrainerDetails(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { trainerId } = req.params;
+    async getTrainerDetails(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { trainerId } = req.params;
 
-      if (!trainerId) {
-        throw new InvalidDataException(Errors.INVALID_DATA);
-      }
-      const result = await this._getTrainerDetailsUseCase.getTrainerDetails(trainerId);
+            if (!trainerId) {
+                throw new InvalidDataException(Errors.INVALID_DATA);
+            }
+            const result = await this._getTrainerDetailsUseCase.getTrainerDetails(trainerId);
 
-      ResponseHelper.success(res, MESSAGES.Trainer.TRAINER_DETAILS_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.Trainer.TRAINER_DETAILS_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  async selectTrainer(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
-      const { trainerId } = req.body;
+    async selectTrainer(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            const { trainerId } = req.body;
 
-      if (!userId || !trainerId) {
-        throw new InvalidDataException(Errors.INVALID_DATA);
-      }
+            if (!userId || !trainerId) {
+                throw new InvalidDataException(Errors.INVALID_DATA);
+            }
 
-      await this._trainerSelectUseCase.selectTrainer(userId, trainerId);
+            await this._trainerSelectUseCase.selectTrainer(userId, trainerId);
 
-      ResponseHelper.success(res, MESSAGES.Trainer.TRAINER_SELECTED_SUCCESS, HTTPStatus.OK);
+            ResponseHelper.success(res, MESSAGES.Trainer.TRAINER_SELECTED_SUCCESS, HTTPStatus.OK);
 
-    } catch (error) {
-      next(error);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
-  async getSelectedTrainer(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
+    async getSelectedTrainer(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
 
-      if (!userId) {
-        throw new InvalidDataException(Errors.INVALID_DATA);
-      }
+            if (!userId) {
+                throw new InvalidDataException(Errors.INVALID_DATA);
+            }
 
-      const result = await this._getSelectedTrainerUseCase.getSelectedTrainer(userId);
+            const result = await this._getSelectedTrainerUseCase.getSelectedTrainer(userId);
 
-      ResponseHelper.success(res, MESSAGES.Trainer.GET_SELECTED_TRAINER, { result }, HTTPStatus.OK);
+            ResponseHelper.success(res, MESSAGES.Trainer.GET_SELECTED_TRAINER, { result }, HTTPStatus.OK);
       
-    } catch (error) {
-      next(error);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
     
 
 }

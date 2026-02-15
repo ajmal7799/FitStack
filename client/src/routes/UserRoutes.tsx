@@ -11,17 +11,21 @@ import SubscriptionPlans from '../pages/User/Subscription/subscription';
 import TrainersPageListing from '../pages/User/Trainer/Trainers';
 import SuccessPage from '../pages/User/Subscription/SuccessPage';
 import PlansPage from '../pages/User/Subscription/PlansPage';
-import AddProfilePage from '../pages/User/Profile/AddProfileDataPage'
+import AddProfilePage from '../pages/User/Profile/AddProfileDataPage';
 import AiWorkoutPlan from '../pages/User/Ai/WorkoutPlanPage';
 import AiDietPlan from '../pages/User/Ai/DietPlanPage';
 import UserProfile from '../pages/User/Profile/userPersonalPage';
 import PersonalInfo from '../pages/User/Profile/userBodyMetrics';
 import EditUserPersonalPage from '../pages/User/Profile/EditUserPersonalPage';
 import UserBodyMetricsEditPage from '../pages/User/Profile/EditUserBodyMetrics';
-import ActiveSubscription from "../pages/User/Subscription/ActiveSubscription";
+import ActiveSubscription from '../pages/User/Subscription/ActiveSubscription';
 import TrainerDetails from '../pages/User/Trainer/TrainerDetails';
 import GetSelectedTrainer from '../pages/User/Trainer/GetSelectedTrainer';
 import UserSlotBookingPage from '../pages/User/Slot/UserSlotBookingPage';
+import UserChatPage from '../pages/User/chat/UserChatPage';
+import ChangePasswordUserPage from '../pages/User/Profile/ChangePasswordPage';
+import UserBookedSlotsPage from '../pages/User/Slot/UserBookedSlotsPage';
+import UserBookedSlotDetails from '../pages/User/Slot/UserBookedSlotDetails';
 
 const UserRoutes = () => {
   return (
@@ -38,12 +42,13 @@ const UserRoutes = () => {
       <Route path={FRONTEND_ROUTES.USER.TRAINERS} element={ <PrivateRoute> < TrainersPageListing /> </PrivateRoute>  } />
       <Route path={FRONTEND_ROUTES.USER.SELECTED_TRAINER} element={ <PrivateRoute> < GetSelectedTrainer /> </PrivateRoute>  } />
 
-
+    
       <Route path={FRONTEND_ROUTES.USER.AI_WORKOUT} element={<PrivateRoute> <  AiWorkoutPlan /> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.USER.AI_DIET} element={<PrivateRoute> <  AiDietPlan /> </PrivateRoute>} />
 
       <Route path={FRONTEND_ROUTES.USER.PROFOILE} element={<PrivateRoute> <  UserProfile /> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.USER.PROFOILE_EDIT} element={<PrivateRoute> <  EditUserPersonalPage /> </PrivateRoute>} />
+      <Route path={FRONTEND_ROUTES.USER.CHANGE_PASSWORD} element={<PrivateRoute> <  ChangePasswordUserPage /> </PrivateRoute>} />
 
       <Route path={FRONTEND_ROUTES.USER.ACTIVE_SUBSCRIPTION} element={<PrivateRoute> <  ActiveSubscription /> </PrivateRoute>} />
 
@@ -55,8 +60,10 @@ const UserRoutes = () => {
 
 
       <Route path={FRONTEND_ROUTES.USER.SLOT_BOOKING} element={<PrivateRoute> < UserSlotBookingPage /> </PrivateRoute>} />
+      <Route path={FRONTEND_ROUTES.USER.SLOT_BOOKED} element={<PrivateRoute> < UserBookedSlotsPage /> </PrivateRoute>} />
+      <Route path={FRONTEND_ROUTES.USER.SLOT_BOOKED_DETAILS} element={<PrivateRoute> < UserBookedSlotDetails /> </PrivateRoute>} />
 
-
+      <Route path={FRONTEND_ROUTES.USER.CHAT} element={<PrivateRoute> < UserChatPage /> </PrivateRoute>} />
 
     </Routes>
   );

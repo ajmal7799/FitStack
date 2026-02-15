@@ -1,5 +1,5 @@
-import { User } from "../../../../domain/entities/user/userEntities";
-import { Trainer } from "../../../../domain/entities/trainer/trainerEntities";
+import { User } from '../../../../domain/entities/user/userEntities';
+import { Trainer } from '../../../../domain/entities/trainer/trainerEntities';
 export interface UpdateTrainerProfileDTO {
   name?: string;
   email?: string;

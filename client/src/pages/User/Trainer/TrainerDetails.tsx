@@ -1,15 +1,15 @@
-import Header from "../../../components/user/Header";
-import Footer from "../../../components/user/footer";
-import { useGetTrainerDetails } from "../../../hooks/User/TrainerHooks";
-import { useSelectTrainer } from "../../../hooks/User/TrainerHooks"; // Import the hook
-import { useParams, useNavigate } from "react-router-dom";
-import { FRONTEND_ROUTES } from "../../../constants/frontendRoutes";
-import { ArrowLeft, Check, Video, MessageCircle, Target, Award, X, AlertCircle } from "lucide-react";
-import { useState } from "react";
-import type { TrainerApiResponse } from "../../../types/userTrainerDetails";
-import toast from "react-hot-toast";
-import type { Rootstate } from "../../../redux/store";
-import {useSelector} from "react-redux";
+import Header from '../../../components/user/Header';
+import Footer from '../../../components/user/footer';
+import { useGetTrainerDetails } from '../../../hooks/User/TrainerHooks';
+import { useSelectTrainer } from '../../../hooks/User/TrainerHooks'; // Import the hook
+import { useParams, useNavigate } from 'react-router-dom';
+import { FRONTEND_ROUTES } from '../../../constants/frontendRoutes';
+import { ArrowLeft, Check, Video, MessageCircle, Target, Award, X, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
+import type { TrainerApiResponse } from '../../../types/userTrainerDetails';
+import toast from 'react-hot-toast';
+import type { Rootstate } from '../../../redux/store';
+import {useSelector} from 'react-redux';
 
 const TrainerDetails = () => {
   const { trainerId } = useParams<{ trainerId: string }>();
@@ -17,7 +17,7 @@ const TrainerDetails = () => {
   const authData = useSelector((state: Rootstate) => state.authData);
  
 
-  const { data, isLoading, error } = useGetTrainerDetails(trainerId || "");
+  const { data, isLoading, error } = useGetTrainerDetails(trainerId || '');
   const selectTrainerMutation = useSelectTrainer();
 
   const [isImageZoomed, setIsImageZoomed] = useState(false);
@@ -25,7 +25,7 @@ const TrainerDetails = () => {
 
   // Check if user has active subscription (replace with your actual logic)
   // You can use Redux selector or context to get this
-  const {hasActiveSubscription} = authData// TODO: Replace with actual subscription check
+  const {hasActiveSubscription} = authData;// TODO: Replace with actual subscription check
 
   const trainer = (data as TrainerApiResponse)?.data?.result;
 
@@ -42,7 +42,7 @@ const TrainerDetails = () => {
   const handleConfirmSelection = () => {
     if (trainerId) {
       selectTrainerMutation.mutate(
-         trainerId ,
+        trainerId ,
         {
           onSuccess: () => {
             toast.success(`${trainer?.name} selected as your trainer!`);
@@ -87,7 +87,7 @@ const TrainerDetails = () => {
       <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
         {/* Back Button */}
         <button
-          onClick={() => navigate(FRONTEND_ROUTES.USER.TRAINERS || "/trainers")}
+          onClick={() => navigate(FRONTEND_ROUTES.USER.TRAINERS || '/trainers')}
           className="mb-6 flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -137,7 +137,7 @@ const TrainerDetails = () => {
                 ) : (
                   <div className="w-40 h-40 md:w-56 md:h-56 rounded-2xl bg-gray-200 flex items-center justify-center border-4 border-white shadow-xl">
                     <span className="text-gray-500 text-5xl font-bold">
-                      {trainer.name?.charAt(0)?.toUpperCase() || "?"}
+                      {trainer.name?.charAt(0)?.toUpperCase() || '?'}
                     </span>
                   </div>
                 )}
@@ -148,13 +148,13 @@ const TrainerDetails = () => {
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-800 capitalize">
                   {trainer.name}
                 </h1>
-                <p className="text-lg text-gray-600 mt-1">{trainer.specialisation || "Personal Trainer"}</p>
+                <p className="text-lg text-gray-600 mt-1">{trainer.specialisation || 'Personal Trainer'}</p>
 
                 <div className="mt-4 flex flex-wrap gap-6 justify-center md:justify-start">
                   <div>
                     <p className="text-sm text-gray-500">Experience</p>
                     <p className="text-xl font-semibold text-gray-800">
-                      {trainer.experience} {trainer.experience === 1 ? "year" : "years"}
+                      {trainer.experience} {trainer.experience === 1 ? 'year' : 'years'}
                     </p>
                   </div>
 
@@ -173,7 +173,7 @@ const TrainerDetails = () => {
           <div className="p-6 md:p-10">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">About</h2>
             <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-              {trainer.about || "No detailed information provided yet."}
+              {trainer.about || 'No detailed information provided yet.'}
             </p>
 
             {/* Email */}
@@ -243,12 +243,12 @@ const TrainerDetails = () => {
                   className="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 mx-auto"
                 >
                   <Check className="w-5 h-5" />
-                  {hasActiveSubscription ? "Choose This Trainer" : "Get Subscription to Choose Trainer"}
+                  {hasActiveSubscription ? 'Choose This Trainer' : 'Get Subscription to Choose Trainer'}
                 </button>
 
                 {!hasActiveSubscription && (
                   <p className="mt-4 text-sm text-gray-600">
-                    🔒 You need an active subscription to select a trainer.{" "}
+                    🔒 You need an active subscription to select a trainer.{' '}
                     <button
                       onClick={() => navigate(FRONTEND_ROUTES.USER.SUBSCRIPTION)}
                       className="text-blue-600 font-medium hover:underline"
@@ -286,8 +286,8 @@ const TrainerDetails = () => {
               {/* Modal Body */}
               <div className="mb-6">
                 <p className="text-gray-700 mb-4">
-                  Are you sure you want to select{" "}
-                  <span className="font-semibold text-gray-900">{trainer?.name}</span>{" "}
+                  Are you sure you want to select{' '}
+                  <span className="font-semibold text-gray-900">{trainer?.name}</span>{' '}
                   as your personal trainer?
                 </p>
                 

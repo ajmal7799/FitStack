@@ -1,0 +1,4 @@
+import { BookedSlotsTrainerDTO } from "../../../dto/slot/slotDTO";
+export interface IBookedSlotsUseCase {
+    getBookedSlots(userId: string, page: number, limit: number): Promise<{slots: BookedSlotsTrainerDTO[], totalSlots: number,totalePages: number, currentPage: number}>;
+}

@@ -17,6 +17,6 @@ export class TokenInvalidationUseCase implements ITokenInvalidationUseCase {
             throw new TokenMissingException(Errors.INVALID_TOKEN);
         }
 
-        await this._cacheService.setData(`blackList:${token}`,7 * 24 * 60 * 60, 'blackListed');
+        await this._cacheService.setData(`blackList:${token}`,7 * 24 * 60 * 60, 'blackListed'); 
     }
 }

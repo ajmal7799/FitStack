@@ -1,8 +1,8 @@
 
-import { TrainerSelection } from "../../domain/entities/trainer/trainerSelectionEntities";
-    import mongoose, { Mongoose } from 'mongoose';
-import { ITrainerSelectModel } from "../../infrastructure/database/models/trainerSelectModel";
-import { TrainerSelectionStatus } from "../../domain/enum/trainerSelectionEnums";
+import { TrainerSelection } from '../../domain/entities/trainer/trainerSelectionEntities';
+import mongoose, { Mongoose } from 'mongoose';
+import { ITrainerSelectModel } from '../../infrastructure/database/models/trainerSelectModel';
+import { TrainerSelectionStatus } from '../../domain/enum/trainerSelectionEnums';
 
 
 export class TrainerSelectMapper {
@@ -23,7 +23,7 @@ export class TrainerSelectMapper {
             trainerId: doc.trainerId.toString(),
             status: doc.status as TrainerSelectionStatus,
             selectedAt: doc.selectedAt,
-        }
+        };
     }
 
     static toEntity(userId: string, trainerId: string): TrainerSelection {
@@ -32,7 +32,7 @@ export class TrainerSelectMapper {
             userId,
             trainerId,
             status: TrainerSelectionStatus.ACTIVE,
-            selectedAt: new Date()
-        }
+            selectedAt: new Date(),
+        };
     }
 }
