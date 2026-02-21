@@ -29,6 +29,9 @@ export const FRONTEND_ROUTES = {
     SLOT_BOOKED_DETAILS:'/sessions/:slotId',
 
     CHAT:'/chat',
+
+    VIDEO_SESSION:'/video-session/:roomId/:slotId',
+
   },
 
 
@@ -44,6 +47,9 @@ export const FRONTEND_ROUTES = {
     TRAINER_UPCOMING_SLOT_DETAILS:'/upcoming-slots/:slotId',
 
     TRAINER_CHAT:'/chat',
+
+    VIDEO_SESSION:'/video-session/:roomId/:slotId',
+
     TRAINER_CHANGE_PASSWORD:'/change-password',
   },
 

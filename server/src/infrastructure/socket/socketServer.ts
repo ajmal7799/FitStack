@@ -10,6 +10,11 @@ import { messageModel } from '../database/models/messageModel';
 import { ChatRepository } from '../repositories/chatRepository';
 import { chatModel } from '../database/models/chatModel';
 import { DeleteMessageUseCase } from '../../application/implementation/chat/deleteMessageUseCase';
+import { EndVideoCallSessionUseCase } from '../../application/implementation/Video/EndVideoCallSessionUseCase';
+import { VideoCallRepository } from '../repositories/videoCallRepository';
+import { videoCallModel } from '../database/models/videoCallModel';
+import { SlotRepository } from '../repositories/slotRepository';
+import { slotModel } from '../database/models/slotModel';
 
 export class SocketService {
     private static _io: Server;
@@ -27,10 +32,14 @@ export class SocketService {
 
         const messageRepository = new MessageRepository( messageModel);
         const chatRepository = new ChatRepository( chatModel);
+        const videoCallRepository = new VideoCallRepository(videoCallModel);
+        const slotRepository = new SlotRepository(slotModel);
+
         const sendingMessageUseCase = new SendingMessageUseCase(messageRepository, chatRepository);
         const deleteMessageUseCase = new DeleteMessageUseCase(messageRepository, chatRepository);
+        const endVideoCallSessionUseCase = new EndVideoCallSessionUseCase( videoCallRepository, slotRepository);
     
-        const socketController = new SocketController(this._io, sendingMessageUseCase, deleteMessageUseCase);
+        const socketController = new SocketController(this._io, sendingMessageUseCase, deleteMessageUseCase, endVideoCallSessionUseCase);
 
         this._io.on('connection', (socket) => {
             socketController.onConnection(socket);

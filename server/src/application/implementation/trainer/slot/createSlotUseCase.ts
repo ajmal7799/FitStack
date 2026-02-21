@@ -38,6 +38,7 @@ export class CreateSlotUseCase implements ICreateSlotUseCase {
             slotStatus: SlotStatus.AVAILABLE,
         }; 
 
+
         const slotData = SlotMapper.toEntity(data);
         const slot = await this._slotRepository.save(slotData);
         return slot;

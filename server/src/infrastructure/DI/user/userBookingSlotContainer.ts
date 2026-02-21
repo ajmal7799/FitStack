@@ -13,7 +13,8 @@ import { BookedSlotUseCase } from '../../../application/implementation/user/slot
 import { BookedSlotDetailsUseCase } from '../../../application/implementation/user/slot/BookedSlotDetailsUseCase';
 import { StorageService } from '../../services/Storage/storageService';
 import { BookedSlotCancelUseCase } from '../../../application/implementation/user/slot/BookedSlotCancelUseCase';
-
+import { VideoCallRepository } from '../../repositories/videoCallRepository';
+import { videoCallModel } from '../../database/models/videoCallModel';
 
 // Repository & Service
 const userRepository = new UserRepository(userModel);
@@ -21,13 +22,15 @@ const trainerRepository = new TrainerRepository(trainerModel);
 const trainerSelectRepository = new TrainerSelectRepository(trainerSelectModel);
 const slotRepository = new SlotRepository(slotModel);
 const storageSvc = new StorageService();
+const videoCallRepository = new VideoCallRepository(videoCallModel);
 
 // UseCases
 const getAllAvailableSlotUseCase = new GetAllAvailableSlotUseCase(slotRepository, userRepository, trainerSelectRepository);
-const bookSlotUseCase = new BookSlotUseCase(userRepository, slotRepository);
+const bookSlotUseCase = new BookSlotUseCase(userRepository, slotRepository, videoCallRepository);
 const bookedSlotUseCase = new BookedSlotUseCase(userRepository, slotRepository, trainerSelectRepository);
 const bookedSlotDetailsUseCase = new BookedSlotDetailsUseCase(userRepository, slotRepository, storageSvc);
 const bookedSlotCancelUseCase = new BookedSlotCancelUseCase(slotRepository);
+
 
 // Controllers
 export const userBookingSlotController = new UserBookingSlotController(getAllAvailableSlotUseCase, bookSlotUseCase, bookedSlotUseCase, bookedSlotDetailsUseCase, bookedSlotCancelUseCase);

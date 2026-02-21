@@ -8,4 +8,7 @@ export interface Trainer {
     experience: number;
     about: string;
     isVerified: boolean;
+    ratingCount: number;  
+    ratingSum: number;    
+    averageRating: number; 
 }

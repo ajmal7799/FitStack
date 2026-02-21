@@ -36,7 +36,7 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
       case 'upcoming':
         query.startTime = { $gt: now };
         sort = { startTime: 1 };
-        query.isBooked = false; // Usually trainers want to see available future slots here
+       
         break;
       case 'booked':
         query.isBooked = true;
@@ -52,16 +52,16 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
         break;
     }
 
-    const slots = await this._model.find(query).sort(sort).skip(skip).limit(limit); // .lean() makes it a plain JS object for better performance
+    const slots = await this._model.find(query).sort(sort).skip(skip).limit(limit);
     return slots.map(slot => SlotMapper.fromMongooseDocument(slot));
   }
+
   async countSlots(trainerId: string, status?: string): Promise<number> {
     const now = new Date();
     const query: FilterQuery<ISlotModel> = { trainerId };
     switch (status) {
       case 'upcoming':
         query.startTime = { $gt: now };
-        query.isBooked = false;
         break;
       case 'booked':
         query.isBooked = true;
@@ -95,7 +95,10 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
     const slots = await this._model
       .find({
         trainerId,
-        isBooked: false,
+        slotStatus: {
+          $in: [SlotStatus.AVAILABLE, SlotStatus.CANCELLED],
+        },
+        
         startTime: {
           $gte: queryStart,
           $lte: endOfDay,
@@ -109,6 +112,8 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
   async checkUserBookingForDay(userId: string, startTime: Date, endTime: Date): Promise<boolean> {
     const count = await this._model.countDocuments({
       bookedBy: userId,
+      slotStatus: SlotStatus.BOOKED,
+      
       startTime: {
         $gte: new Date(startTime),
         $lte: new Date(endTime),
@@ -121,13 +126,13 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
     const updateDoc = await this._model.findOneAndUpdate(
       {
         _id: slotId,
-        isBooked: false,
       },
       {
         $set: {
           isBooked: true,
           bookedBy: userId,
           slotStatus: SlotStatus.BOOKED,
+          cancellationReason: null,
         },
       },
       {
@@ -158,8 +163,9 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
   async findAllBookedSlotsByUserId(userId: string, skip: number = 0, limit: number = 5): Promise<Slot[]> {
     const query: FilterQuery<ISlotModel> = {
       bookedBy: userId,
-      startTime: {$gt:new Date() }
+      // startTime: {$gt:new Date() }
       // isBooked: true,
+      slotStatus: SlotStatus.BOOKED,
     };
 
     const slots = await this._model.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
@@ -167,10 +173,10 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
     return slots.map(slot => SlotMapper.fromMongooseDocument(slot));
   }
 
-
   async countBookedSlotsByUserId(userId: string): Promise<number> {
     return await this._model.countDocuments({
       bookedBy: userId,
+      slotStatus: SlotStatus.BOOKED,
       // isBooked: true
     });
   }
@@ -178,10 +184,7 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
   async updateSlotStatus(slotId: string, data: Partial<Slot>): Promise<void> {
     await this._model.findByIdAndUpdate(slotId, {
       $set: {
-        // isBooked: data.isBooked,
-        // bookedBy: data.bookedBy,
-        slotStatus: data.slotStatus,
-        cancellationReason: data.cancellationReason,
+        ...data,
       },
     });
   }
@@ -190,15 +193,14 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
     const query: FilterQuery<ISlotModel> = {
       trainerId: trainerId,
       isBooked: true,
-      startTime: { $gt: new Date() },
-      
+      slotStatus: SlotStatus.BOOKED,
     };
-    const slots = await this._model.find(query).sort({ startTime: -1 }).skip(skip).limit(limit);
+    const slots = await this._model.find(query).sort({ startTime: 1 }).skip(skip).limit(limit);
 
     return slots.map(slot => SlotMapper.fromMongooseDocument(slot));
   }
 
   async countTrainerSessions(trainerId: string): Promise<number> {
-    return await this._model.countDocuments({ trainerId, isBooked: true, startTime: { $gt: new Date() } });
+    return await this._model.countDocuments({ trainerId, isBooked: true, slotStatus: SlotStatus.BOOKED });
   }
 }

@@ -367,18 +367,20 @@ const TrainerSlotPage = () => {
                         >
                           {isExpired ? 'Expired' : slot.isBooked ? 'Booked' : 'Available'}
                         </span>
-                        <button
-                          onClick={() => handleDeleteSlot(slot._id)}
-                          disabled={deletingSlotId === slot._id}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          title="Delete slot"
-                        >
-                          {deletingSlotId === slot._id ? (
-                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
-                          ) : (
-                            <Trash2 className="w-5 h-5" />
-                          )}
-                        </button>
+                       {!slot.isBooked && (
+    <button
+      onClick={() => handleDeleteSlot(slot._id)}
+      disabled={deletingSlotId === slot._id}
+      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      title="Delete slot"
+    >
+      {deletingSlotId === slot._id ? (
+        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
+      ) : (
+        <Trash2 className="w-5 h-5" />
+      )}
+    </button>
+  )}
                       </div>
 
                       <div className="mb-3">

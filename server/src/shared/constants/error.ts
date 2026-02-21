@@ -65,7 +65,7 @@ export const USER_ERRORS = {
     CONNOT_BOOK_SLOT_THAT_ALREADY_PASSED : 'Cannot book a slot that has already passed',
     YOUR_HAVE_ALREADY_BOOKED_A_SEESSION_FOR_THIS_DAY : 'You have already booked a session for this day',
     THIS_SLOT_WAS_BOOKED_BY_ANOTHER_USER : 'This slot was just booked by someone else',
-    OLD_PASSWORD_INCORRECT : 'The old password you entered is incorrect',
+    OLD_PASSWORD_INCORRECT : 'The old password you entered is incorrect', 
 };
 
 

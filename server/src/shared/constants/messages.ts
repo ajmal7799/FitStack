@@ -25,6 +25,7 @@ export const MESSAGES = {
         BOOKED_SLOTS_FETCHED_SUCCESS: 'Booked slots fetched successfully.',
         BOOKED_SLOT_DETAILS_FETCHED_SUCCESS: 'Booked slot details fetched successfully.',
         BOOKED_SLOT_CANCELLED_SUCCESS: ' slot cancelled successfully.',
+        VIDEO_SESSION_JOINED_SUCCESS: 'Video session joined successfully.',
     },
     Trainer: {
         VERIFICATION_SUBMITTED: 'Trainer verification submitted successfully.',

@@ -14,7 +14,8 @@ import {
   changePassword,
   getBookedSlots,
   getBookedSlotDetails,
-  cancelBookedSlot
+  cancelBookedSlot,
+  joinSession
 } from '../../service/user/userService';
 import type { UserBodyMetricsPayload } from '../../types/UserBodyMetricsPayload';
 
@@ -141,6 +142,12 @@ export const useGetBookedSlotDetails = (slotId: string) => {
 export const useCancelBookedSlot = () => {
   return useMutation({
     mutationFn: (data: { slotId: string; reason: string }) => cancelBookedSlot(data.slotId, data.reason),
+  });
+};
+
+export const useJoinSession = () => {
+  return useMutation({
+    mutationFn: (slotId: string) => joinSession(slotId),
   });
 };
 

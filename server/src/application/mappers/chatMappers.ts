@@ -1,4 +1,4 @@
-import mongoose, { Mongoose } from 'mongoose';
+  import mongoose, { Mongoose } from 'mongoose';
 import { Chat } from '../../domain/entities/chat/chatEntity';
 import { IChatModel } from '../../infrastructure/database/models/chatModel';
 import { CreateChatDTO } from '../dto/chat/createChatDTO';
