@@ -11,6 +11,7 @@ import TrainerChatPage from '../pages/Trainer/chat/TrainerChatPage';
 import ChangeTrainerPasswordPage from '../pages/Trainer/profile/TrainerChangePassword';
 import UpcomingSlotsPage from '../pages/Trainer/slot/UpcomingSlotsPage';
 import UpcomingSlotDetails from '../pages/Trainer/slot/UpcomingSlotDetails';
+import VideoSessionPage from '../pages/Video/VideoSessionPage';
 
 const TrainerRoutes = () => {
   return (
@@ -28,6 +29,8 @@ const TrainerRoutes = () => {
 
 
       <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_CHAT} element={<PrivateRoute > <TrainerChatPage/> </PrivateRoute>} />
+
+      <Route path={FRONTEND_ROUTES.TRAINER.VIDEO_SESSION} element={<PrivateRoute > <VideoSessionPage/> </PrivateRoute>} />
 
     </Routes>
   );

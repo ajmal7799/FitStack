@@ -4,8 +4,16 @@ import { IBookSlotUseCase } from '../../../useCase/user/booking/IBookSlotUseCase
 import { Slot } from '../../../../domain/entities/trainer/slot';
 import { ConflictException, InvalidDataException, NotFoundException } from '../../../constants/exceptions';
 import { USER_ERRORS } from '../../../../shared/constants/error';
+import { IVideoCallRepository } from '../../../../domain/interfaces/repositories/IVideoCallRepository';
+import { CreateVideoCallDTO } from '../../../dto/videoCall/videoCallDTO';
+import crypto from "crypto";
+import { VideoCallStatus } from '../../../../domain/enum/videoCallEnums';
+import { VideoCallMapper } from '../../../mappers/videoCallMappers';
+
+
+
 export class BookSlotUseCase implements IBookSlotUseCase {
-    constructor(private _userRepository: IUserRepository, private _slotRepository: ISlotRepository) {}
+    constructor(private _userRepository: IUserRepository, private _slotRepository: ISlotRepository, private _videoCallRepository: IVideoCallRepository) {}
 
     async bookSlot(userId: string, slotId: string): Promise<Slot> {
         const user = await this._userRepository.findById(userId);
@@ -34,12 +42,29 @@ export class BookSlotUseCase implements IBookSlotUseCase {
             throw new InvalidDataException(USER_ERRORS.YOUR_HAVE_ALREADY_BOOKED_A_SEESSION_FOR_THIS_DAY);
         }
 
-
+        const roomId = crypto.randomBytes(16).toString("hex");
         const updatedSlot = await this._slotRepository.updateSlotBooking(slotId, userId);
 
         if (!updatedSlot) {
             throw new ConflictException(USER_ERRORS.SLOT_NOT_FOUND);
         }
+        
+        const data : CreateVideoCallDTO = {
+            _id: '',
+            userId: userId,
+            trainerId: slot.trainerId,
+            slotId,
+            roomId,
+            trainerJoined: false,
+            userJoined: false,
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            status: VideoCallStatus.WAITING,
+        }
+        
+        const videoCallData = VideoCallMapper.toEnitity(data);
+
+        await this._videoCallRepository.save(videoCallData);
 
         return updatedSlot;
     }

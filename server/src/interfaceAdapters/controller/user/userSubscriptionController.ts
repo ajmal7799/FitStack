@@ -99,18 +99,5 @@ export class UserSubscriptionController {
         }
     }
 
-  async getNonSubscribedUsers(req: Request, res: Response, next: NextFunction) {
-    try {
-        const userId = req.user?.userId;
-        if (!userId) {
-            throw new NotFoundException(USER_ERRORS.NO_USERS_FOUND);
-        }
-
-        const result = await this._nonSubscribedUsersUseCase.getNonSubscribedUsers(userId!);
-        ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_GET_SUCCESS, { result }, HTTPStatus.OK);
-        
-    } catch (error) {
-        next(error);
-    }
-  }
+ 
 }

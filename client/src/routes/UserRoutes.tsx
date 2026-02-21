@@ -26,6 +26,7 @@ import UserChatPage from '../pages/User/chat/UserChatPage';
 import ChangePasswordUserPage from '../pages/User/Profile/ChangePasswordPage';
 import UserBookedSlotsPage from '../pages/User/Slot/UserBookedSlotsPage';
 import UserBookedSlotDetails from '../pages/User/Slot/UserBookedSlotDetails';
+import VideoSessionPage from '../pages/Video/VideoSessionPage';
 
 const UserRoutes = () => {
   return (
@@ -64,6 +65,8 @@ const UserRoutes = () => {
       <Route path={FRONTEND_ROUTES.USER.SLOT_BOOKED_DETAILS} element={<PrivateRoute> < UserBookedSlotDetails /> </PrivateRoute>} />
 
       <Route path={FRONTEND_ROUTES.USER.CHAT} element={<PrivateRoute> < UserChatPage /> </PrivateRoute>} />
+
+      <Route path={FRONTEND_ROUTES.USER.VIDEO_SESSION} element={<PrivateRoute> < VideoSessionPage /> </PrivateRoute>} />
 
     </Routes>
   );

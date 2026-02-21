@@ -14,5 +14,5 @@ export interface ISlotRepository extends IBaseRepository<Slot> {
     updateSlotStatus(slotId: string, data: Partial<Slot>): Promise<void>;
     findTrainerSessions(trainerId: string, skip: number, limit: number): Promise<Slot[]>
     countTrainerSessions(trainerId: string): Promise<number>
-
+    
 }

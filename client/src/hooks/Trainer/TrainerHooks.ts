@@ -67,10 +67,7 @@ export const useGetSlots = (page: number, limit: number, status?: string,) => {
   return useQuery({
     queryKey: ['trainerSlots', page, limit, status,],
     queryFn: () =>  getSlots(page, limit, status),
-    retry: false,
-    refetchOnWindowFocus: false, // 👈 Prevent refetching when switching tabs
-    staleTime: 5 * 60 * 1000,
-    // keepPreviousData: true,
+
   });
 };
 

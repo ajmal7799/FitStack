@@ -14,7 +14,8 @@ import {
     TokenExpiredException,
     TokenMissingException,
     ConflictException,
-    UnauthorizedException
+    UnauthorizedException,
+    ForbiddenException
 } from '../../application/constants/exceptions';
 
 import { Request, Response, NextFunction } from 'express';
@@ -34,7 +35,7 @@ export const errorHandlingMiddleware = (
                 statusCode = HTTPStatus.NOT_FOUND;
             } else if (err instanceof AlreadyExisitingExecption || err instanceof ConflictException) {
                 statusCode = HTTPStatus.CONFLICT;
-            } else if (err instanceof IsBlockedExecption) {
+            } else if (err instanceof IsBlockedExecption || err instanceof ForbiddenException) {
                 statusCode = HTTPStatus.FORBIDDEN;
             } else if (err instanceof InvalidOTPExecption ||
                 err instanceof OTPExpiredException ||

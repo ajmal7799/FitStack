@@ -16,9 +16,9 @@ export class DeleteSlotUseCase implements IDeleteSlotUseCase {
             throw new IsBlockedExecption(TRAINER_ERRORS.YOU_CAN_ONLY_DELETE_YOUR_OWN_SLOT);
         }
 
-        if (slot.isBooked) {
-            throw new InvalidDataException(TRAINER_ERRORS.SLOT_ALREADY_BOOKED);
-        }
+        // if (slot.isBooked) {
+        //     throw new InvalidDataException(TRAINER_ERRORS.SLOT_ALREADY_BOOKED);
+        // }
 
         await this._slotRepository.deleteById(slotId);
     }    

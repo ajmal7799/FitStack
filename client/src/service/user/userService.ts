@@ -124,4 +124,9 @@ export const cancelBookedSlot = async (slotId: string, reason: string) => {
   const response = await AxiosInstance.patch(`/booked-slots/${slotId}/cancel`, { reason });
   return response.data;
 };
+
+export const joinSession = async (slotId: string) => {
+  const response = await AxiosInstance.post(`/video-session/join/${slotId}`);
+  return response.data;
+};
   

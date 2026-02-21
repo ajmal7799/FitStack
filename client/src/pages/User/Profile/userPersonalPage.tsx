@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useGetUserProfile } from '../../../hooks/User/userServiceHooks';
 import UserSidebar from '../../../components/user/Sidebar';
 import Header from '../../../components/user/Header';
@@ -7,8 +8,6 @@ import type { Rootstate } from '../../../redux/store';
 import defaultProfileImage from '../../../assets/defaultProfileImage.png';
 import { useNavigate } from 'react-router-dom';
 import { FRONTEND_ROUTES } from '../../../constants/frontendRoutes';
-
-
 
 // Type definitions
 interface UserProfileData {
@@ -33,11 +32,8 @@ interface UserProfileResponse {
 
 const UserProfile: React.FC = () => {
   const { data, isLoading, isError, error } = useGetUserProfile();
-
   const navigate = useNavigate();
-
-  const authData = useSelector((state: Rootstate)=> state.authData);
-  const  {userProfileCompleted} = authData;
+  const authData = useSelector((state: Rootstate) => state.authData);
 
   if (isLoading) {
     return (
@@ -107,16 +103,26 @@ const UserProfile: React.FC = () => {
         <Header />
         <main className="flex-1 p-6 overflow-auto">
           <div className="max-w-4xl mx-auto">
+
             {/* Profile Header Card */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+            <motion.div
+              className="bg-white rounded-xl shadow-lg overflow-hidden mb-6"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
               <div className="h-32 bg-gradient-to-r from-blue-500 to-blue-600"></div>
               <div className="px-6 pb-6">
                 <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 -mt-16">
-                  <div className="relative">
+                  <motion.div
+                    className="relative"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: 0.2 }}
+                  >
                     {userProfile.profileImage ? (
                       <img
                         src={userProfile.profileImage || defaultProfileImage}
-                        
                         alt={'User profile picture'}
                         className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
                       />
@@ -128,94 +134,89 @@ const UserProfile: React.FC = () => {
                       </div>
                     )}
                     <div className="absolute bottom-1 right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
-                  </div>
-                  <div className="flex-1 text-center sm:text-left sm:mt-4">
+                  </motion.div>
+
+                  <motion.div
+                    className="flex-1 text-center sm:text-left sm:mt-4"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                  >
                     <h1 className="text-3xl font-bold text-gray-900">{userProfile.name}</h1>
-                    {/* <p className="text-gray-600 mt-1 capitalize">{userProfile.role}</p> */}
-                  </div>
-                  {/* <div className="sm:mt-4">
-                    <span
-                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-                        userProfileCompleted
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {userProfileCompleted ? (
-                        <>
-                          <CheckCircle size={16} />
-                          Profile Completed
-                        </>
-                      ) : (
-                        <>
-                          <XCircle size={16} />
-                          Profile Incomplete
-                        </>
-                      )}
-                    </span>
-                  </div> */}
+                  </motion.div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Profile Details Card */}
-            <div className="relative">
+            <motion.div
+              className="relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                   <User size={24} className="text-blue-600" />
-                Personal Information
+                  Personal Information
                 </h2>
-              
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
+                  <motion.div
+                    className="space-y-2"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.35 }}
+                  >
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
                       <User size={16} />
-                    Full Name
+                      Full Name
                     </label>
                     <p className="text-lg text-gray-900 font-medium">{userProfile.name}</p>
-                  </div>
+                  </motion.div>
 
-                  <div className="space-y-2">
+                  <motion.div
+                    className="space-y-2"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.42 }}
+                  >
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
                       <Mail size={16} />
-                    Email Address
+                      Email Address
                     </label>
                     <p className="text-lg text-gray-900 font-medium break-all">{userProfile.email}</p>
-                  </div>
+                  </motion.div>
 
-                  <div className="space-y-2">
+                  <motion.div
+                    className="space-y-2"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.49 }}
+                  >
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
                       <Phone size={16} />
-                    Phone Number
+                      Phone Number
                     </label>
                     <p className="text-lg text-gray-900 font-medium">{userProfile.phone}</p>
-                  </div>
-
-                  {/* <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-500 uppercase tracking-wide">
-                    <CheckCircle size={16} />
-                    Verification Status
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
-                        userProfile.verificationCheck
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                     
-                    </span>
-                  </div>
-                </div> */}
+                  </motion.div>
                 </div>
               </div>
               <br />
               <br />
-              <button className="absolute -bottom-4 right-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition" onClick={()=> navigate(FRONTEND_ROUTES.USER.PROFOILE_EDIT)}>
-    Update Profile
-              </button>
-            </div>
+              <motion.button
+                className="absolute -bottom-4 right-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition"
+                onClick={() => navigate(FRONTEND_ROUTES.USER.PROFOILE_EDIT)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, delay: 0.55 }}
+              >
+                Update Profile
+              </motion.button>
+            </motion.div>
+
           </div>
         </main>
       </div>

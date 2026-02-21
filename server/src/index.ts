@@ -11,6 +11,9 @@ import { loggingMiddleware } from './interfaceAdapters/middleware/loggerMiddlewa
 import { createServer, Server as HttpServer } from 'http';
 import { SocketService } from './infrastructure/socket/socketServer';
 import { CONFIG } from './infrastructure/config/config';
+import { CheckExpireySession } from './infrastructure/cron/checkExpireySession';
+import { findExpiredSessionUseCase } from './infrastructure/DI/videoCall/videoCallContainer';
+
 
 class ExpressApp {
     private _app: Express;
@@ -28,6 +31,13 @@ class ExpressApp {
         this._setMiddlewares();
         this._setRoutes();
         this._setErrorHandlingMiddleware();
+        this._initCronJobs();
+    }
+
+    private _initCronJobs() {
+        
+        const checkExpireySession = new CheckExpireySession( findExpiredSessionUseCase);
+        checkExpireySession.start();
     }
 
     private _setMiddlewares() {
