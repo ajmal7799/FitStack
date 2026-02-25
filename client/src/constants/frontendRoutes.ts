@@ -27,6 +27,8 @@ export const FRONTEND_ROUTES = {
     SLOT_BOOKING:'/slots-booking',
     SLOT_BOOKED:'/sessions',
     SLOT_BOOKED_DETAILS:'/sessions/:slotId',
+    SESSION_HISTORY:'/sessions-history',
+    SESSION_HISTORY_DETAILS:'/session-history/:sessionId',
 
     CHAT:'/chat',
 
@@ -45,6 +47,8 @@ export const FRONTEND_ROUTES = {
     TRAINER_SLOT:'/slot',
     TRAINER_UPCOMING_SLOTS:'/upcoming-slots',
     TRAINER_UPCOMING_SLOT_DETAILS:'/upcoming-slots/:slotId',
+    TRAINER_SESSION_HISTORY:'/sessions-history',
+    TRAINER_SESSION_HISTORY_DETAILS:'/session-history/:sessionId',
 
     TRAINER_CHAT:'/chat',
 
@@ -62,5 +66,8 @@ export const FRONTEND_ROUTES = {
     VERIFICATION: '/verification',
     VERIFICATION_DETAILS: '/verifications/:trainerId',
     SUBSCRIPTION_PLAN: '/subscriptions',
+    SESSION_HISTORY: '/sessions',
+    SESSION_HISTORY_DETAILS: '/sessions/:sessionId',
+    MEMBERSHIPS: '/memberships',
   },
 };

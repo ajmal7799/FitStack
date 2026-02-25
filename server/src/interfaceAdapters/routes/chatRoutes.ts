@@ -27,6 +27,12 @@ export class Chat_Router {
     this._route.delete("/delete/:messageId", authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
         chatController.deleteMessage(req, res, next);
     });
+
+    this._route.get("/attachment/upload-url", authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+        chatController.getAttachment(req, res, next);
+      
+  });
+
   }
   public get_router(): Router {
     return this._route;

@@ -7,6 +7,7 @@ import { InvalidDataException, NotFoundException } from '../../../application/co
 import { NextFunction, Request, Response } from 'express';
 import { IUpdateTrainerStatusUseCase } from '../../../application/useCase/admin/trainer/IUpdateTrainerUseCase';
 
+
 export class AdminTrainerController {
     constructor(
     private _getAllTrainerUseCase: IGetAllTrainerUseCase,

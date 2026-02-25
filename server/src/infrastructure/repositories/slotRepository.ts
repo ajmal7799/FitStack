@@ -165,7 +165,7 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
       bookedBy: userId,
       // startTime: {$gt:new Date() }
       // isBooked: true,
-      slotStatus: SlotStatus.BOOKED,
+      // slotStatus: SlotStatus.BOOKED,
     };
 
     const slots = await this._model.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
@@ -176,7 +176,7 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
   async countBookedSlotsByUserId(userId: string): Promise<number> {
     return await this._model.countDocuments({
       bookedBy: userId,
-      slotStatus: SlotStatus.BOOKED,
+      // slotStatus: SlotStatus.BOOKED,
       // isBooked: true
     });
   }
@@ -193,7 +193,10 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
     const query: FilterQuery<ISlotModel> = {
       trainerId: trainerId,
       isBooked: true,
-      slotStatus: SlotStatus.BOOKED,
+      // slotStatus: SlotStatus.BOOKED ,
+      endTime: {
+        $gte: new Date(),
+      }
     };
     const slots = await this._model.find(query).sort({ startTime: 1 }).skip(skip).limit(limit);
 
@@ -201,6 +204,6 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
   }
 
   async countTrainerSessions(trainerId: string): Promise<number> {
-    return await this._model.countDocuments({ trainerId, isBooked: true, slotStatus: SlotStatus.BOOKED });
+    return await this._model.countDocuments({ trainerId, isBooked: true, endTime: { $gte: new Date() } });
   }
 }

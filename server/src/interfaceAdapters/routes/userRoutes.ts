@@ -11,6 +11,7 @@ import {
   userGenerateWorkoutplanController,
   userGenerateDietplanController,
 } from '../../infrastructure/DI/user/userAiIntegrationContainer';
+import { feedbackController } from '../../infrastructure/DI/Feedback/feedbackContainer';
 import { upload } from '../middleware/multer';
 
 export class User_Router {
@@ -216,13 +217,21 @@ export class User_Router {
       }
     );
 
-    this._route.patch(
+    this._route.patch(  
       '/booked-slots/:slotId/cancel',
       authMiddleware.verify,
       (req: Request, res: Response, next: NextFunction) => {
         userBookingSlotController.cancelBookedSlot(req, res, next);
       }
     );
+
+    this._route.get('/sessions-history', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {  
+      userBookingSlotController.getSessionHistory(req, res, next);
+    });
+
+    this._route.get('/session-history/:sessionId', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+      userBookingSlotController.getSessionHistoryDetails(req, res, next);
+    });
 
     // --------------------------------------------------
     //              🛠 VIDEO CALL
@@ -235,6 +244,16 @@ export class User_Router {
         videoCallController.joinVideoSession(req, res, next);
       }
     );
+
+    // --------------------------------------------------
+    //              🛠 feedback
+    // --------------------------------------------------
+
+    this._route.post('/feedback', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+      feedbackController.createfeedback(req, res, next);
+    });
+
+
 
     // --------------------------------------------------
     //              🛠 Logout

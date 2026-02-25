@@ -34,7 +34,16 @@ interface Message {
     _id: string;
     chatId: string;
     senderId: string;
-    text: string;
+    type: 'text' | 'image' | 'file' | 'video' | 'audio';
+    text?: string;
+    attachment?: {
+        key: string;
+        fileName: string;
+        fileType: string;
+        fileSize: number;
+        url?: string;
+    };
+    isDeleted: boolean;
     createdAt: string;
 }
 
@@ -90,49 +99,33 @@ const TrainerChatPage = () => {
     }, [baseChats.length]); // Only re-run when number of chats changes
 
     // ✅ Define message handler with useCallback and detailed logging
-    const handleReceiveMessage = useCallback((message: Message) => {
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('📥 TRAINER PAGE - Message received:', {
-            messageId: message._id,
-            chatId: message.chatId,
-            senderId: message.senderId,
-            text: message.text,
-            currentUserId: userId,
-            selectedChatId: selectedChatId,
-            isFromUser: message.senderId !== userId,
-            totalChats: baseChats.length
-        });
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        
-        // ✅ Update the last message for this chat
-        console.log('✅ Updating chat preview for chat:', message.chatId);
-        setChatUpdates(prev => ({
-            ...prev,
-            [message.chatId]: {
-                text: message.text,
-                timestamp: message.createdAt,
-                senderId: message.senderId,
-            }
-        }));
+  const handleReceiveMessage = useCallback((message: Message) => {
+    const previewText = message.type === 'text'
+        ? (message.text || '')
+        : message.type === 'image' ? '📷 Image'
+        : message.type === 'video' ? '🎥 Video'
+        : message.type === 'audio' ? '🎵 Audio'
+        : '📄 File';
 
-        // ✅ Increment unread count if chat is not selected and message is from user
-        const shouldIncrementUnread = selectedChatId !== message.chatId && message.senderId !== userId;
-        
-        if (shouldIncrementUnread) {
-            console.log('🔔 Incrementing unread count for chat:', message.chatId);
-            setLocalUnreadCounts(prev => {
-                const currentCount = prev[message.chatId] || 0;
-                const newCount = currentCount + 1;
-                console.log('📊 Unread count updated for', message.chatId, ':', currentCount, '->', newCount);
-                return {
-                    ...prev,
-                    [message.chatId]: newCount
-                };
-            });
-        } else {
-            console.log('ℹ️ Not incrementing unread (chat is open or message is from self)');
+    // ✅ key fix: use functional update with [message.chatId]
+    setChatUpdates(prev => ({
+        ...prev,
+        [message.chatId]: {
+            text: previewText,
+            timestamp: message.createdAt,
+            senderId: message.senderId,
         }
-    }, [selectedChatId, userId, baseChats.length]);
+    }));
+
+    const shouldIncrementUnread = selectedChatId !== message.chatId && message.senderId !== userId;
+
+    if (shouldIncrementUnread) {
+        setLocalUnreadCounts(prev => ({
+            ...prev,
+            [message.chatId]: (prev[message.chatId] || 0) + 1
+        }));
+    }
+}, [selectedChatId, userId, baseChats.length]);
 
     // ✅ Listen for messages globally
     useEffect(() => {

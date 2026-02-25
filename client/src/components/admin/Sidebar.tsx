@@ -9,6 +9,7 @@ import {
   Calendar,
   Menu,
   X,
+  Award
 } from 'lucide-react';
 
 const AdminSidebar = () => {
@@ -22,7 +23,8 @@ const AdminSidebar = () => {
     { id: 'trainers', label: 'Trainers', icon: Dumbbell, path: '/admin/trainers' },
     { id: 'verification', label: 'Verification', icon: CheckCircle, path: '/admin/verification' },
     { id: 'subscription', label: 'Subscription', icon: CreditCard, path: '/admin/subscriptions' },
-    { id: 'session', label: 'Session', icon: Calendar, path: '/admin/session' },
+    { id: 'memberships',  label: 'Memberships',  icon: Award,           path: '/admin/memberships' },  // ← added
+    { id: 'session', label: 'Session', icon: Calendar, path: '/admin/sessions' },
   ];
 
   // ✅ Determine which item should be active based on the URL

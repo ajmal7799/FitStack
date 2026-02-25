@@ -2,13 +2,24 @@ import { Server, Socket } from 'socket.io';
 import { ISendingMessageUseCase } from '../../../application/useCase/chat/ISendingMessageUseCase';
 import { IDeleteMessagesUseCase } from '../../../application/useCase/chat/IDeleteMessagesUseCase';
 import { IEndVideoCallSessionUseCase } from '../../../application/useCase/video/IEndVideoCallSessionUseCase';
+import { SendMessagePayload } from '../../../domain/types/SendMessagePayload';
+import { MessageTypeEnums } from '../../../domain/enum/MessageTypeEnums';
+
+
 
 export class SocketController {
   private io: Server;
+  private endingRooms = new Set<string>();
+
   private _sendingMessageUseCase: ISendingMessageUseCase;
   private _deleteMessageUseCase: IDeleteMessagesUseCase;
   private _endVideoCallSessionUseCase: IEndVideoCallSessionUseCase;
-  constructor(io: Server, sendingMessageUseCase: ISendingMessageUseCase, deleteMessageUseCase: IDeleteMessagesUseCase, endVideoCallSessionUseCase: IEndVideoCallSessionUseCase) {
+  constructor(
+    io: Server,
+    sendingMessageUseCase: ISendingMessageUseCase,
+    deleteMessageUseCase: IDeleteMessagesUseCase,
+    endVideoCallSessionUseCase: IEndVideoCallSessionUseCase
+  ) {
     this.io = io;
     this._sendingMessageUseCase = sendingMessageUseCase;
     this._deleteMessageUseCase = deleteMessageUseCase;
@@ -35,27 +46,41 @@ export class SocketController {
     // --------------------------------------------------
     //              🛠 SEND MESSAGE LOGIC
     // --------------------------------------------------
-    socket.on('send_message', async (data: { chatId: string; text: string }) => {
-      try {
-        const { chatId, text } = data;
-        console.log(`📩 Received message from ${userId} in room ${chatId}:`, text);
+ socket.on('send_message', async (data: SendMessagePayload) => {
+    try {
+        const { chatId, type, text, attachment } = data;
 
-        if (!text || text.trim() === '') {
-          console.log('⚠️ Empty message ignored');
-          return;
+        if (!chatId || !type) {
+            socket.emit('error', 'Invalid message payload');
+            return;
+        }
+
+        if (type === MessageTypeEnums.TEXT && (!text || text.trim() === '')) {
+            socket.emit('error', 'Text message cannot be empty');
+            return;
+        }
+
+        if (type !== MessageTypeEnums.TEXT && !attachment) {
+            socket.emit('error', 'Attachment required');
+            return;
         }
 
         await socket.join(chatId);
 
-        const savedMessage = await this._sendingMessageUseCase.sendMessage(chatId, userId, text);
-        console.log(`✅ Message saved, broadcasting to room ${chatId}`);
+        const savedMessage = await this._sendingMessageUseCase.sendMessage({
+            chatId,
+            senderId: userId,
+            type,
+            text,
+            attachment,
+        });
 
         this.io.to(chatId).emit('receive_message', savedMessage);
-      } catch (error) {
+    } catch (error) {
         console.error('❌ Error handling send_message:', error);
         socket.emit('error', 'Message could not be sent');
-      }
-    });
+    }
+});
 
     socket.on('delete_message', async (data: { messageId: string; chatId: string }) => {
       try {
@@ -76,11 +101,11 @@ export class SocketController {
     });
 
     // --------------------------------------------------
-    //              🛠 VIDEO CALL 
+    //              🛠 VIDEO CALL
     // --------------------------------------------------
 
-    socket.on('video_call:join', ({ roomId, userId,slotId }: { roomId: string; userId: string,slotId: string }) => {
-      console.log("🎥 User [${userId}] joined Video Room [${roomId}]");
+    socket.on('video_call:join', ({ roomId, userId, slotId }: { roomId: string; userId: string; slotId: string }) => {
+      console.log('🎥 User [${userId}] joined Video Room [${roomId}]');
       if (!roomId) return;
 
       socket.data.userId = userId;
@@ -104,22 +129,32 @@ export class SocketController {
       socket.to(roomId).emit('video_call:signal', signalData);
     });
 
-
     // 3. LEAVE VIDEO ROOM
     socket.on('video_call:leave', async ({ roomId }: { roomId: string }) => {
-      socket.leave(roomId);
-
       const userId = socket.data.userId;
       const slotId = socket.data.slotId;
-      console.log("slotId", slotId, userId);
+
+      socket.leave(roomId);
+      socket.to(roomId).emit('video_call:peer_left');
+
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       const remaining = (await this.io.in(roomId).allSockets()).size;
-      if(remaining === 0) {
-        this._endVideoCallSessionUseCase.execute(slotId);
-      }
 
-      // Notify others so they can close the connection on their end
-      socket.to(roomId).emit('video_call:peer_left');
+      if (remaining === 0 && slotId && !this.endingRooms.has(roomId)) {
+        this.endingRooms.add(roomId);
+        try {
+          await this._endVideoCallSessionUseCase.execute(slotId);
+
+          // ✅ Notify both users that session is officially completed
+          this.io.to(roomId).emit('video_call:session_completed', { slotId });
+          console.log(`✅ Session completed for slot: ${slotId}`);
+        } catch (err) {
+          console.error(`❌ Failed to end session:`, err);
+        } finally {
+          setTimeout(() => this.endingRooms.delete(roomId), 5000);
+        }
+      }
     });
   }
 }

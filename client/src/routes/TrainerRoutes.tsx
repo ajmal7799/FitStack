@@ -12,6 +12,9 @@ import ChangeTrainerPasswordPage from '../pages/Trainer/profile/TrainerChangePas
 import UpcomingSlotsPage from '../pages/Trainer/slot/UpcomingSlotsPage';
 import UpcomingSlotDetails from '../pages/Trainer/slot/UpcomingSlotDetails';
 import VideoSessionPage from '../pages/Video/VideoSessionPage';
+import TrainerSessionHistoryPage from '../pages/Trainer/slot/TrainerSessionHistoryPage';
+import TrainerSessionHistoryDetails from '../pages/Trainer/slot/TrainerSessionHistoryDetails';
+
 
 const TrainerRoutes = () => {
   return (
@@ -26,6 +29,8 @@ const TrainerRoutes = () => {
       <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_SLOT} element={<PrivateRoute > <TrainerSlotPage/> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_UPCOMING_SLOTS} element={<PrivateRoute > <UpcomingSlotsPage/> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_UPCOMING_SLOT_DETAILS} element={<PrivateRoute > <UpcomingSlotDetails/> </PrivateRoute>} />
+      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_SESSION_HISTORY} element={<PrivateRoute > <TrainerSessionHistoryPage/> </PrivateRoute>} />
+      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_SESSION_HISTORY_DETAILS} element={<PrivateRoute > <TrainerSessionHistoryDetails/> </PrivateRoute>} />
 
 
       <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_CHAT} element={<PrivateRoute > <TrainerChatPage/> </PrivateRoute>} />

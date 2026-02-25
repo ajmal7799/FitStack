@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, keepPreviousData } from '@tanstack/react-query';
 import {
   createUserProfile,
   generateWorkoutPlan,
@@ -15,7 +15,10 @@ import {
   getBookedSlots,
   getBookedSlotDetails,
   cancelBookedSlot,
-  joinSession
+  joinSession,
+  getSessionHistory,
+  getSessionHistoryDetails,
+  feedback
 } from '../../service/user/userService';
 import type { UserBodyMetricsPayload } from '../../types/UserBodyMetricsPayload';
 
@@ -125,18 +128,31 @@ export const useChangePassword = () => {
 };
 
 
-export const useGetBookedSlots = (page: number, limit: number) => {
+export const useGetBookedSlots = (page: number, limit: number, status?: string) => {
   return useQuery({
-    queryKey: ['bookedSlots', page, limit], 
-    queryFn: () => getBookedSlots(page, limit),
-  });
+    queryKey: ['bookedSlots', page, limit, status],    
+    queryFn: () => getBookedSlots(page, limit, status),
+     staleTime: 0,
+    // placeholderData: keepPreviousData,
+  }); 
 };
 
 export const useGetBookedSlotDetails = (slotId: string) => {
   return useQuery({
-    queryKey: ['bookedSlotDetails', slotId],
+    queryKey: ["bookedSlotDetails", slotId],
     queryFn: () => getBookedSlotDetails(slotId),
-})
+    staleTime: 0,
+    enabled: !!slotId,
+    refetchOnWindowFocus: true, // ✅ refetch when user tabs back
+    // ✅ Poll every 3s but ONLY when status is not yet terminal
+    refetchInterval: (query) => {
+      const status = query.state.data?.data?.result?.slotStatus;
+      const terminalStatuses = ["completed", "cancelled", "missed"];
+      // Stop polling once we have a terminal status
+      if (status && terminalStatuses.includes(status)) return false;
+      return 3000; // poll every 3s until terminal
+    },
+  });
 };
 
 export const useCancelBookedSlot = () => {
@@ -148,6 +164,26 @@ export const useCancelBookedSlot = () => {
 export const useJoinSession = () => {
   return useMutation({
     mutationFn: (slotId: string) => joinSession(slotId),
+  });
+};
+
+export const useGetSessionHistory = (page: number, limit: number, status?: string) => {
+  return useQuery({
+    queryKey: ['sessionHistory', page, limit, status],
+    queryFn: () => getSessionHistory(page, limit, status),
+  });
+};
+
+export const useGetSessionHistoryDetails = (sessionId: string) => {
+  return useQuery({
+    queryKey: ['sessionHistoryDetails', sessionId],
+    queryFn: () => getSessionHistoryDetails(sessionId),
+  });
+};
+
+export const useFeedback = () => {
+  return useMutation({
+    mutationFn: (data: {sessionId: string; rating: number; review: string }) => feedback(data),
   });
 };
 

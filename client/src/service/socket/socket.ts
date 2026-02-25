@@ -6,7 +6,11 @@ class SocketService {
   private joinedRooms: Set<string> = new Set(); // ✅ Track joined rooms
   private messageListeners: Set<Function> = new Set(); // ✅ Track multiple listeners
   private messageDeleteListeners: Set<Function> = new Set(); // ✅ Track delete listeners
-  private pendingVideoRoom: { roomId: string; userId: string,slotId: string } | null = null; // ✅ Add this
+  private pendingVideoRoom: {
+    roomId: string;
+    userId: string;
+    slotId: string;
+  } | null = null; // ✅ Add this
 
   // Initialize socket connection
   connect(token: string, userId: string) {
@@ -40,8 +44,8 @@ class SocketService {
       });
 
       if (this.pendingVideoRoom) {
-        const { roomId, userId,slotId } = this.pendingVideoRoom;
-        this.socket?.emit("video_call:join", { roomId, userId,slotId });
+        const { roomId, userId, slotId } = this.pendingVideoRoom;
+        this.socket?.emit("video_call:join", { roomId, userId, slotId });
         console.log(`🚀 Joined pending video room: ${roomId}`);
         this.pendingVideoRoom = null;
       }
@@ -118,15 +122,19 @@ class SocketService {
   }
 
   // Send message
-  sendMessage(chatId: string, text: string) {
-    if (!this.socket?.connected) {
-      console.error("Socket not connected");
-      return;
-    }
-
-    console.log(`📤 Emitting send_message for room ${chatId}:`, text);
-    this.socket.emit("send_message", { chatId, text });
+  sendMessage(chatId: string, text?: string, type: string = 'text', attachment?: {
+  key: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+}) {
+  if (!this.socket?.connected) {
+    console.error("Socket not connected");
+    return;
   }
+    console.log('📤 sendMessage payload:', JSON.stringify({ chatId, type, text, attachment })); // ← add this
+  this.socket.emit("send_message", { chatId, type, text, attachment });
+}
 
   deleteMessage(messageId: string, chatId: string) {
     if (!this.socket?.connected) {
@@ -234,10 +242,10 @@ class SocketService {
 
   // ─── Video Call ───────────────────────────────────────────────
 
-  joinVideoRoom(roomId: string, userId: string, slotId:string) {
+  joinVideoRoom(roomId: string, userId: string, slotId: string) {
     const emitJoin = () => {
       console.log(`🚀 Joining video room: ${roomId}`);
-      this.socket?.emit("video_call:join", { roomId, userId,slotId });
+      this.socket?.emit("video_call:join", { roomId, userId, slotId });
     };
 
     if (this.socket?.connected) {
@@ -247,7 +255,7 @@ class SocketService {
       this.socket.once("connect", () => emitJoin());
     } else {
       console.warn("⚠️ Socket not initialized, queuing video room join...");
-      this.pendingVideoRoom = { roomId, userId,slotId };
+      this.pendingVideoRoom = { roomId, userId, slotId };
     }
   }
 
@@ -268,10 +276,27 @@ class SocketService {
     this.socket?.on("video_call:signal", callback);
   }
 
+  onPeerLeft(callback: (result: any) => void) {
+    this.socket?.off("video_call:peer_left");
+    this.socket?.on("video_call:peer_left", callback);
+  }
+
+  onSessionCompleted(callback: (data: { slotId: string }) => void) {
+  this.socket?.off("video_call:session_completed");
+  this.socket?.on("video_call:session_completed", callback);
+}
+
+offSessionCompleted() {
+  this.socket?.off("video_call:session_completed");
+}
+  
   leaveVideoRoom(roomId: string) {
     this.socket?.emit("video_call:leave", { roomId });
     this.socket?.off("video_call:peer_joined");
     this.socket?.off("video_call:signal");
+    this.socket?.off("video_call:peer_left");
+      this.socket?.off("video_call:session_completed"); // ✅ add this
+
     console.log(`📴 Left video room: ${roomId}`);
   }
 }

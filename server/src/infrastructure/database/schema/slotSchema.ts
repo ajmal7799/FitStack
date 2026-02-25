@@ -9,8 +9,6 @@ const slotSchema = new mongoose.Schema(
         isBooked: { type: Boolean, default: false },
         slotStatus: { type: String, enum: Object.values(SlotStatus), default: SlotStatus.AVAILABLE },
         bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
-        cancellationReason: { type: String, default: null },
-        canceldAt: { type: Date, default: null },
     },
     { timestamps: true },
 );

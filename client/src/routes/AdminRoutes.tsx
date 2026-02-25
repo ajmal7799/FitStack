@@ -9,6 +9,11 @@ import TrainersListing from '../pages/Admin/TrainerListing';
 import VerificationPage from '../pages/Admin/VerificationPage';
 import VerificationDetailsPage from '../pages/Admin/VerificationDetailsPage';
 import SubscriptionPlan from '../pages/Admin/SubscriptionPlan/SubscriptionPlan';
+import SessionAdminHistoryPage from '../pages/Admin/session/SessionAdminHistory';
+import SessionAdminHistoryDetails from '../pages/Admin/session/SessionAdminHistoryDetails';
+import MembershipListing from '../pages/Admin/memberships/MembershipListing';
+
+
 const AdminRoutes = () => {
 
   return (
@@ -21,6 +26,14 @@ const AdminRoutes = () => {
       <Route path={FRONTEND_ROUTES.ADMIN.VERIFICATION_DETAILS} element={<PrivateRoute> <VerificationDetailsPage/> </PrivateRoute>} />
       {/* subscription plan */}
       <Route path={FRONTEND_ROUTES.ADMIN.SUBSCRIPTION_PLAN} element={<PrivateRoute> <SubscriptionPlan/> </PrivateRoute>} />
+
+    /* session management */
+      <Route path={FRONTEND_ROUTES.ADMIN.SESSION_HISTORY} element={<PrivateRoute> <SessionAdminHistoryPage/> </PrivateRoute>} />
+      <Route path={FRONTEND_ROUTES.ADMIN.SESSION_HISTORY_DETAILS} element={<PrivateRoute> <SessionAdminHistoryDetails/> </PrivateRoute>} />
+
+      // membership
+      <Route path={FRONTEND_ROUTES.ADMIN.MEMBERSHIPS} element={<PrivateRoute> <MembershipListing/> </PrivateRoute>} />
+
     </Routes>
   );
 };

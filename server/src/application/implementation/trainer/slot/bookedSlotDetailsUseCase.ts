@@ -1,21 +1,21 @@
 import { IBookedSlotDetailsUseCase } from "../../../useCase/trainer/slot/IBookedSlotDetailsUseCase";
 import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { ISlotRepository } from "../../../../domain/interfaces/repositories/ISlotRepository";
 import { UpcomingSlotDetailsDTO } from "../../../dto/slot/slotDTO";
 import { IStorageService } from "../../../../domain/interfaces/services/IStorage/IStorageService";
 import { NotFoundException,UnauthorizedException } from "../../../constants/exceptions";
 import { Errors, USER_ERRORS } from "../../../../shared/constants/error";
+import { IVideoCallRepository } from "../../../../domain/interfaces/repositories/IVideoCallRepository";
 
 
 export class BookedSlotDetailsUseCase implements IBookedSlotDetailsUseCase {
     constructor(
-        private _slotRepository: ISlotRepository,
+        private _videoCallRepository: IVideoCallRepository,
         private _userRepository: IUserRepository,
         private _storageService: IStorageService
     ) {}
 
     async getBookedSlotDetails(trainerId: string, slotId: string): Promise<UpcomingSlotDetailsDTO> {
-        const slot = await this._slotRepository.findById(slotId);
+        const slot = await this._videoCallRepository.findById(slotId);
         if(!slot) {
             throw new NotFoundException(Errors.SLOT_NOT_FOUND);
         }
@@ -23,7 +23,7 @@ export class BookedSlotDetailsUseCase implements IBookedSlotDetailsUseCase {
              throw new UnauthorizedException("You do not have permission to view this slot.");
         }
 
-        const user = await this._userRepository.findById(slot.bookedBy || '');
+        const user = await this._userRepository.findById(slot.userId || '');
         if(!user) {
             throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
         }
@@ -40,8 +40,12 @@ export class BookedSlotDetailsUseCase implements IBookedSlotDetailsUseCase {
             userEmail: user.email,
             startTime: slot.startTime,
             endTime: slot.endTime,
-            slotStatus: slot.slotStatus,
-            cancellationReason: slot.cancellationReason? slot.cancellationReason : "",
+            slotStatus: slot.status,
+            cancellationReason: slot.cancellationReason || null,
+            cancelledAt: slot.cancelledAt || null,
+            cancelledBy: slot.cancelledBy || null
+
+            // cancellationReason: slot.cancellationReason? slot.cancellationReason : "",
         };
         
     }

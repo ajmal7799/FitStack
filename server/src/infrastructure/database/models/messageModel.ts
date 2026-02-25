@@ -1,14 +1,32 @@
-import { Document, Model, model,Types } from 'mongoose';
-import messageSchema from '../schema/messageSchema';
+import { Document, model, Types } from "mongoose";
+import messageSchema from "../schema/messageSchema";
+import { MessageTypeEnums } from "../../../domain/enum/MessageTypeEnums";
 
 export interface IMessageModel extends Document {
-    _id: Types.ObjectId;
-    chatId: Types.ObjectId;
-    senderId: Types.ObjectId;
-    isDeleted: boolean; 
-    deletedAt?: Date;
-    text: string;
-    createdAt: string;
+  _id: Types.ObjectId;
+
+  chatId: Types.ObjectId;
+  senderId: Types.ObjectId;
+
+  type: MessageTypeEnums;
+
+  text?: string;
+
+  attachment?: {
+    key: string;
+    fileName: string;
+    fileType: string;
+    fileSize: number;
+  };
+
+  isDeleted: boolean;
+  deletedAt?: Date;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export const messageModel = model<IMessageModel>('Message', messageSchema);
+export const messageModel = model<IMessageModel>(
+  "Message",
+  messageSchema
+);

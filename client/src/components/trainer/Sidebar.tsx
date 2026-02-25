@@ -59,7 +59,7 @@ const TrainerSidebar = () => {
       id: "sessionHistory",
       label: "Session History",
       icon: Calendar,
-      path: "/trainer/sessions",
+      path: "/trainer/sessions-history",
     },
     {
       id: "change-password",

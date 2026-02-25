@@ -15,6 +15,7 @@ import { VideoCallRepository } from '../repositories/videoCallRepository';
 import { videoCallModel } from '../database/models/videoCallModel';
 import { SlotRepository } from '../repositories/slotRepository';
 import { slotModel } from '../database/models/slotModel';
+import { StorageService } from '../services/Storage/storageService';
 
 export class SocketService {
     private static _io: Server;
@@ -34,8 +35,9 @@ export class SocketService {
         const chatRepository = new ChatRepository( chatModel);
         const videoCallRepository = new VideoCallRepository(videoCallModel);
         const slotRepository = new SlotRepository(slotModel);
+        const storageService = new StorageService();
 
-        const sendingMessageUseCase = new SendingMessageUseCase(messageRepository, chatRepository);
+        const sendingMessageUseCase = new SendingMessageUseCase(messageRepository, chatRepository, storageService);
         const deleteMessageUseCase = new DeleteMessageUseCase(messageRepository, chatRepository);
         const endVideoCallSessionUseCase = new EndVideoCallSessionUseCase( videoCallRepository, slotRepository);
     

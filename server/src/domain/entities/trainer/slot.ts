@@ -8,6 +8,4 @@ export interface Slot {
     isBooked: boolean;
     bookedBy?: string | null; 
     slotStatus: SlotStatus;
-    cancellationReason?: string | null;
-    canceldAt?: Date | null;
 }   

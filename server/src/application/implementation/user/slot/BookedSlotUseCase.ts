@@ -6,18 +6,22 @@ import { TrainerRepository } from "../../../../infrastructure/repositories/train
 import { NotFoundException,ConflictException } from "../../../constants/exceptions";
 import { USER_ERRORS,TRAINER_ERRORS } from "../../../../shared/constants/error";
 import { BookedSlotDTO } from "../../../dto/slot/slotDTO";
+import { IVideoCallRepository } from "../../../../domain/interfaces/repositories/IVideoCallRepository";
+import { VideoCallStatus } from "../../../../domain/enum/videoCallEnums";
+
 
 export class BookedSlotUseCase implements IBookedSlotUseCase {
     constructor( 
         private _userRepository: IUserRepository,
-        private _slotRepository: ISlotRepository,
         private _trainerSelectRepository: ITrainerSelectRepository,
+        private _videoCallRepository: IVideoCallRepository
     ) {}
 
     async getBookedSlots(
         userId: string, 
         page: number, 
-        limit: number
+        limit: number,
+        status: string
     ): Promise<{ slots: BookedSlotDTO[], totalSlots: number, totalePages: number, currentPage: number }> {
         
         const skip = (page - 1) * limit;
@@ -31,8 +35,8 @@ export class BookedSlotUseCase implements IBookedSlotUseCase {
         // 2. Fetch trainer details and slot data in parallel for efficiency
         const [trainer, slots, totalSlots] = await Promise.all([
             this._userRepository.findById(selectedTrainer.trainerId),
-            this._slotRepository.findAllBookedSlotsByUserId(userId, skip, limit),
-            this._slotRepository.countBookedSlotsByUserId(userId)
+            this._videoCallRepository.findAllBookedSessionByUserId(userId, skip, limit, status as VideoCallStatus),
+            this._videoCallRepository.countBookedSessionByUserId(userId, status as VideoCallStatus),
         ]);
 
         if (!trainer) {
@@ -45,7 +49,7 @@ export class BookedSlotUseCase implements IBookedSlotUseCase {
             trainerName: trainer.name,
             startTime: slot.startTime,
             endTime: slot.endTime,
-            slotStatus: slot.slotStatus,
+            slotStatus: slot.status,
         }));
 
         // 4. Return the full pagination object

@@ -10,6 +10,9 @@ export interface ITrainerModel extends Document {
     about: string;
     // certifications: string[];
     isVerified: boolean;
+    ratingCount?: number;
+    ratingSum?: number;
+    averageRating?: number;
 }
 
 export const trainerModel = model<ITrainerModel>('Trainer', trainerSchema);

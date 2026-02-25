@@ -1,4 +1,5 @@
 import { VideoCallStatus } from '../../enum/videoCallEnums';
+import { UserRole } from '../../enum/userEnums';
 export interface VideoCall {
   _id: string;
   userId: string;
@@ -12,4 +13,7 @@ export interface VideoCall {
   startTime: Date;
   endTime: Date;
   status: VideoCallStatus;
+  cancellationReason?: string | null;
+  cancelledAt?: Date | null;
+  cancelledBy?: UserRole | null;
 }

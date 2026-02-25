@@ -15,8 +15,8 @@ export class JoinSessionUseCase implements IJoinSessionUseCase {
     ) {}
   async execute(userId: string,slotId: string): Promise<{roomId: string}> {
 
-        const slot = await this._slotRepository.findById(slotId);
-        if (!slot || slot.slotStatus !== SlotStatus.BOOKED) {
+        const slot = await this._videoCallRepository.findById(slotId);
+        if (!slot || slot.status == VideoCallStatus.COMPLETED || slot.status == VideoCallStatus.MISSED) {
             throw new NotFoundException("Valid booked slot not found.");
         }
 
@@ -31,12 +31,12 @@ export class JoinSessionUseCase implements IJoinSessionUseCase {
         }
 
         // 3. Find the Video Session
-        const session = await this._videoCallRepository.findBySlotId(slotId);
+        const session = await this._videoCallRepository.findById(slotId);
         if (!session) throw new NotFoundException("Video session record missing.");
 
         // 4. Update Join Flags
         const isTrainer = userId === slot.trainerId;
-        const isUser = userId === slot.bookedBy;
+        const isUser = userId === slot.userId; 
 
         if (!isTrainer && !isUser) {
             throw new ForbiddenException("You are not authorized to join this session.");

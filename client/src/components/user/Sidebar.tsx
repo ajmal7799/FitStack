@@ -44,7 +44,7 @@ const UserSidebar = () => {
       id: "session-history",
       label: "Session History",
       icon: Calendar,
-      path: "/session-history",
+      path: "/sessions-history",
     },
     
         {

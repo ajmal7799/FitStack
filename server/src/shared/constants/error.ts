@@ -40,6 +40,11 @@ export const Errors = {
     SLOT_NOT_FOUND : 'Slot not found',
     SLOT_ALREADY_BOOKED : 'This slot is already booked',
     SLOT_ALREADY_EXISTS_IN_THAT_TIME : 'Slot already exists in that time',
+    VIDEO_CALL_NOT_FOUND : 'Video call not found',
+    VIDEO_CALL_NOT_COMPLETED : 'Video call is not completed',
+    NOT_ALLOWED : 'You are not allowed to perform this action',
+    FEEDBACK_ALREADY_EXISTS : 'Feedback already exists',
+    TRAINER_NOT_FOUND : 'Trainer not found',
     
 };
 

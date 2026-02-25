@@ -4,4 +4,5 @@ export enum VideoCallStatus {
     ACTIVE = 'active',
     COMPLETED = 'completed',
     MISSED = 'missed',
+    CANCELLED = 'cancelled',
 }

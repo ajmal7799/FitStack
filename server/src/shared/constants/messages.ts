@@ -26,6 +26,10 @@ export const MESSAGES = {
         BOOKED_SLOT_DETAILS_FETCHED_SUCCESS: 'Booked slot details fetched successfully.',
         BOOKED_SLOT_CANCELLED_SUCCESS: ' slot cancelled successfully.',
         VIDEO_SESSION_JOINED_SUCCESS: 'Video session joined successfully.',
+        FEEDBACK_CREATED_SUCCESS: 'Feedback created successfully.',
+        SESSION_HISTORY_FETCHED_SUCCESS: 'Session history fetched successfully.',
+        SESSION_HISTORY_DETAILS_FETCHED_SUCCESS: 'Session history details fetched successfully.',
+        
     },
     Trainer: {
         VERIFICATION_SUBMITTED: 'Trainer verification submitted successfully.',
@@ -45,6 +49,8 @@ export const MESSAGES = {
         SLOT_DELETED_SUCCESS: 'Slot deleted successfully.',
         BOOKED_SLOTS_FETCHED_SUCCESS: 'Booked slots fetched successfully.',
         BOOKED_SLOT_DETAILS_FETCHED_SUCCESS: 'Booked slot details fetched successfully.',
+        SESSION_HISTORY_FETCHED_SUCCESS: 'Session history fetched successfully.',
+        SESSION_HISTORY_DETAILS_FETCHED_SUCCESS: 'Session history details fetched successfully.',
     },
     Admin: {
         VERIFIED_USER: 'User verified successfully by admin.',
@@ -67,6 +73,7 @@ export const MESSAGES = {
         SUBSCRIPTION_GET_SUCCESS: 'Subscription fetched successfully.',
         SUBSCRIPTION_UPDATE_STATUS_SUCCESS: 'Subscription status updated successfully.',
         SUBSCRIPTION_EDIT_PAGE_SUCCESS: 'Subscription fetched successfully.',
+        MEMBERSHIP_SUCCESS: 'Memberships fetched successfully.',
     },
     REFRESH_TOKEN: {
         REFRESH_SUCCESSFUL: 'Successfully got a new accessToken',
@@ -78,5 +85,6 @@ export const MESSAGES = {
         MESSAGE_SENT_SUCCESS: 'Message sent successfully.',
         MARK_AS_READ_SUCCESS: 'Message marked as read successfully.',
         DELETE_MESSAGE_SUCCESS: 'Message deleted successfully.',
+        GET_ATTACHMENT_SUCCESS: 'Attachment fetched successfully.',
     },
 };

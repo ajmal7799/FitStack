@@ -49,8 +49,8 @@ export class AuthMiddleware {
         }
 
         req.user = {
-            userId: decoded.userId,
-            role: decoded.role,
+            userId: user._id!,
+            role: user.role,
         };
     
         next();

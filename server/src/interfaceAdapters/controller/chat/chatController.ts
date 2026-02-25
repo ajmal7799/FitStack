@@ -11,6 +11,8 @@ import { IGetMessageUseCase } from '../../../application/useCase/chat/IGetMessag
 import { IInitiateTrainerChatUseCase } from '../../../application/useCase/chat/IInitiateTrainerChatUseCase';
 import { IMarkAsReadUseCase } from '../../../application/useCase/chat/IMarkAsReadUseCase';
 import { IDeleteMessagesUseCase } from '../../../application/useCase/chat/IDeleteMessagesUseCase';
+import { IGetAttachmentUploadUrlUseCase } from '../../../application/useCase/chat/IGetAttachmentUploadUrlUseCase';
+
 
 export class ChatController {
   constructor(
@@ -18,7 +20,8 @@ export class ChatController {
     private _getMessageUseCase: IGetMessageUseCase,
     private _initiateTrainerChatUseCase: IInitiateTrainerChatUseCase,
     private _markAsReadUseCase: IMarkAsReadUseCase,
-    private _deleteMessageUseCase: IDeleteMessagesUseCase
+    private _deleteMessageUseCase: IDeleteMessagesUseCase,
+    private _getAttachmentUploadUrlUseCase: IGetAttachmentUploadUrlUseCase
   ) {}
 
   async initiateChat(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -101,4 +104,22 @@ export class ChatController {
       next(error);
     }
   }
+
+  async getAttachment(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const { chatId, fileName, fileType } = req.query as {
+        chatId: string;
+        fileName: string;
+        fileType: string;
+    };
+
+    if (!chatId || !fileName || !fileType) {
+      throw new InvalidDataException(Errors.INVALID_DATA);
+    }
+
+    const result = await this._getAttachmentUploadUrlUseCase.execute(chatId, fileName, fileType);
+ResponseHelper.success(res, MESSAGES.CHAT.GET_ATTACHMENT_SUCCESS, result, HTTPStatus.OK);
+
+
+  }
+
 }

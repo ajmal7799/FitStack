@@ -8,6 +8,5 @@ export interface CreateSlotDTO {
     isBooked: boolean;
     bookedBy?: string | null;
     slotStatus: SlotStatus;
-    cancellationReason?: string | null;
-    canceldAt?: Date | null;
+   
 }

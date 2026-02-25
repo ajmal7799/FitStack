@@ -14,8 +14,6 @@ export class SlotMapper {
             isBooked: slot.isBooked,
             bookedBy: slot.bookedBy,
             slotStatus: slot.slotStatus,
-            cancellationReason: slot.cancellationReason,
-            canceldAt: slot.canceldAt,
         };
     }
 
@@ -28,8 +26,7 @@ export class SlotMapper {
             isBooked: slot.isBooked,
             bookedBy: slot.bookedBy ? slot.bookedBy.toString() : null,
             slotStatus: slot.slotStatus,
-            cancellationReason: slot.cancellationReason,
-            canceldAt: slot.canceldAt,
+           
         };
     }
 
@@ -42,8 +39,7 @@ export class SlotMapper {
             isBooked: slot.isBooked,
             bookedBy: slot.bookedBy,
             slotStatus: slot.slotStatus,
-            cancellationReason: slot.cancellationReason,
-            canceldAt: slot.canceldAt,
+           
         };
     }
 

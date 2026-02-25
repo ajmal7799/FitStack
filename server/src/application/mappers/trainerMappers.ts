@@ -17,6 +17,10 @@ export class TrainerMapper {
             experience: trainer.experience,
             about: trainer.about,
             isVerified: trainer.isVerified,
+            ratingCount: trainer.ratingCount,
+            ratingSum: trainer.ratingSum,
+            averageRating: trainer.averageRating
+
         };
     }
 
@@ -29,6 +33,9 @@ export class TrainerMapper {
             experience: doc.experience,
             about: doc.about,
             isVerified: doc.isVerified,
+            ratingCount: doc.ratingCount,
+            ratingSum: doc.ratingSum,
+            averageRating: doc.averageRating
         };
     }
 
