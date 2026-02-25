@@ -3,7 +3,10 @@ import {
   getAllVerification,
   getVerificationDetails,
   approveVerification,
-  rejectVerification
+  rejectVerification,
+  getSessionHistory,
+  getSessionHistoryDetails,
+  getMembershipPage
 } from '../../service/admin/AdminService';
 
 export const useGetAllVerifications = (page: number, limit: number, status?: string, search?: string) => {
@@ -36,4 +39,29 @@ export const useRejectVerification = () => {
     mutationFn:({id, reason}: {id: string, reason: string}) => 
       rejectVerification(id, reason)
   });
+};
+
+
+export const useGetSessionAdminHistory = (page: number, limit: number, status?: string, search?: string) => {
+  return useQuery({
+    queryKey: ['session-history', page, limit, status, search],
+    queryFn: () => getSessionHistory(page, limit, status, search),
+  } );
+};
+
+
+export const useGetSessionAdminHistoryDetail = (sessionId: string) => {
+  return useQuery({
+    queryKey: ['session-history', sessionId],
+    queryFn: () => getSessionHistoryDetails(sessionId),
+  } );
+};
+
+
+
+export const useGetMembershipPage = (page: number, limit: number, status?: string, search?: string) => {
+  return useQuery({
+    queryKey: ['membership', page, limit, status, search],
+    queryFn: () => getMembershipPage(page, limit, status, search),
+  } );
 };

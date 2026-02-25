@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { VideoCallStatus } from '../../../domain/enum/videoCallEnums';
+import { UserRole } from '../../../domain/enum/userEnums';
 
 const videoCallSchema = new mongoose.Schema(
     {
@@ -50,6 +51,9 @@ const videoCallSchema = new mongoose.Schema(
       enum: Object.values(VideoCallStatus), 
       default: VideoCallStatus.WAITING // Adjust default based on your enum
     },
+     cancellationReason: { type: String, default: null },
+        cancelledAt: { type: Date, default: null },
+        cancelledBy: { type: String, enum: Object.values(UserRole), default: null },
     },
     { timestamps: true }
 

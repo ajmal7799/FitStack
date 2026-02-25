@@ -104,11 +104,14 @@ export const changePassword = async (data: {
 };
 
 
-export const getBookedSlots = async (page = 1, limit = 10) => {
+export const getBookedSlots = async (page = 1, limit = 10, status?: string) => {
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
   });
+  if (status) {
+    params.append('status', status);
+  }
   const response = await AxiosInstance.get(`/booked-slots?${params.toString()}`);
   return response.data;
 };
@@ -129,4 +132,28 @@ export const joinSession = async (slotId: string) => {
   const response = await AxiosInstance.post(`/video-session/join/${slotId}`);
   return response.data;
 };
-  
+
+
+export const getSessionHistory = async (page = 1, limit = 10, status?: string) => {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+  if (status) {
+    params.append('status', status);
+  }
+  const response = await AxiosInstance.get(`/sessions-history?${params.toString()}`);
+  return response.data;
+}
+
+
+export const getSessionHistoryDetails = async (sessionId: string) => {
+  const response = await AxiosInstance.get(`/session-history/${sessionId}`);
+  return response.data;
+};
+
+
+export const feedback = async (data: {sessionId: string; rating: number; review: string }) => {
+  const response = await AxiosInstance.post('/feedback', data);
+  return response.data;
+};

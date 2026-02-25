@@ -1,5 +1,6 @@
-import TrainerSidebar from '../../../components/trainer/Sidebar';
-import TrainerHeader from '../../../components/trainer/Header';
+import React from 'react';
+import { motion, type Variants } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   Mail,
   Phone,
@@ -9,42 +10,78 @@ import {
   AlertCircle,
   Edit2,
 } from 'lucide-react';
+
+// Components & Hooks
+import TrainerSidebar from '../../../components/trainer/Sidebar';
+import TrainerHeader from '../../../components/trainer/Header';
 import { useGetTrainerProfile } from '../../../hooks/Trainer/TrainerHooks';
-import { useNavigate } from 'react-router-dom';
 import { FRONTEND_ROUTES } from '../../../constants/frontendRoutes';
 
-const TrainerProfile = () => {
-  const { data: trainer, isLoading, isError } = useGetTrainerProfile();
+// Define Interface for Type Safety
+interface TrainerData {
+  name?: string;
+  email?: string;
+  phone?: string;
+  about?: string;
+  experience?: number;
+  qualification?: string;
+  specialisation?: string | null;
+  verificationStatus?: 'verified' | 'pending' | 'rejected';
+  profileImage?: string | null;
+}
 
+const BRAND_COLOR = "#eb9334";
+
+const TrainerProfile: React.FC = () => {
+  const { data, isLoading, isError } = useGetTrainerProfile();
   const navigate = useNavigate();
 
-  // Loading State
+  // Cast data to our interface safely
+  const trainer = data as TrainerData;
+
+  // Animation Variants
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+    }
+  };
+
+  const cardVariants: Variants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } }
+  };
+
   if (isLoading) {
     return (
-      <div className="flex h-screen bg-gray-950">
+      <div className="flex h-screen bg-white">
         <TrainerSidebar />
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-xl text-gray-400">Loading your profile...</div>
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+            className="w-10 h-10 border-4 rounded-full"
+            style={{ borderColor: `${BRAND_COLOR}33`, borderTopColor: BRAND_COLOR }}
+          />
         </div>
       </div>
     );
   }
 
-  // Error State
   if (isError || !trainer) {
     return (
-      <div className="flex h-screen bg-gray-950">
+      <div className="flex h-screen bg-white">
         <TrainerSidebar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-xl text-red-400">
-            Failed to load profile. Please try again later.
-          </div>
+        <div className="flex-1 flex flex-col items-center justify-center text-slate-500">
+          <AlertCircle size={40} className="mb-4 text-red-500" />
+          <p>Unable to load profile data.</p>
         </div>
       </div>
     );
   }
 
-  // Safely extract data with fallbacks
+  // Destructure with strict defaults
   const {
     name = 'Trainer',
     email = 'Not provided',
@@ -52,189 +89,178 @@ const TrainerProfile = () => {
     about = 'No description added yet.',
     experience = 0,
     qualification = 'Not specified',
-    specialisation = '', // ← can be string, null, or undefined
+    specialisation = '',
     verificationStatus = 'pending',
-  }: any = trainer;
+  } = trainer;
 
   const isVerified = verificationStatus === 'verified';
   const isPending = verificationStatus === 'pending';
 
-  // Safe initials
   const initials = name
     .split(' ')
-    .map((n: string) => n[0])
+    .map((n) => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2);
 
-  // Safely split specialisations (handles null, undefined, empty string)
   const specialisationList = specialisation
-    ? specialisation
-      .split(',')
-      .map((s: string) => s.trim())
-      .filter((s: string) => s.length > 0)
+    ? specialisation.split(',').map((s) => s.trim()).filter((s) => s.length > 0)
     : [];
 
   return (
-    <div className="flex h-screen bg-gray-950 text-white">
+    <div className="flex h-screen bg-slate-50 text-slate-900 overflow-hidden">
       <TrainerSidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <TrainerHeader />
 
-        <main className="flex-1 overflow-y-auto bg-gray-950 p-6">
-          <div className="max-w-6xl mx-auto">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+        <main className="flex-1 overflow-y-auto p-6 lg:p-10">
+          <motion.div 
+            className="max-w-5xl mx-auto"
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+          >
+            {/* Top Bar */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
               <div>
-                <h1 className="text-3xl font-bold">My Profile</h1>
-                <p className="text-gray-400 mt-1">
-                  Your trainer information and verification status
-                </p>
+                <motion.h1 variants={cardVariants} className="text-4xl font-extrabold tracking-tight">
+                  My <span style={{ color: BRAND_COLOR }}>Profile</span>
+                </motion.h1>
+                <p className="text-slate-500 mt-2 font-medium">Overview of your professional trainer account</p>
               </div>
-              <button
-                className="flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 rounded-lg transition-all"
-                onClick={() =>
-                  navigate(
-                    '/trainer' + FRONTEND_ROUTES.TRAINER.TRAINER_PROFILE_EDIT
-                  )
-                }
+              <motion.button
+                whileHover={{ scale: 1.03, boxShadow: "0 10px 15px -3px rgba(235, 147, 52, 0.3)" }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/trainer' + FRONTEND_ROUTES.TRAINER.TRAINER_PROFILE_EDIT)}
+                className="flex items-center justify-center gap-2 px-6 py-3 text-white rounded-2xl font-bold shadow-md transition-all"
+                style={{ backgroundColor: BRAND_COLOR }}
               >
                 <Edit2 size={18} />
                 Edit Profile
-              </button>
+              </motion.button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left: Avatar & Info */}
-              <div className="space-y-6">
-                <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center">
-                  <div className="relative inline-block mx-auto group">
-                    <div className="w-36 h-36 rounded-full overflow-hidden shadow-xl border-4 border-gray-800 bg-gray-800 transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:border-purple-500">
-                      {trainer.profileImage ? (
-                        <img
-                          src={trainer.profileImage}
-                          alt={`${name}'s profile`}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      ) : null}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
+              {/* Profile Card */}
+              <motion.div variants={cardVariants} className="lg:col-span-4">
+                <div className="bg-white border border-slate-200 rounded-[2rem] shadow-sm overflow-hidden p-8 text-center relative">
+                  <div className="relative z-10">
+                    <div className="w-32 h-32 mx-auto mb-6 relative">
+                      <div className="w-full h-full rounded-[2.5rem] overflow-hidden bg-slate-100 border-4 border-white shadow-xl">
+                        {trainer.profileImage ? (
+                          <img src={trainer.profileImage} alt={name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-slate-300 bg-slate-50">
+                            {initials}
+                          </div>
+                        )}
+                      </div>
+                      {isVerified && (
+                        <div className="absolute -bottom-2 -right-2 bg-green-500 text-white p-2 rounded-2xl border-4 border-white shadow-lg">
+                          <UserCheck size={18} />
+                        </div>
+                      )}
+                    </div>
 
-                      {/* Fallback initials */}
-                      <div
-                        className="absolute inset-0 flex items-center justify-center text-5xl font-bold bg-gradient-to-br from-purple-600 to-pink-600"
-                        style={{
-                          display: trainer.profileImage ? 'none' : 'flex',
-                        }}
-                      >
-                        {initials}
+                    <h2 className="text-2xl font-bold text-slate-800">{name}</h2>
+                    <p className="font-semibold text-sm uppercase tracking-widest mt-1" style={{ color: BRAND_COLOR }}>
+                      Fitness Professional
+                    </p>
+
+                    <div className="mt-8 space-y-4">
+                      <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-100 group transition-colors hover:bg-white">
+                        <div className="p-2 rounded-xl bg-white shadow-sm group-hover:bg-orange-50">
+                          <Mail size={16} style={{ color: BRAND_COLOR }} />
+                        </div>
+                        <span className="text-sm font-medium text-slate-600 truncate">{email}</span>
+                      </div>
+                      <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-100 group transition-colors hover:bg-white">
+                        <div className="p-2 rounded-xl bg-white shadow-sm group-hover:bg-orange-50">
+                          <Phone size={16} style={{ color: BRAND_COLOR }} />
+                        </div>
+                        <span className="text-sm font-medium text-slate-600">{phone}</span>
                       </div>
                     </div>
 
-                    {isVerified && (
-                      <div className="absolute bottom-1 right-1 w-9 h-9 bg-green-500 rounded-full border-4 border-gray-900 flex items-center justify-center shadow-md transition-transform duration-300 group-hover:scale-110">
-                        <UserCheck size={18} className="text-white" />
-                      </div>
-                    )}
-                  </div>
-
-                  <h2 className="text-2xl font-bold mt-6">{name}</h2>
-                  <p className="text-purple-400 text-lg">Fitness Trainer</p>
-
-                  {/* Verification Badge */}
-                  <div className="mt-4">
-                    {isVerified ? (
-                      <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-900/50 text-green-400 rounded-full text-sm font-medium">
-                        <UserCheck size={16} />
-                        Verified Trainer
-                      </span>
-                    ) : isPending ? (
-                      <span className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-900/50 text-yellow-400 rounded-full text-sm font-medium">
-                        <AlertCircle size={16} />
-                        Verification Pending
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-2 px-4 py-2 bg-red-900/50 text-red-400 rounded-full text-sm font-medium">
-                        <AlertCircle size={16} />
-                        Verification Required
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mt-8 space-y-4 text-left text-gray-300">
-                    <div className="flex items-center gap-3">
-                      <Mail size={18} className="text-purple-400" />
-                      <span>{email}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Phone size={18} className="text-purple-400" />
-                      <span>{phone}</span>
+                    <div className="mt-8 pt-6 border-t border-slate-100">
+                      {isVerified ? (
+                        <div className="flex items-center justify-center gap-2 text-green-600 font-bold bg-green-50 py-3 rounded-2xl">
+                          <UserCheck size={18} /> Verified
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-2 text-orange-500 font-bold bg-orange-50 py-3 rounded-2xl">
+                          <AlertCircle size={18} /> {isPending ? 'Pending Approval' : 'Verification Needed'}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Right: Details */}
-              <div className="lg:col-span-2 space-y-6">
-                {/* About */}
-                <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-                  <h3 className="text-xl font-semibold mb-3">About Me</h3>
-                  <p className="text-gray-300 leading-relaxed">
-                    {about ||
-                      'Add a description to let clients know more about your training style!'}
-                  </p>
-                </div>
-
-                {/* Experience & Qualification */}
+              {/* Information Side */}
+              <div className="lg:col-span-8 space-y-6">
+                
+                {/* Highlights */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Clock className="text-blue-400" size={22} />
-                      <h4 className="text-lg font-semibold">Experience</h4>
+                  <motion.div variants={cardVariants} className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 rounded-2xl bg-blue-50 text-blue-500">
+                        <Clock size={24} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase">Experience</p>
+                        <h4 className="text-xl font-bold">{experience} {experience === 1 ? 'Year' : 'Years'}</h4>
+                      </div>
                     </div>
-                    <p className="text-2xl font-bold text-blue-400">
-                      {experience} {experience === 1 ? 'Year' : 'Years'}
-                    </p>
-                  </div>
+                  </motion.div>
 
-                  <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Award className="text-yellow-400" size={22} />
-                      <h4 className="text-lg font-semibold">Qualification</h4>
+                  <motion.div variants={cardVariants} className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 rounded-2xl bg-orange-50" style={{ color: BRAND_COLOR }}>
+                        <Award size={24} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase">Qualification</p>
+                        <h4 className="text-xl font-bold truncate max-w-[180px]">{qualification}</h4>
+                      </div>
                     </div>
-                    <p className="text-xl font-medium text-yellow-400">
-                      {qualification}
-                    </p>
-                  </div>
+                  </motion.div>
                 </div>
+
+                {/* Bio */}
+                <motion.div variants={cardVariants} className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-3">
+                    Biography <span className="h-px flex-1 bg-slate-100"></span>
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed italic">
+                    "{about}"
+                  </p>
+                </motion.div>
 
                 {/* Specializations */}
-                <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-                  <h3 className="text-xl font-semibold mb-4">
-                    Specializations
-                  </h3>
-                  {specialisationList.length > 0 ? (
-                    <div className="flex flex-wrap gap-3">
-                      {specialisationList.map((spec: string, i: number) => (
-                        <span
+                <motion.div variants={cardVariants} className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                  <h3 className="text-lg font-bold mb-6">Area of Expertise</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {specialisationList.length > 0 ? (
+                      specialisationList.map((spec, i) => (
+                        <motion.span
                           key={i}
-                          className="px-4 py-2 bg-purple-900/40 border border-purple-700 text-purple-300 rounded-full text-sm font-medium"
+                          whileHover={{ y: -2 }}
+                          className="px-5 py-2 rounded-xl bg-slate-50 text-slate-700 text-sm font-bold border border-slate-100"
                         >
                           {spec}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 italic">
-                      No specializations added yet
-                    </p>
-                  )}
-                </div>
+                        </motion.span>
+                      ))
+                    ) : (
+                      <p className="text-slate-400 text-sm">No specializations added yet.</p>
+                    )}
+                  </div>
+                </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </main>
       </div>
     </div>

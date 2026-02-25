@@ -4,6 +4,8 @@ import { adminUserController } from '../../infrastructure/DI/Admin/adminUserCont
 import { adminTrainerController } from '../../infrastructure/DI/Admin/adminTrainerContainer';
 import { adminVerificationController } from '../../infrastructure/DI/Admin/adminVerificationContainer';
 import { adminSubscriptionController } from '../../infrastructure/DI/Admin/subscription/adminSubscriptionContainer';
+import { adminSessionController } from '../../infrastructure/DI/Admin/adminSessionContainer';
+
 
 export class Admin_Routes {
     private _route: Router;
@@ -78,6 +80,28 @@ export class Admin_Routes {
 
         this._route.put('/subscriptions/:subscriptionId', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
             adminSubscriptionController.updateSubscription(req, res, next);
+        });
+
+
+        // --------------------------------------------------
+        //              🛠 SESSION MANAGEMENT 
+        // --------------------------------------------------
+
+        this._route.get('/sessions', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+            adminSessionController.getAllSessions(req, res, next);
+        });
+
+        this._route.get('/sessions/:sessionId', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+            adminSessionController.getSessionDetails(req, res, next);
+        });
+
+
+        // --------------------------------------------------
+        //              🛠 MEMBERSHIP
+        // --------------------------------------------------
+
+        this._route.get('/memberships', authMiddleware.verify, authMiddleware.isAdmin, (req: Request, res: Response, next: NextFunction) => {
+            adminSubscriptionController.getAllMemberships(req, res, next);
         });
         
 

@@ -10,6 +10,7 @@ interface TrainerChat {
   lastMessage?: {
     text: string;
     timestamp: string;
+    senderId?: string;
   };
 }
 
@@ -107,16 +108,21 @@ export default function ChatUserSidebar({
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  {chat.lastMessage ? (
-                    <p className={`text-sm truncate flex-1 ${chat.unreadCount > 0 ? 'text-gray-900 font-medium' : 'text-gray-600'
-                      }`}>
-                      {chat.lastMessage.text}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-gray-400 italic flex-1">
-                      Say hi to start the conversation! ✌️
-                    </p>
-                  )}
+                {chat.lastMessage ? (
+    <p className={`text-sm truncate flex-1 ${
+        chat.unreadCount > 0 ? 'text-gray-900 font-medium' : 'text-gray-600'
+    }`}>
+        {chat.lastMessage.text === '📷 Image' ? '📷 Photo' :
+         chat.lastMessage.text === '🎥 Video' ? '🎥 Video' : 
+         chat.lastMessage.text === '📄 File' ? '📄 File' :
+         chat.lastMessage.text === '🎵 Audio' ? '🎵 Audio' :
+         chat.lastMessage.text}
+    </p>
+) : (
+    <p className="text-sm text-gray-400 italic flex-1">
+        Say hi to start the conversation! ✌️
+    </p>
+)}
 
                   {/* WhatsApp-style unread count badge */}
                   {chat.unreadCount > 0 && (

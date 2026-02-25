@@ -1,5 +1,5 @@
 
 
 export interface IEndVideoCallSessionUseCase {
-    execute(slotId: string): Promise<void>;
+    execute(slotId: string): Promise<{sessionId: string}>;
 }

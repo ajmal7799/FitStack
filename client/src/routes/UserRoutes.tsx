@@ -27,6 +27,9 @@ import ChangePasswordUserPage from '../pages/User/Profile/ChangePasswordPage';
 import UserBookedSlotsPage from '../pages/User/Slot/UserBookedSlotsPage';
 import UserBookedSlotDetails from '../pages/User/Slot/UserBookedSlotDetails';
 import VideoSessionPage from '../pages/Video/VideoSessionPage';
+import SessionHistoryPage from '../pages/User/Slot/SessionHistoryPage';
+import SessionHistoryDetailsPage from '../pages/User/Slot/SessionHistoryDetailsPage';
+
 
 const UserRoutes = () => {
   return (
@@ -63,6 +66,9 @@ const UserRoutes = () => {
       <Route path={FRONTEND_ROUTES.USER.SLOT_BOOKING} element={<PrivateRoute> < UserSlotBookingPage /> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.USER.SLOT_BOOKED} element={<PrivateRoute> < UserBookedSlotsPage /> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.USER.SLOT_BOOKED_DETAILS} element={<PrivateRoute> < UserBookedSlotDetails /> </PrivateRoute>} />
+      <Route path={FRONTEND_ROUTES.USER.SESSION_HISTORY} element={<PrivateRoute> < SessionHistoryPage /> </PrivateRoute>} />
+      <Route path={FRONTEND_ROUTES.USER.SESSION_HISTORY_DETAILS} element={<PrivateRoute> < SessionHistoryDetailsPage /> </PrivateRoute>} />
+
 
       <Route path={FRONTEND_ROUTES.USER.CHAT} element={<PrivateRoute> < UserChatPage /> </PrivateRoute>} />
 

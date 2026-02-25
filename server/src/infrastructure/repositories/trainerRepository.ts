@@ -43,4 +43,14 @@ export class TrainerRepository extends BaseRepository<Trainer, ITrainerModel> im
         if (!updatedDoc) return null;
         return TrainerMapper.fromMongooseDocument(updatedDoc);
     }
+
+   async updateRatingMetrics(id: string, metrics: { ratingSum: number; ratingCount: number; averageRating: number; }): Promise<void> {
+       await this._model.findByIdAndUpdate(id,{
+            $set: {
+                ratingSum: metrics.ratingSum,
+                ratingCount: metrics.ratingCount,
+                averageRating: metrics.averageRating
+            }
+        });
+    }
 }

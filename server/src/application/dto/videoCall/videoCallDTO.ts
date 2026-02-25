@@ -1,4 +1,5 @@
 import { VideoCallStatus } from '../../../domain/enum/videoCallEnums';
+import { UserRole } from '../../../domain/enum/userEnums';
 export interface CreateVideoCallDTO {
   _id: string;
   userId: string;
@@ -14,4 +15,8 @@ export interface CreateVideoCallDTO {
   startTime: Date;
   endTime: Date;
   status: VideoCallStatus;
+
+   cancellationReason?: string | null;
+    cancelledAt?: Date | null;
+    cancelledBy?:   UserRole | null;
 }

@@ -11,8 +11,6 @@ export interface ISlotModel extends Document {
     isBooked: boolean;
     slotStatus: SlotStatus;
     bookedBy: Types.ObjectId | null;
-    cancellationReason: string | null;
-    canceldAt: Date | null;
 }
 
 export const slotModel = model<ISlotModel>('Slot', slotSchema);

@@ -1,7 +1,8 @@
-import { Document, Model, model, Types } from 'mongoose';
+    import { Document, Model, model, Types } from 'mongoose';
 
 import videoCallSchema from "../schema/videoCallSchema";
 import { VideoCallStatus } from '../../../domain/enum/videoCallEnums';
+import { UserRole } from '../../../domain/enum/userEnums';
 
 export interface IVideoCallModel extends Document {
     _id: Types.ObjectId;
@@ -16,6 +17,9 @@ export interface IVideoCallModel extends Document {
     startTime: Date;
     endTime: Date;
     status: VideoCallStatus;
+    cancellationReason: string | null;
+    cancelledAt: Date | null;
+    cancelledBy: UserRole | null;
     createdAt: Date;
     updatedAt: Date;
 }

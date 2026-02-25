@@ -2,12 +2,16 @@ import { Message } from '../../../domain/entities/chat/messageEnitity';
 import { IGetMessageUseCase } from '../../useCase/chat/IGetMessageUseCase';
 import { IMessageRepository } from '../../../domain/interfaces/repositories/IMessageRepository';
 import { IChatRepository } from '../../../domain/interfaces/repositories/IChatRepository';
-import { NotFoundException } from '../../constants/exceptions';
-import { CHAT_ERRORS, Errors } from '../../../shared/constants/error';
-import { UnauthorizedException } from '../../constants/exceptions';
+import { NotFoundException, UnauthorizedException } from '../../constants/exceptions';
+import { CHAT_ERRORS } from '../../../shared/constants/error';
+import { IStorageService } from '../../../domain/interfaces/services/IStorage/IStorageService';
 
 export class GetMessageUseCase implements IGetMessageUseCase {
-  constructor(private _messageRepository: IMessageRepository, private _chatRepository: IChatRepository) {}
+  constructor(
+    private _messageRepository: IMessageRepository,
+    private _chatRepository: IChatRepository,
+    private _storageService: IStorageService  // ← inject
+  ) {}
 
   async getMessages(userId: string, chatId: string): Promise<Message[]> {
     const chat = await this._chatRepository.findById(chatId);
@@ -20,6 +24,25 @@ export class GetMessageUseCase implements IGetMessageUseCase {
       throw new UnauthorizedException(CHAT_ERRORS.ACCESS_DENIED);
     }
 
-    return this._messageRepository.findByChatId(chatId);
+    const messages = await this._messageRepository.findByChatId(chatId);
+
+    // ✅ Resolve signed URLs for all attachment messages
+    const messagesWithUrls = await Promise.all(
+      messages.map(async (msg) => {
+        if (msg.attachment?.key) {
+          const url = await this._storageService.createSignedUrl(
+            msg.attachment.key,
+            60 * 60  // 1 hour
+          );
+          return {
+            ...msg,
+            attachment: { ...msg.attachment, url },
+          };
+        }
+        return msg;
+      })
+    );
+
+    return messagesWithUrls;
   }
 }

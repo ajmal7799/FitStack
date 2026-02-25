@@ -15,7 +15,8 @@ import { recurringSlotSchema } from '../../../shared/validations/recurringSlotVa
 import { IRecurringSlotUseCase } from '../../../application/useCase/trainer/slot/IRecurringSlotUseCase';
 import { IBookedSlotsUseCase } from '../../../application/useCase/trainer/slot/IBookedSlotsUseCase';
 import { IBookedSlotDetailsUseCase } from '../../../application/useCase/trainer/slot/IBookedSlotDetailsUseCase';
-
+import { ISessionHistoryUseCase } from '../../../application/useCase/trainer/slot/ISessionHistoryUseCase';
+import { ISessionHistoryDetailsUseCase } from '../../../application/useCase/trainer/slot/ISessionHistoryDetails';
 export class TrainerSlotController {
   constructor(
     private _createSlotUseCase: ICreateSlotUseCase,
@@ -23,7 +24,9 @@ export class TrainerSlotController {
     private _deleteSlotUseCase: IDeleteSlotUseCase,
     private _recurringSlotUseCase: IRecurringSlotUseCase,
     private _bookedSlotsUseCase: IBookedSlotsUseCase,
-    private _bookedSlotDetailsUseCase: IBookedSlotDetailsUseCase
+    private _bookedSlotDetailsUseCase: IBookedSlotDetailsUseCase,
+    private _sessionHistoryUseCase: ISessionHistoryUseCase,
+    private _sessionHistoryDetailsUseCase: ISessionHistoryDetailsUseCase,
 
   ) {}
   // --------------------------------------------------
@@ -83,7 +86,7 @@ export class TrainerSlotController {
   }
   // --------------------------------------------------
   //              🛠 DELETE SLOT
-  // --------------------------------------------------\
+  // --------------------------------------------------
 
   async deleteSlot(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -133,10 +136,11 @@ export class TrainerSlotController {
       const trainerId = req.user?.userId;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      const status = (req.query.status as string) || undefined;
       if (!trainerId) {
         throw new DataMissingExecption(Errors.INVALID_DATA);
       }
-      const result = await this._bookedSlotsUseCase.getBookedSlots(trainerId, page, limit);
+      const result = await this._bookedSlotsUseCase.getBookedSlots(trainerId, page, limit, status);
       ResponseHelper.success(res, MESSAGES.Trainer.BOOKED_SLOTS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
     } catch (error) {
       next(error);
@@ -158,4 +162,45 @@ export class TrainerSlotController {
       next(error);
     }
   }
+
+  // --------------------------------------------------
+  //              🛠 SESSION HISTORY 
+  // --------------------------------------------------
+
+  async getSessionHistory(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const trainerId = req.user?.userId;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      if (!trainerId) {
+        throw new DataMissingExecption(Errors.INVALID_DATA);
+      }
+      const result = await this._sessionHistoryUseCase.getTrainerSessionHistory(trainerId, page, limit,);
+      ResponseHelper.success(res, MESSAGES.Trainer.SESSION_HISTORY_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // --------------------------------------------------
+  //              🛠 SESSION HISTORY DETAILS
+  // --------------------------------------------------
+
+  async getSessionHistoryDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const trainerId = req.user?.userId;
+      const { sessionId } = req.params;
+
+      if (!trainerId || !sessionId) {
+        throw new DataMissingExecption(Errors.INVALID_DATA);
+      }
+
+      const result = await this._sessionHistoryDetailsUseCase.getTrainerSessionHistoryDetails(trainerId, sessionId);
+      ResponseHelper.success(res, MESSAGES.Trainer.SESSION_HISTORY_DETAILS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }
