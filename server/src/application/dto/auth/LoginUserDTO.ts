@@ -11,5 +11,4 @@ export interface LoginUserDTO {
     userProfileCompleted?: boolean
     profileImage?: string
     hasActiveSubscription?: boolean
-    
 }

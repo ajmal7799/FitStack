@@ -20,7 +20,7 @@ const TrainerSidebar = () => {
         { id: "slots", label: "Slots", icon: Calendar, path: "/trainer/slot" },
         { id: "upcomingSlots", label: "Session", icon: Calendar, path: "/trainer/upcoming-slots" },
         { id: "myChat", label: "My Chat", icon: MessageCircle, path: "/trainer/chat" },
-        { id: "earnings", label: "My Earnings", icon: DollarSign, path: "/trainer/earnings" },
+        // { id: "earnings", label: "My Earnings", icon: DollarSign, path: "/trainer/earnings" },
         { id: "wallet", label: "My Wallet", icon: Wallet, path: "/trainer/wallet" },
         { id: "sessionHistory", label: "Session History", icon: Calendar, path: "/trainer/sessions-history" },
         { id: "change-password", label: "Change Password", icon: Lock, path: "/trainer/change-password" },

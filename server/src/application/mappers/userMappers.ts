@@ -35,7 +35,7 @@ export class UserMapper {
         };
     }
 
-    static toLoginUserResponse(user: User, verificationCheck: boolean = true, userProfileCompleted: boolean = true, hasActiveSubscription: boolean = false): LoginUserDTO {
+    static toLoginUserResponse(user: User, verificationCheck: boolean = true, userProfileCompleted: boolean = true, hasActiveSubscription: boolean = false, profileImage?: string): LoginUserDTO {
         return {
             _id: user._id!,
             name: user.name,
@@ -45,8 +45,9 @@ export class UserMapper {
             isActive: user.isActive,
             verificationCheck,
             userProfileCompleted,
-            profileImage: user.profileImage,
             hasActiveSubscription,
+            profileImage
+
         };
     }
 

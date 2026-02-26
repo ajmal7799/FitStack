@@ -29,6 +29,7 @@ import { UserProfileRepository } from '../../repositories/userProfileRepository'
 import { userProfileModel } from '../../database/models/userProfileModel';
 import { RefreshTokenUseCase } from '../../../application/implementation/auth/refreshTokenUseCase';
 import { ChangePasswordUseCase } from '../../../application/implementation/auth/changePasswordUseCase';
+import { StorageService } from '../../services/Storage/storageService';
 
 //Repositories & Services
 const userRepository = new UserRepository(userModel);
@@ -42,6 +43,7 @@ const tokenService = new TokenSerivce();
 const trainerRepository = new TrainerRepository(trainerModel);
 const googleAuthService = new GoogleAuthService();
 const userProfileRepository = new UserProfileRepository(userProfileModel);
+const storageService = new StorageService();
 
 
 //UseCases
@@ -55,7 +57,7 @@ const userSendOtpUseCase = new SignUpSendOtpUseCase(
 );
 const verifyOtpUseCase = new VerifyOtpUseCase(cacheStorage);
 const tokenCreationUseCase = new TokenCreationUseCase(jwtService);
-const userLoginUseCase = new UserLoginUseCase(userRepository,hashService,trainerRepository,userProfileRepository);
+const userLoginUseCase = new UserLoginUseCase(userRepository,hashService,trainerRepository,userProfileRepository,storageService);
 const adminLoginUseCase = new AdminLoginUseCase(userRepository,hashService);
 const tokenValidationUseCase = new TokenInvalidationUseCase(jwtService,cacheStorage);
 const resendOtpUseCase = new ResendOtpUseCase(

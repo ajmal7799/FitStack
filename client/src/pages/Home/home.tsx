@@ -8,6 +8,7 @@ import gymImage from '../../assets/gym.jpg';
 import gymarea from '../../assets/gymarea.jpg';
 import gymImage2 from '../../assets/gymImage2.jpg';
 import { FRONTEND_ROUTES } from '../../constants/frontendRoutes';
+import Header from '../../components/user/Header';
 
 // Icon Imports
 import {
@@ -19,7 +20,6 @@ import {
   FiArrowRight,
   FiCheckCircle,
   FiStar,
-  FiLogOut,
 } from 'react-icons/fi';
 
 const Home = () => {
@@ -28,76 +28,10 @@ const Home = () => {
   const navigate = useNavigate();
   const { mutate: logout } = useLogout();
 
-  const handleLogout = () => {
-    logout(undefined, {
-      onSuccess: () => {
-        dispatch(clearData());
-        toast.success('User logged out successfully');
-        window.location.reload();
-        navigate('/admin/login');
-      },
-      onError: () => {
-        toast.error('Logout failed. Please try again.');
-      },
-    });
-  };
-
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
-      {/* Navbar with Logout */}
-      <nav className="sticky top-0 z-50 flex justify-between items-center px-6 md:px-12 py-4 bg-white border-b border-gray-100 shadow-sm">
-        <h1 className="text-2xl font-extrabold text-blue-700">FitStack</h1>
-        <ul className="hidden md:flex space-x-8 text-sm font-medium text-gray-600">
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300">
-            Home
-          </li>
-          <li
-            className="hover:text-blue-700 cursor-pointer transition duration-300"
-            onClick={() => navigate(FRONTEND_ROUTES.USER.AI_WORKOUT)}
-          >
-            AI Diet & Work Out
-          </li>
-          <li
-            className="hover:text-blue-700 cursor-pointer transition duration-300"
-            onClick={() => navigate('/subscription')} // Add this onClick
-          >
-            Subscription
-          </li>
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300" 
-            onClick={() => navigate('/trainers')}>
-            Trainers
-            
-          </li>
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300">
-            Reviews
-          </li>
-        </ul>
-        <div className="flex items-center space-x-4">
-          {/* User Info & Logout */}
-          <div className="flex items-center space-x-3">
-            {/* Profile Icon */}
-            <div
-              className="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md cursor-pointer"
-              onClick={() => navigate('/profile')}
-            >
-              {userData.name?.charAt(0).toUpperCase()}
-            </div>
-            <div className="hidden sm:block text-right">
-              <p className="text-sm font-semibold text-gray-900">
-                {userData.name}
-              </p>
-              {/* <p className="text-xs text-gray-500">{userData.email}</p> */}
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-2 bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-full shadow-md hover:bg-red-700 transition duration-300"
-            >
-              <FiLogOut />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </nav>
+      {/* Shared Header */}
+      <Header />
 
       {/* Hero Section */}
       <section className="relative flex flex-col md:flex-row items-center justify-between pt-16 pb-24 px-6 md:px-12 bg-gray-50">
@@ -246,10 +180,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Premium Upgrade Section with Image */}
+      {/* Premium Upgrade Section */}
       <section className="py-24 px-6 md:px-12 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
-          {/* Image Side */}
           <div className="md:w-1/2">
             <img
               src={gymImage2}
@@ -258,7 +191,6 @@ const Home = () => {
             />
           </div>
 
-          {/* Content Side */}
           <div className="md:w-1/2 text-center md:text-left">
             <div className="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-4 py-2 rounded-full mb-4 uppercase tracking-wider">
               🌟 Limited Time Offer
@@ -274,7 +206,6 @@ const Home = () => {
               level!
             </p>
 
-            {/* Benefits List */}
             <ul className="space-y-4 text-left mb-8">
               <li className="flex items-start">
                 <FiCheckCircle className="text-green-500 mr-3 mt-1 flex-shrink-0" />
@@ -336,59 +267,33 @@ const Home = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-            <div className="flex text-yellow-500 mb-4">
-              <FiStar />
-              <FiStar />
-              <FiStar />
-              <FiStar />
-              <FiStar />
+          {[
+            {
+              text: '"The AI plans kept me motivated, and the weekly video calls with my trainer were game-changing for my deadlift form. I\'ve never felt stronger."',
+              author: 'Alex R., User since 2024',
+            },
+            {
+              text: '"FitStack helped me lose 20 lbs by providing a diet plan that actually fit my busy schedule. The nutritionist chat feature is priceless."',
+              author: 'Sarah L., Working Professional',
+            },
+            {
+              text: '"As a trainer, the platform is superb. The AI handles the initial programming, allowing me to focus on high-value coaching during video sessions."',
+              author: 'Coach Mark D., FitStack Trainer',
+            },
+          ].map((review, i) => (
+            <div
+              key={i}
+              className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100"
+            >
+              <div className="flex text-yellow-500 mb-4">
+                {[...Array(5)].map((_, s) => (
+                  <FiStar key={s} />
+                ))}
+              </div>
+              <p className="text-gray-600 italic mb-4">{review.text}</p>
+              <p className="font-semibold text-gray-900">- {review.author}</p>
             </div>
-            <p className="text-gray-600 italic mb-4">
-              "The AI plans kept me motivated, and the weekly video calls with
-              my trainer were game-changing for my deadlift form. I've never
-              felt stronger."
-            </p>
-            <p className="font-semibold text-gray-900">
-              - Alex R., User since 2024
-            </p>
-          </div>
-
-          <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-            <div className="flex text-yellow-500 mb-4">
-              <FiStar />
-              <FiStar />
-              <FiStar />
-              <FiStar />
-              <FiStar />
-            </div>
-            <p className="text-gray-600 italic mb-4">
-              "FitStack helped me lose 20 lbs by providing a diet plan that
-              actually fit my busy schedule. The nutritionist chat feature is
-              priceless."
-            </p>
-            <p className="font-semibold text-gray-900">
-              - Sarah L., Working Professional
-            </p>
-          </div>
-
-          <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-            <div className="flex text-yellow-500 mb-4">
-              <FiStar />
-              <FiStar />
-              <FiStar />
-              <FiStar />
-              <FiStar />
-            </div>
-            <p className="text-gray-600 italic mb-4">
-              "As a trainer, the platform is superb. The AI handles the initial
-              programming, allowing me to focus on high-value coaching during
-              video sessions."
-            </p>
-            <p className="font-semibold text-gray-900">
-              - Coach Mark D., FitStack Trainer
-            </p>
-          </div>
+          ))}
         </div>
       </section>
 

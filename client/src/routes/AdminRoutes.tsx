@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { FRONTEND_ROUTES } from '../constants/frontendRoutes';
 import AdminLoginPage from '../pages/Admin/AdminLoginPage';
-import AdminDashboardPage from '../pages/Admin/Dashboard';
 import PrivateRoute from '../components/protectedComponents/PrivateRoute';
 import PublicRoute from '../components/protectedComponents/PublicRoute';
 import UsersListing from '../pages/Admin/UsersListing';
@@ -12,14 +11,18 @@ import SubscriptionPlan from '../pages/Admin/SubscriptionPlan/SubscriptionPlan';
 import SessionAdminHistoryPage from '../pages/Admin/session/SessionAdminHistory';
 import SessionAdminHistoryDetails from '../pages/Admin/session/SessionAdminHistoryDetails';
 import MembershipListing from '../pages/Admin/memberships/MembershipListing';
+import AdminDashboard from '../pages/Admin/dashboard/AdminDashboard'; 
+import { AdminSidebarProvider } from '../components/admin/AdminSidebarContext';
 
 
+ 
 const AdminRoutes = () => {
 
   return (
+    <AdminSidebarProvider>
     <Routes>
       <Route path={FRONTEND_ROUTES.ADMIN.LOGIN} element={<PublicRoute><AdminLoginPage /></PublicRoute>} />
-      <Route path={FRONTEND_ROUTES.ADMIN.DASHBOARD} element={<PrivateRoute > <AdminDashboardPage /> </PrivateRoute>} />
+      <Route path={FRONTEND_ROUTES.ADMIN.DASHBOARD} element={<PrivateRoute > <AdminDashboard /> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.ADMIN.USERS} element={<PrivateRoute> <UsersListing/> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.ADMIN.TRAINER} element={<PrivateRoute> <TrainersListing/> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.ADMIN.VERIFICATION} element={<PrivateRoute> <VerificationPage/> </PrivateRoute>} />
@@ -35,6 +38,7 @@ const AdminRoutes = () => {
       <Route path={FRONTEND_ROUTES.ADMIN.MEMBERSHIPS} element={<PrivateRoute> <MembershipListing/> </PrivateRoute>} />
 
     </Routes>
+    </AdminSidebarProvider>
   );
 };
 

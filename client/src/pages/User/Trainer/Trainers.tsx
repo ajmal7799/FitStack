@@ -5,20 +5,16 @@ import Footer from '../../../components/user/footer';
 import Pagination from '../../../components/pagination/Pagination';
 import { useGetAllVerifiedTrainers } from '../../../hooks/User/TrainerHooks';
 import { Link } from 'react-router-dom';
-// import { FRONTEND_ROUTES } from "../../../constants/frontendRoutes";
 import { updateHasActiveSubscription } from '../../../redux/slice/userSlice/authDataSlice';
 import { useDispatch } from 'react-redux';
 
 import type React from 'react';
 import {
   FiStar,
-  FiMapPin,
   FiAward,
-  FiClock,
   FiUser,
   FiCheckCircle,
   FiMail,
-  FiPhone,
 } from 'react-icons/fi';
 import { X } from 'lucide-react';
 
@@ -26,41 +22,83 @@ interface Trainer {
   trainerId: string;
   name: string;
   email: string;
-  phone?: string;
   profileImage?: string;
   specialisation?: string;
-  experience?: number;
-  rating?: number;
-  location?: string;
-  bio?: string;
-  qualification?: string;
-  certifications?: string[];
-  isVerified?: boolean;
+  averageRating?: number;
+  ratingCount?: number;
 }
 
+// ─── Star Rating Component ───────────────────────────────────────────────────
+const StarRating: React.FC<{ rating: number; count: number }> = ({
+  rating,
+  count,
+}) => {
+  const fullStars = Math.floor(rating);
+  const hasHalf = rating - fullStars >= 0.5;
+
+  return (
+    <div className="flex items-center gap-2 mt-3 mb-4">
+      {/* Stars */}
+      <div className="flex items-center gap-0.5">
+        {[1, 2, 3, 4, 5].map((star) => {
+          const filled = star <= fullStars;
+          const half = !filled && star === fullStars + 1 && hasHalf;
+          return (
+            <span key={star} className="relative inline-block text-lg">
+              {/* Background empty star */}
+              <FiStar className="text-gray-200" style={{ fill: '#e5e7eb' }} />
+              {/* Filled overlay */}
+              {(filled || half) && (
+                <span
+                  className="absolute inset-0 overflow-hidden"
+                  style={{ width: half ? '50%' : '100%' }}
+                >
+                  <FiStar
+                    className="text-amber-400"
+                    style={{ fill: '#fbbf24' }}
+                  />
+                </span>
+              )}
+            </span>
+          );
+        })}
+      </div>
+
+      {/* Score badge */}
+      <span className="bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">
+        {rating.toFixed(1)}
+      </span>
+
+      {/* Review count */}
+      <span className="text-xs text-gray-400 font-medium">
+        {count === 0
+          ? 'No reviews yet'
+          : `${count} ${count === 1 ? 'review' : 'reviews'}`}
+      </span>
+    </div>
+  );
+};
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 const TrainersPageListing: React.FC = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const limit = 3; // 9 trainers per page (3x3 grid)
+  const limit = 3;
   const dispatch = useDispatch();
 
-
-  // Search state
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
   const { data, isLoading, isError, refetch } = useGetAllVerifiedTrainers(
     page,
     limit,
-    debouncedSearch // Pass search parameter
+    debouncedSearch
   );
 
-  // Normalize data structure
   const trainers: Trainer[] = useMemo(() => {
     const resp = data as any;
     return resp?.data?.data?.verifications || [];
   }, [data]);
-  console.log('Trainers Data:', trainers);
 
   const totalPages = useMemo(() => {
     const resp = data as any;
@@ -81,9 +119,6 @@ const TrainersPageListing: React.FC = () => {
     dispatch(updateHasActiveSubscription(true));
   }
 
-
-
-  // Search handlers
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchInput(e.target.value);
@@ -146,7 +181,6 @@ const TrainersPageListing: React.FC = () => {
               onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
               className="px-6 py-4 border-2 border-gray-300 rounded-full w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg shadow-lg"
             />
-
             {searchInput && (
               <button
                 onClick={handleClearSearch}
@@ -156,7 +190,6 @@ const TrainersPageListing: React.FC = () => {
                 <X size={20} />
               </button>
             )}
-
             <button
               onClick={handleSearchClick}
               disabled={isLoading}
@@ -199,140 +232,94 @@ const TrainersPageListing: React.FC = () => {
         {!isLoading && !isError && trainers.length > 0 && (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {trainers.map(
-                (trainer) => (
-                  console.log('Trainer ID:', trainer.trainerId),
-                  (
-                    <div
-                      key={trainer.trainerId}
-                      className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden"
-                    >
-                      {/* Trainer Image/Avatar */}
-                      <div className="relative h-56 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                        {trainer.profileImage ? (
-                          <img
-                            src={trainer.profileImage}
-                            alt={trainer.name}
-                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                          />
-                        ) : (
-                          <div className="text-white text-6xl font-bold">
-                            {trainer.name?.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        {/* Verified Badge */}
-                        {trainer.isVerified && (
-                          <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center shadow-lg">
-                            <FiCheckCircle className="mr-1" /> Verified
-                          </div>
-                        )}
+              {trainers.map((trainer) => (
+                <div
+                  key={trainer.trainerId}
+                  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col"
+                >
+                  {/* Trainer Image */}
+                  <div className="relative h-56 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
+                    {trainer.profileImage ? (
+                      <img
+                        src={trainer.profileImage}
+                        alt={trainer.name}
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                      />
+                    ) : (
+                      <div className="text-white text-6xl font-bold">
+                        {trainer.name?.charAt(0).toUpperCase()}
                       </div>
+                    )}
 
-                      <div className="p-6">
-                        {/* Trainer Name */}
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                          {trainer.name}
-                        </h3>
-
-                        {/* Specialization */}
-                        {/* {trainer.specialisation && (
-                      <p className="text-blue-600 font-semibold text-sm mb-3 flex items-center">
-                        <FiAward className="mr-1" />
-                        {trainer.specialisation}
-                      </p>
-                    )} */}
-
-                        {/* Specialisation */}
-                        {trainer.specialisation && (
-                          <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 mb-3">
-                            <p className="text-xs text-purple-600 font-semibold mb-1 uppercase">
-                              Specialization
-                            </p>
-                            <p className="text-sm text-gray-700 font-medium">
-                              {trainer.specialisation}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Contact Information */}
-                        <div className="space-y-2 mb-4">
-                          {/* Email */}
-                          <div className="flex items-center text-gray-600 text-sm">
-                            <FiMail className="text-blue-600 mr-2 flex-shrink-0" />
-                            <span className="truncate">{trainer.email}</span>
-                          </div>
-
-                          {/* Phone */}
-                          {trainer.phone && (
-                            <div className="flex items-center text-gray-600 text-sm">
-                              <FiPhone className="text-green-600 mr-2 flex-shrink-0" />
-                              <span>{trainer.phone}</span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Trainer Stats */}
-                        <div className="grid grid-cols-2 gap-3 mb-4">
-                          {/* Experience */}
-                          {trainer.experience && (
-                            <div className="bg-gray-50 rounded-lg p-3 text-center">
-                              <FiClock className="text-blue-600 mx-auto mb-1" />
-                              <p className="text-xs text-gray-500">
-                                Experience
-                              </p>
-                              <p className="font-bold text-gray-900">
-                                {trainer.experience} Years
-                              </p>
-                            </div>
-                          )}
-
-                          {/* Rating */}
-                          {trainer.rating && (
-                            <div className="bg-gray-50 rounded-lg p-3 text-center">
-                              <FiStar className="text-yellow-500 mx-auto mb-1" />
-                              <p className="text-xs text-gray-500">Rating</p>
-                              <p className="font-bold text-gray-900">
-                                {trainer.rating}/5.0
-                              </p>
-                            </div>
-                          )}
-
-                          {/* Location */}
-                          {trainer.location && (
-                            <div className="bg-gray-50 rounded-lg p-3 text-center col-span-2">
-                              <div className="flex items-center justify-center text-gray-700">
-                                <FiMapPin className="text-blue-600 mr-1" />
-                                <p className="text-sm font-semibold">
-                                  {trainer.location}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Subscription Required Notice */}
-                        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-5 text-center shadow-sm">
-                          <p className="text-base font-semibold text-gray-900 mb-3">
-                            🔒 Want to train with {trainer.name?.split(' ')[0]}?
-                          </p>
-
-                          <p className="text-sm text-gray-600 mb-4">
-                            Click to see full profile and choose this trainer if
-                            it's the right fit for you.
-                          </p>
-
-                          <Link
-                            to={`/trainers/details/${trainer.trainerId}`}
-                            className="w-full max-w-xs mx-auto py-2.5 px-6 bg-blue-600 text-white rounded-full font-semibold text-sm hover:bg-blue-700 hover:shadow-md transition duration-300 inline-block text-center"
-                          >
-                            View Details & Choose Trainer
-                          </Link>
-                        </div>
-                      </div>
+                    {/* Verified Badge */}
+                    <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                      <FiCheckCircle size={12} /> Verified
                     </div>
-                  )
-                )
-              )}
+                  </div>
+
+                  {/* Card Body */}
+                  <div className="p-6 flex flex-col flex-1">
+                    {/* Name */}
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      {trainer.name}
+                    </h3>
+
+                    {/* Email */}
+                    <div className="flex items-center text-gray-500 text-sm mb-3">
+                      <FiMail className="mr-1.5 text-blue-400" />
+                      <span className="truncate">{trainer.email}</span>
+                    </div>
+
+                    {/* Specialisation */}
+                    {trainer.specialisation && (
+                      <div className="inline-flex items-center gap-1.5 bg-purple-50 border border-purple-100 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-3 w-fit">
+                        <FiAward size={12} />
+                        {trainer.specialisation}
+                      </div>
+                    )}
+
+                    {/* ── Professional Star Rating ── */}
+                    {trainer.averageRating !== undefined ? (
+                      <StarRating
+                        rating={trainer.averageRating}
+                        count={trainer.ratingCount ?? 0}
+                      />
+                    ) : (
+                      <div className="flex items-center gap-1.5 mt-3 mb-4">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <FiStar
+                            key={s}
+                            className="text-gray-200 text-lg"
+                            style={{ fill: '#e5e7eb' }}
+                          />
+                        ))}
+                        <span className="text-xs text-gray-400 ml-1">
+                          No reviews yet
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Divider */}
+                    <div className="border-t border-gray-100 my-2" />
+
+                    {/* CTA */}
+                    <div className="mt-auto pt-4">
+                      <p className="text-sm text-gray-500 mb-3 text-center">
+                        🔒 Subscribe to book a session with{' '}
+                        <span className="font-semibold text-gray-700">
+                          {trainer.name?.split(' ')[0]}
+                        </span>
+                      </p>
+                      <Link
+                        to={`/trainers/details/${trainer.trainerId}`}
+                        className="block w-full text-center py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-sm hover:shadow-lg hover:opacity-90 transition duration-300"
+                      >
+                        View Profile & Choose
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Pagination */}
@@ -355,7 +342,7 @@ const TrainersPageListing: React.FC = () => {
             </h3>
             <p className="text-gray-600 text-lg mb-8">
               {debouncedSearch
-                ? `No trainers match your search "${debouncedSearch}". Try a different search term.`
+                ? `No trainers match "${debouncedSearch}". Try a different search term.`
                 : "We're currently onboarding amazing trainers. Check back soon!"}
             </p>
             <button
@@ -369,49 +356,49 @@ const TrainersPageListing: React.FC = () => {
           </div>
         )}
 
-        {/* Why Choose Our Trainers Section */}
+        {/* Why Choose Section */}
         <div className="mt-16 bg-white rounded-3xl shadow-2xl p-12">
           <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-12">
             Why Choose Our{' '}
             <span className="text-blue-600">Certified Trainers</span>
           </h2>
           <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FiCheckCircle className="text-green-600 text-3xl" />
+            {[
+              {
+                icon: <FiCheckCircle className="text-green-600 text-3xl" />,
+                bg: 'bg-green-100',
+                title: 'Verified Experts',
+                desc: 'All trainers are certified and verified',
+              },
+              {
+                icon: <span className="text-3xl">🎥</span>,
+                bg: 'bg-blue-100',
+                title: 'Video Sessions',
+                desc: 'Daily 1-on-1 video calls with your trainer',
+              },
+              {
+                icon: <span className="text-3xl">💬</span>,
+                bg: 'bg-purple-100',
+                title: '24/7 Support',
+                desc: 'Chat anytime with your trainer',
+              },
+              {
+                icon: <FiAward className="text-orange-600 text-3xl" />,
+                bg: 'bg-orange-100',
+                title: 'Specialized',
+                desc: 'Experts in various fitness domains',
+              },
+            ].map((item, i) => (
+              <div key={i} className="text-center">
+                <div
+                  className={`w-16 h-16 ${item.bg} rounded-full flex items-center justify-center mx-auto mb-4`}
+                >
+                  {item.icon}
+                </div>
+                <h4 className="font-bold text-gray-900 mb-2">{item.title}</h4>
+                <p className="text-gray-600 text-sm">{item.desc}</p>
               </div>
-              <h4 className="font-bold text-gray-900 mb-2">Verified Experts</h4>
-              <p className="text-gray-600 text-sm">
-                All trainers are certified and verified
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                {/* <FiVideo className="text-blue-600 text-3xl" /> */}
-              </div>
-              <h4 className="font-bold text-gray-900 mb-2">Video Sessions</h4>
-              <p className="text-gray-600 text-sm">
-                Daily video calls except Sunday
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                {/* <FiMessageCircle className="text-purple-600 text-3xl" /> */}
-              </div>
-              <h4 className="font-bold text-gray-900 mb-2">24/7 Support</h4>
-              <p className="text-gray-600 text-sm">
-                Chat anytime with your trainer
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FiAward className="text-orange-600 text-3xl" />
-              </div>
-              <h4 className="font-bold text-gray-900 mb-2">Specialized</h4>
-              <p className="text-gray-600 text-sm">
-                Experts in various fitness domains
-              </p>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -433,7 +420,6 @@ const TrainersPageListing: React.FC = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

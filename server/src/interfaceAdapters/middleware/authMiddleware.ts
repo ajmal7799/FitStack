@@ -19,22 +19,37 @@ export class AuthMiddleware {
     //              🛠 VERIFY TOKEN
     // --------------------------------------------------
 
-    verify = async(req: Request, res: Response, next: NextFunction) => {
+  verify = async (req: Request, res: Response, next: NextFunction) => {
+    try {
         const header = req.header('Authorization');
 
         if (!header?.startsWith('Bearer ')) {
-            res.status(HTTPStatus.UNAUTHORIZED).json({ success: false, message: Errors.INVALID_TOKEN });
+            res.status(HTTPStatus.UNAUTHORIZED).json({
+                success: false,
+                message: Errors.INVALID_TOKEN
+            });
             return;
         }
 
         const token = header.split(' ')[1];
-        
 
-        const decoded = this._jwtService.verifyAccessToken(token as string);
-        
+        let decoded;
+        try {
+            decoded = this._jwtService.verifyAccessToken(token);
+        } catch (error) {
+            // ✅ Return 401 with specific code so frontend knows to refresh
+            res.status(HTTPStatus.UNAUTHORIZED).json({
+                success: false,
+                message: 'TOKEN_EXPIRED', // ← frontend checks this
+            });
+            return;
+        }
 
         if (!decoded) {
-            res.status(HTTPStatus.UNAUTHORIZED).json({ success: false, message: Errors.INVALID_TOKEN });
+            res.status(HTTPStatus.UNAUTHORIZED).json({
+                success: false,
+                message: Errors.INVALID_TOKEN
+            });
             return;
         }
 
@@ -52,36 +67,44 @@ export class AuthMiddleware {
             userId: user._id!,
             role: user.role,
         };
-    
+
         next();
-    };
-
+    } catch (error) {
+        next(error);
+    }
+  }
+  
     // --------------------------------------------------
-    //              🛠 ADMIN CHECKING
+    //              🛠 ROLE CHECKING (reusable)
     // --------------------------------------------------
-    isAdmin = async(req: Request, res: Response, next: NextFunction) => {
-        
-        if (!req.user) {
-            return res.status(HTTPStatus.UNAUTHORIZED).json({
-                success: false,
-                message: Errors.INVALID_TOKEN,
-            });
-        }
 
-        if (req.user.role !== UserRole.ADMIN) {
-            return res.status(HTTPStatus.FORBIDDEN).json({
-                success: false,
-                message: Errors.FORBIDDEN,
-            });
-        }
-        next();
-    };
+    hasRole = (...roles: UserRole[]) => {
+        return (req: Request, res: Response, next: NextFunction) => {
+            if (!req.user) {
+                return res.status(HTTPStatus.UNAUTHORIZED).json({
+                    success: false,
+                    message: Errors.INVALID_TOKEN,
+                });
+            }
 
-    checkStatus = () => {
-        return async(req: Request, res: Response, next: NextFunction) => {
-            const { id } = res.locals.users;
+            if (!roles.includes(req.user.role)) {
+                return res.status(HTTPStatus.FORBIDDEN).json({
+                    success: false,
+                    message: Errors.FORBIDDEN,
+                });
+            }
 
-            let userStatus;
+            next();
         };
     };
+
+    // --------------------------------------------------
+    //              🛠 CONVENIENCE ROLE MIDDLEWARES
+    // --------------------------------------------------
+
+    isAdmin = this.hasRole(UserRole.ADMIN);
+
+    isTrainer = this.hasRole(UserRole.TRAINER);
+
+    isUser = this.hasRole(UserRole.USER);
 }

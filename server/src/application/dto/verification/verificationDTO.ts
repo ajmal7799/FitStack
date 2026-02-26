@@ -7,4 +7,6 @@ export interface VerificationDTO {
     specialisation: string;
     verificationStatus: VerificationStatus;
     profileImage?: string;
+    averageRating?: number;
+    ratingCount?: number;
 }

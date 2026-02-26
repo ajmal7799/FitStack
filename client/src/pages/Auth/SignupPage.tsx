@@ -69,7 +69,8 @@ export default function UserSignUpPage() {
               accessToken: res.data.accessToken,
               verificationCheck: res.data.accessToken,
               userProfileCompleted: res.data.userProfileCompleted,
-              hasActiveSubscription: res.data.user.hasActiveSubscription
+              hasActiveSubscription: res.data.user.hasActiveSubscription,
+              profileImage: res.data.user.profileImage
             }));
 
             if (userData.role === 'trainer') {
@@ -121,7 +122,8 @@ export default function UserSignUpPage() {
               accessToken: res.data.accessToken,
               verificationCheck: res.data.user.verificationCheck,
               userProfileCompleted: res.data.user.userProfileCompleted,
-              hasActiveSubscription: res.data.user.hasActiveSubscription
+              hasActiveSubscription: res.data.user.hasActiveSubscription,
+              profileImage: res.data.user.profileImage
             })
           );
 
