@@ -9,11 +9,19 @@ import { CreateVideoCallDTO } from '../../../dto/videoCall/videoCallDTO';
 import crypto from "crypto";
 import { VideoCallStatus } from '../../../../domain/enum/videoCallEnums';
 import { VideoCallMapper } from '../../../mappers/videoCallMappers';
+import { UserRole } from '../../../../domain/enum/userEnums';
+import { NotificationType } from '../../../../domain/enum/NotificationEnums';
+import { CreateNotification } from '../../notification/CreateNotification';
 
 
 
 export class BookSlotUseCase implements IBookSlotUseCase {
-    constructor(private _userRepository: IUserRepository, private _slotRepository: ISlotRepository, private _videoCallRepository: IVideoCallRepository) {}
+    constructor(
+        private _userRepository: IUserRepository,
+        private _slotRepository: ISlotRepository,
+        private _videoCallRepository: IVideoCallRepository,
+        private _createNotification: CreateNotification
+        ) {}
 
     async bookSlot(userId: string, slotId: string): Promise<Slot> {
         const user = await this._userRepository.findById(userId);
@@ -65,6 +73,16 @@ export class BookSlotUseCase implements IBookSlotUseCase {
         const videoCallData = VideoCallMapper.toEnitity(data);
 
         await this._videoCallRepository.save(videoCallData);
+
+        await this._createNotification.execute({
+            recipientId: slot.trainerId,
+            recipientRole: UserRole.TRAINER,
+            type: NotificationType.SLOT_BOOKED,
+            title: "Slot Booked!",
+            message: `${user.name} has booked a slot with you for ${new Date(slot.startTime).toLocaleString()}.`,
+            relatedId: slot._id,
+            isRead: false
+        })
 
         return updatedSlot;
     }

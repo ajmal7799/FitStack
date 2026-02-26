@@ -13,6 +13,7 @@ import {
 } from '../../infrastructure/DI/user/userAiIntegrationContainer';
 import { feedbackController } from '../../infrastructure/DI/Feedback/feedbackContainer';
 import { upload } from '../middleware/multer';
+import { notificationController } from '../../infrastructure/DI/Notification/notificationContainer';
 
 export class User_Router {
   private _route: Router;
@@ -75,13 +76,12 @@ export class User_Router {
       userSubscriptionController.createCheckoutSession(req, res, next);
     });
 
-    this._route.post(
-      '/stripe/webhook',
-      express.raw({ type: 'application/json' }),
-      (req: Request, res: Response, next: NextFunction) => {
+ this._route.post(
+    '/stripe/webhook',
+    (req: Request, res: Response, next: NextFunction) => {
         userSubscriptionController.handleStripeWebhook(req, res, next);
-      }
-    );
+    }
+);
 
     // --------------------------------------------------
     //              🛠 USER SIDE TRAINERS
@@ -217,7 +217,7 @@ export class User_Router {
       }
     );
 
-    this._route.patch(  
+    this._route.patch(
       '/booked-slots/:slotId/cancel',
       authMiddleware.verify,
       (req: Request, res: Response, next: NextFunction) => {
@@ -225,13 +225,17 @@ export class User_Router {
       }
     );
 
-    this._route.get('/sessions-history', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {  
+    this._route.get('/sessions-history', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
       userBookingSlotController.getSessionHistory(req, res, next);
     });
 
-    this._route.get('/session-history/:sessionId', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
-      userBookingSlotController.getSessionHistoryDetails(req, res, next);
-    });
+    this._route.get(
+      '/session-history/:sessionId',
+      authMiddleware.verify,
+      (req: Request, res: Response, next: NextFunction) => {
+        userBookingSlotController.getSessionHistoryDetails(req, res, next);
+      }
+    );
 
     // --------------------------------------------------
     //              🛠 VIDEO CALL
@@ -253,6 +257,35 @@ export class User_Router {
       feedbackController.createfeedback(req, res, next);
     });
 
+
+    // --------------------------------------------------
+    //              🛠 NOTIFICATION
+    // --------------------------------------------------
+    this._route.get('/notifications', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+      notificationController.getNotifications(req, res, next);
+    });
+
+
+    this._route.patch('/notifications/:notificationId/read', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+      notificationController.markAsRead(req, res, next);
+    })
+
+    this._route.patch('/notifications/read-all', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+      notificationController.markAllAsRead(req, res, next);
+    })
+
+    this._route.delete('/notifications', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+      notificationController.clearAll(req, res, next);
+    })
+
+
+    // --------------------------------------------------
+    //              🛠 wallet
+    // --------------------------------------------------
+
+    this._route.get('/wallet', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+      userSubscriptionController.getWallet(req, res, next);
+    })
 
 
     // --------------------------------------------------

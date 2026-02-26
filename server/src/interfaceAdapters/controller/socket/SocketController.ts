@@ -26,9 +26,17 @@ export class SocketController {
     this._endVideoCallSessionUseCase = endVideoCallSessionUseCase;
   }
 
-  public onConnection(socket: Socket) {
+  public async onConnection(socket: Socket) {
     const userId = socket.data.userId;
-    console.log(`📡 New connection established for user: ${userId}`);
+    console.log(`📡 New connection established. User ID: ${userId}, Socket ID: ${socket.id}`);
+    
+    if (userId) {
+      await socket.join(userId.toString());
+      console.log(`🏠 User [${userId}] joined personal notification room`);
+    } else {
+      console.warn(`⚠️ Socket [${socket.id}] connected but has no userId in data`);
+    }
+
 
     socket.on('join_room', (chatId: string) => {
       if (!chatId) {
@@ -38,7 +46,7 @@ export class SocketController {
 
       socket.join(chatId);
 
-      console.log(`🏠 User [${userId}] joined Room [${chatId}]`);
+      console.log(`🏠 User [${userId}] joined Chat Room [${chatId}]`);
 
       socket.to(chatId).emit('user_joined', { userId });
     });
@@ -105,15 +113,15 @@ export class SocketController {
     // --------------------------------------------------
 
     socket.on('video_call:join', ({ roomId, userId, slotId }: { roomId: string; userId: string; slotId: string }) => {
-      console.log('🎥 User [${userId}] joined Video Room [${roomId}]');
+      console.log(`🎥 User [${userId}] joined Video Room [${roomId}]`);
       if (!roomId) return;
 
-      socket.data.userId = userId;
+      const vUserId = userId;
       socket.data.roomId = roomId;
       socket.data.slotId = slotId;
 
       socket.join(roomId);
-      console.log(`🎥 User [${userId}] joined Video Room [${roomId}]`);
+      console.log(`🎥 User [${vUserId}] joined Video Room [${roomId}]`);
 
       // Notify the other user in the room that a peer has arrived.
       // This is the "trigger" for Peer A to start the WebRTC handshake.
@@ -148,13 +156,20 @@ export class SocketController {
 
           // ✅ Notify both users that session is officially completed
           this.io.to(roomId).emit('video_call:session_completed', { slotId });
-          console.log(`✅ Session completed for slot: ${slotId}`);
         } catch (err) {
-          console.error(`❌ Failed to end session:`, err);
         } finally {
           setTimeout(() => this.endingRooms.delete(roomId), 5000);
         }
       }
     });
+
+    // --------------------------------------------------
+    //              🛠 NOTIFICATION
+    // --------------------------------------------------
+
+
+
+
+
   }
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Plus, RefreshCw, Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import TrainerSidebar from '../../../components/trainer/Sidebar';
 import TrainerHeader from '../../../components/trainer/Header';
 import { useGetSlots, useCreateSlot, useDeleteSlots, useCreateRecurringSlot } from '../../../hooks/Trainer/TrainerHooks';
@@ -10,6 +10,29 @@ import 'react-datepicker/dist/react-datepicker.css';
 import toast from 'react-hot-toast';
 
 type FilterStatus = 'all' | 'upcoming' | 'booked' | 'past';
+
+// ─── Helper: combine local date + time parts → UTC "Z" ISO string ────────────
+// WHY: Zod .datetime() only accepts strings ending in Z (pure UTC).
+// WHY NOT .toISOString() directly on selectedDate: react-datepicker's date-only
+//   picker returns midnight UTC, so combining it naively with setHours() still
+//   shifts the date in non-UTC timezones.
+// FIX: construct a new Date() from explicit local year/month/day/hour/minute —
+//   this respects the local timezone — then call .toISOString() which gives Z.
+// e.g. IST user picks Jan 26, 09:00 AM
+//   → new Date(2026, 0, 26, 9, 0) = Jan 26 09:00 IST
+//   → .toISOString()              = "2026-01-25T03:30:00.000Z"  ✓ Zod accepts
+//   → backend new Date(val)       = Jan 26 09:00 IST            ✓ correct time
+const buildLocalISOString = (date: Date, time: Date): string => {
+  return new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    time.getHours(),
+    time.getMinutes(),
+    0,
+    0
+  ).toISOString();
+};
 
 const TrainerSlotPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,45 +79,30 @@ const TrainerSlotPage = () => {
     try {
       const date = new Date(dateString);
       return {
-        date: date.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'short', 
-          day: 'numeric' 
-        }),
-        time: date.toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit',
-          hour12: true 
-        })
+        date: date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+        time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
       };
-    } catch (error) {
+    } catch {
       return { date: 'Invalid Date', time: 'Invalid Time' };
     }
   };
 
   const filterButtons: { label: string; value: FilterStatus }[] = [
-    { label: 'All Slots', value: 'all' },
+    { label: 'All', value: 'all' },
     { label: 'Upcoming', value: 'upcoming' },
     { label: 'Booked', value: 'booked' },
     { label: 'Past', value: 'past' }
   ];
 
+  // ─── FIXED: uses buildLocalISOString instead of .toISOString() ───────────
   const handleCreateSlot = async () => {
     if (!selectedDate || !selectedTime) {
-      alert('Please select both date and time');
+      toast.error('Please select both date and time');
       return;
     }
-
-    const combinedDateTime = new Date(selectedDate);
-    combinedDateTime.setHours(selectedTime.getHours());
-    combinedDateTime.setMinutes(selectedTime.getMinutes());
-    combinedDateTime.setSeconds(0);
-    combinedDateTime.setMilliseconds(0);
-
-    const isoString = combinedDateTime.toISOString();
-
+    const localISO = buildLocalISOString(selectedDate, selectedTime);
     try {
-      await createSlotMutation.mutateAsync(isoString);
+      await createSlotMutation.mutateAsync(localISO);
       setIsModalOpen(false);
       setSelectedDate(null);
       setSelectedTime(null);
@@ -105,14 +113,13 @@ const TrainerSlotPage = () => {
     }
   };
 
-  const handleDeleteSlot = async (slotId: string) => {
+  const handleDeleteSlot = (slotId: string) => {
     setSlotToDelete(slotId);
     setDeleteModalOpen(true);
   };
 
   const confirmDelete = async () => {
     if (!slotToDelete) return;
-        
     setDeletingSlotId(slotToDelete);
     try {
       await deleteSlotMutation.mutateAsync(slotToDelete);
@@ -136,20 +143,18 @@ const TrainerSlotPage = () => {
   };
 
   const weekdaysList = [
-    { label: 'Monday', value: 'MON' },
-    { label: 'Tuesday', value: 'TUE' },
-    { label: 'Wednesday', value: 'WED' },
-    { label: 'Thursday', value: 'THU' },
-    { label: 'Friday', value: 'FRI' },
-    { label: 'Saturday', value: 'SAT' },
-    { label: 'Sunday', value: 'SUN' }
+    { label: 'Mon', value: 'MON' },
+    { label: 'Tue', value: 'TUE' },
+    { label: 'Wed', value: 'WED' },
+    { label: 'Thu', value: 'THU' },
+    { label: 'Fri', value: 'FRI' },
+    { label: 'Sat', value: 'SAT' },
+    { label: 'Sun', value: 'SUN' }
   ];
 
   const toggleWeekday = (day: string) => {
-    setSelectedWeekdays(prev => 
-      prev.includes(day) 
-        ? prev.filter(d => d !== day)
-        : [...prev, day]
+    setSelectedWeekdays(prev =>
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
     );
   };
 
@@ -160,16 +165,14 @@ const TrainerSlotPage = () => {
     }
 
     const formatDate = (date: Date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
     };
 
     const formatTime = (date: Date) => {
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      return `${hours}:${minutes}`;
+      return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     };
 
     const today = new Date();
@@ -179,7 +182,6 @@ const TrainerSlotPage = () => {
       toast.error('Start date cannot be in the past');
       return;
     }
-
     if (recurringEndDate < recurringStartDate) {
       toast.error('End date must be after start date');
       return;
@@ -214,343 +216,323 @@ const TrainerSlotPage = () => {
     setSelectedWeekdays([]);
   };
 
-  const calculateEndTime = (startTime: Date) => {
-    return new Date(startTime.getTime() + 60 * 60 * 1000);
+  const addOneHour = (t: Date) => new Date(t.getTime() + 60 * 60 * 1000);
+
+  const statusConfig: Record<string, { bg: string; text: string; dot: string }> = {
+    Expired:   { bg: 'bg-gray-100',   text: 'text-gray-500',   dot: 'bg-gray-400' },
+    Booked:    { bg: 'bg-green-50',   text: 'text-green-700',  dot: 'bg-green-500' },
+    Available: { bg: 'bg-orange-50',  text: 'text-orange-600', dot: 'bg-orange-400' }
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      <div className="fixed left-0 top-0 h-full">
-        <TrainerSidebar />
-      </div>
-            
-      <div className="flex-1 flex flex-col ml-64 overflow-hidden">
-        <TrainerHeader />
-                
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-6 flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  My Training Slots
-                </h1>
-                <p className="text-gray-600">
-                  Manage and view your training schedule
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center gap-2"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+    <>
+      {/* ── Global styles injected inline so no extra CSS file needed ── */}
+      <style>{`
+        :root {
+          --orange: #f58d42;
+          --orange-light: #fef3e8;
+          --orange-dark: #d9722e;
+          --white: #ffffff;
+          --gray-50: #fafafa;
+          --gray-100: #f5f5f5;
+          --gray-200: #e8e8e8;
+          --gray-500: #9e9e9e;
+          --gray-700: #555;
+          --gray-900: #1a1a1a;
+        }
+
+        /* DatePicker overrides to match our palette */
+        .react-datepicker { font-family: inherit !important; border: 1.5px solid var(--gray-200) !important; border-radius: 12px !important; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important; }
+        .react-datepicker__header { background: var(--orange) !important; border-bottom: none !important; padding: 12px !important; }
+        .react-datepicker__current-month,
+        .react-datepicker__day-name { color: #fff !important; font-weight: 600 !important; }
+        .react-datepicker__navigation-icon::before { border-color: #fff !important; }
+        .react-datepicker__day--selected,
+        .react-datepicker__day--keyboard-selected { background: var(--orange) !important; border-radius: 8px !important; }
+        .react-datepicker__day:hover { background: var(--orange-light) !important; border-radius: 8px !important; }
+        .react-datepicker__time-container .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--selected { background: var(--orange) !important; }
+        .react-datepicker-wrapper { width: 100%; }
+        .slot-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+        .slot-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,141,66,0.15); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.25s ease forwards; }
+      `}</style>
+
+      <div className="flex h-screen bg-gray-50 overflow-hidden">
+        {/* Sidebar */}
+        <div className="fixed left-0 top-0 h-full z-20">
+          <TrainerSidebar />
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 flex flex-col ml-0 md:ml-64 overflow-hidden">
+          <TrainerHeader />
+
+          <main className="flex-1 overflow-y-auto" style={{ background: '#fafaf8' }}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+              {/* ── Page header ── */}
+              <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                    Training Slots
+                  </h1>
+                  <p className="text-gray-500 mt-1 text-sm">
+                    Manage your availability and schedule
+                  </p>
+                </div>
+
+                <div className="flex gap-2 flex-wrap">
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white font-semibold text-sm shadow-sm transition-all hover:opacity-90 active:scale-95"
+                    style={{ background: 'var(--orange)' }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                  Single Slot
-                </button>
-                <button
-                  onClick={() => setIsRecurringModalOpen(true)}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                    <Plus size={16} />
+                    Single Slot
+                  </button>
+                  <button
+                    onClick={() => setIsRecurringModalOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white font-semibold text-sm shadow-sm transition-all hover:bg-gray-800 active:scale-95"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
-                  Recurring Slots
-                </button>
+                    <RefreshCw size={15} />
+                    Recurring
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div className="mb-6 flex gap-3 flex-wrap">
-              {filterButtons.map((filter) => (
-                <button
-                  key={filter.value}
-                  onClick={() => {
-                    setFilterStatus(filter.value);
-                    setCurrentPage(1);
-                  }}
-                  className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-200 ${
-                    filterStatus === filter.value
-                      ? 'bg-black text-white shadow-md'
-                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  {filter.label}
-                </button>
-              ))}
-            </div>
+              {/* ── Filter pills ── */}
+              <div className="mb-6 flex gap-2 flex-wrap">
+                {filterButtons.map((f) => (
+                  <button
+                    key={f.value}
+                    onClick={() => { setFilterStatus(f.value); setCurrentPage(1); }}
+                    className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200"
+                    style={
+                      filterStatus === f.value
+                        ? { background: 'var(--orange)', color: '#fff', boxShadow: '0 2px 8px rgba(245,141,66,0.35)' }
+                        : { background: '#fff', color: '#555', border: '1.5px solid #e8e8e8' }
+                    }
+                  >
+                    {f.label}
+                  </button>
+                ))}
 
-            {!isLoading && (
-              <div className="mb-4 text-sm text-gray-600">
-                Showing {slots.length} of {totalSlots} slots
+                {!isLoading && (
+                  <span className="ml-auto self-center text-xs text-gray-400 font-medium">
+                    {slots.length} / {totalSlots} slots
+                  </span>
+                )}
               </div>
-            )}
 
-            {isLoading && (
-              <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-              </div>
-            )}
+              {/* ── States ── */}
+              {isLoading && (
+                <div className="flex justify-center items-center py-24">
+                  <div className="w-10 h-10 rounded-full border-3 border-gray-200 border-t-orange-400 animate-spin"
+                    style={{ borderTopColor: 'var(--orange)', borderWidth: 3 }} />
+                </div>
+              )}
 
-            {isError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                <p className="text-red-600 font-medium">
-                  Failed to load slots. Please try again.
-                </p>
-              </div>
-            )}
+              {isError && (
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+                  <p className="text-red-600 font-medium">Failed to load slots. Please try again.</p>
+                </div>
+              )}
 
-            {!isLoading && !isError && slots.length === 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-                <svg
-                  className="mx-auto h-16 w-16 text-gray-400 mb-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No slots found
-                </h3>
-                <p className="text-gray-600">
-                  There are no {filterStatus !== 'all' ? filterStatus : ''} slots available at the moment.
-                </p>
-              </div>
-            )}
+              {!isLoading && !isError && slots.length === 0 && (
+                <div className="bg-white border border-gray-200 rounded-2xl p-16 text-center">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                    style={{ background: 'var(--orange-light)' }}>
+                    <Calendar size={24} style={{ color: 'var(--orange)' }} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">No slots found</h3>
+                  <p className="text-gray-400 text-sm">
+                    No {filterStatus !== 'all' ? filterStatus : ''} slots at the moment.
+                  </p>
+                </div>
+              )}
 
-            {!isLoading && !isError && slots.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {slots.map((slot) => {
-                  const startDateTime = formatDateTime(slot.startTime);
-                  const endDateTime = formatDateTime(slot.endTime);
-                  const isExpired = new Date(slot.endTime) < new Date();
+              {/* ── Slot grid ── */}
+              {!isLoading && !isError && slots.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 fade-in">
+                  {slots.map((slot) => {
+                    const start = formatDateTime(slot.startTime);
+                    const end = formatDateTime(slot.endTime);
+                    const isExpired = new Date(slot.endTime) < new Date();
+                    const label = isExpired ? 'Expired' : slot.isBooked ? 'Booked' : 'Available';
+                    const cfg = statusConfig[label];
 
-                  return (
-                    <div
-                      key={slot._id}
-                      className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow duration-200"
-                    >
-                      <div className="flex justify-between items-start mb-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            isExpired
-                              ? 'bg-gray-100 text-gray-700'
-                              : slot.isBooked
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-blue-100 text-blue-700'
-                          }`}
-                        >
-                          {isExpired ? 'Expired' : slot.isBooked ? 'Booked' : 'Available'}
-                        </span>
-                       {!slot.isBooked && (
-    <button
-      onClick={() => handleDeleteSlot(slot._id)}
-      disabled={deletingSlotId === slot._id}
-      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      title="Delete slot"
-    >
-      {deletingSlotId === slot._id ? (
-        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
-      ) : (
-        <Trash2 className="w-5 h-5" />
-      )}
-    </button>
-  )}
-                      </div>
+                    return (
+                      <div
+                        key={slot._id}
+                        className="slot-card bg-white rounded-2xl border border-gray-100 p-5 relative overflow-hidden"
+                        style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}
+                      >
+                        {/* Accent bar */}
+                        <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
+                          style={{
+                            background: label === 'Available'
+                              ? 'var(--orange)'
+                              : label === 'Booked'
+                                ? '#22c55e'
+                                : '#d1d5db'
+                          }} />
 
-                      <div className="mb-3">
-                        <div className="flex items-center text-gray-700 mb-1">
-                          <svg
-                            className="w-5 h-5 mr-2"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            />
-                          </svg>
-                          <span className="font-medium">
-                            {startDateTime.date}
+                        <div className="flex items-start justify-between mb-4 pt-1">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                            {label}
                           </span>
+
+                          {!slot.isBooked && (
+                            <button
+                              onClick={() => handleDeleteSlot(slot._id)}
+                              disabled={deletingSlotId === slot._id}
+                              className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-40"
+                              title="Delete slot"
+                            >
+                              {deletingSlotId === slot._id
+                                ? <div className="w-4 h-4 rounded-full border-2 border-red-400 border-t-transparent animate-spin" />
+                                : <Trash2 size={15} />}
+                            </button>
+                          )}
                         </div>
+
+                        <div className="space-y-2.5">
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                              style={{ background: 'var(--orange-light)' }}>
+                              <Calendar size={13} style={{ color: 'var(--orange)' }} />
+                            </div>
+                            <span className="font-semibold text-sm">{start.date}</span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                              style={{ background: 'var(--orange-light)' }}>
+                              <Clock size={13} style={{ color: 'var(--orange)' }} />
+                            </div>
+                            <span className="font-semibold text-sm">{start.time} — {end.time}</span>
+                          </div>
+                        </div>
+
+                        {slot.isBooked && slot.bookedBy && (
+                          <div className="mt-4 pt-3 border-t border-gray-100">
+                            <p className="text-xs text-gray-400">
+                              Booked by <span className="font-semibold text-gray-700">{slot.bookedBy}</span>
+                            </p>
+                          </div>
+                        )}
                       </div>
+                    );
+                  })}
+                </div>
+              )}
 
-                      <div className="mb-4">
-                        <div className="flex items-center text-gray-700">
-                          <svg
-                            className="w-5 h-5 mr-2"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          <span className="font-medium">
-                            {startDateTime.time} - {endDateTime.time}
-                          </span>
-                        </div>
-                      </div>
-
-                      {slot.isBooked && slot.bookedBy && (
-                        <div className="pt-3 border-t border-gray-200">
-                          <p className="text-sm text-gray-600">
-                            Booked by: <span className="font-medium text-gray-900">{slot.bookedBy}</span>
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              setPage={handlePageChange}
-            />
-          </div>
-        </main>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setPage={handlePageChange}
+              />
+            </div>
+          </main>
+        </div>
       </div>
 
+      {/* ══════════════════════════════════════════════════════
+          SINGLE SLOT MODAL
+      ══════════════════════════════════════════════════════ */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Create New Slot</h2>
-              <button
-                onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md fade-in overflow-hidden">
+            {/* Header */}
+            <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between"
+              style={{ background: 'var(--orange-light)' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+                  style={{ background: 'var(--orange)' }}>
+                  <Plus size={18} color="#fff" />
+                </div>
+                <h2 className="text-lg font-bold text-gray-900">Create Single Slot</h2>
+              </div>
+              <button onClick={closeModal}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-white transition-colors">
+                ✕
               </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="p-6 space-y-5">
+              {/* Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Select Date
                 </label>
                 <DatePicker
                   selected={selectedDate}
-                  onChange={(date : Date | null) => setSelectedDate(date)}
+                  onChange={(date: Date | null) => setSelectedDate(date)}
                   minDate={new Date()}
                   dateFormat="MMMM d, yyyy"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none"
                   placeholderText="Choose a date"
                   inline
                 />
               </div>
 
+              {/* Time */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Select Time
                 </label>
                 <DatePicker
                   selected={selectedTime}
-                  onChange={(time : Date| null) => setSelectedTime(time)}
+                  onChange={(time: Date | null) => setSelectedTime(time)}
                   showTimeSelect
                   showTimeSelectOnly
-                  timeIntervals={30}  
+                  timeIntervals={30}
                   timeCaption="Time"
                   dateFormat="h:mm aa"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none"
                   placeholderText="Choose a time"
                   minTime={
-                    selectedDate && 
-                    selectedDate.toDateString() === new Date().toDateString()
+                    selectedDate && selectedDate.toDateString() === new Date().toDateString()
                       ? new Date()
                       : new Date(new Date().setHours(0, 0, 0, 0))
                   }
-                  maxTime={new Date(new Date().setHours(23, 59, 59, 999))}
+                  maxTime={new Date(new Date().setHours(23, 30, 0, 0))}
                 />
               </div>
 
+              {/* Preview */}
               {selectedDate && selectedTime && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-sm text-blue-800 font-medium mb-2">
-                    Selected Slot:
+                <div className="rounded-xl p-4 border" style={{ background: 'var(--orange-light)', borderColor: '#f5c89a' }}>
+                  <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: 'var(--orange-dark)' }}>
+                    Slot Preview
                   </p>
-                  <p className="text-lg text-blue-900 font-semibold">
-                    {selectedDate.toLocaleDateString('en-US', { 
-                      weekday: 'long',
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
+                  <p className="font-semibold text-gray-800 text-sm">
+                    {selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                   </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <p className="text-lg text-blue-900 font-semibold">
-                      {selectedTime.toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit',
-                        hour12: true 
-                      })}
-                    </p>
-                    <span className="text-blue-700">→</span>
-                    <p className="text-lg text-blue-900 font-semibold">
-                      {new Date(selectedTime.getTime() + 60 * 60 * 1000).toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit',
-                        hour12: true 
-                      })}
-                    </p>
-                  </div>
-                  <p className="text-xs text-blue-700 mt-2">
-                    Duration: 1 hour
+                  <p className="text-sm text-gray-600 mt-1">
+                    {selectedTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                    {' '}<span style={{ color: 'var(--orange)' }}>→</span>{' '}
+                    {addOneHour(selectedTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                    <span className="ml-2 text-xs text-gray-400">(1 hour)</span>
                   </p>
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4">
-                <button
-                  onClick={closeModal}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                >
+              <div className="flex gap-3 pt-1">
+                <button onClick={closeModal}
+                  className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-colors">
                   Cancel
                 </button>
                 <button
                   onClick={handleCreateSlot}
                   disabled={!selectedDate || !selectedTime || createSlotMutation.isPending}
-                  className="flex-1 px-4 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-3 rounded-xl text-white font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+                  style={{ background: 'var(--orange)' }}
                 >
-                  {createSlotMutation.isPending ? 'Creating...' : 'Create Slot'}
+                  {createSlotMutation.isPending ? 'Creating…' : 'Create Slot'}
                 </button>
               </div>
             </div>
@@ -558,97 +540,93 @@ const TrainerSlotPage = () => {
         </div>
       )}
 
+      {/* ══════════════════════════════════════════════════════
+          DELETE CONFIRMATION MODAL
+      ══════════════════════════════════════════════════════ */}
       {deleteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                <Trash2 className="w-6 h-6 text-red-600" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 fade-in">
+            <div className="flex items-center gap-4 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+                <Trash2 size={20} className="text-red-500" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Delete Slot</h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  Are you sure you want to delete this slot? This action cannot be undone.
-                </p>
+                <h3 className="font-bold text-gray-900">Delete Slot</h3>
+                <p className="text-sm text-gray-500 mt-0.5">This action cannot be undone.</p>
               </div>
             </div>
-
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={cancelDelete}
+            <div className="flex gap-3">
+              <button onClick={cancelDelete}
                 disabled={deletingSlotId === slotToDelete}
-                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
-              >
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 disabled:opacity-50 transition-colors">
                 Cancel
               </button>
-              <button
-                onClick={confirmDelete}
+              <button onClick={confirmDelete}
                 disabled={deletingSlotId === slotToDelete}
-                className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {deletingSlotId === slotToDelete ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Deleting...
-                  </>
-                ) : (
-                  'Delete Slot'
-                )}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 text-white font-semibold text-sm hover:bg-red-600 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+                {deletingSlotId === slotToDelete
+                  ? <><div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> Deleting…</>
+                  : 'Delete'}
               </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* ══════════════════════════════════════════════════════
+          RECURRING SLOTS MODAL
+      ══════════════════════════════════════════════════════ */}
       {isRecurringModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 my-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Create Recurring Slots</h2>
-              <button
-                onClick={closeRecurringModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+          style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-6 fade-in overflow-hidden">
+            {/* Header */}
+            <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between"
+              style={{ background: '#f0f4ff' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-gray-900">
+                  <RefreshCw size={16} color="#fff" />
+                </div>
+                <h2 className="text-lg font-bold text-gray-900">Create Recurring Slots</h2>
+              </div>
+              <button onClick={closeRecurringModal}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-white transition-colors">
+                ✕
               </button>
             </div>
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-6 space-y-5">
+              {/* Date range */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Start Date *
-                  </label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Start Date *</label>
                   <DatePicker
                     selected={recurringStartDate}
                     onChange={(date: Date | null) => setRecurringStartDate(date)}
                     minDate={new Date()}
-                    dateFormat="MMMM d, yyyy"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    dateFormat="MMM d, yyyy"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none"
                     placeholderText="Select start date"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    End Date *
-                  </label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">End Date *</label>
                   <DatePicker
                     selected={recurringEndDate}
                     onChange={(date: Date | null) => setRecurringEndDate(date)}
                     minDate={recurringStartDate || new Date()}
-                    dateFormat="MMMM d, yyyy"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    dateFormat="MMM d, yyyy"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none"
                     placeholderText="Select end date"
                   />
                 </div>
               </div>
 
+              {/* Start time */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Start Time * (Session duration: 1 hour)
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Start Time * <span className="font-normal text-gray-400">(sessions are 1 hour)</span>
                 </label>
                 <DatePicker
                   selected={recurringStartTime}
@@ -658,26 +636,28 @@ const TrainerSlotPage = () => {
                   timeIntervals={30}
                   timeCaption="Time"
                   dateFormat="h:mm aa"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none"
                   placeholderText="Choose start time"
                 />
               </div>
 
+              {/* Weekday selector */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Select Weekdays * (Choose at least one day)
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Repeat on *
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="flex flex-wrap gap-2">
                   {weekdaysList.map((day) => (
                     <button
                       key={day.value}
                       type="button"
                       onClick={() => toggleWeekday(day.value)}
-                      className={`px-4 py-3 rounded-lg border-2 font-medium transition-all duration-200 ${
+                      className="px-3 py-2 rounded-xl text-sm font-semibold border-2 transition-all duration-150"
+                      style={
                         selectedWeekdays.includes(day.value)
-                          ? 'bg-blue-600 border-blue-600 text-white shadow-md'
-                          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
+                          ? { background: '#1a1a1a', borderColor: '#1a1a1a', color: '#fff' }
+                          : { background: '#fff', borderColor: '#e8e8e8', color: '#555' }
+                      }
                     >
                       {day.label}
                     </button>
@@ -685,69 +665,49 @@ const TrainerSlotPage = () => {
                 </div>
               </div>
 
+              {/* Summary */}
               {recurringStartDate && recurringEndDate && recurringStartTime && selectedWeekdays.length > 0 && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-sm text-blue-800 font-medium mb-3">
-                    Summary:
+                <div className="rounded-xl p-4 text-sm space-y-1.5"
+                  style={{ background: '#f0f4ff', border: '1.5px solid #c7d4f7' }}>
+                  <p className="font-bold text-gray-800 text-xs uppercase tracking-wide mb-2">Summary</p>
+                  <p className="text-gray-700">
+                    <span className="font-semibold">Period:</span>{' '}
+                    {recurringStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} –{' '}
+                    {recurringEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </p>
-                  <div className="space-y-2 text-sm text-blue-900">
-                    <p>
-                      <span className="font-semibold">Period:</span> {recurringStartDate.toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        year: 'numeric'
-                      })} - {recurringEndDate.toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Time:</span> {recurringStartTime.toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit',
-                        hour12: true 
-                      })} - {calculateEndTime(recurringStartTime).toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit',
-                        hour12: true 
-                      })} (1 hour)
-                    </p>
-                    <p>
-                      <span className="font-semibold">Days:</span> {selectedWeekdays.map(day => 
-                        weekdaysList.find(w => w.value === day)?.label
-                      ).join(', ')}
-                    </p>
-                  </div>
+                  <p className="text-gray-700">
+                    <span className="font-semibold">Time:</span>{' '}
+                    {recurringStartTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })} –{' '}
+                    {addOneHour(recurringStartTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                  </p>
+                  <p className="text-gray-700">
+                    <span className="font-semibold">Days:</span>{' '}
+                    {selectedWeekdays.map(d => weekdaysList.find(w => w.value === d)?.label).join(', ')}
+                  </p>
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4">
-                <button
-                  onClick={closeRecurringModal}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                >
+              <div className="flex gap-3 pt-1">
+                <button onClick={closeRecurringModal}
+                  className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition-colors">
                   Cancel
                 </button>
                 <button
                   onClick={handleCreateRecurringSlot}
                   disabled={
-                    !recurringStartDate || 
-                    !recurringEndDate || 
-                    !recurringStartTime || 
-                    selectedWeekdays.length === 0 ||
-                    createRecurringSlotMutation.isPending
+                    !recurringStartDate || !recurringEndDate || !recurringStartTime ||
+                    selectedWeekdays.length === 0 || createRecurringSlotMutation.isPending
                   }
-                  className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-3 rounded-xl bg-gray-900 text-white font-semibold text-sm hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
-                  {createRecurringSlotMutation.isPending ? 'Creating Slots...' : 'Create Recurring Slots'}
+                  {createRecurringSlotMutation.isPending ? 'Creating…' : 'Create Recurring Slots'}
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

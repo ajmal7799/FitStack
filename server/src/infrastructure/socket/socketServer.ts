@@ -16,6 +16,15 @@ import { videoCallModel } from '../database/models/videoCallModel';
 import { SlotRepository } from '../repositories/slotRepository';
 import { slotModel } from '../database/models/slotModel';
 import { StorageService } from '../services/Storage/storageService';
+import { WalletRepository } from '../repositories/walletRepository';
+import { walletModel } from '../database/models/walletModel';
+import { MembershipRepository } from '../repositories/membershipRepository';
+import { membershipModel } from '../database/models/membershipModel';
+import { SubscriptionRepository } from '../repositories/subscriptionRepository';
+import { subscriptionModel } from '../database/models/subscriptionModel';
+import { NotificationRepository } from '../repositories/notificationRepository';
+import { notificationModel } from '../database/models/notificationModel';
+import { CreateNotification } from '../../application/implementation/notification/CreateNotification';
 
 export class SocketService {
     private static _io: Server;
@@ -36,12 +45,20 @@ export class SocketService {
         const videoCallRepository = new VideoCallRepository(videoCallModel);
         const slotRepository = new SlotRepository(slotModel);
         const storageService = new StorageService();
+        const walletRepository = new WalletRepository(walletModel);
+        const membershipRepository = new MembershipRepository(membershipModel);
+        const subscriptionRepository = new SubscriptionRepository(subscriptionModel);
+        const notificationRepository = new NotificationRepository(notificationModel);
 
+
+       const createNotification = new CreateNotification(notificationRepository);
         const sendingMessageUseCase = new SendingMessageUseCase(messageRepository, chatRepository, storageService);
         const deleteMessageUseCase = new DeleteMessageUseCase(messageRepository, chatRepository);
-        const endVideoCallSessionUseCase = new EndVideoCallSessionUseCase( videoCallRepository, slotRepository);
-    
+        const endVideoCallSessionUseCase = new EndVideoCallSessionUseCase( videoCallRepository, slotRepository, walletRepository, membershipRepository, subscriptionRepository, createNotification);
+        
+        
         const socketController = new SocketController(this._io, sendingMessageUseCase, deleteMessageUseCase, endVideoCallSessionUseCase);
+        
 
         this._io.on('connection', (socket) => {
             socketController.onConnection(socket);

@@ -36,7 +36,7 @@ export class TrainerSlotController {
   async createSlot(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = req.user?.userId;
-
+      console.log(user);
       if (!user) {
         throw new DataMissingExecption(Errors.INVALID_DATA);
       }
@@ -44,7 +44,7 @@ export class TrainerSlotController {
       const parseResult = slotCreationSchema.safeParse(req.body);
 
       if (parseResult.error) {
-        throw new InvalidDataException(Errors.INVALID_DATA);
+        throw new InvalidDataException(parseResult.error.message);
       }
       const result = await this._createSlotUseCase.createSlot(user, parseResult.data.startTime);
 

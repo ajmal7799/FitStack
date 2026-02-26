@@ -3,11 +3,14 @@ import { IVerificationApproveUseCase } from '../../../useCase/admin/verification
 import { NotFoundException } from '../../../constants/exceptions';
 import { TRAINER_ERRORS } from '../../../../shared/constants/error';
 import { VerificationApproveResponseDTO } from '../../../dto/verification/verificationApproveDTO';
+import { CreateNotification } from '../../notification/CreateNotification';
+import { NotificationType } from '../../../../domain/enum/NotificationEnums';
+import { UserRole } from '../../../../domain/enum/userEnums';
 
 export class VerificationApproveUseCase implements IVerificationApproveUseCase {
     constructor(
         private _verificationRepository: IUpdateVerification,
-        
+        private _createNotification: CreateNotification
     ) { }
     async execute(trainerId: string): Promise<VerificationApproveResponseDTO> {
 
@@ -22,6 +25,15 @@ export class VerificationApproveUseCase implements IVerificationApproveUseCase {
         if (!trainerVerification) {
             throw new NotFoundException(TRAINER_ERRORS.TRAINER_VERIFICATION_NOT_FOUND);
         }
+
+        await this._createNotification.execute({
+            recipientId: trainerId,
+            recipientRole: UserRole.TRAINER,
+            type: NotificationType.VERIFICATION_APPROVED,
+            title: "Verification Approved",
+            message: "Your documents have been verified. You can now start hosting sessions!",
+            isRead: false
+        });
 
         return {
             id: trainerVerification.id,

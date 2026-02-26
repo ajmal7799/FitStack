@@ -8,12 +8,16 @@ import { VideoCallStatus } from '../../../domain/enum/videoCallEnums';
 import { CreateFeedbackDto } from '../../dto/feedback/createFeedback';
 import { FeedbackMapper } from '../../mappers/feedbackMappers';
 import { ITrainerRepository } from '../../../domain/interfaces/repositories/ITrainerRepository';
+import { CreateNotification } from '../notification/CreateNotification';
+import { UserRole } from '../../../domain/enum/userEnums';
+import { NotificationType } from '../../../domain/enum/NotificationEnums';
 
 export class CreateFeedback implements ICreateFeedback {
   constructor(
     private _feedbackRepository: IFeedbackRepository,
     private _videoCallRepository: IVideoCallRepository,
-    private _TrainerRepository: ITrainerRepository
+    private _TrainerRepository: ITrainerRepository,
+    private _createNotification: CreateNotification
   ) {}
 
   async createFeedback(userId: string, sessionId: string, rating: number, review: string): Promise<CreateFeedbackDto> {
@@ -59,6 +63,15 @@ export class CreateFeedback implements ICreateFeedback {
       ratingCount: newRatingCount,
       averageRating: newAverageRating,
     });
+
+    await this._createNotification.execute({
+      recipientId: trainerId,
+      recipientRole: UserRole.TRAINER,
+      type: NotificationType.FEEDBACK_RECEIVED,
+      title: "Feedback Received",
+      message: `${userId} has given you a feedback.`,
+      isRead: false
+    })
 
     return feedback;
   }

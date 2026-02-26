@@ -19,4 +19,7 @@ export enum MembershipStatus {
 
   // Initial payment never completed, Stripe expired it
   IncompleteExpired = 'incomplete_expired',
+
+  // Subscription term has ended
+  Expired = 'expired',
 }

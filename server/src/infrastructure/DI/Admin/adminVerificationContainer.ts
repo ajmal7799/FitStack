@@ -6,16 +6,21 @@ import { GetVerificationDetailsUseCase } from '../../../application/implementati
 import { StorageService } from '../../services/Storage/storageService';
 import { VerificationApproveUseCase } from '../../../application/implementation/admin/verification/verificationApproveUseCase';
 import { VerificationRejectUseCase } from '../../../application/implementation/admin/verification/verificationRejectUseCase';
+import { CreateNotification } from '../../../application/implementation/notification/CreateNotification';
+import { NotificationRepository } from '../../repositories/notificationRepository';
+import { notificationModel } from '../../database/models/notificationModel';
 
 //Repository & Service
 const verificationRepository = new VerificationRepository(verificationModel);
 const storageSvc = new StorageService();
+const notificationRepository = new NotificationRepository(notificationModel);
+const createNotification = new CreateNotification(notificationRepository);
 
 //UseCase
 const getAllVerificationUseCase = new GetAllVerificationUseCase(verificationRepository);
 const getVerificationDetailsUseCase = new GetVerificationDetailsUseCase(verificationRepository, storageSvc);
-const verificationApproveUseCase = new VerificationApproveUseCase(verificationRepository);
-const verificationRejectUseCase = new VerificationRejectUseCase(verificationRepository);
+const verificationApproveUseCase = new VerificationApproveUseCase(verificationRepository, createNotification);
+const verificationRejectUseCase = new VerificationRejectUseCase(verificationRepository, createNotification);
 
 
 //Controllers

@@ -1,5 +1,6 @@
 import { BaseRepository } from './baseRepository';
 import { Membership } from '../../domain/entities/membership/MembershipEntity';
+import { MembershipStatus } from '../../domain/enum/membershipEnums';
 import { IMembershipModel } from '../database/models/membershipModel';
 import { IMembershipRepository } from '../../domain/interfaces/repositories/IMembershipRepository';
 import { MembershipMapper } from '../../application/mappers/membershipMappers';
@@ -17,7 +18,7 @@ export class MembershipRepository
   }
 
   async findBySubscriptionId(subscriptionId: string): Promise<Membership | null> {
-    const membershipDoc = await this._model.findOne({ subscriptionId: subscriptionId });
+    const membershipDoc = await this._model.findOne({ stripeSubscriptionId: subscriptionId });
 
     if (!membershipDoc) {
       return null;
@@ -170,5 +171,14 @@ export class MembershipRepository
     ];
     const result = await this._model.aggregate(pipeline).exec();
     return result.length > 0 ? result[0].total : 0;
+  }
+
+  async findExpiredActiveMemberships(): Promise<Membership[]> {
+    const now = new Date();
+    const docs = await this._model.find({
+      status: MembershipStatus.Active,
+      currentPeriodEnd: { $lt: now }
+    });
+    return docs.map(doc => MembershipMapper.fromMongooseDocument(doc));
   }
 }

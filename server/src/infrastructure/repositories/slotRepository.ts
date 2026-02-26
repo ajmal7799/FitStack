@@ -36,7 +36,7 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
       case 'upcoming':
         query.startTime = { $gt: now };
         sort = { startTime: 1 };
-       
+
         break;
       case 'booked':
         query.isBooked = true;
@@ -78,31 +78,25 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
     return await this._model.countDocuments(query);
   }
   async findAllAvailableSlots(trainerId: string, date: string): Promise<Slot[]> {
-    // 1. Force the string to be the start and end of the UTC day
-    // input date: "2026-01-15"
-    const startOfDay = new Date(`${date}T00:00:00.000Z`);
-    const endOfDay = new Date(`${date}T23:59:59.999Z`);
+    const OFFSET_HOURS = 5.5; // IST = UTC+5:30 — change to your timezone
+    const OFFSET_MS = OFFSET_HOURS * 60 * 60 * 1000;
+
+    // Convert local midnight to UTC
+    // "2026-01-26" local 00:00 IST = "2026-01-25T18:30:00.000Z"
+    const startOfDay = new Date(new Date(`${date}T00:00:00.000Z`).getTime() - OFFSET_MS);
+    const endOfDay = new Date(new Date(`${date}T23:59:59.999Z`).getTime() - OFFSET_MS);
 
     const now = new Date();
 
-    // 2. Adjust the start point if the searched day is "today"
-    // We want (Start of Day) but it cannot be earlier than (Now)
-    const queryStart = startOfDay > now ? startOfDay : now;
-    if (queryStart > endOfDay) {
-      return [];
-    }
+    // Use endTime > now so slots that already started but haven't ended are still shown
+    const isToday = now >= startOfDay && now <= endOfDay;
 
     const slots = await this._model
       .find({
         trainerId,
-        slotStatus: {
-          $in: [SlotStatus.AVAILABLE, SlotStatus.CANCELLED],
-        },
-        
-        startTime: {
-          $gte: queryStart,
-          $lte: endOfDay,
-        },
+        slotStatus: { $in: [SlotStatus.AVAILABLE, SlotStatus.CANCELLED] },
+        startTime: { $gte: startOfDay, $lte: endOfDay },
+        ...(isToday && { endTime: { $gt: now } }), // only filter past slots when searching today
       })
       .sort({ startTime: 1 });
 
@@ -113,7 +107,7 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
     const count = await this._model.countDocuments({
       bookedBy: userId,
       slotStatus: SlotStatus.BOOKED,
-      
+
       startTime: {
         $gte: new Date(startTime),
         $lte: new Date(endTime),
@@ -196,7 +190,7 @@ export class SlotRepository extends BaseRepository<Slot, ISlotModel> implements 
       // slotStatus: SlotStatus.BOOKED ,
       endTime: {
         $gte: new Date(),
-      }
+      },
     };
     const slots = await this._model.find(query).sort({ startTime: 1 }).skip(skip).limit(limit);
 

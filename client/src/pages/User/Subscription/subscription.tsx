@@ -46,35 +46,39 @@ const SubscriptionPlans: React.FC = () => {
   }, [data]);
 
   // Handle plan selection and checkout
-  const handleSelectPlan = (plan: SubscriptionPlan) => {
-    
+const handleSelectPlan = (plan: SubscriptionPlan) => {
     if (processingPlanId === plan._id) return;
-    
     setProcessingPlanId(plan._id);
 
     createCheckoutSession(plan._id, {
-      onSuccess: (response:any) => {
-        // Extract session URL from response
-        const sessionUrl = response?.data?.data?.sessionUrl || response?.sessionUrl;
-        
-        if (sessionUrl) {
-          window.location.href = sessionUrl;
-        } else {
-          console.error('Session URL missing from response');
-          alert('Failed to initialize payment. Please try again.');
-          setProcessingPlanId(null);
+        onSuccess: (response: any) => {
+            const result = response?.data?.data;
+
+            // ✅ Fully paid with wallet — no Stripe redirect needed
+            if (result?.paidWithWallet) {
+                toast.success(`✅ Subscription activated using wallet balance!`);
+                setProcessingPlanId(null);
+                // redirect to success page or refresh
+                setTimeout(() => window.location.href = '/active-subscription', 1500);
+                return;
+            }
+
+            // Stripe payment needed
+            const sessionUrl = result?.sessionUrl;
+            if (sessionUrl) {
+                window.location.href = sessionUrl;
+            } else {
+                toast.error('Failed to initialize payment. Please try again.');
+                setProcessingPlanId(null);
+            }
+        },
+        onError: (error: any) => {
+            const errorMessage = error?.response?.data?.message || 'Failed to create checkout session.';
+            toast.error(errorMessage);
+            setProcessingPlanId(null);
         }
-      },
-      onError: (error: any) => {
-        console.error('Checkout failed:', error);
-        const errorMessage = error?.response?.data?.message || 
-                           error?.message || 
-                           'Failed to create checkout session. Please try again.';
-        toast.error(errorMessage);
-        setProcessingPlanId(null);
-      }
     });
-  };
+};
 
   // Common features for all plans
   const getPlanFeatures = () => {
