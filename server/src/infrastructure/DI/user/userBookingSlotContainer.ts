@@ -19,7 +19,15 @@ import { SessionHistoryUseCase } from '../../../application/implementation/user/
 import { SessionHistoryDetailsUseCase } from '../../../application/implementation/user/slot/SessionHistoryDetailsUseCase';
 import { FeedbackRepository } from '../../repositories/feedbackRepository';
 import { feedbackModel } from '../../database/models/feedbackModel';
-
+import { CreateNotification } from '../../../application/implementation/notification/CreateNotification';
+import { NotificationRepository } from '../../repositories/notificationRepository';
+import { notificationModel } from '../../database/models/notificationModel';
+import { WalletRepository } from '../../repositories/walletRepository';
+import { walletModel } from '../../database/models/walletModel';
+import { MembershipRepository } from '../../repositories/membershipRepository';
+import { membershipModel } from '../../database/models/membershipModel';
+import { SubscriptionRepository } from '../../repositories/subscriptionRepository';
+import { subscriptionModel } from '../../database/models/subscriptionModel';
 
 // Repository & Service
 const userRepository = new UserRepository(userModel);
@@ -29,13 +37,19 @@ const slotRepository = new SlotRepository(slotModel);
 const storageSvc = new StorageService();
 const videoCallRepository = new VideoCallRepository(videoCallModel);
 const feedbackRepository = new FeedbackRepository(feedbackModel);
+const notificationRepository = new NotificationRepository(notificationModel);
+const walletRepository = new WalletRepository(walletModel);
+const membershipRepository = new MembershipRepository(membershipModel);
+const subscriptionRepository = new SubscriptionRepository(subscriptionModel);
 
-// UseCases
+
+// Use Cases
+const createNotification = new CreateNotification(notificationRepository);
 const getAllAvailableSlotUseCase = new GetAllAvailableSlotUseCase(slotRepository, userRepository, trainerSelectRepository);
-const bookSlotUseCase = new BookSlotUseCase(userRepository, slotRepository, videoCallRepository);
+const bookSlotUseCase = new BookSlotUseCase(userRepository, slotRepository, videoCallRepository, createNotification);
 const bookedSlotUseCase = new BookedSlotUseCase(userRepository, trainerSelectRepository, videoCallRepository);
 const bookedSlotDetailsUseCase = new BookedSlotDetailsUseCase(userRepository, videoCallRepository, storageSvc, feedbackRepository);
-const bookedSlotCancelUseCase = new BookedSlotCancelUseCase(slotRepository, videoCallRepository);
+const bookedSlotCancelUseCase = new BookedSlotCancelUseCase(slotRepository, videoCallRepository, createNotification, walletRepository, membershipRepository, subscriptionRepository);
 const sessionHistoryUseCase = new SessionHistoryUseCase(videoCallRepository, userRepository, trainerSelectRepository, feedbackRepository);
 const sessionHistoryDetailsUseCase = new SessionHistoryDetailsUseCase(videoCallRepository, userRepository, storageSvc, feedbackRepository);
 

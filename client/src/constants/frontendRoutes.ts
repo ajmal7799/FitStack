@@ -34,6 +34,8 @@ export const FRONTEND_ROUTES = {
 
     VIDEO_SESSION:'/video-session/:roomId/:slotId',
 
+    WALLET:'/wallet',
+
   },
 
 
@@ -55,6 +57,8 @@ export const FRONTEND_ROUTES = {
     VIDEO_SESSION:'/video-session/:roomId/:slotId',
 
     TRAINER_CHANGE_PASSWORD:'/change-password',
+
+    TRAINER_WALLET:'/wallet',
   },
 
 

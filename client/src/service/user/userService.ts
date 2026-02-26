@@ -157,3 +157,25 @@ export const feedback = async (data: {sessionId: string; rating: number; review:
   const response = await AxiosInstance.post('/feedback', data);
   return response.data;
 };
+
+export const getNotifications = async () => {
+  const response = await AxiosInstance.get('/notifications');
+  return response.data;
+};
+
+export const markAsRead = async (notificationId: string) => {
+  await AxiosInstance.patch(`/notifications/${notificationId}/read`);
+};
+
+export const markAllAsRead = async () => {
+  await AxiosInstance.patch('/notifications/read-all');
+};
+
+export const clearAllNotifications = async () => {
+  await AxiosInstance.delete('/notifications');
+};
+
+export const getWallet = async () => {
+    const response = await AxiosInstance.get('/wallet');
+    return response.data.data;
+};

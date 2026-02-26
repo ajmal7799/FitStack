@@ -10,6 +10,7 @@ import { IHandleWebhookUseCase } from '../../../application/useCase/user/subscri
 import { IActiveSubscriptionUseCase } from '../../../application/useCase/user/subscription/IActiveSubscriptionUseCase';
 import { USER_ERRORS } from '../../../shared/constants/error';
 import { INonSubscribedUserUseCase } from '../../../application/useCase/user/subscription/INonSubscribedUserUseCase';
+import { IGetWalletUseCase } from '../../../application/useCase/wallet/IGetWalletUseCase';
 
 export class UserSubscriptionController {
     constructor(
@@ -17,7 +18,8 @@ export class UserSubscriptionController {
     private _createCheckoutSessionUseCase: ICreateUserCheckoutSession,
     private _handleWebhookUseCase: IHandleWebhookUseCase,
     private _activeSubscriptionUseCase: IActiveSubscriptionUseCase,
-    private _nonSubscribedUsersUseCase: INonSubscribedUserUseCase
+    private _nonSubscribedUsersUseCase: INonSubscribedUserUseCase,
+    private _getWalletUseCase: IGetWalletUseCase
     ) {}
 
     // --------------------------------------------------
@@ -71,16 +73,19 @@ export class UserSubscriptionController {
     //              🛠 HANDLE STRIPE WEBHOOK
     // --------------------------------------------------
 
-    async handleStripeWebhook(req: Request, res: Response, next: NextFunction) {
-        try {
-            const event = req.body;
-            const signature = req.headers['stripe-signature'] as string;
+        async handleStripeWebhook(req: Request, res: Response, next: NextFunction) {
+                const signature = req.headers['stripe-signature'] as string;
+                console.log('Body is Buffer:', Buffer.isBuffer(req.body)); // must print TRUE
+                console.log('Signature:', signature);
+                res.status(200).json({ received: true });
+            try {
 
-            await this._handleWebhookUseCase.excute(Buffer.from(event), signature);
-        } catch (error) {
-            next(error);
+                await this._handleWebhookUseCase.excute(req.body, signature);
+            } catch (error) {
+                console.error('❌ Webhook error:', error);
+                
+            }
         }
-    }
 
     // --------------------------------------------------
     //              🛠 SHOW ACTIVE SUBSCRIPTION
@@ -94,6 +99,24 @@ export class UserSubscriptionController {
             }
             const result = await this._activeSubscriptionUseCase.showActiveSubscription(userId!);
             ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.SUBSCRIPTION_GET_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // --------------------------------------------------
+    //              🛠 GET WALLET
+    // --------------------------------------------------
+
+    async getWallet(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            const role = req.user?.role;
+            if (!userId) {
+                throw new NotFoundException(USER_ERRORS.NO_USERS_FOUND);
+            }
+            const result = await this._getWalletUseCase.execute(userId!, role!);
+            ResponseHelper.success(res, MESSAGES.SUBSCRIPTION.WALLET_FETCHED_SUCCESS,  result , HTTPStatus.OK);
         } catch (error) {
             next(error);
         }

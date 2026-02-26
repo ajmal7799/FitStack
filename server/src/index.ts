@@ -13,6 +13,8 @@ import { SocketService } from './infrastructure/socket/socketServer';
 import { CONFIG } from './infrastructure/config/config';
 import { CheckExpireySession } from './infrastructure/cron/checkExpireySession';
 import { findExpiredSessionUseCase } from './infrastructure/DI/videoCall/videoCallContainer';
+import { processExpiredSubscriptionsUseCase } from './infrastructure/DI/user/userSubscription/userSubscriptionContainer';
+import { CheckExpirySubscription } from './infrastructure/cron/checkExpirySubscription';
 
 
 class ExpressApp {
@@ -38,6 +40,9 @@ class ExpressApp {
         
         const checkExpireySession = new CheckExpireySession( findExpiredSessionUseCase);
         checkExpireySession.start();
+
+        const checkExpirySubscription = new CheckExpirySubscription(processExpiredSubscriptionsUseCase);
+        checkExpirySubscription.start();
     }
 
     private _setMiddlewares() {
@@ -47,6 +52,8 @@ class ExpressApp {
                 credentials: true,
             }),
         );
+        this._app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
+
 
         this._app.use((req, res, next) => {
             if (req.originalUrl === '/stripe/webhook') {

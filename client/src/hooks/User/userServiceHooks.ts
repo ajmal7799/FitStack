@@ -1,4 +1,4 @@
-import { useMutation, useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient  } from '@tanstack/react-query';
 import {
   createUserProfile,
   generateWorkoutPlan,
@@ -18,7 +18,12 @@ import {
   joinSession,
   getSessionHistory,
   getSessionHistoryDetails,
-  feedback
+  feedback,
+  getNotifications,
+  markAsRead,
+  markAllAsRead,
+  clearAllNotifications,
+  getWallet
 } from '../../service/user/userService';
 import type { UserBodyMetricsPayload } from '../../types/UserBodyMetricsPayload';
 
@@ -187,3 +192,41 @@ export const useFeedback = () => {
   });
 };
 
+export const useGetNotifications = () => {
+  return useQuery({
+    queryKey: ['notifications'],
+    queryFn: getNotifications,
+  });
+};
+
+export const useMarkAsRead = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (notificationId: string) => markAsRead(notificationId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+  });
+};
+
+export const useMarkAllAsRead = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: markAllAsRead,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+  });
+};
+
+export const useClearAllNotifications = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: clearAllNotifications,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+  });
+};
+
+
+export const useGetWallet = () => {
+    return useQuery({
+        queryKey: ['wallet'],
+        queryFn: getWallet,
+    });
+};

@@ -4,7 +4,6 @@ import { trainerProfileController } from '../../infrastructure/DI/Trainer/traine
 import { authMiddleware } from '../../infrastructure/DI/Auth/authContainer';
 import { trainerSlotController } from '../../infrastructure/DI/Trainer/trainerSlotContainer';
 import { upload } from '../middleware/multer';
-import { notificationController } from '../../infrastructure/DI/Notification/notificationContainer';
 
 export class Trainer_Routes {
     private _route: Router;
@@ -77,9 +76,9 @@ export class Trainer_Routes {
         });
 
 
-        // --------------------------------------------------
-        //              🛠 NOTIFICATION
-        // --------------------------------------------------
+     
+
+     
 
             
 

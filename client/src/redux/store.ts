@@ -4,6 +4,7 @@ import userAuthDataSlice from './slice/userSlice/authDataSlice';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import { combineReducers } from '@reduxjs/toolkit';
+import notificationReducer from './slice/notificationSlice';
 
 
 const persistConfig = {
@@ -14,6 +15,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   authData: userAuthDataSlice,  
+  notifications: notificationReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

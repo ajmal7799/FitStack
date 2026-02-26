@@ -8,6 +8,7 @@ import { useLogout } from '../../hooks/Auth/AuthHooks';
 import { FiLogOut, FiMenu, FiX } from 'react-icons/fi';
 import { FRONTEND_ROUTES } from '../../constants/frontendRoutes';
 import { useQueryClient } from '@tanstack/react-query';
+import NotificationBell from '../notification/NotificationBell';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,6 +17,8 @@ const Header = () => {
   const navigate = useNavigate();
   const { mutate: logout } = useLogout();
   const queryClient = useQueryClient();
+
+  
 
   const handleLogout = () => {
     logout(undefined, {
@@ -38,32 +41,24 @@ const Header = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-      {/* Desktop & Mobile Header */}
       <div className="flex justify-between items-center px-4 md:px-12 py-4">
         {/* Logo */}
         <h1 className="text-xl md:text-2xl font-extrabold text-blue-700">FitStack</h1>
 
         {/* Desktop Navigation */}
         <ul className="hidden md:flex space-x-8 text-sm font-medium text-gray-600">
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300" onClick={() => navigate('/home')}>
-            Home
-          </li>
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300" onClick={() => navigate(FRONTEND_ROUTES.USER.AI_WORKOUT)}>
-            AI Diet & Work Out
-          </li>
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300" onClick={() => navigate('/subscription')}>
-            Subscription
-          </li>
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300" onClick={() => navigate('/trainers')}>
-            Trainers
-          </li>
-          <li className="hover:text-blue-700 cursor-pointer transition duration-300">
-            Reviews
-          </li>
+          <li className="hover:text-blue-700 cursor-pointer transition duration-300" onClick={() => navigate('/home')}>Home</li>
+          <li className="hover:text-blue-700 cursor-pointer transition duration-300" onClick={() => navigate(FRONTEND_ROUTES.USER.AI_WORKOUT)}>AI Diet & Work Out</li>
+          <li className="hover:text-blue-700 cursor-pointer transition duration-300" onClick={() => navigate('/subscription')}>Subscription</li>
+          <li className="hover:text-blue-700 cursor-pointer transition duration-300" onClick={() => navigate('/trainers')}>Trainers</li>
+          <li className="hover:text-blue-700 cursor-pointer transition duration-300">Reviews</li>
         </ul>
 
-        {/* Desktop User Section */}
+        {/* Desktop Right Section */}
         <div className="hidden md:flex items-center space-x-3">
+          {/* ✅ Notification Bell */}
+          <NotificationBell />
+
           <div
             className="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md cursor-pointer"
             onClick={() => navigate('/profile')}
@@ -83,13 +78,17 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-gray-700 text-2xl focus:outline-none"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <FiX /> : <FiMenu />}
-        </button>
+        {/* Mobile Right Section */}
+        <div className="md:hidden flex items-center gap-2">
+          {/* ✅ Notification Bell on mobile too */}
+          <NotificationBell />
+          <button
+            className="text-gray-700 text-2xl focus:outline-none"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <FiX /> : <FiMenu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -98,7 +97,7 @@ const Header = () => {
           {/* User Profile Section */}
           <div className="flex items-center space-x-3 px-4 py-4 border-b border-gray-100">
             <div
-              className="w-12 h-12 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md"
+              className="w-12 h-12 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md cursor-pointer"
               onClick={() => handleNavigate('/profile')}
             >
               {userData.name?.charAt(0).toUpperCase()}
@@ -111,36 +110,21 @@ const Header = () => {
 
           {/* Navigation Links */}
           <ul className="py-2">
-            <li
-              className="px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer transition duration-200"
-              onClick={() => handleNavigate('/home')}
-            >
-              Home
-            </li>
-            <li
-              className="px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer transition duration-200"
-              onClick={() => handleNavigate(FRONTEND_ROUTES.USER.AI_WORKOUT)}
-            >
-              AI Diet & Work Out
-            </li>
-            <li
-              className="px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer transition duration-200"
-              onClick={() => handleNavigate('/subscription')}
-            >
-              Subscription
-            </li>
-            <li
-              className="px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer transition duration-200"
-              onClick={() => handleNavigate('/trainers')}
-            >
-              Trainers
-            </li>
-            <li
-              className="px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer transition duration-200"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Reviews
-            </li>
+            {[
+              { label: 'Home', path: '/home' },
+              { label: 'AI Diet & Work Out', path: FRONTEND_ROUTES.USER.AI_WORKOUT },
+              { label: 'Subscription', path: '/subscription' },
+              { label: 'Trainers', path: '/trainers' },
+              { label: 'Reviews', path: '' },
+            ].map(({ label, path }) => (
+              <li
+                key={label}
+                className="px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer transition duration-200"
+                onClick={() => path ? handleNavigate(path) : setIsMenuOpen(false)}
+              >
+                {label}
+              </li>
+            ))}
           </ul>
 
           {/* Logout Button */}

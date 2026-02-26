@@ -11,7 +11,7 @@ export interface INotificationModel extends Document {
     type: NotificationType;
     title: string;
     message: string;
-    relatedId?: Types.ObjectId;
+    relatedId?: string;
     isRead?: boolean;
     createdAt?: Date;
 }

@@ -37,10 +37,11 @@ export class UserBookingSlotController {
       if (!date) {
         throw new DataMissingExecption(Errors.INVALID_DATA);
       }
+    
       const result = await this._getAllAvailableSlotUseCase.getAvailableSlots(userId, date);
-      if (!result || !result.length) {
-        ResponseHelper.success(res, MESSAGES.Trainer.TRAINER_NOT_SELECTED_IN_THAT_TIME_SLOT, { result }, HTTPStatus.OK);
-      }
+      // if (!result || !result.length) {
+      //   ResponseHelper.success(res, MESSAGES.Trainer.TRAINER_NOT_SELECTED_IN_THAT_TIME_SLOT, { result }, HTTPStatus.OK);
+      // }
 
       ResponseHelper.success(res, MESSAGES.Trainer.SLOTS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
     } catch (error) {

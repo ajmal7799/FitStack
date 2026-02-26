@@ -74,6 +74,7 @@ export const MESSAGES = {
         SUBSCRIPTION_UPDATE_STATUS_SUCCESS: 'Subscription status updated successfully.',
         SUBSCRIPTION_EDIT_PAGE_SUCCESS: 'Subscription fetched successfully.',
         MEMBERSHIP_SUCCESS: 'Memberships fetched successfully.',
+        WALLET_FETCHED_SUCCESS: 'Wallet fetched successfully.',
     },
     REFRESH_TOKEN: {
         REFRESH_SUCCESSFUL: 'Successfully got a new accessToken',
@@ -86,5 +87,11 @@ export const MESSAGES = {
         MARK_AS_READ_SUCCESS: 'Message marked as read successfully.',
         DELETE_MESSAGE_SUCCESS: 'Message deleted successfully.',
         GET_ATTACHMENT_SUCCESS: 'Attachment fetched successfully.',
+    },
+    NOTIFICATION: {
+        GET_NOTIFICATIONS_SUCCESS: 'Notifications fetched successfully.',
+        MARK_AS_READ_SUCCESS: 'Notification marked as read successfully.',
+        MARK_ALL_AS_READ_SUCCESS: 'All notifications marked as read successfully.',
+        CLEAR_ALL_SUCCESS: 'All notifications cleared successfully.',
     },
 };

@@ -5,7 +5,10 @@ class SocketService {
   private userId: string | null = null;
   private joinedRooms: Set<string> = new Set(); // ✅ Track joined rooms
   private messageListeners: Set<Function> = new Set(); // ✅ Track multiple listeners
-  private messageDeleteListeners: Set<Function> = new Set(); // ✅ Track delete listeners
+  private messageDeleteListeners: Set<Function> = new Set();
+  private notificationListeners: Set<Function> = new Set(); // ✅ Track delete listeners
+  private pendingNotifications: any[] = [];
+
   private pendingVideoRoom: {
     roomId: string;
     userId: string;
@@ -35,7 +38,7 @@ class SocketService {
     });
 
     this.socket.on("connect", () => {
-      console.log("✅ Socket connected:", this.socket?.id);
+      console.log("✅ Socket connected (client):", this.socket?.id);
 
       // ✅ Rejoin all rooms after reconnection
       this.joinedRooms.forEach((chatId) => {
@@ -49,6 +52,14 @@ class SocketService {
         console.log(`🚀 Joined pending video room: ${roomId}`);
         this.pendingVideoRoom = null;
       }
+    });
+
+    this.socket.on("reconnect", (attempt) => {
+      console.log(`🔄 Socket reconnected after ${attempt} attempts`);
+    });
+
+    this.socket.on("reconnect_attempt", (attempt) => {
+      console.log(`⏳ Socket reconnection attempt #${attempt}`);
     });
 
     this.socket.on("disconnect", (reason) => {
@@ -86,6 +97,20 @@ class SocketService {
         }
       });
     });
+
+     this.socket.on("receive_notification", (notification) => {
+        console.log(`🔔 Notification received, listeners: ${this.notificationListeners.size}`);
+        
+        if (this.notificationListeners.size === 0) {
+            // Buffer it until listener is ready
+            this.pendingNotifications.push(notification);
+            return;
+        }
+        
+        this.notificationListeners.forEach((listener) => {
+            try { listener(notification); } catch (e) { console.error(e); }
+        });
+    });
   }
 
   // Join a chat room
@@ -122,19 +147,27 @@ class SocketService {
   }
 
   // Send message
-  sendMessage(chatId: string, text?: string, type: string = 'text', attachment?: {
-  key: string;
-  fileName: string;
-  fileType: string;
-  fileSize: number;
-}) {
-  if (!this.socket?.connected) {
-    console.error("Socket not connected");
-    return;
+  sendMessage(
+    chatId: string,
+    text?: string,
+    type: string = "text",
+    attachment?: {
+      key: string;
+      fileName: string;
+      fileType: string;
+      fileSize: number;
+    },
+  ) {
+    if (!this.socket?.connected) {
+      console.error("Socket not connected");
+      return;
+    }
+    console.log(
+      "📤 sendMessage payload:",
+      JSON.stringify({ chatId, type, text, attachment }),
+    ); // ← add this
+    this.socket.emit("send_message", { chatId, type, text, attachment });
   }
-    console.log('📤 sendMessage payload:', JSON.stringify({ chatId, type, text, attachment })); // ← add this
-  this.socket.emit("send_message", { chatId, type, text, attachment });
-}
 
   deleteMessage(messageId: string, chatId: string) {
     if (!this.socket?.connected) {
@@ -164,6 +197,21 @@ class SocketService {
     );
   }
 
+     onReceiveNotification(callback: (notification: any) => void) {
+        this.notificationListeners.clear();
+        this.notificationListeners.add(callback);
+        
+        // ✅ Flush any buffered notifications
+        if (this.pendingNotifications.length > 0) {
+            console.log(`🔔 Flushing ${this.pendingNotifications.length} buffered notifications`);
+            this.pendingNotifications.forEach(notification => {
+                try { callback(notification); } catch (e) { console.error(e); }
+            });
+            this.pendingNotifications = [];
+        }
+    }
+
+
   // Listen for user joined event
   onUserJoined(callback: (data: { userId: string }) => void) {
     if (!this.socket) return;
@@ -173,24 +221,19 @@ class SocketService {
   }
 
   // Remove listener
-  removeListener(event: string, callback?: (data: any) => void) {
+ removeListener(event: string, callback?: (data: any) => void) {
     if (event === "receive_message" && callback) {
-      this.messageListeners.delete(callback);
-      console.log(
-        `👂 Message listener removed (${this.messageListeners.size} remaining listeners)`,
-      );
+        this.messageListeners.delete(callback);
     } else if (event === "message_deleted" && callback) {
-      this.messageDeleteListeners.delete(callback);
-      console.log(
-        `👂 Delete listener removed (${this.messageDeleteListeners.size} remaining listeners)`,
-      );
+        this.messageDeleteListeners.delete(callback);
+    } else if (event === "receive_notification" && callback) {  // ✅ moved up
+        this.notificationListeners.delete(callback);
     } else if (this.socket && callback) {
-      this.socket.off(event, callback);
+        this.socket.off(event, callback);
     } else if (this.socket) {
-      this.socket.off(event);
+        this.socket.off(event);
     }
-  }
-
+}
   // Remove all listeners for specific events
   removeAllListeners(event?: string) {
     if (event === "receive_message") {
@@ -214,6 +257,7 @@ class SocketService {
       this.joinedRooms.clear();
       this.messageListeners.clear();
       this.messageDeleteListeners.clear(); // ✅ Clear delete listeners on disconnect
+      this.notificationListeners.clear(); // ← add alongside other clears
       console.log("🔌 Socket disconnected manually");
     }
   }
@@ -282,20 +326,21 @@ class SocketService {
   }
 
   onSessionCompleted(callback: (data: { slotId: string }) => void) {
-  this.socket?.off("video_call:session_completed");
-  this.socket?.on("video_call:session_completed", callback);
-}
+    this.socket?.off("video_call:session_completed");
+    this.socket?.on("video_call:session_completed", callback);
+  }
 
-offSessionCompleted() {
-  this.socket?.off("video_call:session_completed");
-}
-  
+  offSessionCompleted() {
+    this.socket?.off("video_call:session_completed");
+  }
+
   leaveVideoRoom(roomId: string) {
     this.socket?.emit("video_call:leave", { roomId });
     this.socket?.off("video_call:peer_joined");
     this.socket?.off("video_call:signal");
     this.socket?.off("video_call:peer_left");
-      this.socket?.off("video_call:session_completed"); // ✅ add this
+    this.socket?.off("video_call:session_completed");
+    this.pendingNotifications = []; 
 
     console.log(`📴 Left video room: ${roomId}`);
   }

@@ -348,7 +348,7 @@ const ProfileCompletion = () => {
                   onClick={handleSkip}
                   className="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition"
                 >
-                  Skip for Now
+                  {/* Skip for Now */}
                 </button>
                 <button
                   onClick={handleSubmit1(onNext)}
@@ -542,7 +542,7 @@ const ProfileCompletion = () => {
               {/* Diet Preference */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Diet Preference (Optional)
+                  Diet Preference 
                 </label>
                 <select
                   {...register2('dietPreference')}

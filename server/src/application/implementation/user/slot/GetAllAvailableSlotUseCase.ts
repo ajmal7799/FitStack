@@ -25,6 +25,7 @@ export class GetAllAvailableSlotUseCase implements IGetAllAvailableSlotUseCase {
             throw new NotFoundException(USER_ERRORS.TRAINER_SELECT_NOT_FOUND);
         }
         const trainerId = trainerSelect.trainerId;
+        console.log('trainerId', trainerId, 'date', date);
 
         return await this._slotRepository.findAllAvailableSlots(trainerId, date);
     }

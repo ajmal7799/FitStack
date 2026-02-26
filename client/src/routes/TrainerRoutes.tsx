@@ -14,10 +14,13 @@ import UpcomingSlotDetails from '../pages/Trainer/slot/UpcomingSlotDetails';
 import VideoSessionPage from '../pages/Video/VideoSessionPage';
 import TrainerSessionHistoryPage from '../pages/Trainer/slot/TrainerSessionHistoryPage';
 import TrainerSessionHistoryDetails from '../pages/Trainer/slot/TrainerSessionHistoryDetails';
+import TrainerWalletPage from '../pages/Trainer/wallet/TrainerWalletPage';
+import { TrainerSidebarProvider } from '../components/trainer/TrainerSidebarContext';
 
 
 const TrainerRoutes = () => {
   return (
+     <TrainerSidebarProvider>
     <Routes>
       <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_DASHBOARD} element={<PrivateRoute > <TrainerDashboard/> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_VERIFICATION} element={<PrivateRoute > <TrainerVerification/> </PrivateRoute>  } />
@@ -37,7 +40,10 @@ const TrainerRoutes = () => {
 
       <Route path={FRONTEND_ROUTES.TRAINER.VIDEO_SESSION} element={<PrivateRoute > <VideoSessionPage/> </PrivateRoute>} />
 
+      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_WALLET} element={<PrivateRoute > <TrainerWalletPage/> </PrivateRoute>} />
+
     </Routes>
+    </TrainerSidebarProvider>
   );
 };   
 
