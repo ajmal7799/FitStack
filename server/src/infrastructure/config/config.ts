@@ -9,6 +9,7 @@ export const CONFIG = {
     GOOGLE_APP_PASSWORD: process.env.GOOGLE_APP_PASSWORD,
     REDIS_URL: process.env.REDIS_URL,
     JWT_SECRET: process.env.JWT_SECRET,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
     AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
     AWS_REGION: process.env.AWS_REGION,
@@ -20,5 +21,6 @@ export const CONFIG = {
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
+    ADMIN_ID: process.env.ADMIN_ID || 'admin',
 
 };

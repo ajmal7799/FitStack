@@ -54,6 +54,8 @@ export class VerificationMapper {
             specialisation: trainer.specialisation,
             verificationStatus: verification.verificationStatus,
             profileImage: profileImage  || undefined,
+            averageRating: trainer.averageRating,
+            ratingCount: trainer.ratingCount,
         };
     }
 

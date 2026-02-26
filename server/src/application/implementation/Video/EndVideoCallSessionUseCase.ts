@@ -12,6 +12,8 @@ import { CreateNotification } from '../notification/CreateNotification';
 import { WalletTransactionType } from '../../../domain/enum/WalletTransactionType';
 import { UserRole } from '../../../domain/enum/userEnums';
 import { NotificationType } from '../../../domain/enum/NotificationEnums';
+import { CONFIG } from '../../../infrastructure/config/config';
+
 
 const PLATFORM_FEE_PERCENT = 0.2;
 const TRAINER_COMMISSION_PERCENT = 0.8;
@@ -89,7 +91,7 @@ export class EndVideoCallSessionUseCase implements IEndVideoCallSessionUseCase {
         relatedId: session._id,
       });
 
-      await this._walletRepository.credit(ADMIN_ID, 'admin', platformAmount, {
+      await this._walletRepository.credit(CONFIG.ADMIN_ID, 'admin', platformAmount, {
         type: WalletTransactionType.PLATFORM_FEE,
         amount: platformAmount,
         description: `Platform fee (20%) for completed session`,

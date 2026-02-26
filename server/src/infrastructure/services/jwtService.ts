@@ -10,64 +10,44 @@ import {
 import { Errors } from '../../shared/constants/error';
 
 export class JWTService implements IJWTService {
-    createAccessToken(payload: JWTPayloadType): string {
-        const SecreteKey = CONFIG.JWT_SECRET;
-        if (!SecreteKey) {
-            throw new Error('Access Token Secrete Key Not Found');
-        }
 
+    createAccessToken(payload: JWTPayloadType): string {
+        const secretKey = CONFIG.JWT_SECRET;
+        if (!secretKey) throw new Error('Access Token Secret Key Not Found');
         try {
-            return sign(payload, SecreteKey, { expiresIn: '7d' });
+            return sign(payload, secretKey, { expiresIn: '15m' }); // ← short lived
         } catch (error) {
             throw new InvalidDataException(Errors.ACCESS_TOKEN_CREATION_FAILED);
         }
-
     }
 
-
     createRefreshToken(payload: JWTPayloadType): string {
-        const SecreteKey = CONFIG.JWT_SECRET;
-        if (!SecreteKey) {
-            throw new Error('Access Token Secrete Key Not Found');
-        }
-
+        const secretKey = CONFIG.JWT_REFRESH_SECRET; // ← separate secret
+        if (!secretKey) throw new Error('Refresh Token Secret Key Not Found');
         try {
-            return sign(payload, SecreteKey, { expiresIn: '7d' });
+            return sign(payload, secretKey, { expiresIn: '7d' }); // ← long lived
         } catch (error) {
             throw new InvalidDataException(Errors.REFRESH_TOKEN_CREATION_FAILED);
         }
-
     }
 
-
     verifyAccessToken(token: string): JWTPayloadType | null {
-        const SecreteKey = CONFIG.JWT_SECRET;
-        if (!SecreteKey) {
-            throw new TokenMissingException(Errors.ACCESS_TOKEN_SECRETKEY_MISSING);
-        }
-
-        if (!token) {
-            throw new TokenMissingException(Errors.ACCESS_TOKEN_MISSING);
-        }
-
+        const secretKey = CONFIG.JWT_SECRET;
+        if (!secretKey) throw new TokenMissingException(Errors.ACCESS_TOKEN_SECRETKEY_MISSING);
+        if (!token) throw new TokenMissingException(Errors.ACCESS_TOKEN_MISSING);
         try {
-            const decoded =  verify(token,SecreteKey);
-            return decoded as JWTPayloadType;
+            return verify(token, secretKey) as JWTPayloadType;
         } catch (error) {
             throw new TokenExpiredException(Errors.TOKEN_EXPIRED);
         }
-
     }
 
     verifyRefreshToken(token: string): JWTPayloadType | null {
-        const SecreteKey = CONFIG.JWT_SECRET;
-        if (!SecreteKey) {
-            throw new Error('Access Token Secrete Key Not Found');
-        }
+        const secretKey = CONFIG.JWT_REFRESH_SECRET; // ← separate secret
+        if (!secretKey) throw new Error('Refresh Token Secret Key Not Found');
+        if (!token) throw new TokenMissingException(Errors.ACCESS_TOKEN_MISSING);
         try {
-            const decode = verify(token, SecreteKey) as JWTPayloadType;
-            return decode;
-
+            return verify(token, secretKey) as JWTPayloadType;
         } catch (error) {
             throw new TokenExpiredException(Errors.TOKEN_EXPIRED);
         }

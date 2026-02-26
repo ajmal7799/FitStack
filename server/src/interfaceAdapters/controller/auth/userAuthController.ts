@@ -255,15 +255,35 @@ export class UserAuthController {
     //              🛠 HANDLE REFRESH TOKEN
     // --------------------------------------------------
 
-    async handleRefreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const refreshToken = req.cookies.refreshToken;
-            const accessToken = await this._tokenRefreshUseCase.refresh(refreshToken);
-            res
-                .status(HTTPStatus.OK)
-                .json({ success: true, message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL, accessToken });
-        } catch (error) {}
+  async handleRefreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        // ✅ Fix: was 'refreshToken' (lowercase), cookie is set as 'RefreshToken'
+        const refreshToken = req.cookies.RefreshToken;
+
+        if (!refreshToken) {
+            res.status(HTTPStatus.UNAUTHORIZED).json({
+                success: false,
+                message: 'Refresh token missing'
+            });
+            return;
+        }
+
+        const accessToken = await this._tokenRefreshUseCase.refresh(refreshToken);
+
+        res.status(HTTPStatus.OK).json({
+            success: true,
+            message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL,
+            accessToken
+        });
+    } catch (error) {
+        // ✅ If refresh token expired → force logout
+        clearRefreshTokenCookie(res);
+        res.status(HTTPStatus.UNAUTHORIZED).json({
+            success: false,
+            message: 'Session expired. Please login again.'
+        });
     }
+}
 
 
     // --------------------------------------------------

@@ -16,6 +16,7 @@ const TrainerHeader = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const userData = useSelector((state: Rootstate) => state.authData);
     const { toggle } = useTrainerSidebar(); // ← from context
+    const profileImage = userData.profileImage;
 
     const handleLogout = () => {
         logout(undefined, {
@@ -53,8 +54,21 @@ const TrainerHeader = () => {
                         <p className="text-xs text-gray-400">{userData.email}</p>
                     </div>
 
-                    <div className="w-9 h-9 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                        {userData.name?.charAt(0).toUpperCase()}
+                    <div 
+                        className="w-9 h-9 rounded-full flex-shrink-0 shadow-md overflow-hidden cursor-pointer"
+                        onClick={() => navigate('/trainer/profile')}
+                    >
+                        {profileImage ? (
+                            <img
+                                src={profileImage}
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-9 h-9 bg-gray-700 flex items-center justify-center text-white font-bold text-sm">
+                                {userData.name?.charAt(0).toUpperCase()}
+                            </div>
+                        )}
                     </div>
 
                     <button
@@ -70,8 +84,21 @@ const TrainerHeader = () => {
                         className="md:hidden text-white"
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     >
-                        <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                            {userData.name?.charAt(0).toUpperCase()}
+                        <div 
+                            className="w-8 h-8 rounded-full overflow-hidden cursor-pointer"
+                            onClick={() => navigate('/trainer/profile')}
+                        >
+                            {profileImage ? (
+                                <img
+                                    src={profileImage}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                    {userData.name?.charAt(0).toUpperCase()}
+                                </div>
+                            )}
                         </div>
                     </button>
                 </div>
@@ -81,8 +108,20 @@ const TrainerHeader = () => {
             {isUserMenuOpen && (
                 <div className="md:hidden bg-gray-900 border-t border-gray-800 px-4 py-4 space-y-3">
                     <div className="flex items-center gap-3 pb-3 border-b border-gray-800">
-                        <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">
-                            {userData.name?.charAt(0).toUpperCase()}
+                        <div 
+                            className="w-10 h-10 rounded-full overflow-hidden cursor-pointer flex-shrink-0"
+                        >
+                            {profileImage ? (
+                                <img
+                                    src={profileImage}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold">
+                                    {userData.name?.charAt(0).toUpperCase()}
+                                </div>
+                            )}
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-white">{userData.name}</p>

@@ -13,6 +13,7 @@ interface UserAuthData {
     verificationCheck: boolean;
     userProfileCompleted: boolean;
     hasActiveSubscription: boolean;
+    profileImage?: string
 }
 
 const initialState: UserAuthData = {
@@ -27,6 +28,7 @@ const initialState: UserAuthData = {
   verificationCheck: false,
   userProfileCompleted: false,
   hasActiveSubscription: false,
+  profileImage: ''
 };
 
 const userAuthDataSlice = createSlice({
@@ -39,9 +41,13 @@ const userAuthDataSlice = createSlice({
     updateHasActiveSubscription: (state, action: PayloadAction<boolean>) => {
       state.hasActiveSubscription = action.payload;
     },
+    setAccessToken: (state, action) => {
+    state.accessToken = action.payload;
+  },
+
     clearData: ()=> initialState,
   },    
 });
 
-export const { setData,clearData, updateHasActiveSubscription } = userAuthDataSlice.actions;
+export const { setData,clearData, updateHasActiveSubscription, setAccessToken } = userAuthDataSlice.actions;
 export default userAuthDataSlice.reducer;

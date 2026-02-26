@@ -18,7 +18,7 @@ const Header = () => {
   const { mutate: logout } = useLogout();
   const queryClient = useQueryClient();
 
-  
+  const profileImage = userData.profileImage;
 
   const handleLogout = () => {
     logout(undefined, {
@@ -60,10 +60,20 @@ const Header = () => {
           <NotificationBell />
 
           <div
-            className="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md cursor-pointer"
+            className="w-10 h-10 rounded-full shadow-md cursor-pointer overflow-hidden"
             onClick={() => navigate('/profile')}
           >
-            {userData.name?.charAt(0).toUpperCase()}
+            {profileImage ? (
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-blue-700 flex items-center justify-center text-white font-bold text-lg">
+                {userData.name?.charAt(0).toUpperCase()}
+              </div>
+            )}
           </div>
           <div className="hidden lg:block text-right">
             <p className="text-sm font-semibold text-gray-900">{userData.name}</p>
@@ -97,10 +107,20 @@ const Header = () => {
           {/* User Profile Section */}
           <div className="flex items-center space-x-3 px-4 py-4 border-b border-gray-100">
             <div
-              className="w-12 h-12 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md cursor-pointer"
+              className="w-12 h-12 rounded-full shadow-md cursor-pointer overflow-hidden flex-shrink-0"
               onClick={() => handleNavigate('/profile')}
             >
-              {userData.name?.charAt(0).toUpperCase()}
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-blue-700 flex items-center justify-center text-white font-bold text-lg">
+                  {userData.name?.charAt(0).toUpperCase()}
+                </div>
+              )}
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-900">{userData.name}</p>

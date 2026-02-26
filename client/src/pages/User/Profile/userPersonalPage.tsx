@@ -120,9 +120,9 @@ const UserProfile: React.FC = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
                   >
-                    {userProfile.profileImage ? (
+                    {authData.profileImage ? (
                       <img
-                        src={userProfile.profileImage || defaultProfileImage}
+                        src={authData.profileImage || defaultProfileImage}
                         alt={'User profile picture'}
                         className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
                       />

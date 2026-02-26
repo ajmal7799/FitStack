@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 import { FRONTEND_ROUTES } from '../constants/frontendRoutes';
-import TrainerDashboard from '../pages/Trainer/TrainerDashboard';
 import PrivateRoute from '../components/protectedComponents/PrivateRoute';
 import TrainerVerification from '../pages/Trainer/TrainerVerification';
 import TrainerProfile from '../pages/Trainer/profile/TrainerProfile';
@@ -16,6 +15,7 @@ import TrainerSessionHistoryPage from '../pages/Trainer/slot/TrainerSessionHisto
 import TrainerSessionHistoryDetails from '../pages/Trainer/slot/TrainerSessionHistoryDetails';
 import TrainerWalletPage from '../pages/Trainer/wallet/TrainerWalletPage';
 import { TrainerSidebarProvider } from '../components/trainer/TrainerSidebarContext';
+import TrainerDashboard from '../pages/Trainer/dashboard/TrainerDashboard';
 
 
 const TrainerRoutes = () => {

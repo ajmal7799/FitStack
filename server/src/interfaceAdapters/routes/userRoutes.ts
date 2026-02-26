@@ -56,17 +56,22 @@ export class User_Router {
       userAuthController.googleLogin(req, res, next);
     });
 
+    this._route.post('/refresh-token',
+    (req, res, next) => userAuthController.handleRefreshToken(req, res, next)
+    );
+
     // --------------------------------------------------
     //              🛠 HOME PAGE CONTENT
     // --------------------------------------------------
 
-    this._route.get('/subscriptions', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.get('/subscriptions', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userSubscriptionController.getAllSubscriptionPlans(req, res, next);
     });
 
     this._route.get(
       '/active-subscription',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userSubscriptionController.getActiveSubscription(req, res, next);
       }
@@ -87,25 +92,27 @@ export class User_Router {
     //              🛠 USER SIDE TRAINERS
     // --------------------------------------------------
 
-    this._route.get('/get-all-trainers', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.get('/get-all-trainers', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userTrainerController.getAllTrainer(req, res, next);
     });
 
     this._route.get(
       '/get-trainer-details/:trainerId',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userTrainerController.getTrainerDetails(req, res, next);
       }
     );
 
-    this._route.post('/select-trainer', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.post('/select-trainer', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userTrainerController.selectTrainer(req, res, next);
     });
 
     this._route.get(
       '/get-selected-trainer',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userTrainerController.getSelectedTrainer(req, res, next);
       }
@@ -118,6 +125,7 @@ export class User_Router {
     this._route.post(
       '/profile',
       authMiddleware.verify,
+      authMiddleware.isUser,
       upload.fields([{ name: 'profileImage', maxCount: 1 }]),
       (req: Request, res: Response, next: NextFunction) => {
         userProfileController.createUserProfile(req, res, next);
@@ -131,24 +139,26 @@ export class User_Router {
     this._route.post(
       '/generate-workout-plan',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userGenerateWorkoutplanController.handleGenerateWorkoutplan(req, res, next);
       }
     );
 
-    this._route.get('/get-workout-plan', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.get('/get-workout-plan', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userGenerateWorkoutplanController.getWorkoutPlan(req, res, next);
     });
 
     this._route.post(
       '/generate-diet-plan',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userGenerateDietplanController.handleDietPlan(req, res, next);
       }
     );
 
-    this._route.get('/get-diet-plan', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.get('/get-diet-plan', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userGenerateDietplanController.getDietPlan(req, res, next);
     });
 
@@ -156,32 +166,34 @@ export class User_Router {
     //              🛠 USER PROFILE DATA
     // --------------------------------------------------
 
-    this._route.get('/profile', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.get('/profile', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userProfileController.getUserProfile(req, res, next);
     });
 
     this._route.patch(
       '/profile-update',
       authMiddleware.verify,
+      authMiddleware.isUser,
       upload.fields([{ name: 'profileImage', maxCount: 1 }])!,
       (req: Request, res: Response, next: NextFunction) => {
         userProfileController.updateUserProfile(req, res, next);
       }
     );
 
-    this._route.get('/personal-info', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.get('/personal-info', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userProfileController.getBodyMetrics(req, res, next);
     });
 
     this._route.patch(
       '/personal-info-update',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userProfileController.updateBodyMetrics(req, res, next);
       }
     );
 
-    this._route.patch('/change-password', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.patch('/change-password', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userAuthController.handlePasswordChange(req, res, next);
     });
 
@@ -192,6 +204,7 @@ export class User_Router {
     this._route.get(
       '/get-available-slots',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userBookingSlotController.getAvailableSlots(req, res, next);
       }
@@ -200,18 +213,20 @@ export class User_Router {
     this._route.patch(
       '/book-slot/:slotId',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userBookingSlotController.bookSlot(req, res, next);
       }
     );
 
-    this._route.get('/booked-slots', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.get('/booked-slots', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userBookingSlotController.getBookedSlots(req, res, next);
     });
 
     this._route.get(
       '/booked-slots/:slotId',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userBookingSlotController.getBookedSlotDetails(req, res, next);
       }
@@ -220,18 +235,20 @@ export class User_Router {
     this._route.patch(
       '/booked-slots/:slotId/cancel',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userBookingSlotController.cancelBookedSlot(req, res, next);
       }
     );
 
-    this._route.get('/sessions-history', authMiddleware.verify, (req: Request, res: Response, next: NextFunction) => {
+    this._route.get('/sessions-history', authMiddleware.verify, authMiddleware.isUser, (req: Request, res: Response, next: NextFunction) => {
       userBookingSlotController.getSessionHistory(req, res, next);
     });
 
     this._route.get(
       '/session-history/:sessionId',
       authMiddleware.verify,
+      authMiddleware.isUser,
       (req: Request, res: Response, next: NextFunction) => {
         userBookingSlotController.getSessionHistoryDetails(req, res, next);
       }
