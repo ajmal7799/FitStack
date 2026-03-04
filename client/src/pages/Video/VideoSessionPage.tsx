@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { socketService } from "../../service/socket/socket";
-import { Mic, MicOff, Video, VideoOff, PhoneOff } from "lucide-react";
-import Peer from "simple-peer";
-import type { Rootstate } from "../../redux/store";
-import { useSelector } from "react-redux";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { socketService } from '../../service/socket/socket';
+import { Mic, MicOff, Video, VideoOff, PhoneOff } from 'lucide-react';
+import Peer from 'simple-peer';
+import type { Rootstate } from '../../redux/store';
+import { useSelector } from 'react-redux';
+import { useQueryClient } from '@tanstack/react-query';
 
 const VideoSessionPage = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -30,136 +30,136 @@ const VideoSessionPage = () => {
 
   // ✅ Single teardown function — always called in the same order
   const teardown = useCallback((shouldNavigate = true) => {
-  if (isTearingDown.current) return;
-  isTearingDown.current = true;
+    if (isTearingDown.current) return;
+    isTearingDown.current = true;
 
-  if (localVideoRef.current?.srcObject) {
-    (localVideoRef.current.srcObject as MediaStream)
-      .getTracks().forEach(track => track.stop());
-    localVideoRef.current.srcObject = null;
-  }
-
-  if (remoteVideoRef.current) {
-    remoteVideoRef.current.srcObject = null;
-  }
-
-  if (connectionRef.current) {
-    connectionRef.current.destroy();
-    connectionRef.current = null;
-  }
-
-  hasAnswered.current = false;
-
-  if (roomId) socketService.leaveVideoRoom(roomId);
-
-  // ✅ Invalidate BEFORE navigating so details page gets fresh data immediately
-  queryClient.invalidateQueries({ queryKey: ["bookedSlots"] });
-  queryClient.invalidateQueries({ queryKey: ["bookedSlotDetails", slotId] });
-
-  if (shouldNavigate) {
-    // ✅ Small delay so invalidation settles before page transition
-    setTimeout(() => navigate(-1), 100);
-  }
-}, [roomId, slotId, navigate, queryClient]);
-
-useEffect(() => {
-  if (!userId || !roomId) return;
-
-  let currentStream: MediaStream | null = null;
-
-  const initSession = async () => {
-    try {
-      currentStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      setStream(currentStream);
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = currentStream;
-      }
-
-      if (!socketService.isConnected()) {
-        socketService.connect(token, userId);
-      }
-
-      socketService.joinVideoRoom(roomId, userId, slotId as string);
-
-      socketService.onPeerJoined(() => {
-        // ✅ Reset ALL state — handles both first join AND rejoin
-        setIsPartnerPresent(true);
-        setPartnerLeft(false);        // ✅ clear "partner left" overlay on rejoin
-        hasAnswered.current = false;  // ✅ reset so handshake can happen again
-
-        // Destroy stale peer before creating new one
-        if (connectionRef.current) {
-          connectionRef.current.destroy();
-          connectionRef.current = null;
-        }
-
-        if (currentStream) initiateCall(currentStream);
-      });
-
-      socketService.onReceiveSignal((signalData: any) => {
-        // ✅ Reset partner state when we receive a signal (they're back)
-        setIsPartnerPresent(true);
-        setPartnerLeft(false); // ✅ clear overlay if they rejoined and sent signal first
-
-        if (!connectionRef.current && !hasAnswered.current) {
-          hasAnswered.current = true;
-          answerCall(signalData, currentStream!);
-        } else if (connectionRef.current) {
-          const peer = connectionRef.current as any;
-          const signalingState = peer._pc?.signalingState;
-          if (signalingState && signalingState !== "stable") {
-            connectionRef.current.signal(signalData);
-          }
-        }
-      });
-
-      // ✅ Partner left — only update UI, keep stream alive for potential rejoin
-      socketService.onPeerLeft(() => {
-        setIsPartnerPresent(false);
-        setPartnerLeft(true);
-
-        // Clear remote video
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = null;
-        }
-
-        // Destroy peer but reset hasAnswered so rejoin handshake works
-        if (connectionRef.current) {
-          connectionRef.current.destroy();
-          connectionRef.current = null;
-        }
-        hasAnswered.current = false; // ✅ critical — allows fresh handshake on rejoin
-      });
-
-      // ✅ Both fully left → server confirmed session complete → navigate
-      socketService.onSessionCompleted(({ slotId: completedSlotId }) => {
-        console.log("✅ Session completed for slot:", completedSlotId);
-        queryClient.invalidateQueries({ queryKey: ["bookedSlotDetails", completedSlotId] });
-        queryClient.invalidateQueries({ queryKey: ["bookedSlots"] });
-        teardown(true);
-      });
-
-    } catch (err) {
-      console.error("Media Error:", err);
+    if (localVideoRef.current?.srcObject) {
+      (localVideoRef.current.srcObject as MediaStream)
+        .getTracks().forEach(track => track.stop());
+      localVideoRef.current.srcObject = null;
     }
-  };
 
-  initSession();
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
 
-  return () => {
-    if (!isTearingDown.current) {
-      currentStream?.getTracks().forEach(track => track.stop());
-      connectionRef.current?.destroy();
+    if (connectionRef.current) {
+      connectionRef.current.destroy();
       connectionRef.current = null;
-      hasAnswered.current = false;
-      isTearingDown.current = false;
-      if (roomId) socketService.leaveVideoRoom(roomId);
     }
-  };
-}, [roomId, userId, token]);
+
+    hasAnswered.current = false;
+
+    if (roomId) socketService.leaveVideoRoom(roomId);
+
+    // ✅ Invalidate BEFORE navigating so details page gets fresh data immediately
+    queryClient.invalidateQueries({ queryKey: ['bookedSlots'] });
+    queryClient.invalidateQueries({ queryKey: ['bookedSlotDetails', slotId] });
+
+    if (shouldNavigate) {
+    // ✅ Small delay so invalidation settles before page transition
+      setTimeout(() => navigate(-1), 100);
+    }
+  }, [roomId, slotId, navigate, queryClient]);
+
+  useEffect(() => {
+    if (!userId || !roomId) return;
+
+    let currentStream: MediaStream | null = null;
+
+    const initSession = async () => {
+      try {
+        currentStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setStream(currentStream);
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = currentStream;
+        }
+
+        if (!socketService.isConnected()) {
+          socketService.connect(token, userId);
+        }
+
+        socketService.joinVideoRoom(roomId, userId, slotId as string);
+
+        socketService.onPeerJoined(() => {
+        // ✅ Reset ALL state — handles both first join AND rejoin
+          setIsPartnerPresent(true);
+          setPartnerLeft(false);        // ✅ clear "partner left" overlay on rejoin
+          hasAnswered.current = false;  // ✅ reset so handshake can happen again
+
+          // Destroy stale peer before creating new one
+          if (connectionRef.current) {
+            connectionRef.current.destroy();
+            connectionRef.current = null;
+          }
+
+          if (currentStream) initiateCall(currentStream);
+        });
+
+        socketService.onReceiveSignal((signalData: any) => {
+        // ✅ Reset partner state when we receive a signal (they're back)
+          setIsPartnerPresent(true);
+          setPartnerLeft(false); // ✅ clear overlay if they rejoined and sent signal first
+
+          if (!connectionRef.current && !hasAnswered.current) {
+            hasAnswered.current = true;
+            answerCall(signalData, currentStream!);
+          } else if (connectionRef.current) {
+            const peer = connectionRef.current as any;
+            const signalingState = peer._pc?.signalingState;
+            if (signalingState && signalingState !== 'stable') {
+              connectionRef.current.signal(signalData);
+            }
+          }
+        });
+
+        // ✅ Partner left — only update UI, keep stream alive for potential rejoin
+        socketService.onPeerLeft(() => {
+          setIsPartnerPresent(false);
+          setPartnerLeft(true);
+
+          // Clear remote video
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = null;
+          }
+
+          // Destroy peer but reset hasAnswered so rejoin handshake works
+          if (connectionRef.current) {
+            connectionRef.current.destroy();
+            connectionRef.current = null;
+          }
+          hasAnswered.current = false; // ✅ critical — allows fresh handshake on rejoin
+        });
+
+        // ✅ Both fully left → server confirmed session complete → navigate
+        socketService.onSessionCompleted(({ slotId: completedSlotId }) => {
+          console.log('✅ Session completed for slot:', completedSlotId);
+          queryClient.invalidateQueries({ queryKey: ['bookedSlotDetails', completedSlotId] });
+          queryClient.invalidateQueries({ queryKey: ['bookedSlots'] });
+          teardown(true);
+        });
+
+      } catch (err) {
+        console.error('Media Error:', err);
+      }
+    };
+
+    initSession();
+
+    return () => {
+      if (!isTearingDown.current) {
+        currentStream?.getTracks().forEach(track => track.stop());
+        connectionRef.current?.destroy();
+        connectionRef.current = null;
+        hasAnswered.current = false;
+        isTearingDown.current = false;
+        if (roomId) socketService.leaveVideoRoom(roomId);
+      }
+    };
+  }, [roomId, userId, token]);
 
   const initiateCall = (myStream: MediaStream) => {
     if (connectionRef.current) {
@@ -169,12 +169,12 @@ useEffect(() => {
 
     const peer = new Peer({ initiator: true, trickle: false, stream: myStream });
 
-    peer.on("signal", (data) => socketService.sendSignal(roomId!, data));
-    peer.on("stream", (remoteStream) => {
+    peer.on('signal', (data) => socketService.sendSignal(roomId!, data));
+    peer.on('stream', (remoteStream) => {
       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStream;
     });
-    peer.on("error", (err) => console.error("Peer error:", err));
-    peer.on("close", () => setIsPartnerPresent(false));
+    peer.on('error', (err) => console.error('Peer error:', err));
+    peer.on('close', () => setIsPartnerPresent(false));
 
     connectionRef.current = peer;
   };
@@ -187,12 +187,12 @@ useEffect(() => {
 
     const peer = new Peer({ initiator: false, trickle: false, stream: myStream });
 
-    peer.on("signal", (data) => socketService.sendSignal(roomId!, data));
-    peer.on("stream", (remoteStream) => {
+    peer.on('signal', (data) => socketService.sendSignal(roomId!, data));
+    peer.on('stream', (remoteStream) => {
       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStream;
     });
-    peer.on("error", (err) => console.error("Peer error:", err));
-    peer.on("close", () => setIsPartnerPresent(false));
+    peer.on('error', (err) => console.error('Peer error:', err));
+    peer.on('close', () => setIsPartnerPresent(false));
 
     peer.signal(incomingSignal);
     connectionRef.current = peer;
@@ -259,7 +259,7 @@ useEffect(() => {
           autoPlay
           muted
           playsInline
-          className={`h-full w-full object-cover -scale-x-100 ${isVideoOff ? "hidden" : "block"}`}
+          className={`h-full w-full object-cover -scale-x-100 ${isVideoOff ? 'hidden' : 'block'}`}
         />
         {isVideoOff && (
           <div className="h-full w-full flex items-center justify-center bg-zinc-800">
@@ -273,9 +273,9 @@ useEffect(() => {
 
       {/* TOP STATUS BAR */}
       <div className="absolute top-6 left-6 flex items-center gap-3 bg-black/30 backdrop-blur-lg px-4 py-2 rounded-full border border-white/10 z-30">
-        <div className={`w-2 h-2 rounded-full ${isPartnerPresent ? "bg-green-500 animate-pulse" : "bg-zinc-500"}`} />
+        <div className={`w-2 h-2 rounded-full ${isPartnerPresent ? 'bg-green-500 animate-pulse' : 'bg-zinc-500'}`} />
         <span className="text-sm font-medium">
-          {partnerLeft ? "Session Ended" : isPartnerPresent ? "Session Active" : "Waiting Room"}
+          {partnerLeft ? 'Session Ended' : isPartnerPresent ? 'Session Active' : 'Waiting Room'}
         </span>
       </div>
 
@@ -284,7 +284,7 @@ useEffect(() => {
         <button
           onClick={toggleMute}
           disabled={partnerLeft}
-          className={`p-4 rounded-full transition-all disabled:opacity-40 ${isMuted ? "bg-red-500" : "bg-zinc-800 hover:bg-zinc-700"}`}
+          className={`p-4 rounded-full transition-all disabled:opacity-40 ${isMuted ? 'bg-red-500' : 'bg-zinc-800 hover:bg-zinc-700'}`}
         >
           {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
         </button>
@@ -292,7 +292,7 @@ useEffect(() => {
         <button
           onClick={toggleVideo}
           disabled={partnerLeft}
-          className={`p-4 rounded-full transition-all disabled:opacity-40 ${isVideoOff ? "bg-red-500" : "bg-zinc-800 hover:bg-zinc-700"}`}
+          className={`p-4 rounded-full transition-all disabled:opacity-40 ${isVideoOff ? 'bg-red-500' : 'bg-zinc-800 hover:bg-zinc-700'}`}
         >
           {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
         </button>

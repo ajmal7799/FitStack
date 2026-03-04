@@ -11,7 +11,7 @@ import { UserRole } from '../../../../domain/enum/userEnums';
 export class VerificationRejectUseCase implements IVerificationRejectUseCase {
     constructor(
         private _verificationRepository: IUpdateVerification,
-        private _createNotification: CreateNotification
+        private _createNotification: CreateNotification,
     ) {}
 
     async execute(id: string, reason: string): Promise<VerificationRejectResponseDTO> {
@@ -31,9 +31,9 @@ export class VerificationRejectUseCase implements IVerificationRejectUseCase {
             recipientId: id,
             recipientRole: UserRole.TRAINER,
             type: NotificationType.VERIFICATION_REJECTED,
-            title: "Verification Rejected",
+            title: 'Verification Rejected',
             message: `Your verification was rejected. Reason: ${reason}`,
-            isRead: false
+            isRead: false,
         });
 
         return {

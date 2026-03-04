@@ -15,7 +15,8 @@ export interface createUserProfileRequest {
 
     dietPreference?: DietPreference,
     preferredWorkoutTypes?: string[],
-    medicalConditions?: string[]
+    medicalConditions?: string[],
+    profileImage?: string;
 }
 
 

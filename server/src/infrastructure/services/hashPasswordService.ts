@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
 import { IHashedPasswordServices } from '../../domain/interfaces/services/IHashPasswordServices';
-import { CONFIG } from '../config/config';
 
 export class HashPassword implements IHashedPasswordServices {
     async hashPassword(password: string): Promise<string> {

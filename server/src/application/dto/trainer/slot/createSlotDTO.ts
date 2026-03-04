@@ -1,4 +1,4 @@
-import { SlotStatus } from "../../../../domain/enum/SlotEnums";
+import { SlotStatus } from '../../../../domain/enum/SlotEnums';
 
 export interface CreateSlotDTO {
     _id: string;

@@ -17,7 +17,7 @@ const walletSchema = new mongoose.Schema(
         balance: { type: Number, default: 0 },
         transactions: [walletTransactionSchema],
     },
-    { timestamps: true }
+    { timestamps: true },
 );
 
 walletSchema.index({ ownerId: 1, ownerType: 1 }, { unique: true });

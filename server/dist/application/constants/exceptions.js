@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InvalidDataException = exports.OTPExpiredException = exports.TokenMissingException = exports.TokenExpiredException = exports.PasswordNotMatchingException = exports.DataMissingExecption = exports.InvalidOTPExecption = exports.IsBlockedExecption = exports.AlreadyExisitingExecption = exports.NotFoundException = exports.ApplicationException = void 0;
+exports.ForbiddenException = exports.UnauthorizedException = exports.ConflictException = exports.InvalidDataException = exports.OTPExpiredException = exports.TokenMissingException = exports.TokenExpiredException = exports.PasswordNotMatchingException = exports.DataMissingExecption = exports.InvalidOTPExecption = exports.IsBlockedExecption = exports.AlreadyExisitingExecption = exports.NotFoundException = exports.ApplicationException = void 0;
 class ApplicationException extends Error {
     constructor(message) {
         super(message);
@@ -67,3 +67,21 @@ class InvalidDataException extends ApplicationException {
     }
 }
 exports.InvalidDataException = InvalidDataException;
+class ConflictException extends ApplicationException {
+    constructor(message) {
+        super(message);
+    }
+}
+exports.ConflictException = ConflictException;
+class UnauthorizedException extends ApplicationException {
+    constructor(message) {
+        super(message);
+    }
+}
+exports.UnauthorizedException = UnauthorizedException;
+class ForbiddenException extends ApplicationException {
+    constructor(message) {
+        super(message);
+    }
+}
+exports.ForbiddenException = ForbiddenException;

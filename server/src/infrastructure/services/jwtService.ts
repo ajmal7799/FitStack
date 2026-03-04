@@ -15,7 +15,7 @@ export class JWTService implements IJWTService {
         const secretKey = CONFIG.JWT_SECRET;
         if (!secretKey) throw new Error('Access Token Secret Key Not Found');
         try {
-            return sign(payload, secretKey, { expiresIn: '15m' }); // ← short lived
+            return sign(payload, secretKey, { expiresIn: '7d' }); // ← short lived
         } catch (error) {
             throw new InvalidDataException(Errors.ACCESS_TOKEN_CREATION_FAILED);
         }

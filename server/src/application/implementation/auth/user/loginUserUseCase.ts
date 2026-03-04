@@ -20,20 +20,20 @@ export class UserLoginUseCase implements IUserLoginUseCase {
     private _hashService;
     private _trainerRepository;
     private _userProfileRepository;
-    private _storageService 
+    private _storageService; 
 
     constructor(
         userRepository: IUserRepository,
         hashService: IHashedPasswordServices,
         trainerRepository: ITrainerRepository,
         userProfileRepository: IUserProfileRepository,
-         storageService: IStorageService
+        storageService: IStorageService,
     ) {
         this._userRepository = userRepository;
         this._hashService = hashService;
         this._trainerRepository = trainerRepository;
         this._userProfileRepository = userProfileRepository;
-        this._storageService = storageService
+        this._storageService = storageService;
     }
 
     async userLogin(email: string, password: string): Promise<LoginUserDTO> {
@@ -51,7 +51,7 @@ export class UserLoginUseCase implements IUserLoginUseCase {
         if (!verifyPassword) {
             throw new PasswordNotMatchingException(Errors.INVALID_CREDENTIALS);
         }
-        let profileImage = "";
+        let profileImage = '';
         if (user.profileImage) {
             profileImage = await this._storageService.createSignedUrl(user.profileImage, 10 * 60);
         }

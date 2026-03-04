@@ -13,5 +13,4 @@ export interface User {
     stripeCustomerId?: string;
     activeMembershipId?: string;
     profileImage?: string,
-
 }

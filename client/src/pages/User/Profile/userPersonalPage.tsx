@@ -3,8 +3,6 @@ import { useGetUserProfile } from '../../../hooks/User/userServiceHooks';
 import UserSidebar from '../../../components/user/Sidebar';
 import Header from '../../../components/user/Header';
 import { User, Mail, Phone, XCircle } from 'lucide-react';
-import { useSelector } from 'react-redux';
-import type { Rootstate } from '../../../redux/store';
 import defaultProfileImage from '../../../assets/defaultProfileImage.png';
 import { useNavigate } from 'react-router-dom';
 import { FRONTEND_ROUTES } from '../../../constants/frontendRoutes';
@@ -33,7 +31,6 @@ interface UserProfileResponse {
 const UserProfile: React.FC = () => {
   const { data, isLoading, isError, error } = useGetUserProfile();
   const navigate = useNavigate();
-  const authData = useSelector((state: Rootstate) => state.authData);
 
   if (isLoading) {
     return (
@@ -120,9 +117,9 @@ const UserProfile: React.FC = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
                   >
-                    {authData.profileImage ? (
+                    {userProfile.profileImage ? (
                       <img
-                        src={authData.profileImage || defaultProfileImage}
+                        src={userProfile.profileImage || defaultProfileImage}
                         alt={'User profile picture'}
                         className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
                       />

@@ -11,7 +11,7 @@ export class AdminDashboardController {
     async getStats(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const stats = await this._getDashboardUseCase.getStats();
-             ResponseHelper.success(res, 'Dashboard stats fetched', stats, HTTPStatus.OK);
+            ResponseHelper.success(res, 'Dashboard stats fetched', stats, HTTPStatus.OK);
         } catch (error) {
             next(error);
         }
@@ -21,7 +21,7 @@ export class AdminDashboardController {
         try {
             const period = (req.query.period as FilterPeriod) || 'monthly';
             const chartData = await this._getDashboardUseCase.getChartData(period);
-             ResponseHelper.success(res, 'Chart data fetched', chartData, HTTPStatus.OK);
+            ResponseHelper.success(res, 'Chart data fetched', chartData, HTTPStatus.OK);
         } catch (error) {
             next(error);
         }

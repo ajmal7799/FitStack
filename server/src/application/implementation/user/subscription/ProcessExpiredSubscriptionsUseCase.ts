@@ -1,16 +1,16 @@
-import { IProcessExpiredSubscriptionsUseCase } from "../../../useCase/user/subscription/IProcessExpiredSubscriptionsUseCase";
-import { IMembershipRepository } from "../../../../domain/interfaces/repositories/IMembershipRepository";
-import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { CreateNotification } from "../../notification/CreateNotification";
-import { MembershipStatus } from "../../../../domain/enum/membershipEnums";
-import { NotificationType } from "../../../../domain/enum/NotificationEnums";
-import { UserRole } from "../../../../domain/enum/userEnums";
+import { IProcessExpiredSubscriptionsUseCase } from '../../../useCase/user/subscription/IProcessExpiredSubscriptionsUseCase';
+import { IMembershipRepository } from '../../../../domain/interfaces/repositories/IMembershipRepository';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { CreateNotification } from '../../notification/CreateNotification';
+import { MembershipStatus } from '../../../../domain/enum/membershipEnums';
+import { NotificationType } from '../../../../domain/enum/NotificationEnums';
+import { UserRole } from '../../../../domain/enum/userEnums';
 
 export class ProcessExpiredSubscriptionsUseCase implements IProcessExpiredSubscriptionsUseCase {
     constructor(
         private _membershipRepository: IMembershipRepository,
         private _userRepository: IUserRepository,
-        private _createNotification: CreateNotification
+        private _createNotification: CreateNotification,
     ) {}
 
     async execute(): Promise<void> {
@@ -35,10 +35,10 @@ export class ProcessExpiredSubscriptionsUseCase implements IProcessExpiredSubscr
                     recipientId: membership.userId,
                     recipientRole: UserRole.USER,
                     type: NotificationType.SUBSCRIPTION_EXPIRED,
-                    title: "Subscription Expired 🕰️",
-                    message: "Your subscription has expired. Purchase a new plan to continue enjoying premium features!",
+                    title: 'Subscription Expired 🕰️',
+                    message: 'Your subscription has expired. Purchase a new plan to continue enjoying premium features!',
                     relatedId: membership.stripeSubscriptionId,
-                    isRead: false
+                    isRead: false,
                 });
 
                 console.log(`[Cron] Processed expiry for user: ${membership.userId}`);

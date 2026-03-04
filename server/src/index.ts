@@ -91,7 +91,7 @@ class ExpressApp {
         this._app.use('/chat', new Chat_Router().get_router());
     }
 
-  public listen(port: number) {
+    public listen(port: number) {
         // IMPORTANT: Listen using _httpServer, not _app
         this._httpServer.listen(port, () => {
             console.log(`✅ Server started on http://localhost:${port}`);

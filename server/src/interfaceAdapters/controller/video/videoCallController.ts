@@ -7,18 +7,18 @@ import { Errors, SUBSCRIPTION_ERRORS } from '../../../shared/constants/error';
 import { IJoinSessionUseCase } from '../../../application/useCase/video/IJoinSessionUseCase';
 
 export class VideoCallController {
-  constructor(private joinSessionUseCase: IJoinSessionUseCase) {}
+    constructor(private joinSessionUseCase: IJoinSessionUseCase) {}
 
-  async joinVideoSession(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
+    async joinVideoSession(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
 
-      const { slotId } = req.params;
+            const { slotId } = req.params;
 
-      const result = await this.joinSessionUseCase.execute(userId!, slotId);
-      ResponseHelper.success(res, MESSAGES.USERS.VIDEO_SESSION_JOINED_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            const result = await this.joinSessionUseCase.execute(userId!, slotId);
+            ResponseHelper.success(res, MESSAGES.USERS.VIDEO_SESSION_JOINED_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 }

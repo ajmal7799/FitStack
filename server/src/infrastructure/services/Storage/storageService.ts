@@ -17,7 +17,7 @@ export class StorageService implements IStorageService {
                 secretAccessKey: CONFIG.AWS_SECRET_ACCESS_KEY!,
             },
             requestChecksumCalculation: 'WHEN_REQUIRED',   // ← add this
-        responseChecksumValidation: 'WHEN_REQUIRED', 
+            responseChecksumValidation: 'WHEN_REQUIRED', 
         });
     }
     async upload(file: File | Buffer, key: string): Promise<string> {
@@ -44,15 +44,15 @@ export class StorageService implements IStorageService {
         const signedUrl = await getSignedUrl(this._s3Client, command, { expiresIn: expiary });
         return signedUrl;
     }
-  async createPresignedUploadUrl(key: string, fileType: string, expiry: number): Promise<string> {
-    const command = new PutObjectCommand({
-        Bucket: CONFIG.S3_BUCKET_NAME,
-        Key: key,
+    async createPresignedUploadUrl(key: string, fileType: string, expiry: number): Promise<string> {
+        const command = new PutObjectCommand({
+            Bucket: CONFIG.S3_BUCKET_NAME,
+            Key: key,
         // ← removed ContentType, no ChecksumAlgorithm
-    });
-    return await getSignedUrl(this._s3Client, command, { 
-        expiresIn: expiry,
-    });
-}
+        });
+        return await getSignedUrl(this._s3Client, command, { 
+            expiresIn: expiry,
+        });
+    }
     
 }

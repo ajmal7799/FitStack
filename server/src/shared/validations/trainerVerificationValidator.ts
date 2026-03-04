@@ -1,14 +1,7 @@
 import { z } from 'zod';
 
 
-const MulterFileSchema = z
-    .object({
-        fieldname: z.string(),
-        originalname: z.string(),
-        mimetype: z.string(),
-    // We don't need to validate all Multer properties, just that the object is present
-    })
-    .passthrough();
+
 
 export const trainerVerificationSchema = z.object({
     trainerId: z.string().min(1, 'Invalid Trainer ID.'),

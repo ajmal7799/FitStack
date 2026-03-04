@@ -25,6 +25,10 @@ class UserTrainerController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             try {
+                // const userId = req.user?.userId;
+                // if (!userId) {
+                //     throw new InvalidDataException(Errors.INVALID_DATA);
+                // }
                 const page = parseInt(req.query.page) || 1;
                 const limit = parseInt(req.query.limit) || 10;
                 const search = req.query.search || undefined;

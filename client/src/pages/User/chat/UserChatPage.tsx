@@ -1,14 +1,14 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { useSelector } from "react-redux";
-import UserSidebar from "../../../components/user/Sidebar";
-import Header from "../../../components/user/Header";
-import ChatUserSidebar from "../../../components/chat/ChatSideBar";
-import ChatWindow from "../../../components/chat/ChatWindow";
-import { useInitiateChat } from "../../../hooks/chat/chatHooks";
-import { useChatSocket } from "../../../hooks/Socket/useChat";
-import { socketService } from "../../../service/socket/socket";
-import type { Rootstate } from "../../../redux/store";
-import { MessageSquare, Loader2 } from "lucide-react";
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import UserSidebar from '../../../components/user/Sidebar';
+import Header from '../../../components/user/Header';
+import ChatUserSidebar from '../../../components/chat/ChatSideBar';
+import ChatWindow from '../../../components/chat/ChatWindow';
+import { useInitiateChat } from '../../../hooks/chat/chatHooks';
+import { useChatSocket } from '../../../hooks/Socket/useChat';
+import { socketService } from '../../../service/socket/socket';
+import type { Rootstate } from '../../../redux/store';
+import { MessageSquare, Loader2 } from 'lucide-react';
 
 // Types
 interface TrainerChat {
@@ -36,7 +36,7 @@ interface Message {
   _id: string;
   chatId: string;
   senderId: string;
-  type: "text" | "image" | "file" | "video" | "audio";
+  type: 'text' | 'image' | 'file' | 'video' | 'audio';
   text?: string;
   attachment?: {
     key: string;
@@ -81,7 +81,7 @@ const UserChatPage = () => {
   // Join the chat room when we have chatId
   useEffect(() => {
     if (baseChat?.chatId) {
-      console.log("🔗 Joining chat room:", baseChat.chatId);
+      console.log('🔗 Joining chat room:', baseChat.chatId);
       socketService.joinRoom(baseChat.chatId);
     }
   }, [baseChat?.chatId]);
@@ -90,15 +90,15 @@ const UserChatPage = () => {
   const handleReceiveMessage = useCallback(
     (message: Message) => {
       const previewText =
-        message.type === "text"
-          ? message.text || ""
-          : message.type === "image"
-            ? "📷 Image"
-            : message.type === "video"
-              ? "🎥 Video"
-              : message.type === "audio"
-                ? "🎵 Audio"
-              : "📄 File";
+        message.type === 'text'
+          ? message.text || ''
+          : message.type === 'image'
+            ? '📷 Image'
+            : message.type === 'video'
+              ? '🎥 Video'
+              : message.type === 'audio'
+                ? '🎵 Audio'
+                : '📄 File';
 
 
       setChatUpdates({
@@ -120,7 +120,7 @@ const UserChatPage = () => {
   const handleChatSelect = (chatId: string) => {
     setSelectedChatId(chatId);
     setLocalUnreadCount(0);
-    console.log("Selected chat:", chatId);
+    console.log('Selected chat:', chatId);
   };
 
   const handleMessageSent = (
@@ -132,7 +132,7 @@ const UserChatPage = () => {
     setChatUpdates({
       text,
       timestamp: timestamp || new Date().toISOString(),
-      senderId: senderId || userId || "",
+      senderId: senderId || userId || '',
     });
   };
 
@@ -178,7 +178,7 @@ const UserChatPage = () => {
                   <p className="text-xs text-gray-500 mt-1">
                     {error instanceof Error
                       ? error.message
-                      : "Please try again later"}
+                      : 'Please try again later'}
                   </p>
                 </div>
               </div>
@@ -196,7 +196,7 @@ const UserChatPage = () => {
               <ChatWindow
                 chatId={currentChat.chatId}
                 userName={currentChat.trainerName}
-                userProfilePic={currentChat.trainerProfilePic || ""}
+                userProfilePic={currentChat.trainerProfilePic || ''}
                 userId={currentChat.userId}
                 onMessageSent={handleMessageSent}
               />
@@ -206,17 +206,17 @@ const UserChatPage = () => {
                   <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-700 mb-2">
                     {isLoading
-                      ? "Connecting..."
+                      ? 'Connecting...'
                       : currentChat
-                        ? "Select a chat to start"
-                        : "No trainer assigned yet"}
+                        ? 'Select a chat to start'
+                        : 'No trainer assigned yet'}
                   </h3>
                   <p className="text-gray-500 max-w-md">
                     {isLoading
-                      ? "Please wait while we connect you with your trainer"
+                      ? 'Please wait while we connect you with your trainer'
                       : currentChat
-                        ? "Click on your trainer in the sidebar to open the conversation"
-                        : "Once you are assigned a trainer, you can start chatting here."}
+                        ? 'Click on your trainer in the sidebar to open the conversation'
+                        : 'Once you are assigned a trainer, you can start chatting here.'}
                   </p>
                 </div>
               </div>

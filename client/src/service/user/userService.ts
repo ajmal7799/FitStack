@@ -120,7 +120,7 @@ export const getBookedSlots = async (page = 1, limit = 10, status?: string) => {
 export const getBookedSlotDetails = async (slotId: string) => {
   const response = await AxiosInstance.get(`/booked-slots/${slotId}`);
   return response.data;
-}
+};
 
 
 export const cancelBookedSlot = async (slotId: string, reason: string) => {
@@ -144,7 +144,7 @@ export const getSessionHistory = async (page = 1, limit = 10, status?: string) =
   }
   const response = await AxiosInstance.get(`/sessions-history?${params.toString()}`);
   return response.data;
-}
+};
 
 
 export const getSessionHistoryDetails = async (sessionId: string) => {
@@ -176,6 +176,6 @@ export const clearAllNotifications = async () => {
 };
 
 export const getWallet = async () => {
-    const response = await AxiosInstance.get('/wallet');
-    return response.data.data;
+  const response = await AxiosInstance.get('/wallet');
+  return response.data.data;
 };

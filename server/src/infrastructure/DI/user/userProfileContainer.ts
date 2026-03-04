@@ -1,7 +1,6 @@
 
 import { UserProfileController } from '../../../interfaceAdapters/controller/user/userProfileController';
 import { UserRepository } from '../../repositories/userRepository';
-import { UserProfile } from '../../../domain/entities/user/userProfile';
 import { StorageService } from '../../services/Storage/storageService';
 import { userProfileModel } from '../../database/models/userProfileModel';
 import { UserProfileRepository } from '../../repositories/userProfileRepository';

@@ -1,4 +1,4 @@
-import feedbackSchema from "../schema/feedbackSchema";
+import feedbackSchema from '../schema/feedbackSchema';
 import { Document, Model, model, Types } from 'mongoose';
 
 

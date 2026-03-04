@@ -1,21 +1,18 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import { Eye, EyeOff } from "lucide-react";
-import TrainerSidebar from "../../../components/trainer/Sidebar";
-import TrainerHeader from "../../../components/trainer/Header";
-import { useChangePassword } from "../../../hooks/User/userServiceHooks";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { Eye, EyeOff } from 'lucide-react';
+import TrainerSidebar from '../../../components/trainer/Sidebar';
+import TrainerHeader from '../../../components/trainer/Header';
+import { useChangePassword } from '../../../hooks/User/userServiceHooks';
 
 
 const ChangeTrainerPasswordPage = () => {
   const { mutate, isPending } = useChangePassword();
 
-
-  // Visibility states
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
 
   const {
     register,
@@ -25,15 +22,13 @@ const ChangeTrainerPasswordPage = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     },
   });
 
-
-  const newPasswordValue = watch("newPassword");
-
+  const newPasswordValue = watch('newPassword');
 
   const onSubmit = handleSubmit((data) => {
     mutate(
@@ -43,27 +38,27 @@ const ChangeTrainerPasswordPage = () => {
       },
       {
         onSuccess: () => {
-          toast.success("Password changed successfully");
+          toast.success('Password changed successfully');
           reset();
         },
         onError: (err: unknown) => {
           const errorMessage = (err as { response?: { data?: { message?: string } } })
-            ?.response?.data?.message || "Failed to update password";
+            ?.response?.data?.message || 'Failed to update password';
           toast.error(errorMessage);
         },
       }
     );
   });
 
+  // ✅ shared input class
+  const inputClass = 'block w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#faac05] focus:border-transparent outline-none transition';
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <TrainerSidebar />
 
-
       <div className="flex-1 flex flex-col">
         <TrainerHeader />
-
 
         <main className="flex-1 p-6 md:p-10">
           <div className="mx-auto max-w-lg">
@@ -76,9 +71,9 @@ const ChangeTrainerPasswordPage = () => {
                 </p>
               </div>
 
-
               {/* Form */}
               <form onSubmit={onSubmit} className="p-6 space-y-5">
+
                 {/* Current Password */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -86,9 +81,9 @@ const ChangeTrainerPasswordPage = () => {
                   </label>
                   <div className="relative">
                     <input
-                      type={showOld ? "text" : "password"}
-                      {...register("oldPassword", { required: "Current password is required" })}
-                      className="block w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      type={showOld ? 'text' : 'password'}
+                      {...register('oldPassword', { required: 'Current password is required' })}
+                      className={inputClass}
                       placeholder="Enter your current password"
                     />
                     <button
@@ -100,12 +95,9 @@ const ChangeTrainerPasswordPage = () => {
                     </button>
                   </div>
                   {errors.oldPassword && (
-                    <p className="text-red-600 text-sm mt-1.5">
-                      {errors.oldPassword.message}
-                    </p>
+                    <p className="text-red-600 text-sm mt-1.5">{errors.oldPassword.message}</p>
                   )}
                 </div>
-
 
                 {/* New Password */}
                 <div>
@@ -114,17 +106,17 @@ const ChangeTrainerPasswordPage = () => {
                   </label>
                   <div className="relative">
                     <input
-                      type={showNew ? "text" : "password"}
-                      {...register("newPassword", {
-                        required: "New password is required",
-                        minLength: { value: 6, message: "Minimum 6 characters required" },
+                      type={showNew ? 'text' : 'password'}
+                      {...register('newPassword', {
+                        required: 'New password is required',
+                        minLength: { value: 6, message: 'Minimum 6 characters required' },
                         validate: {
-                          uppercase: (v) => /[A-Z]/.test(v) || "At least one uppercase letter required",
-                          number: (v) => /[0-9]/.test(v) || "At least one number required",
-                          symbol: (v) => /[^A-Za-z0-9]/.test(v) || "At least one symbol required",
+                          uppercase: (v) => /[A-Z]/.test(v) || 'At least one uppercase letter required',
+                          number:    (v) => /[0-9]/.test(v) || 'At least one number required',
+                          symbol:    (v) => /[^A-Za-z0-9]/.test(v) || 'At least one symbol required',
                         },
                       })}
-                      className="block w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      className={inputClass}
                       placeholder="New password"
                     />
                     <button
@@ -136,12 +128,9 @@ const ChangeTrainerPasswordPage = () => {
                     </button>
                   </div>
                   {errors.newPassword && (
-                    <p className="text-red-600 text-sm mt-1.5">
-                      {errors.newPassword.message}
-                    </p>
+                    <p className="text-red-600 text-sm mt-1.5">{errors.newPassword.message}</p>
                   )}
                 </div>
-
 
                 {/* Confirm Password */}
                 <div>
@@ -150,12 +139,12 @@ const ChangeTrainerPasswordPage = () => {
                   </label>
                   <div className="relative">
                     <input
-                      type={showConfirm ? "text" : "password"}
-                      {...register("confirmPassword", {
-                        required: "Please confirm your password",
-                        validate: (value) => value === newPasswordValue || "Passwords do not match",
+                      type={showConfirm ? 'text' : 'password'}
+                      {...register('confirmPassword', {
+                        required: 'Please confirm your password',
+                        validate: (value) => value === newPasswordValue || 'Passwords do not match',
                       })}
-                      className="block w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                      className={inputClass}
                       placeholder="Confirm password"
                     />
                     <button
@@ -167,21 +156,19 @@ const ChangeTrainerPasswordPage = () => {
                     </button>
                   </div>
                   {errors.confirmPassword && (
-                    <p className="text-red-600 text-sm mt-1.5">
-                      {errors.confirmPassword.message}
-                    </p>
+                    <p className="text-red-600 text-sm mt-1.5">{errors.confirmPassword.message}</p>
                   )}
                 </div>
 
-
+                {/* ✅ Submit button changed to #faac05 */}
                 <div className="pt-4">
-                 <button
-  type="submit"
-  disabled={isPending}
-  className="w-full py-2.5 px-4 bg-black hover:bg-gray-800 text-white font-medium rounded-md transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
->
-  {isPending ? "Updating..." : "Update Password"}
-</button>
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className="w-full py-2.5 px-4 bg-[#faac05] hover:bg-[#e09b00] text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isPending ? 'Updating...' : 'Update Password'}
+                  </button>
                 </div>
               </form>
             </div>
@@ -191,6 +178,5 @@ const ChangeTrainerPasswordPage = () => {
     </div>
   );
 };
-
 
 export default ChangeTrainerPasswordPage;

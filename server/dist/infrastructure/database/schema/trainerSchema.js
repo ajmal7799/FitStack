@@ -11,6 +11,18 @@ const trainerSchema = new mongoose_1.default.Schema({
     experience: { type: Number, required: true },
     about: { type: String, required: true },
     isVerified: { type: Boolean, default: false },
+    ratingCount: {
+        type: Number,
+        default: 0,
+    },
+    ratingSum: {
+        type: Number,
+        default: 0,
+    },
+    averageRating: {
+        type: Number,
+        default: 0,
+    },
 }, {
     timestamps: true,
 });

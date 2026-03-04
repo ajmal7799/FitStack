@@ -3,7 +3,6 @@ import Table from '../../components/table/Table';
 import Pagination from '../../components/pagination/Pagination';
 import { useGetAllUsers, useUpdateUserStatus } from '../../hooks/Auth/AuthHooks';
 import toast from 'react-hot-toast';
-
 import { X } from 'lucide-react';
 import StatusChangeModal from '../../components/modals/StatusChangeModal';
 import { useQueryClient } from '@tanstack/react-query';
@@ -14,6 +13,7 @@ import AdminHeader from '../../components/admin/Header';
 interface TableUser extends User {
 	_id: string;
 	id: string;
+	profileImage?: string;
 }
 
 const UsersListing: React.FC = () => {
@@ -37,11 +37,9 @@ const UsersListing: React.FC = () => {
 		status: 'ACTIVE' | 'BLOCKED';
 	} | null>(null);
 
-  // temporary: keep full mutation object (typed any to avoid TS mismatches)
   const updateUserStatusMutation: any = useUpdateUserStatus();
   const queryClient = useQueryClient();
 
-  // normalize users list from response safely
   const users: User[] = useMemo(() => {
     const resp = data as any;
     return resp?.data?.data?.users || [];
@@ -49,7 +47,6 @@ const UsersListing: React.FC = () => {
 
   const totalPages = useMemo(() => {
     const resp = data as any;
-    // fallback to 1 if missing
     return resp?.data?.data?.totalPages ?? 1;
   }, [data]);
 
@@ -62,7 +59,6 @@ const UsersListing: React.FC = () => {
     [users]
   );
 
-  // Search handlers
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
   }, []);
@@ -78,13 +74,11 @@ const UsersListing: React.FC = () => {
     setPage(1);
   }, []);
 
-  // Status filter handler
   const handleStatusChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatusFilter(e.target.value);
     setPage(1);
   }, []);
 
-  // Toggle user status with optimistic update for immediate UI feedback
   const handleStatusToggle = useCallback(
     (userId: string, currentStatus: 'ACTIVE' | 'BLOCKED') => {
       const queryKey = ['users', page, limit, statusFilter, debouncedSearch];
@@ -95,32 +89,25 @@ const UsersListing: React.FC = () => {
         {
           onMutate: async (variables: { userId: string; currentStatus: string }) => {
             await queryClient.cancelQueries({ queryKey });
-
             const previousData = queryClient.getQueryData(queryKey);
 
             if (previousData) {
               const newData = structuredClone(previousData as any);
               const usersArr: any[] = newData.data.data.users || [];
-
               const updatedUsers = usersArr.map((u: any) =>
                 u._id === variables.userId ? { ...u, isActive: newStatus } : u
               );
-
-              // If a filter is active, remove users who no longer match
               const filteredUsers = statusFilter
                 ? updatedUsers.filter((u: any) => u.isActive === statusFilter)
                 : updatedUsers;
-
               newData.data.data.users = filteredUsers;
               newData.data.data.totalPages = Math.max(1, Math.ceil(filteredUsers.length / limit));
               newData.data.data.totalUsers = filteredUsers.length;
-
               queryClient.setQueryData(queryKey, newData);
             }
-
             return { previousData };
           },
-          onError: (_err:any, _vars:any, context:any) => {
+          onError: (_err: any, _vars: any, context: any) => {
             if (context?.previousData) {
               queryClient.setQueryData(queryKey, context.previousData);
             }
@@ -152,17 +139,35 @@ const UsersListing: React.FC = () => {
       {
         id: 'name',
         label: 'Name',
-        render: (row: TableUser) => row.name,
+        render: (row: TableUser) => (
+          <div className="flex items-center gap-3">
+            {/* ✅ Profile image with initial fallback */}
+            {row.profileImage ? (
+              <img
+                src={row.profileImage}
+                alt={row.name}
+                className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-gray-200"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 text-indigo-600 font-semibold text-sm">
+                {row.name?.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <span className="truncate">{row.name}</span>
+          </div>
+        ),
       },
       {
         id: 'email',
         label: 'Email',
-        render: (row: TableUser) => row.email,
+        render: (row: TableUser) => (
+          <span className="truncate block max-w-[160px]">{row.email}</span>
+        ),
       },
       {
         id: 'phone',
         label: 'Phone',
-        render: (row: TableUser) => row.phone || '-', // render phone number
+        render: (row: TableUser) => row.phone || '-',
       },
       {
         id: 'status',
@@ -189,27 +194,28 @@ const UsersListing: React.FC = () => {
   );
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen">
       <AdminSidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader />
 
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h1 className="text-2xl font-semibold mb-6 text-gray-800">Users Management</h1>
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md m-2 sm:m-4">
+          <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">
+            Users Management
+          </h1>
 
-          {/* search and filter */}
-          <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-6">
-            <div className="flex gap-2 w-full md:w-1/3 relative">
+          {/* Search and filter */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between mb-6">
+            <div className="flex gap-2 w-full sm:w-1/3 relative">
               <input
                 type="text"
                 placeholder="Search by name or email"
                 value={searchInput}
                 onChange={handleSearchChange}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
-                className="px-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-indigo-400"
+                className="px-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 text-sm"
               />
-
               {searchInput && (
                 <button
                   onClick={handleClearSearch}
@@ -219,13 +225,12 @@ const UsersListing: React.FC = () => {
                   <X size={18} />
                 </button>
               )}
-
               <button
                 onClick={handleSearchClick}
                 disabled={updateUserStatusMutation?.isLoading}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 text-sm whitespace-nowrap"
               >
-								Search
+                Search
               </button>
             </div>
 
@@ -233,7 +238,7 @@ const UsersListing: React.FC = () => {
               value={statusFilter}
               onChange={handleStatusChange}
               disabled={updateUserStatusMutation?.isLoading}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 text-sm w-full sm:w-auto"
             >
               <option value="">All Status</option>
               <option value="ACTIVE">Active</option>
@@ -241,7 +246,7 @@ const UsersListing: React.FC = () => {
             </select>
           </div>
 
-          {/* states: loading / error / empty */}
+          {/* States */}
           {isLoading ? (
             <div className="py-10 text-center text-gray-500">Loading users...</div>
           ) : isError ? (
@@ -265,7 +270,6 @@ const UsersListing: React.FC = () => {
                 />
               )}
 
-              {/* Pagination */}
               {formattedUsers.length > 0 && (
                 <Pagination totalPages={totalPages} currentPage={page} setPage={setPage} />
               )}

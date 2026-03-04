@@ -50,6 +50,7 @@ export const userProfileSchema = z.object({
     medicalConditions: z
         .array(z.string().min(2))
         .optional(),
+    profileImage: z.any().optional(),    
 });
 
 

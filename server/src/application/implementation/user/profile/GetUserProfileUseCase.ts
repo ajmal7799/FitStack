@@ -17,7 +17,13 @@ export class GetProfileUseCase implements IGetProfileUseCase {
 
         const response: LoginUserDTO = UserMapper.toLoginUserResponse(user);
         
-        response.profileImage = await this._storageService.createSignedUrl(response.profileImage!, 10 * 60);
+        if (response.profileImage) {
+            response.profileImage = await this._storageService.createSignedUrl(
+                response.profileImage,
+                10 * 60,
+            );
+        }
+
         return response;
     }
 }

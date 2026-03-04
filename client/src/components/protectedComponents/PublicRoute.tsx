@@ -25,7 +25,7 @@ const PublicRoute = ({ children }: PublicRouteProps) => {
       
     } else if (role === 'user') {
       if(userProfileCompleted===true) {
-        return <Navigate to="/home" replace/>;
+        return <Navigate to="/" replace/>;
       }else {
         return <Navigate to={FRONTEND_ROUTES.USER.ADD_PROFILE} replace />;
       }

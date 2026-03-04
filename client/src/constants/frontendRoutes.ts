@@ -66,7 +66,10 @@ export const FRONTEND_ROUTES = {
     LOGIN: '/login',
     DASHBOARD: '/dashboard',
     USERS: '/users',
+
     TRAINER: '/trainers',
+    TRAINER_DETAILS: '/trainers/:trainerId',
+
     VERIFICATION: '/verification',
     VERIFICATION_DETAILS: '/verifications/:trainerId',
     SUBSCRIPTION_PLAN: '/subscriptions',

@@ -1,6 +1,6 @@
-import { IGetAttachmentUploadUrlUseCase } from "../../useCase/chat/IGetAttachmentUploadUrlUseCase";
-import { IStorageService } from "../../../domain/interfaces/services/IStorage/IStorageService";
-import { StorageFolderNameEnums } from "../../../domain/enum/storageFolderNameEnums";
+import { IGetAttachmentUploadUrlUseCase } from '../../useCase/chat/IGetAttachmentUploadUrlUseCase';
+import { IStorageService } from '../../../domain/interfaces/services/IStorage/IStorageService';
+import { StorageFolderNameEnums } from '../../../domain/enum/storageFolderNameEnums';
 
 export class GetAttachmentUploadUrlUseCase implements IGetAttachmentUploadUrlUseCase {
     constructor(private  _storageService: IStorageService) {}
@@ -12,7 +12,7 @@ export class GetAttachmentUploadUrlUseCase implements IGetAttachmentUploadUrlUse
         const uploadUrl = await this._storageService.createPresignedUploadUrl(
             key,
             fileType,
-            5 * 60  // 5 minutes to upload
+            5 * 60,  // 5 minutes to upload
         );
 
         return { uploadUrl, key };

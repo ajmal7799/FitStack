@@ -156,7 +156,13 @@ export default function NotificationBell() {
       </div>
 
       {/* Notification List */}
-      <div className="flex-1 overflow-y-auto overscroll-contain">
+      <div
+        className="overflow-y-auto overscroll-contain max-h-[420px]"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#D1D5DB transparent',
+        }}
+      >
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-gray-400 px-4">
             <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">

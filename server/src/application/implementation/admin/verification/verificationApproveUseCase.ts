@@ -10,7 +10,7 @@ import { UserRole } from '../../../../domain/enum/userEnums';
 export class VerificationApproveUseCase implements IVerificationApproveUseCase {
     constructor(
         private _verificationRepository: IUpdateVerification,
-        private _createNotification: CreateNotification
+        private _createNotification: CreateNotification,
     ) { }
     async execute(trainerId: string): Promise<VerificationApproveResponseDTO> {
 
@@ -30,9 +30,9 @@ export class VerificationApproveUseCase implements IVerificationApproveUseCase {
             recipientId: trainerId,
             recipientRole: UserRole.TRAINER,
             type: NotificationType.VERIFICATION_APPROVED,
-            title: "Verification Approved",
-            message: "Your documents have been verified. You can now start hosting sessions!",
-            isRead: false
+            title: 'Verification Approved',
+            message: 'Your documents have been verified. You can now start hosting sessions!',
+            isRead: false,
         });
 
         return {

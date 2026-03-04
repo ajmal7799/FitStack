@@ -137,14 +137,14 @@ export const useGetBookedSlots = (page: number, limit: number, status?: string) 
   return useQuery({
     queryKey: ['bookedSlots', page, limit, status],    
     queryFn: () => getBookedSlots(page, limit, status),
-     staleTime: 0,
+    staleTime: 0,
     // placeholderData: keepPreviousData,
   }); 
 };
 
 export const useGetBookedSlotDetails = (slotId: string) => {
   return useQuery({
-    queryKey: ["bookedSlotDetails", slotId],
+    queryKey: ['bookedSlotDetails', slotId],
     queryFn: () => getBookedSlotDetails(slotId),
     staleTime: 0,
     enabled: !!slotId,
@@ -152,7 +152,7 @@ export const useGetBookedSlotDetails = (slotId: string) => {
     // ✅ Poll every 3s but ONLY when status is not yet terminal
     refetchInterval: (query) => {
       const status = query.state.data?.data?.result?.slotStatus;
-      const terminalStatuses = ["completed", "cancelled", "missed"];
+      const terminalStatuses = ['completed', 'cancelled', 'missed'];
       // Stop polling once we have a terminal status
       if (status && terminalStatuses.includes(status)) return false;
       return 3000; // poll every 3s until terminal
@@ -225,8 +225,8 @@ export const useClearAllNotifications = () => {
 
 
 export const useGetWallet = () => {
-    return useQuery({
-        queryKey: ['wallet'],
-        queryFn: getWallet,
-    });
+  return useQuery({
+    queryKey: ['wallet'],
+    queryFn: getWallet,
+  });
 };

@@ -12,12 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllTrainerUseCase = void 0;
 const verificationMappers_1 = require("../../../mappers/verificationMappers");
 class GetAllTrainerUseCase {
-    constructor(_verificationRepository, _storageService) {
+    constructor(_verificationRepository, _storageService, _userRepository) {
         this._verificationRepository = _verificationRepository;
         this._storageService = _storageService;
+        this._userRepository = _userRepository;
     }
     getAllTrainer(page, limit, search) {
         return __awaiter(this, void 0, void 0, function* () {
+            // const user = await this._userRepository.findById(userId!);
             const skip = (page - 1) * limit;
             const [verifications, totalVerifications] = yield Promise.all([
                 this._verificationRepository.allVerifiedTrainer(skip, limit, search),
@@ -30,11 +32,14 @@ class GetAllTrainerUseCase {
                 }
                 return verificationMappers_1.VerificationMapper.toDTO(verification.verification, verification.trainer, verification.user, profileImageUrl);
             })));
+            //     let hasActiveSubscription: boolean = false;
+            //  hasActiveSubscription = user ? user.activeMembershipId ? true : false : false;
             return {
                 verifications: verificationDTOs,
                 totalVerifications,
                 totalPages: Math.ceil(totalVerifications / limit),
                 currentPage: page,
+                // hasActiveSubscription
             };
         });
     }

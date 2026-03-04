@@ -4,6 +4,5 @@ export interface IGetAllTrainerUseCase {
     page: number,
     limit: number,
     search?: string,
-    userId?: string,
-  ): Promise<{ verifications: VerificationDTO[]; totalVerifications: number; totalPages: number; currentPage: number, hasActiveSubscription: boolean }>;
+  ): Promise<{ verifications: VerificationDTO[]; totalVerifications: number; totalPages: number; currentPage: number }>;
 }

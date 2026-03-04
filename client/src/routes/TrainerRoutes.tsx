@@ -16,33 +16,35 @@ import TrainerSessionHistoryDetails from '../pages/Trainer/slot/TrainerSessionHi
 import TrainerWalletPage from '../pages/Trainer/wallet/TrainerWalletPage';
 import { TrainerSidebarProvider } from '../components/trainer/TrainerSidebarContext';
 import TrainerDashboard from '../pages/Trainer/dashboard/TrainerDashboard';
+import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
 
 
 const TrainerRoutes = () => {
   return (
-     <TrainerSidebarProvider>
-    <Routes>
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_DASHBOARD} element={<PrivateRoute > <TrainerDashboard/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_VERIFICATION} element={<PrivateRoute > <TrainerVerification/> </PrivateRoute>  } />
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_PROFILE} element={<PrivateRoute > <TrainerProfile/> </PrivateRoute>  } />
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_PROFILE_EDIT} element={<PrivateRoute > <TrainerProfileEdit/> </PrivateRoute>  } />
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_CHANGE_PASSWORD} element={<PrivateRoute > <ChangeTrainerPasswordPage/> </PrivateRoute>  } />
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_GET_VERIFICATION} element={<PrivateRoute > <TrainerGetVerification/> </PrivateRoute>  } />
+    <TrainerSidebarProvider>
+      <Routes>
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_DASHBOARD} element={<PrivateRoute > <TrainerDashboard/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_VERIFICATION} element={<PrivateRoute > <TrainerVerification/> </PrivateRoute>  } />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_PROFILE} element={<PrivateRoute > <TrainerProfile/> </PrivateRoute>  } />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_PROFILE_EDIT} element={<PrivateRoute > <TrainerProfileEdit/> </PrivateRoute>  } />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_CHANGE_PASSWORD} element={<PrivateRoute > <ChangeTrainerPasswordPage/> </PrivateRoute>  } />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_GET_VERIFICATION} element={<PrivateRoute > <TrainerGetVerification/> </PrivateRoute>  } />
 
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_SLOT} element={<PrivateRoute > <TrainerSlotPage/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_UPCOMING_SLOTS} element={<PrivateRoute > <UpcomingSlotsPage/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_UPCOMING_SLOT_DETAILS} element={<PrivateRoute > <UpcomingSlotDetails/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_SESSION_HISTORY} element={<PrivateRoute > <TrainerSessionHistoryPage/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_SESSION_HISTORY_DETAILS} element={<PrivateRoute > <TrainerSessionHistoryDetails/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_SLOT} element={<PrivateRoute > <TrainerSlotPage/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_UPCOMING_SLOTS} element={<PrivateRoute > <UpcomingSlotsPage/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_UPCOMING_SLOT_DETAILS} element={<PrivateRoute > <UpcomingSlotDetails/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_SESSION_HISTORY} element={<PrivateRoute > <TrainerSessionHistoryPage/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_SESSION_HISTORY_DETAILS} element={<PrivateRoute > <TrainerSessionHistoryDetails/> </PrivateRoute>} />
 
 
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_CHAT} element={<PrivateRoute > <TrainerChatPage/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_CHAT} element={<PrivateRoute > <TrainerChatPage/> </PrivateRoute>} />
 
-      <Route path={FRONTEND_ROUTES.TRAINER.VIDEO_SESSION} element={<PrivateRoute > <VideoSessionPage/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.TRAINER.VIDEO_SESSION} element={<PrivateRoute > <VideoSessionPage/> </PrivateRoute>} />
 
-      <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_WALLET} element={<PrivateRoute > <TrainerWalletPage/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.TRAINER.TRAINER_WALLET} element={<PrivateRoute > <TrainerWalletPage/> </PrivateRoute>} />
+        <Route path="*" element={<NotFoundPage />} />
 
-    </Routes>
+      </Routes>
     </TrainerSidebarProvider>
   );
 };   

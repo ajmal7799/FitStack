@@ -24,7 +24,7 @@ import {
   useUpdateTrainerProfile,
 } from '../../../hooks/Trainer/TrainerHooks';
 
-const BRAND_COLOR = "#eb9334";
+const BRAND_COLOR = '#eb9334';
 
 const TrainerProfileEdit: React.FC = () => {
   const navigate = useNavigate();
@@ -74,11 +74,11 @@ const TrainerProfileEdit: React.FC = () => {
 
   const validateField = (name: string, value: string | number): string => {
     switch (name) {
-      case 'name': return String(value).length < 3 ? 'Name must be at least 3 characters' : '';
-      case 'email': return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value)) ? 'Invalid email address' : '';
-      case 'phone': return !/^\d{10}$/.test(String(value)) ? 'Phone number must be 10 digits' : '';
-      case 'about': return String(value).length < 20 ? 'About me must be at least 20 characters' : '';
-      default: return '';
+    case 'name': return String(value).length < 3 ? 'Name must be at least 3 characters' : '';
+    case 'email': return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value)) ? 'Invalid email address' : '';
+    case 'phone': return !/^\d{10}$/.test(String(value)) ? 'Phone number must be 10 digits' : '';
+    case 'about': return String(value).length < 20 ? 'About me must be at least 20 characters' : '';
+    default: return '';
     }
   };
 

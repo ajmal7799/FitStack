@@ -17,4 +17,6 @@ var MembershipStatus;
     MembershipStatus["Incomplete"] = "incomplete";
     // Initial payment never completed, Stripe expired it
     MembershipStatus["IncompleteExpired"] = "incomplete_expired";
+    // Subscription term has ended
+    MembershipStatus["Expired"] = "expired";
 })(MembershipStatus || (exports.MembershipStatus = MembershipStatus = {}));

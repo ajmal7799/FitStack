@@ -29,24 +29,24 @@ const createSlotUseCase = new CreateSlotUseCase(userRepository, slotRepository);
 const getAllSlots = new GetAllSlotsUseCase(userRepository, slotRepository);
 const deleteSlotUseCase = new DeleteSlotUseCase(slotRepository);
 const recurringSlotUseCase = new RecurringSlotUseCase(userRepository, slotRepository);
-const bookedSlotsUseCase = new BookedSlotsUseCase(videoCallRepository, userRepository);
+const bookedSlotsUseCase = new BookedSlotsUseCase(videoCallRepository, userRepository, storageService);
 const bookedSlotDetailsUseCase = new BookedSlotDetailsUseCase(videoCallRepository, userRepository, storageService);
 const sessionHistoryUseCase = new SessionHistoryUseCase(videoCallRepository, userRepository, feedbackRepository);
 const sessionHistoryDetailsUseCase = new SessionHistoryDetailsUseCase(
-  videoCallRepository,
-  userRepository,
-  storageService,
-  feedbackRepository
+    videoCallRepository,
+    userRepository,
+    storageService,
+    feedbackRepository,
 );
 
 // Controllers
 export const trainerSlotController = new TrainerSlotController(
-  createSlotUseCase,
-  getAllSlots,
-  deleteSlotUseCase,
-  recurringSlotUseCase,
-  bookedSlotsUseCase,
-  bookedSlotDetailsUseCase,
-  sessionHistoryUseCase,
-  sessionHistoryDetailsUseCase
+    createSlotUseCase,
+    getAllSlots,
+    deleteSlotUseCase,
+    recurringSlotUseCase,
+    bookedSlotsUseCase,
+    bookedSlotDetailsUseCase,
+    sessionHistoryUseCase,
+    sessionHistoryDetailsUseCase,
 );

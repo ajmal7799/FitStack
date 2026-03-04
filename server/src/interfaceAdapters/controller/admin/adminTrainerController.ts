@@ -6,12 +6,13 @@ import { ResponseHelper } from '../../../shared/utils/responseHelper';
 import { InvalidDataException, NotFoundException } from '../../../application/constants/exceptions';
 import { NextFunction, Request, Response } from 'express';
 import { IUpdateTrainerStatusUseCase } from '../../../application/useCase/admin/trainer/IUpdateTrainerUseCase';
-
+import { ITrainerDetailsUseCase } from '../../../application/useCase/admin/trainer/ITrainerDetailsUseCase';
 
 export class AdminTrainerController {
     constructor(
     private _getAllTrainerUseCase: IGetAllTrainerUseCase,
     private _updateTrainerStatusUseCase: IUpdateTrainerStatusUseCase,
+    private _getTrainerDetailsUseCase: ITrainerDetailsUseCase,
     ) {}
 
     // --------------------------------------------------
@@ -60,4 +61,28 @@ export class AdminTrainerController {
             next(error);
         }
     }
+
+    // --------------------------------------------------
+    //               GET TRAINER DETAILS
+    // --------------------------------------------------
+
+    async getTrainerDetailsPage(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { trainerId } = req.params;
+
+            if (!trainerId) {
+                throw new InvalidDataException(Errors.INVALID_DATA);
+            }
+
+            const result = await this._getTrainerDetailsUseCase.getTrainerDetails(trainerId);
+
+            ResponseHelper.success(res, MESSAGES.Trainer.TRAINER_DETAILS_SUCCESS, { result }, HTTPStatus.OK);
+
+        } catch (error) {
+            next(error);
+            
+        }
+    }
+
+
 }

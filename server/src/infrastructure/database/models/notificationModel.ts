@@ -1,7 +1,7 @@
-import { Document, model, Types } from "mongoose";
-import notificationSchema from "../schema/NotificationSchema";
-import { UserRole } from "../../../domain/enum/userEnums";
-import { NotificationType } from "../../../domain/enum/NotificationEnums";
+import { Document, model, Types } from 'mongoose';
+import notificationSchema from '../schema/NotificationSchema';
+import { UserRole } from '../../../domain/enum/userEnums';
+import { NotificationType } from '../../../domain/enum/NotificationEnums';
 
 
 export interface INotificationModel extends Document {

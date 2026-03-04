@@ -32,7 +32,7 @@ export class WalletRepository implements IWalletRepository {
                 $inc: { balance: amount },
                 $push: { transactions: { ...transaction, createdAt: new Date() } },
             },
-            { new: true, upsert: true }
+            { new: true, upsert: true },
         );
         return WalletMapper.fromMongooseDocument(doc!);
     }
@@ -44,7 +44,7 @@ export class WalletRepository implements IWalletRepository {
                 $inc: { balance: -amount },
                 $push: { transactions: { ...transaction, createdAt: new Date() } },
             },
-            { new: true, upsert: true }
+            { new: true, upsert: true },
         );
         return WalletMapper.fromMongooseDocument(doc!);
     }

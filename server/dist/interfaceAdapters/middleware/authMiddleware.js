@@ -22,54 +22,78 @@ class AuthMiddleware {
         //              🛠 VERIFY TOKEN
         // --------------------------------------------------
         this.verify = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const header = req.header('Authorization');
-            if (!(header === null || header === void 0 ? void 0 : header.startsWith('Bearer '))) {
-                res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({ success: false, message: error_1.Errors.INVALID_TOKEN });
-                return;
+            try {
+                const header = req.header('Authorization');
+                if (!(header === null || header === void 0 ? void 0 : header.startsWith('Bearer '))) {
+                    res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
+                        success: false,
+                        message: error_1.Errors.INVALID_TOKEN
+                    });
+                    return;
+                }
+                const token = header.split(' ')[1];
+                let decoded;
+                try {
+                    decoded = this._jwtService.verifyAccessToken(token);
+                }
+                catch (error) {
+                    // ✅ Return 401 with specific code so frontend knows to refresh
+                    res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
+                        success: false,
+                        message: 'TOKEN_EXPIRED', // ← frontend checks this
+                    });
+                    return;
+                }
+                if (!decoded) {
+                    res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
+                        success: false,
+                        message: error_1.Errors.INVALID_TOKEN
+                    });
+                    return;
+                }
+                const user = yield this._userRepository.findById(decoded.userId);
+                if (!user) {
+                    throw new exceptions_1.NotFoundException(error_1.USER_ERRORS.USER_NOT_FOUND);
+                }
+                if (user.isActive === userEnums_1.UserStatus.BLOCKED) {
+                    throw new exceptions_1.IsBlockedExecption(error_1.USER_ERRORS.USER_BLOCKED);
+                }
+                req.user = {
+                    userId: user._id,
+                    role: user.role,
+                };
+                next();
             }
-            const token = header.split(' ')[1];
-            const decoded = this._jwtService.verifyAccessToken(token);
-            if (!decoded) {
-                res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({ success: false, message: error_1.Errors.INVALID_TOKEN });
-                return;
+            catch (error) {
+                next(error);
             }
-            const user = yield this._userRepository.findById(decoded.userId);
-            if (!user) {
-                throw new exceptions_1.NotFoundException(error_1.USER_ERRORS.USER_NOT_FOUND);
-            }
-            if (user.isActive === userEnums_1.UserStatus.BLOCKED) {
-                throw new exceptions_1.IsBlockedExecption(error_1.USER_ERRORS.USER_BLOCKED);
-            }
-            req.user = {
-                userId: decoded.userId,
-                role: decoded.role,
+        });
+        // --------------------------------------------------
+        //              🛠 ROLE CHECKING (reusable)
+        // --------------------------------------------------
+        this.hasRole = (...roles) => {
+            return (req, res, next) => {
+                if (!req.user) {
+                    return res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
+                        success: false,
+                        message: error_1.Errors.INVALID_TOKEN,
+                    });
+                }
+                if (!roles.includes(req.user.role)) {
+                    return res.status(403 /* HTTPStatus.FORBIDDEN */).json({
+                        success: false,
+                        message: error_1.Errors.FORBIDDEN,
+                    });
+                }
+                next();
             };
-            next();
-        });
-        // --------------------------------------------------
-        //              🛠 ADMIN CHECKING
-        // --------------------------------------------------
-        this.isAdmin = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            if (!req.user) {
-                return res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
-                    success: false,
-                    message: error_1.Errors.INVALID_TOKEN,
-                });
-            }
-            if (req.user.role !== userEnums_1.UserRole.ADMIN) {
-                return res.status(403 /* HTTPStatus.FORBIDDEN */).json({
-                    success: false,
-                    message: error_1.Errors.FORBIDDEN,
-                });
-            }
-            next();
-        });
-        this.checkStatus = () => {
-            return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-                const { id } = res.locals.users;
-                let userStatus;
-            });
         };
+        // --------------------------------------------------
+        //              🛠 CONVENIENCE ROLE MIDDLEWARES
+        // --------------------------------------------------
+        this.isAdmin = this.hasRole(userEnums_1.UserRole.ADMIN);
+        this.isTrainer = this.hasRole(userEnums_1.UserRole.TRAINER);
+        this.isUser = this.hasRole(userEnums_1.UserRole.USER);
     }
 }
 exports.AuthMiddleware = AuthMiddleware;

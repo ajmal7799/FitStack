@@ -1,16 +1,16 @@
 // src/components/chat/ChatTrainerSideBar.tsx
-import { MessageSquare, MessageCircle } from "lucide-react";
+import { MessageSquare, MessageCircle } from 'lucide-react';
 
 interface Chat {
   chatId: string;
   userName: string;
   userProfilePic: string;
   userId: string;
-  unreadCount: number; // ✅ Add unread count
+  unreadCount: number;
   lastMessage?: {
     text: string;
     timestamp: string;
-    senderId?: string; // ✅ Add senderId
+    senderId?: string;
   };
 }
 
@@ -31,8 +31,8 @@ export default function ChatTrainerSidebar({
 
   return (
     <div className="w-full md:w-80 bg-white border-r border-gray-200 flex flex-col h-full">
-      {/* Header */}
-      <div className="p-4 md:p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600">
+      {/* Header — ✅ changed to #faac05 */}
+      <div className="p-4 md:p-4 border-b border-gray-200 bg-[#faac05]">
         <h2 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
           <MessageCircle className="w-5 h-5 md:w-6 md:h-6" />
           Messages
@@ -60,7 +60,7 @@ export default function ChatTrainerSidebar({
                 className={`
                   p-4 md:p-4 border-b border-gray-100 cursor-pointer transition-all duration-200
                   hover:bg-gray-50 active:bg-gray-100
-                  ${isActive ? "bg-blue-50 border-l-4 border-l-blue-600" : ""}
+                  ${isActive ? 'bg-[#faac05]/10 border-l-4 border-l-[#faac05]' : ''}
                 `}
               >
                 <div className="flex items-start gap-3 md:gap-4">
@@ -71,17 +71,17 @@ export default function ChatTrainerSidebar({
                       alt={chat.userName}
                       className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-gray-200 flex-shrink-0"
                       onError={(e) => {
-                        e.currentTarget.style.display = "none";
+                        e.currentTarget.style.display = 'none';
                         const nextEl = e.currentTarget.nextElementSibling;
                         if (nextEl instanceof HTMLElement) {
-                          nextEl.classList.remove("hidden");
+                          nextEl.classList.remove('hidden');
                         }
                       }}
                     />
                   ) : null}
 
                   <div
-                    className={`w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-lg md:text-xl flex-shrink-0 ${chat.userProfilePic ? "hidden" : ""}`}
+                    className={`w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#faac05] flex items-center justify-center text-white font-semibold text-lg md:text-xl flex-shrink-0 ${chat.userProfilePic ? 'hidden' : ''}`}
                   >
                     {chat.userName.charAt(0).toUpperCase()}
                   </div>
@@ -89,13 +89,7 @@ export default function ChatTrainerSidebar({
                   {/* Chat Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3
-                        className={`font-semibold text-base md:text-base truncate ${
-                          chat.unreadCount > 0
-                            ? "text-gray-900"
-                            : "text-gray-900"
-                        }`}
-                      >
+                      <h3 className="font-semibold text-base md:text-base truncate text-gray-900">
                         {chat.userName}
                       </h3>
 
@@ -104,15 +98,15 @@ export default function ChatTrainerSidebar({
                           <span
                             className={`text-xs ${
                               chat.unreadCount > 0
-                                ? "text-[#25D366] font-medium"
-                                : "text-gray-400"
+                                ? 'text-[#faac05] font-medium'
+                                : 'text-gray-400'
                             }`}
                           >
                             {new Date(
                               chat.lastMessage.timestamp,
                             ).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
+                              hour: '2-digit',
+                              minute: '2-digit',
                             })}
                           </span>
                         )}
@@ -124,19 +118,19 @@ export default function ChatTrainerSidebar({
                         <p
                           className={`text-sm md:text-sm truncate flex-1 ${
                             chat.unreadCount > 0
-                              ? "text-gray-900 font-medium"
-                              : "text-gray-500"
+                              ? 'text-gray-900 font-medium'
+                              : 'text-gray-500'
                           }`}
                         >
-                          {chat.lastMessage.text === "📷 Image"
-                            ? "📷 Photo"
-                            : chat.lastMessage.text === "🎥 Video"
-                              ? "🎥 Video"
-                              : chat.lastMessage.text === "📄 File"
-                                ? "📄 File"
-                                : chat.lastMessage.text === "🎵 Audio"
-                                  ? "🎵 Audio"
-                                : chat.lastMessage.text}
+                          {chat.lastMessage.text === '📷 Image'
+                            ? '📷 Photo'
+                            : chat.lastMessage.text === '🎥 Video'
+                              ? '🎥 Video'
+                              : chat.lastMessage.text === '📄 File'
+                                ? '📄 File'
+                                : chat.lastMessage.text === '🎵 Audio'
+                                  ? '🎵 Audio'
+                                  : chat.lastMessage.text}
                         </p>
                       ) : (
                         <p className="text-sm md:text-sm text-gray-400 italic truncate flex-1">
@@ -144,10 +138,10 @@ export default function ChatTrainerSidebar({
                         </p>
                       )}
 
-                      {/* WhatsApp-style unread count badge */}
+                      {/* ✅ Unread badge changed to #faac05 */}
                       {chat.unreadCount > 0 && (
-                        <span className="flex-shrink-0 bg-[#25D366] text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shadow-sm">
-                          {chat.unreadCount > 99 ? "99+" : chat.unreadCount}
+                        <span className="flex-shrink-0 bg-[#faac05] text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shadow-sm">
+                          {chat.unreadCount > 99 ? '99+' : chat.unreadCount}
                         </span>
                       )}
                     </div>

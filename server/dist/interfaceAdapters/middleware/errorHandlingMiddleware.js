@@ -12,10 +12,10 @@ const errorHandlingMiddleware = (err, req, res, next) => {
             if (err instanceof exceptions_1.NotFoundException) {
                 statusCode = 404 /* HTTPStatus.NOT_FOUND */;
             }
-            else if (err instanceof exceptions_1.AlreadyExisitingExecption) {
+            else if (err instanceof exceptions_1.AlreadyExisitingExecption || err instanceof exceptions_1.ConflictException) {
                 statusCode = 409 /* HTTPStatus.CONFLICT */;
             }
-            else if (err instanceof exceptions_1.IsBlockedExecption) {
+            else if (err instanceof exceptions_1.IsBlockedExecption || err instanceof exceptions_1.ForbiddenException) {
                 statusCode = 403 /* HTTPStatus.FORBIDDEN */;
             }
             else if (err instanceof exceptions_1.InvalidOTPExecption ||
@@ -26,7 +26,7 @@ const errorHandlingMiddleware = (err, req, res, next) => {
                 err instanceof exceptions_1.InvalidDataException) {
                 statusCode = 400 /* HTTPStatus.BAD_REQUEST */;
             }
-            else if (err instanceof exceptions_1.TokenExpiredException) {
+            else if (err instanceof exceptions_1.TokenExpiredException || err instanceof exceptions_1.UnauthorizedException) {
                 statusCode = 401 /* HTTPStatus.UNAUTHORIZED */;
             }
         }

@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { type Rootstate } from '../../redux/store';
 import {
   User, FileText, MessageCircle, Calendar,
   Menu, X, ArrowLeft, Crown, Users, Lock, Wallet
-} from "lucide-react";
+} from 'lucide-react';
 
 const UserSidebar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -14,16 +14,16 @@ const UserSidebar = () => {
   const userData = useSelector((state: Rootstate) => state.authData);
 
   const menuItems = [
-    { id: "profile", label: "Personal Info", icon: User, path: "/profile" },
-    { id: "personal-info", label: "Body Metrics", icon: FileText, path: "/profile/personal-info" },
-    { id: "subscription", label: "Subscription", icon: Crown, path: "/active-subscription" },
-    { id: "trainer", label: "Trainer", icon: Users, path: "/selected-trainer" },
-    { id: "slots", label: "Slots", icon: Calendar, path: "/slots-booking" },
-    { id: "chat", label: "Chat", icon: MessageCircle, path: "/chat" },
-    { id: "session", label: "Session", icon: Calendar, path: "/sessions" },
-    { id: "session-history", label: "Session History", icon: Calendar, path: "/sessions-history" },
-    { id: "wallet", label: "My Wallet", icon: Wallet, path: "/wallet" }, // ← added
-    { id: "change-password", label: "Change Password", icon: Lock, path: "/change-password" },
+    { id: 'profile', label: 'Personal Info', icon: User, path: '/profile' },
+    { id: 'personal-info', label: 'Body Metrics', icon: FileText, path: '/profile/personal-info' },
+    { id: 'subscription', label: 'Subscription', icon: Crown, path: '/active-subscription' },
+    { id: 'trainer', label: 'Trainer', icon: Users, path: '/selected-trainer' },
+    { id: 'slots', label: 'Slots', icon: Calendar, path: '/slots-booking' },
+    { id: 'chat', label: 'Chat', icon: MessageCircle, path: '/chat' },
+    { id: 'session', label: 'Session', icon: Calendar, path: '/sessions' },
+    { id: 'session-history', label: 'Session History', icon: Calendar, path: '/sessions-history' },
+    { id: 'wallet', label: 'My Wallet', icon: Wallet, path: '/wallet' }, // ← added
+    { id: 'change-password', label: 'Change Password', icon: Lock, path: '/change-password' },
   ];
 
   const activePath = location.pathname;
@@ -35,7 +35,7 @@ const UserSidebar = () => {
 
   const handleBackToHome = () => {
     setIsMobileMenuOpen(false);
-    navigate("/home");
+    navigate('/');
   };
 
   return (
@@ -51,7 +51,7 @@ const UserSidebar = () => {
         <div onClick={() => setIsMobileMenuOpen(false)} className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30" />
       )}
 
-      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-72 lg:w-64 bg-gradient-to-b from-blue-900 to-blue-950 transform transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} lg:h-screen overflow-y-auto`}>
+      <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-72 lg:w-64 bg-gradient-to-b from-blue-900 to-blue-950 transform transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} lg:h-screen overflow-y-auto`}>
         <div className="sticky top-0 z-10 flex items-center h-16 bg-blue-800 border-b border-blue-700 px-4">
           <button onClick={handleBackToHome} className="flex items-center gap-2 text-white hover:text-blue-200 transition-colors py-2">
             <ArrowLeft size={20} />
@@ -69,7 +69,7 @@ const UserSidebar = () => {
                   <button
                     onClick={() => handleNavigation(item)}
                     className={`w-full flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-lg transition-all duration-200 ${
-                      isActive ? "bg-blue-700 text-white shadow-lg" : "text-blue-200 hover:bg-blue-800 hover:text-white"
+                      isActive ? 'bg-blue-700 text-white shadow-lg' : 'text-blue-200 hover:bg-blue-800 hover:text-white'
                     }`}
                   >
                     <Icon size={20} className="flex-shrink-0" />

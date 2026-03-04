@@ -7,6 +7,10 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
     {
+        ignores: ['dist', 'node_modules'],
+
+    },
+    {
         files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
         ignores: ["eslint.config.mts"], 
         languageOptions: {
@@ -40,7 +44,7 @@ export default defineConfig([
 
             // --- Best Practices ---
             'no-unused-vars': 'off', // turn off base rule for TS
-            '@typescript-eslint/no-unused-vars': 'off', //['warn', { argsIgnorePattern: '^_' }],
+            '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
             // 'unused-imports/no-unused-imports': 'error',
             // 'unused-imports/no-unused-vars': 'off', 
             // [

@@ -11,27 +11,27 @@ const feedbackSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
     },
     trainerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Trainer',
-        required: true
+        required: true,
     },
     rating: {
         type: Number,
         required: true,
         min: 1,
-        max: 5
+        max: 5,
     },
     review: {
         type: String,
-        trim: true
+        trim: true,
     },
     createdAt: {
         type: Date,
-        default: Date.now
-    }
+        default: Date.now,
+    },
 });
 
 // Alternative way to define the index explicitly

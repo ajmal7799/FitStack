@@ -15,9 +15,10 @@ const messages_1 = require("../../../shared/constants/messages");
 const responseHelper_1 = require("../../../shared/utils/responseHelper");
 const exceptions_1 = require("../../../application/constants/exceptions");
 class AdminTrainerController {
-    constructor(_getAllTrainerUseCase, _updateTrainerStatusUseCase) {
+    constructor(_getAllTrainerUseCase, _updateTrainerStatusUseCase, _getTrainerDetailsUseCase) {
         this._getAllTrainerUseCase = _getAllTrainerUseCase;
         this._updateTrainerStatusUseCase = _updateTrainerStatusUseCase;
+        this._getTrainerDetailsUseCase = _getTrainerDetailsUseCase;
     }
     // --------------------------------------------------
     //               LISTING ALL TRAINER
@@ -56,6 +57,24 @@ class AdminTrainerController {
                 }
                 const result = yield this._updateTrainerStatusUseCase.updateTrainerStatus(userId, currentStatus);
                 responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.USERS.STATUS_UPDATED_SUCCESSFULLY, { data: result.user }, 200 /* HTTPStatus.OK */);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    // --------------------------------------------------
+    //               GET TRAINER DETAILS
+    // --------------------------------------------------
+    getTrainerDetailsPage(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { trainerId } = req.params;
+                if (!trainerId) {
+                    throw new exceptions_1.InvalidDataException(error_1.Errors.INVALID_DATA);
+                }
+                const result = yield this._getTrainerDetailsUseCase.getTrainerDetails(trainerId);
+                responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.Trainer.TRAINER_DETAILS_SUCCESS, { result }, 200 /* HTTPStatus.OK */);
             }
             catch (error) {
                 next(error);

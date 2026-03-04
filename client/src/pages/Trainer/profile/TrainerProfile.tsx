@@ -30,7 +30,7 @@ interface TrainerData {
   profileImage?: string | null;
 }
 
-const BRAND_COLOR = "#eb9334";
+const BRAND_COLOR = '#eb9334';
 
 const TrainerProfile: React.FC = () => {
   const { data, isLoading, isError } = useGetTrainerProfile();
@@ -50,7 +50,7 @@ const TrainerProfile: React.FC = () => {
 
   const cardVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } }
+    visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } }
   };
 
   if (isLoading) {
@@ -60,7 +60,7 @@ const TrainerProfile: React.FC = () => {
         <div className="flex-1 flex items-center justify-center">
           <motion.div 
             animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+            transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
             className="w-10 h-10 border-4 rounded-full"
             style={{ borderColor: `${BRAND_COLOR}33`, borderTopColor: BRAND_COLOR }}
           />
@@ -130,7 +130,7 @@ const TrainerProfile: React.FC = () => {
                 <p className="text-slate-500 mt-2 font-medium">Overview of your professional trainer account</p>
               </div>
               <motion.button
-                whileHover={{ scale: 1.03, boxShadow: "0 10px 15px -3px rgba(235, 147, 52, 0.3)" }}
+                whileHover={{ scale: 1.03, boxShadow: '0 10px 15px -3px rgba(235, 147, 52, 0.3)' }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate('/trainer' + FRONTEND_ROUTES.TRAINER.TRAINER_PROFILE_EDIT)}
                 className="flex items-center justify-center gap-2 px-6 py-3 text-white rounded-2xl font-bold shadow-md transition-all"

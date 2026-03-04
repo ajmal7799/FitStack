@@ -1,19 +1,19 @@
-import { ISessionHistoryUseCase } from "../../../useCase/user/booking/ISessionHistoryUseCase";
-import { IVideoCallRepository } from "../../../../domain/interfaces/repositories/IVideoCallRepository";
-import { VideoCallStatus } from "../../../../domain/enum/videoCallEnums";
-import { SessionHistoryResult } from "../../../dto/slot/slotDTO";
-import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { ITrainerSelectRepository } from "../../../../domain/interfaces/repositories/ITrainerSelectRepository";
-import { USER_ERRORS } from "../../../../shared/constants/error";
-import { NotFoundException } from "../../../constants/exceptions";
-import { IFeedbackRepository } from "../../../../domain/interfaces/repositories/IFeedbackRepository";
+import { ISessionHistoryUseCase } from '../../../useCase/user/booking/ISessionHistoryUseCase';
+import { IVideoCallRepository } from '../../../../domain/interfaces/repositories/IVideoCallRepository';
+import { VideoCallStatus } from '../../../../domain/enum/videoCallEnums';
+import { SessionHistoryResult } from '../../../dto/slot/slotDTO';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { ITrainerSelectRepository } from '../../../../domain/interfaces/repositories/ITrainerSelectRepository';
+import { USER_ERRORS } from '../../../../shared/constants/error';
+import { NotFoundException } from '../../../constants/exceptions';
+import { IFeedbackRepository } from '../../../../domain/interfaces/repositories/IFeedbackRepository';
 
 export class SessionHistoryUseCase implements ISessionHistoryUseCase {
     constructor(
         private _videoCallRepository: IVideoCallRepository,
         private _userRepository: IUserRepository,
         private _trainerSelectRepository: ITrainerSelectRepository,
-        private _feedbackRepository: IFeedbackRepository
+        private _feedbackRepository: IFeedbackRepository,
     ) {}
 
     async getSessionHistory(
@@ -36,7 +36,7 @@ export class SessionHistoryUseCase implements ISessionHistoryUseCase {
 
         // ✅ All sessions from repo are completed — fetch feedback for all in parallel
         const feedbackResults = await Promise.all(
-            sessions.map(session => this._feedbackRepository.findBySessionId(session._id))
+            sessions.map(session => this._feedbackRepository.findBySessionId(session._id)),
         );
 
         // ✅ Build map: sessionId → rating for O(1) lookup
@@ -49,7 +49,7 @@ export class SessionHistoryUseCase implements ISessionHistoryUseCase {
 
         const sessionHistoryResults: SessionHistoryResult[] = sessions.map(session => ({
             _id:           session._id,
-            trainerName:   user?.name || "Unknown Trainer",
+            trainerName:   user?.name || 'Unknown Trainer',
             startTime:     session.startTime,
             endTime:       session.endTime,
             sessionStatus: session.status as VideoCallStatus,

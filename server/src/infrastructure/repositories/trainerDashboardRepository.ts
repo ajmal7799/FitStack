@@ -1,5 +1,5 @@
 // infrastructure/repositories/trainerDashboardRepository.ts
-import { Model } from 'mongoose';
+import { Model,Types } from 'mongoose';
 import { ITrainerDashboardRepository } from '../../domain/interfaces/repositories/ITrainerDashboardRepository';
 import { TrainerDashboardStats, TrainerDashboardChartData, TrainerFilterPeriod, TrainerChartDataPoint, TopRatedSession } from '../../domain/entities/trainer/trainerDashboardEntities';
 import { IVideoCallModel } from '../database/models/videoCallModel';
@@ -9,7 +9,6 @@ import { ITrainerSelectModel } from '../database/models/trainerSelectModel';
 import { IUserModel } from '../database/models/userModel';
 import { VideoCallStatus } from '../../domain/enum/videoCallEnums';
 import { WalletTransactionType } from '../../domain/enum/WalletTransactionType';
-import { Types } from 'mongoose';
 
 export class TrainerDashboardRepository implements ITrainerDashboardRepository {
     constructor(
@@ -111,73 +110,73 @@ export class TrainerDashboardRepository implements ITrainerDashboardRepository {
         const now = new Date();
         let startDate: Date;
         let groupFormat: string;
-        let labels: string[] = [];
-        let dateKeys: string[] = [];
+        const labels: string[] = [];
+        const dateKeys: string[] = [];
 
         switch (period) {
-            case 'daily':
-                startDate = new Date(now);
-                startDate.setDate(now.getDate() - 6);
-                startDate.setHours(0, 0, 0, 0);
-                groupFormat = '%Y-%m-%d';
-                for (let i = 6; i >= 0; i--) {
-                    const d = new Date(now);
-                    d.setDate(now.getDate() - i);
-                    labels.push(d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }));
-                    dateKeys.push(d.toISOString().split('T')[0]);
-                }
-                break;
+        case 'daily':
+            startDate = new Date(now);
+            startDate.setDate(now.getDate() - 6);
+            startDate.setHours(0, 0, 0, 0);
+            groupFormat = '%Y-%m-%d';
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(now);
+                d.setDate(now.getDate() - i);
+                labels.push(d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }));
+                dateKeys.push(d.toISOString().split('T')[0]);
+            }
+            break;
 
-            case 'weekly':
-                startDate = new Date(now);
-                startDate.setDate(now.getDate() - 55);
-                startDate.setHours(0, 0, 0, 0);
-                groupFormat = '%Y-%U';
-                for (let i = 7; i >= 0; i--) {
-                    const weekEnd = new Date(now);
-                    weekEnd.setDate(now.getDate() - (i * 7));
-                    const weekStart = new Date(weekEnd);
-                    weekStart.setDate(weekEnd.getDate() - 6);
-                    const cappedEnd = weekEnd > now ? now : weekEnd;
-                    const startLabel = weekStart.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-                    const endLabel = cappedEnd.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-                    labels.push(`${startLabel} - ${endLabel}`);
-                    const year = weekStart.getFullYear();
-                    const startOfYear = new Date(year, 0, 1);
-                    const weekNum = Math.floor(((weekStart.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getDay() + 1) / 7);
-                    dateKeys.push(`${year}-${String(weekNum).padStart(2, '0')}`);
-                }
-                break;
+        case 'weekly':
+            startDate = new Date(now);
+            startDate.setDate(now.getDate() - 55);
+            startDate.setHours(0, 0, 0, 0);
+            groupFormat = '%Y-%U';
+            for (let i = 7; i >= 0; i--) {
+                const weekEnd = new Date(now);
+                weekEnd.setDate(now.getDate() - (i * 7));
+                const weekStart = new Date(weekEnd);
+                weekStart.setDate(weekEnd.getDate() - 6);
+                const cappedEnd = weekEnd > now ? now : weekEnd;
+                const startLabel = weekStart.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+                const endLabel = cappedEnd.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+                labels.push(`${startLabel} - ${endLabel}`);
+                const year = weekStart.getFullYear();
+                const startOfYear = new Date(year, 0, 1);
+                const weekNum = Math.floor(((weekStart.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getDay() + 1) / 7);
+                dateKeys.push(`${year}-${String(weekNum).padStart(2, '0')}`);
+            }
+            break;
 
-            case 'monthly':
-                startDate = new Date(now);
-                startDate.setMonth(now.getMonth() - 11);
-                startDate.setDate(1);
-                startDate.setHours(0, 0, 0, 0);
-                groupFormat = '%Y-%m';
-                for (let i = 11; i >= 0; i--) {
-                    const d = new Date(now);
-                    d.setMonth(now.getMonth() - i);
-                    labels.push(d.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' }));
-                    const year = d.getFullYear();
-                    const month = String(d.getMonth() + 1).padStart(2, '0');
-                    dateKeys.push(`${year}-${month}`);
-                }
-                break;
+        case 'monthly':
+            startDate = new Date(now);
+            startDate.setMonth(now.getMonth() - 11);
+            startDate.setDate(1);
+            startDate.setHours(0, 0, 0, 0);
+            groupFormat = '%Y-%m';
+            for (let i = 11; i >= 0; i--) {
+                const d = new Date(now);
+                d.setMonth(now.getMonth() - i);
+                labels.push(d.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' }));
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                dateKeys.push(`${year}-${month}`);
+            }
+            break;
 
-            case 'yearly':
-            default:
-                startDate = new Date(now);
-                startDate.setFullYear(now.getFullYear() - 2);
-                startDate.setMonth(0, 1);
-                startDate.setHours(0, 0, 0, 0);
-                groupFormat = '%Y';
-                for (let i = 2; i >= 0; i--) {
-                    const year = String(now.getFullYear() - i);
-                    labels.push(year);
-                    dateKeys.push(year);
-                }
-                break;
+        case 'yearly':
+        default:
+            startDate = new Date(now);
+            startDate.setFullYear(now.getFullYear() - 2);
+            startDate.setMonth(0, 1);
+            startDate.setHours(0, 0, 0, 0);
+            groupFormat = '%Y';
+            for (let i = 2; i >= 0; i--) {
+                const year = String(now.getFullYear() - i);
+                labels.push(year);
+                dateKeys.push(year);
+            }
+            break;
         }
 
         return { startDate, groupFormat, labels, dateKeys };
@@ -270,7 +269,7 @@ export class TrainerDashboardRepository implements ITrainerDashboardRepository {
             rating: item.rating,
             review: item.review || '',
             date: new Date(item.createdAt).toLocaleDateString('en-IN', {
-                day: '2-digit', month: 'short', year: 'numeric'
+                day: '2-digit', month: 'short', year: 'numeric',
             }),
         }));
     }

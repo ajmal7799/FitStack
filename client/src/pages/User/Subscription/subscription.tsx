@@ -16,6 +16,7 @@ import {
   FiActivity
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { useRequireAuth } from '../../../hooks/Auth/useRequireAuth';
 
 interface SubscriptionPlan {
   _id: string;
@@ -30,6 +31,8 @@ const SubscriptionPlans: React.FC = () => {
   const [page, setPage] = useState(1);
   const limit = 3;
   const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
+  const { requireAuth } = useRequireAuth();
+
 
   const { data, isLoading, isError, refetch } = useGetSubscriptionPlans(page, limit);
   const { mutate: createCheckoutSession } = useCheckoutSession();
@@ -46,39 +49,39 @@ const SubscriptionPlans: React.FC = () => {
   }, [data]);
 
   // Handle plan selection and checkout
-const handleSelectPlan = (plan: SubscriptionPlan) => {
-    if (processingPlanId === plan._id) return;
-    setProcessingPlanId(plan._id);
+  const handleSelectPlan = (plan: SubscriptionPlan) => {
+    requireAuth(() => {
+      // Everything below only runs if user is logged in
+      if (processingPlanId === plan._id) return;
+      setProcessingPlanId(plan._id);
 
-    createCheckoutSession(plan._id, {
+      createCheckoutSession(plan._id, {
         onSuccess: (response: any) => {
-            const result = response?.data?.data;
+          const result = response?.data?.data;
 
-            // ✅ Fully paid with wallet — no Stripe redirect needed
-            if (result?.paidWithWallet) {
-                toast.success(`✅ Subscription activated using wallet balance!`);
-                setProcessingPlanId(null);
-                // redirect to success page or refresh
-                setTimeout(() => window.location.href = '/active-subscription', 1500);
-                return;
-            }
+          if (result?.paidWithWallet) {
+            toast.success('✅ Subscription activated using wallet balance!');
+            setProcessingPlanId(null);
+            setTimeout(() => window.location.href = '/active-subscription', 1500);
+            return;
+          }
 
-            // Stripe payment needed
-            const sessionUrl = result?.sessionUrl;
-            if (sessionUrl) {
-                window.location.href = sessionUrl;
-            } else {
-                toast.error('Failed to initialize payment. Please try again.');
-                setProcessingPlanId(null);
-            }
+          const sessionUrl = result?.sessionUrl;
+          if (sessionUrl) {
+            window.location.href = sessionUrl;
+          } else {
+            toast.error('Failed to initialize payment. Please try again.');
+            setProcessingPlanId(null);
+          }
         },
         onError: (error: any) => {
-            const errorMessage = error?.response?.data?.message || 'Failed to create checkout session.';
-            toast.error(errorMessage);
-            setProcessingPlanId(null);
+          const errorMessage = error?.response?.data?.message || 'Failed to create checkout session.';
+          toast.error(errorMessage);
+          setProcessingPlanId(null);
         }
+      });
     });
-};
+  };
 
   // Common features for all plans
   const getPlanFeatures = () => {

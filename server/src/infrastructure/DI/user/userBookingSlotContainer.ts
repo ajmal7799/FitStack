@@ -1,9 +1,7 @@
 import { UserBookingSlotController } from '../../../interfaceAdapters/controller/user/userBookingSlotController';
 import { UserRepository } from '../../repositories/userRepository';
-import { TrainerRepository } from '../../repositories/trainerRepository';
 import { TrainerSelectRepository } from '../../repositories/trainerSelectRepository';
 import { userModel } from '../../database/models/userModel';
-import { trainerModel } from '../../database/models/trainerModel';
 import { trainerSelectModel } from '../../database/models/trainerSelectModel';
 import { GetAllAvailableSlotUseCase } from '../../../application/implementation/user/slot/GetAllAvailableSlotUseCase';
 import { SlotRepository } from '../../repositories/slotRepository';
@@ -31,7 +29,6 @@ import { subscriptionModel } from '../../database/models/subscriptionModel';
 
 // Repository & Service
 const userRepository = new UserRepository(userModel);
-const trainerRepository = new TrainerRepository(trainerModel);
 const trainerSelectRepository = new TrainerSelectRepository(trainerSelectModel);
 const slotRepository = new SlotRepository(slotModel);
 const storageSvc = new StorageService();

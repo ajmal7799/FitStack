@@ -1,7 +1,7 @@
-import { Message } from "../../domain/entities/chat/messageEnitity";
-import { IMessageModel } from "../../infrastructure/database/models/messageModel";
+import { Message } from '../../domain/entities/chat/messageEnitity';
+import { IMessageModel } from '../../infrastructure/database/models/messageModel';
 import mongoose, { Mongoose } from 'mongoose';
-import { MessageTypeEnums } from "../../domain/enum/MessageTypeEnums";
+import { MessageTypeEnums } from '../../domain/enum/MessageTypeEnums';
 
 
 
@@ -13,19 +13,19 @@ export class MessageMapper {
             senderId: new mongoose.Types.ObjectId(message.senderId),
             type: message.type,
             text: message.text,
-              attachment: message.attachment
-            ? {
-                  key: message.attachment.key,
-                  fileName: message.attachment.fileName,
-                  fileType: message.attachment.fileType,
-                  fileSize: message.attachment.fileSize,
-              }
-            : undefined,
+            attachment: message.attachment
+                ? {
+                    key: message.attachment.key,
+                    fileName: message.attachment.fileName,
+                    fileType: message.attachment.fileType,
+                    fileSize: message.attachment.fileSize,
+                }
+                : undefined,
             isDeleted: message.isDeleted,
             deletedAt: message.deletedAt ? new Date(message.deletedAt) : undefined,
-            createdAt: message.createdAt
+            createdAt: message.createdAt,
             
-        }
+        };
     }
 
     static fromMongooseDocument(message : IMessageModel) : Message {
@@ -34,20 +34,20 @@ export class MessageMapper {
             chatId: message.chatId.toString(),
             senderId: message.senderId.toString(),
             type: message.type,
-             attachment: message.attachment
-            ? {
-                  key: message.attachment.key,
-                  fileName: message.attachment.fileName,
-                  fileType: message.attachment.fileType,
-                  fileSize: message.attachment.fileSize,
-              }
-            : undefined,
+            attachment: message.attachment
+                ? {
+                    key: message.attachment.key,
+                    fileName: message.attachment.fileName,
+                    fileType: message.attachment.fileType,
+                    fileSize: message.attachment.fileSize,
+                }
+                : undefined,
 
             text: message.text,
             isDeleted: message.isDeleted,
             deletedAt: message.deletedAt?.toISOString(),
             createdAt: message.createdAt?.toISOString(),
 
-        }
+        };
     }
 }

@@ -2,9 +2,10 @@ import { VerificationDTO } from '../../../dto/verification/verificationDTO';
 import { IGetAllVerificationUseCase } from '../../../useCase/admin/verification/IGetAllVerificationUseCase';
 import { IUpdateVerification } from '../../../../domain/interfaces/repositories/IVerificationRepository';
 import { VerificationMapper } from '../../../mappers/verificationMappers';
+import { IStorageService } from '../../../../domain/interfaces/services/IStorage/IStorageService';
 
 export class GetAllVerificationUseCase implements IGetAllVerificationUseCase {
-    constructor(private _verificationRepository: IUpdateVerification) {}
+    constructor(private _verificationRepository: IUpdateVerification, private _storageService: IStorageService) {}
 
     async getAllVerification(
         page: number,
@@ -26,8 +27,24 @@ export class GetAllVerificationUseCase implements IGetAllVerificationUseCase {
         ]);
        
         
-        const verificationDTOs = verifications.map(verification =>
-            VerificationMapper.toDTO(verification.verification, verification.trainer, verification.user),
+        const verificationDTOs = await Promise.all(
+            verifications.map(async(verification) => {
+                let profileImage: string | undefined;
+
+                if (verification.user.profileImage) {
+                    profileImage = await this._storageService.createSignedUrl(
+                        verification.user.profileImage,
+                        10 * 60,
+                    );
+                }
+
+                return VerificationMapper.toDTO(
+                    verification.verification,
+                    verification.trainer,
+                    verification.user,
+                    profileImage, // ✅ now passing it
+                );
+            }),
         );
     
         return {

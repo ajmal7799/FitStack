@@ -6,7 +6,7 @@ import { ConflictException, InvalidDataException, NotFoundException } from '../.
 import { USER_ERRORS } from '../../../../shared/constants/error';
 import { IVideoCallRepository } from '../../../../domain/interfaces/repositories/IVideoCallRepository';
 import { CreateVideoCallDTO } from '../../../dto/videoCall/videoCallDTO';
-import crypto from "crypto";
+import crypto from 'crypto';
 import { VideoCallStatus } from '../../../../domain/enum/videoCallEnums';
 import { VideoCallMapper } from '../../../mappers/videoCallMappers';
 import { UserRole } from '../../../../domain/enum/userEnums';
@@ -20,8 +20,8 @@ export class BookSlotUseCase implements IBookSlotUseCase {
         private _userRepository: IUserRepository,
         private _slotRepository: ISlotRepository,
         private _videoCallRepository: IVideoCallRepository,
-        private _createNotification: CreateNotification
-        ) {}
+        private _createNotification: CreateNotification,
+    ) {}
 
     async bookSlot(userId: string, slotId: string): Promise<Slot> {
         const user = await this._userRepository.findById(userId);
@@ -44,13 +44,13 @@ export class BookSlotUseCase implements IBookSlotUseCase {
         const startOfDay = new Date(`${dateStr}T00:00:00.000Z`);
         const endOfDay = new Date(`${dateStr}T23:59:59.999Z`);
 
-        const hasBookingToday = await this._slotRepository.checkUserBookingForDay(userId, startOfDay, endOfDay);
+        const hasBookingToday = await this._videoCallRepository.checkUserBookingForDay(userId, startOfDay, endOfDay);
 
         if (hasBookingToday) {
             throw new InvalidDataException(USER_ERRORS.YOUR_HAVE_ALREADY_BOOKED_A_SEESSION_FOR_THIS_DAY);
         }
 
-        const roomId = crypto.randomBytes(16).toString("hex");
+        const roomId = crypto.randomBytes(16).toString('hex');
         const updatedSlot = await this._slotRepository.updateSlotBooking(slotId, userId);
 
         if (!updatedSlot) {
@@ -68,7 +68,7 @@ export class BookSlotUseCase implements IBookSlotUseCase {
             startTime: slot.startTime,
             endTime: slot.endTime,
             status: VideoCallStatus.WAITING,
-        }
+        };
         
         const videoCallData = VideoCallMapper.toEnitity(data);
 
@@ -78,11 +78,11 @@ export class BookSlotUseCase implements IBookSlotUseCase {
             recipientId: slot.trainerId,
             recipientRole: UserRole.TRAINER,
             type: NotificationType.SLOT_BOOKED,
-            title: "Slot Booked!",
+            title: 'Slot Booked!',
             message: `${user.name} has booked a slot with you for ${new Date(slot.startTime).toLocaleString()}.`,
             relatedId: slot._id,
-            isRead: false
-        })
+            isRead: false,
+        });
 
         return updatedSlot;
     }

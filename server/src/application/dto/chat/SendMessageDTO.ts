@@ -1,4 +1,4 @@
-import { MessageTypeEnums } from "../../../domain/enum/MessageTypeEnums";
+import { MessageTypeEnums } from '../../../domain/enum/MessageTypeEnums';
 export interface SendMessageDTO {
   chatId: string;
   senderId: string;

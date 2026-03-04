@@ -17,7 +17,7 @@ const notificationRepository = new NotificationRepository(notificationModel);
 const createNotification = new CreateNotification(notificationRepository);
 
 //UseCase
-const getAllVerificationUseCase = new GetAllVerificationUseCase(verificationRepository);
+const getAllVerificationUseCase = new GetAllVerificationUseCase(verificationRepository, storageSvc);
 const getVerificationDetailsUseCase = new GetVerificationDetailsUseCase(verificationRepository, storageSvc);
 const verificationApproveUseCase = new VerificationApproveUseCase(verificationRepository, createNotification);
 const verificationRejectUseCase = new VerificationRejectUseCase(verificationRepository, createNotification);

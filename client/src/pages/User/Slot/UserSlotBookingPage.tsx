@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Calendar, Clock, CheckCircle, XCircle } from "lucide-react";
-import UserSidebar from "../../../components/user/Sidebar";
-import Header from "../../../components/user/Header";
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
+import UserSidebar from '../../../components/user/Sidebar';
+import Header from '../../../components/user/Header';
 import {
   useGetAvailableSlots,
   useBookSlot,
-} from "../../../hooks/User/userServiceHooks";
-import { useNavigate } from "react-router-dom";
+} from '../../../hooks/User/userServiceHooks';
+import { useNavigate } from 'react-router-dom';
 
 interface Slot {
   _id: string;
@@ -15,24 +15,24 @@ interface Slot {
   endTime: string;
   isBooked: boolean;
   bookedBy: string | null;
-  slotStatus: "available" | "booked" | "cancelled" | "missed" | "completed";
+  slotStatus: 'available' | 'booked' | 'cancelled' | 'missed' | 'completed';
 }
 
 interface ToastProps {
   message: string;
-  type: "error" | "success";
+  type: 'error' | 'success';
   onClose: () => void;
 }
 
 const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => (
   <div
     className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-      type === "error"
-        ? "bg-red-50 text-red-800 border border-red-200"
-        : "bg-green-50 text-green-800 border border-green-200"
+      type === 'error'
+        ? 'bg-red-50 text-red-800 border border-red-200'
+        : 'bg-green-50 text-green-800 border border-green-200'
     }`}
   >
-    {type === "error" ? (
+    {type === 'error' ? (
       <XCircle className="w-5 h-5" />
     ) : (
       <CheckCircle className="w-5 h-5" />
@@ -60,9 +60,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   const formatTime = (timeString: string): string => {
     const date = new Date(timeString);
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: true,
     });
   };
@@ -143,17 +143,17 @@ const UserSlotBookingPage: React.FC = () => {
   const navigate = useNavigate();
   const [toast, setToast] = useState<{
     message: string;
-    type: "error" | "success";
+    type: 'error' | 'success';
   } | null>(null);
 
   const formattedDate = `${selectedDate.getFullYear()}-${String(
     selectedDate.getMonth() + 1,
-  ).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+  ).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
   const { data, isLoading, error, refetch } =
     useGetAvailableSlots(formattedDate);
   const { mutate: bookSlot, isPending: isBooking } = useBookSlot();
 
-  const showToast = (message: string, type: "error" | "success") => {
+  const showToast = (message: string, type: 'error' | 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
   };
@@ -161,16 +161,16 @@ const UserSlotBookingPage: React.FC = () => {
   useEffect(() => {
     if (error) {
       const errorData = (error as any)?.response?.data;
-      const errorMessage = errorData?.message || "Failed to fetch slots";
+      const errorMessage = errorData?.message || 'Failed to fetch slots';
 
-      if (errorMessage.toLowerCase().includes("trainer")) {
-        showToast("Please select a trainer first!", "error");
+      if (errorMessage.toLowerCase().includes('trainer')) {
+        showToast('Please select a trainer first!', 'error');
 
         setTimeout(() => {
-          navigate("/trainers");
+          navigate('/trainers');
         }, 2500);
       } else {
-        showToast(errorMessage, "error");
+        showToast(errorMessage, 'error');
       }
     }
   }, [error, navigate]);
@@ -184,17 +184,17 @@ const UserSlotBookingPage: React.FC = () => {
 
     bookSlot(slotToBook._id, {
       onSuccess: () => {
-        showToast("Slot booked successfully!", "success");
+        showToast('Slot booked successfully!', 'success');
         setSlotToBook(null);
         refetch();
-       setTimeout(() => {
-    navigate("/sessions");
-  }, 1000);
+        setTimeout(() => {
+          navigate('/sessions');
+        }, 1000);
       },
       onError: (error: any) => {
         const errorData = error?.response?.data;
-        const errorMessage = errorData?.message || "Failed to book slot";
-        showToast(errorMessage, "error");
+        const errorMessage = errorData?.message || 'Failed to book slot';
+        showToast(errorMessage, 'error');
         setSlotToBook(null);
       },
     });
@@ -243,7 +243,7 @@ const UserSlotBookingPage: React.FC = () => {
   const handleDateClick = (date: Date | null) => {
     if (!date) return;
     if (isPast(date)) {
-      showToast("Cannot select dates in the past", "error");
+      showToast('Cannot select dates in the past', 'error');
       return;
     }
     setSelectedDate(date);
@@ -251,9 +251,9 @@ const UserSlotBookingPage: React.FC = () => {
 
   const formatTime = (timeString: string): string => {
     const date = new Date(timeString);
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: true,
     });
   };
@@ -269,7 +269,7 @@ const UserSlotBookingPage: React.FC = () => {
   };
 
   const days = getDaysInMonth(currentMonth);
-  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   interface Data {
     data?: {
       result?: Slot[];
@@ -302,9 +302,9 @@ const UserSlotBookingPage: React.FC = () => {
                     ←
                   </button>
                   <span className="text-xs font-semibold text-gray-700 w-24 text-center">
-                    {currentMonth.toLocaleDateString("en-US", {
-                      month: "short",
-                      year: "numeric",
+                    {currentMonth.toLocaleDateString('en-US', {
+                      month: 'short',
+                      year: 'numeric',
                     })}
                   </span>
                   <button
@@ -331,21 +331,21 @@ const UserSlotBookingPage: React.FC = () => {
                     disabled={!date || isPast(date)}
                     className={`
           relative h-9 text-xs transition-all bg-white
-          ${!date ? "bg-gray-50" : ""}
+          ${!date ? 'bg-gray-50' : ''}
           ${
-            isPast(date)
-              ? "text-gray-300 cursor-not-allowed"
-              : "hover:bg-blue-50 text-gray-700"
-          }
+                  isPast(date)
+                    ? 'text-gray-300 cursor-not-allowed'
+                    : 'hover:bg-blue-50 text-gray-700'
+                  }
           ${
-            isSelected(date)
-              ? "bg-blue-600 text-white font-bold hover:bg-blue-700"
-              : ""
-          }
-          ${isToday(date) && !isSelected(date) ? "text-blue-600 font-bold" : ""}
+                  isSelected(date)
+                    ? 'bg-blue-600 text-white font-bold hover:bg-blue-700'
+                    : ''
+                  }
+          ${isToday(date) && !isSelected(date) ? 'text-blue-600 font-bold' : ''}
         `}
                   >
-                    {date ? date.getDate() : ""}
+                    {date ? date.getDate() : ''}
                     {isToday(date) && !isSelected(date) && (
                       <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full"></span>
                     )}
@@ -375,7 +375,7 @@ const UserSlotBookingPage: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-blue-900">
-                    <strong>Important:</strong> You can only book{" "}
+                    <strong>Important:</strong> You can only book{' '}
                     <strong>one slot per day</strong>. Please choose your
                     preferred time slot carefully.
                   </p>
@@ -384,11 +384,11 @@ const UserSlotBookingPage: React.FC = () => {
 
               <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-6">
                 <Clock className="w-5 h-5" />
-                Available Slots for{" "}
-                {selectedDate.toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
+                Available Slots for{' '}
+                {selectedDate.toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
                 })}
               </h2>
 
@@ -406,52 +406,52 @@ const UserSlotBookingPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 {slots.map((slot) => {
-  // Logic: Treat both 'available' and 'cancelled' as "Bookable"
-  const isBookable = slot.slotStatus === 'available' || slot.slotStatus === 'cancelled';
-  // const isBooked = slot.slotStatus === 'booked';
+                  {slots.map((slot) => {
+                    // Logic: Treat both 'available' and 'cancelled' as "Bookable"
+                    const isBookable = slot.slotStatus === 'available' || slot.slotStatus === 'cancelled';
+                    // const isBooked = slot.slotStatus === 'booked';
 
-  return (
-    <div
-      key={slot._id}
-      className={`
+                    return (
+                      <div
+                        key={slot._id}
+                        className={`
         border rounded-lg p-4 transition
         ${
-          !isBookable
-            ? 'bg-gray-50 border-gray-200 opacity-60'
-            : 'border-gray-200 hover:border-blue-500 hover:shadow-md cursor-pointer'
-        }
+                      !isBookable
+                        ? 'bg-gray-50 border-gray-200 opacity-60'
+                        : 'border-gray-200 hover:border-blue-500 hover:shadow-md cursor-pointer'
+                      }
       `}
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-medium text-gray-800">
-            {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
-          </p>
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-gray-800">
+                              {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
+                            </p>
           
-          {/* User-friendly status display */}
-          <p className={`text-sm mt-1 font-semibold ${
-              isBookable ? 'text-green-600' : 'text-red-600'
-            }`}
-          >
-            {isBookable ? 'Available' : 'Booked'}
-          </p>
-        </div>
+                            {/* User-friendly status display */}
+                            <p className={`text-sm mt-1 font-semibold ${
+                              isBookable ? 'text-green-600' : 'text-red-600'
+                            }`}
+                            >
+                              {isBookable ? 'Available' : 'Booked'}
+                            </p>
+                          </div>
 
-        {/* The button only appears if the slot can actually be booked */}
-        {isBookable && (
-          <button
-            onClick={() => handleBookClick(slot)}
-            disabled={isBooking}
-            className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isBooking ? 'Booking...' : 'Book Now'}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-})}
+                          {/* The button only appears if the slot can actually be booked */}
+                          {isBookable && (
+                            <button
+                              onClick={() => handleBookClick(slot)}
+                              disabled={isBooking}
+                              className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {isBooking ? 'Booking...' : 'Book Now'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>

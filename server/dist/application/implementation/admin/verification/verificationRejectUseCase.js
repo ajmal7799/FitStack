@@ -12,9 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.VerificationRejectUseCase = void 0;
 const exceptions_1 = require("../../../constants/exceptions");
 const error_1 = require("../../../../shared/constants/error");
+const NotificationEnums_1 = require("../../../../domain/enum/NotificationEnums");
+const userEnums_1 = require("../../../../domain/enum/userEnums");
 class VerificationRejectUseCase {
-    constructor(_verificationRepository) {
+    constructor(_verificationRepository, _createNotification) {
         this._verificationRepository = _verificationRepository;
+        this._createNotification = _createNotification;
     }
     execute(id, reason) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,6 +29,14 @@ class VerificationRejectUseCase {
             if (!trainerReject) {
                 throw new exceptions_1.NotFoundException(error_1.TRAINER_ERRORS.TRAINER_VERIFICATION_NOT_FOUND);
             }
+            yield this._createNotification.execute({
+                recipientId: id,
+                recipientRole: userEnums_1.UserRole.TRAINER,
+                type: NotificationEnums_1.NotificationType.VERIFICATION_REJECTED,
+                title: "Verification Rejected",
+                message: `Your verification was rejected. Reason: ${reason}`,
+                isRead: false
+            });
             return {
                 id: trainerReject.id,
                 verificationStatus: trainerReject.verificationStatus,

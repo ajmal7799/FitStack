@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import { UserRole } from "../../../domain/enum/userEnums";
-import { NotificationType } from "../../../domain/enum/NotificationEnums";
+import mongoose from 'mongoose';
+import { UserRole } from '../../../domain/enum/userEnums';
+import { NotificationType } from '../../../domain/enum/NotificationEnums';
 
 
 const notificationSchema = new mongoose.Schema(

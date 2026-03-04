@@ -1,9 +1,9 @@
-import { INotificationRepository } from "../../domain/interfaces/repositories/INotificationRepository";
-import { BaseRepository } from "./baseRepository";
-import { NotficationMapper } from "../../application/mappers/notificationMappers";
-import { Notification } from "../../domain/entities/Notification/NotificationEntity";
-import { INotificationModel } from "../database/models/notificationModel"; 
-import { Model } from "mongoose";
+import { INotificationRepository } from '../../domain/interfaces/repositories/INotificationRepository';
+import { BaseRepository } from './baseRepository';
+import { NotficationMapper } from '../../application/mappers/notificationMappers';
+import { Notification } from '../../domain/entities/Notification/NotificationEntity';
+import { INotificationModel } from '../database/models/notificationModel'; 
+import { Model } from 'mongoose';
 
 
 
@@ -17,7 +17,7 @@ export class NotificationRepository extends BaseRepository<Notification, INotifi
         return notifications.map((doc) => NotficationMapper.fromMongooseDocument(doc));
     }
 
-   async markAsRead(notificationId: string): Promise<void> {
+    async markAsRead(notificationId: string): Promise<void> {
         await this._model.findByIdAndUpdate(notificationId, { $set: { isRead: true } });
     }
 

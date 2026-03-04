@@ -45,7 +45,7 @@ const UserLoginPage = () => {
             navigate('/trainer/verification');
           }
         } else {
-          navigate('/home');
+          navigate('/');
         }
 
         toast.success(res.message);
@@ -100,7 +100,7 @@ const UserLoginPage = () => {
               navigate('/trainer/verification');
             }
           } else {
-            navigate('/home');
+            navigate('/');
           }
           // dispatch(setToken(res.data?.accessToken || ""));
 

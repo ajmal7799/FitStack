@@ -1,10 +1,10 @@
-import { ISessionHistoryDetailsUseCase } from "../../../useCase/user/booking/ISessionHistoryDetailsUseCase";
-import { IVideoCallRepository } from "../../../../domain/interfaces/repositories/IVideoCallRepository";
-import { VideoCallStatus } from "../../../../domain/enum/videoCallEnums";
-import { SessionHistoryDetailsResult } from "../../../dto/slot/slotDTO";
-import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { IStorageService } from "../../../../domain/interfaces/services/IStorage/IStorageService";
-import { IFeedbackRepository } from "../../../../domain/interfaces/repositories/IFeedbackRepository";
+import { ISessionHistoryDetailsUseCase } from '../../../useCase/user/booking/ISessionHistoryDetailsUseCase';
+import { IVideoCallRepository } from '../../../../domain/interfaces/repositories/IVideoCallRepository';
+import { VideoCallStatus } from '../../../../domain/enum/videoCallEnums';
+import { SessionHistoryDetailsResult } from '../../../dto/slot/slotDTO';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { IStorageService } from '../../../../domain/interfaces/services/IStorage/IStorageService';
+import { IFeedbackRepository } from '../../../../domain/interfaces/repositories/IFeedbackRepository';
 
 
 export class SessionHistoryDetailsUseCase implements ISessionHistoryDetailsUseCase {
@@ -15,13 +15,13 @@ export class SessionHistoryDetailsUseCase implements ISessionHistoryDetailsUseCa
         const session = await this._videoCallRepository.findById(sessionId);
 
         if (!session || session.userId !== userId) {
-            throw new Error("Session not found or access denied");
+            throw new Error('Session not found or access denied');
         }
 
         const trainer = await this._userRepository.findById(session.trainerId);
-        if (!trainer)  throw new Error("Trainer not found");
+        if (!trainer)  throw new Error('Trainer not found');
 
-        let profileImageUrl = trainer.profileImage || "";
+        let profileImageUrl = trainer.profileImage || '';
         if (profileImageUrl) {
             profileImageUrl = await this._storageService.createSignedUrl(profileImageUrl, 10 * 60);
         }
@@ -43,8 +43,8 @@ export class SessionHistoryDetailsUseCase implements ISessionHistoryDetailsUseCa
             cancelledAt: session.cancelledAt || null,
             cancelledBy: session.cancelledBy || null,
             rating:    feedback?.rating    ?? undefined,
-    review:    feedback?.review    ?? undefined,
-    createdAt: feedback?.createdAt ?? undefined,
+            review:    feedback?.review    ?? undefined,
+            createdAt: feedback?.createdAt ?? undefined,
         };
     }
 }

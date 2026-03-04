@@ -1,19 +1,19 @@
-import { IBookedSlotDetailsUseCase } from "../../../useCase/user/booking/IBookedSlotDetailsUseCase";
-import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { BookedSlotDetailsDTO } from "../../../dto/slot/slotDTO";
-import { NotFoundException, UnauthorizedException } from "../../../constants/exceptions";
-import { TRAINER_ERRORS, Errors } from "../../../../shared/constants/error";
-import { IStorageService } from "../../../../domain/interfaces/services/IStorage/IStorageService";
-import { IVideoCallRepository } from "../../../../domain/interfaces/repositories/IVideoCallRepository";
-import { VideoCallStatus } from "../../../../domain/enum/videoCallEnums";
-import { IFeedbackRepository } from "../../../../domain/interfaces/repositories/IFeedbackRepository";
+import { IBookedSlotDetailsUseCase } from '../../../useCase/user/booking/IBookedSlotDetailsUseCase';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { BookedSlotDetailsDTO } from '../../../dto/slot/slotDTO';
+import { NotFoundException, UnauthorizedException } from '../../../constants/exceptions';
+import { TRAINER_ERRORS, Errors } from '../../../../shared/constants/error';
+import { IStorageService } from '../../../../domain/interfaces/services/IStorage/IStorageService';
+import { IVideoCallRepository } from '../../../../domain/interfaces/repositories/IVideoCallRepository';
+import { VideoCallStatus } from '../../../../domain/enum/videoCallEnums';
+import { IFeedbackRepository } from '../../../../domain/interfaces/repositories/IFeedbackRepository';
 
 export class BookedSlotDetailsUseCase implements IBookedSlotDetailsUseCase {
     constructor(
         private _userRepository: IUserRepository,
         private _videoCallRepository: IVideoCallRepository,
         private _storageService: IStorageService,
-        private _feedbackRepository: IFeedbackRepository
+        private _feedbackRepository: IFeedbackRepository,
     ) {}
 
     async getBookedSlotDetails(userId: string, slotId: string): Promise<BookedSlotDetailsDTO> {
@@ -24,7 +24,7 @@ export class BookedSlotDetailsUseCase implements IBookedSlotDetailsUseCase {
         }
 
         if (slot.userId !== userId) {
-            throw new UnauthorizedException("You do not have permission to view this slot.");
+            throw new UnauthorizedException('You do not have permission to view this slot.');
         }
 
         const trainer = await this._userRepository.findById(slot.trainerId);
@@ -33,7 +33,7 @@ export class BookedSlotDetailsUseCase implements IBookedSlotDetailsUseCase {
             throw new NotFoundException(TRAINER_ERRORS.TRAINER_NOT_FOUND);
         }
 
-        let profileImageUrl = trainer.profileImage || "";
+        let profileImageUrl = trainer.profileImage || '';
         if (profileImageUrl) {
             profileImageUrl = await this._storageService.createSignedUrl(profileImageUrl, 10 * 60);
         }

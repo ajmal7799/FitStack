@@ -7,6 +7,8 @@ const adminUserContainer_1 = require("../../infrastructure/DI/Admin/adminUserCon
 const adminTrainerContainer_1 = require("../../infrastructure/DI/Admin/adminTrainerContainer");
 const adminVerificationContainer_1 = require("../../infrastructure/DI/Admin/adminVerificationContainer");
 const adminSubscriptionContainer_1 = require("../../infrastructure/DI/Admin/subscription/adminSubscriptionContainer");
+const adminSessionContainer_1 = require("../../infrastructure/DI/Admin/adminSessionContainer");
+const adminDashboardContainer_1 = require("../../infrastructure/DI/Admin/adminDashboardContainer");
 class Admin_Routes {
     constructor() {
         this._route = (0, express_1.Router)();
@@ -28,8 +30,11 @@ class Admin_Routes {
         this._route.post('/trainers/update-status', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => {
             adminTrainerContainer_1.adminTrainerController.updateTrainerStatus(req, res, next);
         });
+        this._route.get('/trainers/:trainerId', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => {
+            adminTrainerContainer_1.adminTrainerController.getTrainerDetailsPage(req, res, next);
+        });
         // --------------------------------------------------
-        //              🛠 VERIFICATIONS 
+        //              🛠 VERIFICATIONS
         // --------------------------------------------------
         this._route.get('/verification', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => {
             adminVerificationContainer_1.adminVerificationController.getAllTrainerVerificationData(req, res, next);
@@ -58,9 +63,29 @@ class Admin_Routes {
         this._route.get('/subscriptions/:subscriptionId', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => {
             adminSubscriptionContainer_1.adminSubscriptionController.getSubscriptionEditPage(req, res, next);
         });
-        this._route.put("/subscriptions/:subscriptionId", authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => {
+        this._route.put('/subscriptions/:subscriptionId', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => {
             adminSubscriptionContainer_1.adminSubscriptionController.updateSubscription(req, res, next);
         });
+        // --------------------------------------------------
+        //              🛠 SESSION MANAGEMENT
+        // --------------------------------------------------
+        this._route.get('/sessions', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => {
+            adminSessionContainer_1.adminSessionController.getAllSessions(req, res, next);
+        });
+        this._route.get('/sessions/:sessionId', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => {
+            adminSessionContainer_1.adminSessionController.getSessionDetails(req, res, next);
+        });
+        // --------------------------------------------------
+        //              🛠 MEMBERSHIP
+        // --------------------------------------------------
+        this._route.get('/memberships', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => {
+            adminSubscriptionContainer_1.adminSubscriptionController.getAllMemberships(req, res, next);
+        });
+        // --------------------------------------------------
+        //              🛠 DASHBOARD
+        // --------------------------------------------------
+        this._route.get('/dashboard/stats', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => adminDashboardContainer_1.adminDashboardController.getStats(req, res, next));
+        this._route.get('/dashboard/charts', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isAdmin, (req, res, next) => adminDashboardContainer_1.adminDashboardController.getChartData(req, res, next));
     }
     get_router() {
         return this._route;

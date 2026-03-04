@@ -12,8 +12,8 @@ export class GetAllTrainerUseCase implements IGetAllTrainerUseCase {
         private _userRepository: IUserRepository,
     ) { }
 
-    async getAllTrainer(page: number, limit: number, search?: string, userId?: string): Promise<{ verifications: VerificationDTO[]; totalVerifications: number; totalPages: number; currentPage: number; hasActiveSubscription: boolean }> {
-        const user = await this._userRepository.findById(userId!);
+    async getAllTrainer(page: number, limit: number, search?: string ): Promise<{ verifications: VerificationDTO[]; totalVerifications: number; totalPages: number; currentPage: number; }> {
+        // const user = await this._userRepository.findById(userId!);
         const skip = (page - 1) * limit;
 
         const [verifications, totalVerifications] = await Promise.all([
@@ -32,9 +32,9 @@ export class GetAllTrainerUseCase implements IGetAllTrainerUseCase {
                 return VerificationMapper.toDTO(verification.verification, verification.trainer, verification.user, profileImageUrl);
             }),
         );
-        let hasActiveSubscription: boolean = false;
+        //     let hasActiveSubscription: boolean = false;
 
-     hasActiveSubscription = user ? user.activeMembershipId ? true : false : false;
+        //  hasActiveSubscription = user ? user.activeMembershipId ? true : false : false;
 
          
         return {
@@ -42,7 +42,7 @@ export class GetAllTrainerUseCase implements IGetAllTrainerUseCase {
             totalVerifications,
             totalPages: Math.ceil(totalVerifications / limit),
             currentPage: page,
-            hasActiveSubscription
+            // hasActiveSubscription
         };
 
     }

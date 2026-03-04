@@ -1,23 +1,24 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import TrainerSidebar from "../../../components/trainer/Sidebar";
-import TrainerHeader from "../../../components/trainer/Header";
-import Pagination from "../../../components/pagination/Pagination";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { useGetSessionHistory } from "../../../hooks/Trainer/TrainerHooks";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import TrainerSidebar from '../../../components/trainer/Sidebar';
+import TrainerHeader from '../../../components/trainer/Header';
+import Pagination from '../../../components/pagination/Pagination';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { useGetSessionHistory } from '../../../hooks/Trainer/TrainerHooks';
+import { X } from 'lucide-react';
 
 const LIMIT = 10;
 
 const statusStyles: Record<string, string> = {
-  completed: "bg-emerald-100 text-emerald-700 border border-emerald-200",
-  missed:    "bg-amber-100  text-amber-700  border border-amber-200",
-  cancelled: "bg-red-100    text-red-700    border border-red-200",
+  completed: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+  missed:    'bg-amber-100  text-amber-700  border border-amber-200',
+  cancelled: 'bg-red-100    text-red-700    border border-red-200',
 };
 
 const statusDot: Record<string, string> = {
-  completed: "bg-emerald-500",
-  missed:    "bg-amber-500",
-  cancelled: "bg-red-500",
+  completed: 'bg-emerald-500',
+  missed:    'bg-amber-500',
+  cancelled: 'bg-red-500',
 };
 
 type Session = {
@@ -30,22 +31,21 @@ type Session = {
 };
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    weekday: "short", year: "numeric", month: "short", day: "numeric",
+  return new Date(iso).toLocaleDateString('en-US', {
+    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
   });
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
-// ── Star Display ──────────────────────────────────────────────────────────────
 function StarDisplay({ rating }: { rating?: number }) {
   if (!rating) return <span className="text-xs text-gray-300 italic">No rating</span>;
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star} className={`text-sm ${star <= rating ? "text-yellow-400" : "text-gray-200"}`}>★</span>
+        <span key={star} className={`text-sm ${star <= rating ? 'text-yellow-400' : 'text-gray-200'}`}>★</span>
       ))}
     </div>
   );
@@ -58,7 +58,7 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 18 },
-  show:   { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } },
+  show:   { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 22 } },
   exit:   { opacity: 0, x: -24, transition: { duration: 0.18 } },
 };
 
@@ -69,7 +69,6 @@ const EyeIcon = () => (
   </svg>
 );
 
-// ── Mobile Card ───────────────────────────────────────────────────────────────
 function SessionCard({
   session, index, page, navigate,
 }: {
@@ -96,7 +95,7 @@ function SessionCard({
         </div>
         <button
           onClick={() => navigate(`/trainer/session-history/${session._id}`)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-900 text-white text-xs font-semibold hover:bg-gray-700 transition-all duration-200 flex-shrink-0"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#faac05] hover:bg-[#e09b00] text-white text-xs font-semibold hover:bg-gray-700 transition-all duration-200 flex-shrink-0"
         >
           <EyeIcon /> View
         </button>
@@ -111,15 +110,14 @@ function SessionCard({
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Time</p>
           <p className="text-sm text-gray-700">{formatTime(session.startTime)} – {formatTime(session.endTime)}</p>
         </div>
-        {/* ✅ Rating replaces Duration */}
         <div>
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Rating</p>
           <StarDisplay rating={session.rating} />
         </div>
         <div>
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Status</p>
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${statusStyles[session.sessionStatus] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${statusDot[session.sessionStatus] ?? "bg-gray-400"}`} />
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${statusStyles[session.sessionStatus] ?? 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${statusDot[session.sessionStatus] ?? 'bg-gray-400'}`} />
             {session.sessionStatus}
           </span>
         </div>
@@ -128,14 +126,16 @@ function SessionCard({
   );
 }
 
-const EmptyState = () => (
+const EmptyState = ({ search }: { search?: string }) => (
   <div className="flex flex-col items-center justify-center py-16 text-gray-400">
     <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-3">
       <svg className="w-7 h-7 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
       </svg>
     </div>
-    <p className="text-sm font-medium text-gray-600">No sessions found</p>
+    <p className="text-sm font-medium text-gray-600">
+      No sessions found{search ? ` for "${search}"` : ''}
+    </p>
     <p className="text-xs mt-1">Completed sessions will appear here.</p>
   </div>
 );
@@ -157,11 +157,32 @@ const TrainerSessionHistoryPage = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, isError } = useGetSessionHistory(page, LIMIT, undefined);
+  // ✅ Search state
+  const [searchInput,     setSearchInput]     = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  const sessions: Session[] = data?.data?.result?.sessions ?? [];
-  const totalPages: number  = data?.data?.result?.totalPages ?? 1;
+  const { data, isLoading, isError } = useGetSessionHistory(
+    page,
+    LIMIT,
+    undefined,
+    debouncedSearch, // ✅ pass to hook
+  );
+
+  const sessions: Session[]   = data?.data?.result?.sessions     ?? [];
+  const totalPages: number    = data?.data?.result?.totalPages   ?? 1;
   const totalSessions: number = data?.data?.result?.totalSessions ?? 0;
+
+  // ✅ Search handlers
+  const handleSearchClick = () => {
+    setDebouncedSearch(searchInput.trim());
+    setPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput('');
+    setDebouncedSearch('');
+    setPage(1);
+  };
 
   return (
     <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
@@ -193,10 +214,41 @@ const TrainerSessionHistoryPage = () => {
               >
                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span className="text-sm font-semibold text-gray-700">
-                  {totalSessions} completed session{totalSessions !== 1 ? "s" : ""}
+                  {totalSessions} completed session{totalSessions !== 1 ? 's' : ''}
                 </span>
               </motion.div>
             )}
+          </motion.div>
+
+          {/* ✅ Search bar */}
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.1 }}
+            className="flex gap-2 mb-5 w-full sm:w-72 relative"
+          >
+            <input
+              type="text"
+              placeholder="Search by client name..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
+              className="w-full px-4 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-gray-400 transition-all"
+            />
+            {searchInput && (
+              <button
+                onClick={handleClearSearch}
+                className="absolute right-[72px] top-2.5 text-gray-400 hover:text-red-400 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            )}
+            <button
+              onClick={handleSearchClick}
+              className="px-4 py-2 bg-[#faac05] hover:bg-[#e09b00] text-white text-sm font-semibold rounded-xl transition-all whitespace-nowrap"
+            >
+              Search
+            </button>
           </motion.div>
 
           {/* ── DESKTOP TABLE (md+) ──────────────────────────────────────── */}
@@ -206,7 +258,6 @@ const TrainerSessionHistoryPage = () => {
             transition={{ duration: 0.4, delay: 0.15 }}
             className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
           >
-            {/* ✅ Dur. replaced with Rating, updated grid */}
             <div className="grid grid-cols-[40px_1fr_1.3fr_1fr_130px_110px_110px] px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider gap-4">
               <span>#</span>
               <span>User</span>
@@ -230,11 +281,13 @@ const TrainerSessionHistoryPage = () => {
             )}
 
             {isError && !isLoading && <ErrorState />}
-            {!isLoading && !isError && sessions.length === 0 && <EmptyState />}
+            {!isLoading && !isError && sessions.length === 0 && (
+              <EmptyState search={debouncedSearch} />
+            )}
 
             {!isLoading && !isError && sessions.length > 0 && (
               <motion.div
-                key={`desktop-${page}`}
+                key={`desktop-${page}-${debouncedSearch}`}
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
@@ -267,17 +320,16 @@ const TrainerSessionHistoryPage = () => {
                         {formatTime(session.startTime)} – {formatTime(session.endTime)}
                       </span>
 
-                      {/* ✅ Rating column */}
                       <StarDisplay rating={session.rating} />
 
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit capitalize ${statusStyles[session.sessionStatus] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot[session.sessionStatus] ?? "bg-gray-400"}`} />
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit capitalize ${statusStyles[session.sessionStatus] ?? 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot[session.sessionStatus] ?? 'bg-gray-400'}`} />
                         {session.sessionStatus}
                       </span>
 
                       <button
                         onClick={() => navigate(`/trainer/session-history/${session._id}`)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-900 text-white text-xs font-semibold hover:bg-gray-700 transition-all duration-200 w-fit"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#faac05] hover:bg-[#e09b00] text-white text-xs font-semibold transition-all duration-200 w-fit"
                       >
                         <EyeIcon /> View
                       </button>
@@ -315,11 +367,13 @@ const TrainerSessionHistoryPage = () => {
             )}
 
             {isError && !isLoading && <ErrorState />}
-            {!isLoading && !isError && sessions.length === 0 && <EmptyState />}
+            {!isLoading && !isError && sessions.length === 0 && (
+              <EmptyState search={debouncedSearch} />
+            )}
 
             {!isLoading && !isError && sessions.length > 0 && (
               <motion.div
-                key={`mobile-${page}`}
+                key={`mobile-${page}-${debouncedSearch}`}
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"

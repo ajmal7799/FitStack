@@ -18,10 +18,10 @@ export class UserTrainerController {
     ) {}
     async getAllTrainer(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = req.user?.userId;
-            if (!userId) {
-                throw new InvalidDataException(Errors.INVALID_DATA);
-            }
+            // const userId = req.user?.userId;
+            // if (!userId) {
+            //     throw new InvalidDataException(Errors.INVALID_DATA);
+            // }
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
             const search = (req.query.search as string) || undefined;
@@ -32,7 +32,7 @@ export class UserTrainerController {
                 throw new InvalidDataException(Errors.INVALID_PAGINATION_PARAMETERS);
             }
 
-            const result = await this._getAllTrainerUseCase.getAllTrainer(page, limit, search, userId);
+            const result = await this._getAllTrainerUseCase.getAllTrainer(page, limit, search);
             
 
             if (!result || result.verifications?.length === 0) {

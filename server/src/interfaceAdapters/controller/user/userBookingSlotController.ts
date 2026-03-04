@@ -16,7 +16,7 @@ import { ISessionHistoryUseCase } from '../../../application/useCase/user/bookin
 import { ISessionHistoryDetailsUseCase } from '../../../application/useCase/user/booking/ISessionHistoryDetailsUseCase';
 
 export class UserBookingSlotController {
-  constructor(
+    constructor(
     private _getAllAvailableSlotUseCase: IGetAllAvailableSlotUseCase,
     private _bookSlotUseCase: IBookSlotUseCase,
     private _bookedSlotUseCase: IBookedSlotUseCase,
@@ -24,169 +24,169 @@ export class UserBookingSlotController {
     private _bookedSlotCancelUseCase: IBookedSlotCancelUseCase,
     private _sessionHistoryUseCase: ISessionHistoryUseCase,
     private _sessionHistoryDetailsUseCase: ISessionHistoryDetailsUseCase,
-  ) {}
+    ) {}
 
-  async getAvailableSlots(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
-      const { date } = getAvailableSlotsSchema.parse(req).query;
+    async getAvailableSlots(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            const { date } = getAvailableSlotsSchema.parse(req).query;
 
-      if (!userId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
-      if (!date) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+            if (!userId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
+            if (!date) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
     
-      const result = await this._getAllAvailableSlotUseCase.getAvailableSlots(userId, date);
-      // if (!result || !result.length) {
-      //   ResponseHelper.success(res, MESSAGES.Trainer.TRAINER_NOT_SELECTED_IN_THAT_TIME_SLOT, { result }, HTTPStatus.OK);
-      // }
+            const result = await this._getAllAvailableSlotUseCase.getAvailableSlots(userId, date);
+            // if (!result || !result.length) {
+            //   ResponseHelper.success(res, MESSAGES.Trainer.TRAINER_NOT_SELECTED_IN_THAT_TIME_SLOT, { result }, HTTPStatus.OK);
+            // }
 
-      ResponseHelper.success(res, MESSAGES.Trainer.SLOTS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.Trainer.SLOTS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 BOOK SLOT
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 BOOK SLOT
+    // --------------------------------------------------
 
-  async bookSlot(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
-      const { slotId } = req.params;
+    async bookSlot(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            const { slotId } = req.params;
 
-      if (!userId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
-      if (!slotId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
-      const result = await this._bookSlotUseCase.bookSlot(userId, slotId);
-      ResponseHelper.success(res, MESSAGES.USERS.SLOT_CREATED_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            if (!userId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
+            if (!slotId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
+            const result = await this._bookSlotUseCase.bookSlot(userId, slotId);
+            ResponseHelper.success(res, MESSAGES.USERS.SLOT_CREATED_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 BOOKED SLOTS
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 BOOKED SLOTS
+    // --------------------------------------------------
 
-  async getBookedSlots(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-      const status = (req.query.status as string) || undefined;
+    async getBookedSlots(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const status = (req.query.status as string) || undefined;
 
-      if (!userId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+            if (!userId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
 
-      const result = await this._bookedSlotUseCase.getBookedSlots(userId, page, limit, status);
+            const result = await this._bookedSlotUseCase.getBookedSlots(userId, page, limit, status);
 
-      ResponseHelper.success(res, MESSAGES.USERS.BOOKED_SLOTS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.USERS.BOOKED_SLOTS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
-  // --------------------------------------------------
-  //              🛠 GET BOOKED SLOT DETAILS
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 GET BOOKED SLOT DETAILS
+    // --------------------------------------------------
 
-  async getBookedSlotDetails(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
-      const { slotId } = req.params;
+    async getBookedSlotDetails(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            const { slotId } = req.params;
 
-      if (!userId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
-      if (!slotId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+            if (!userId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
+            if (!slotId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
 
-      const result = await this._bookedSlotDetailsUseCase.getBookedSlotDetails(userId, slotId);
+            const result = await this._bookedSlotDetailsUseCase.getBookedSlotDetails(userId, slotId);
 
-      ResponseHelper.success(res, MESSAGES.USERS.BOOKED_SLOT_DETAILS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.USERS.BOOKED_SLOT_DETAILS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 CANCEL BOOKED SLOT
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 CANCEL BOOKED SLOT
+    // --------------------------------------------------
 
-  async cancelBookedSlot(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
-      const role = req.user?.role;
-      const { slotId } = req.params;
-      const reason = req.body.reason?.trim();
-      console.log('role', role);
+    async cancelBookedSlot(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            const role = req.user?.role;
+            const { slotId } = req.params;
+            const reason = req.body.reason?.trim();
+            console.log('role', role);
 
-      // 1. Initial validation
-      if (!userId || !slotId || !reason) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+            // 1. Initial validation
+            if (!userId || !slotId || !reason) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
 
-      await this._bookedSlotCancelUseCase.cancelBookedSlot(userId, slotId, reason, role!);
+            await this._bookedSlotCancelUseCase.cancelBookedSlot(userId, slotId, reason, role!);
 
-      return ResponseHelper.success(res, MESSAGES.USERS.BOOKED_SLOT_CANCELLED_SUCCESS, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            return ResponseHelper.success(res, MESSAGES.USERS.BOOKED_SLOT_CANCELLED_SUCCESS, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 SESSION HISTORY
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 SESSION HISTORY
+    // --------------------------------------------------
 
-  async getSessionHistory(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
+    async getSessionHistory(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
       
 
-      if (!userId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+            if (!userId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
 
-      const result = await this._sessionHistoryUseCase.getSessionHistory(userId, page, limit);
+            const result = await this._sessionHistoryUseCase.getSessionHistory(userId, page, limit);
 
-      ResponseHelper.success(res, MESSAGES.USERS.SESSION_HISTORY_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.USERS.SESSION_HISTORY_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  // --------------------------------------------------
-  //              🛠 SESSION HISTORY DETAILS
-  // --------------------------------------------------
+    // --------------------------------------------------
+    //              🛠 SESSION HISTORY DETAILS
+    // --------------------------------------------------
 
 
-  async getSessionHistoryDetails(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.user?.userId;
-      const { sessionId } = req.params;
+    async getSessionHistoryDetails(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.userId;
+            const { sessionId } = req.params;
 
-      if (!userId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
-      if (!sessionId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+            if (!userId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
+            if (!sessionId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
 
-      const result = await this._sessionHistoryDetailsUseCase.getSessionHistoryDetails(userId, sessionId);
+            const result = await this._sessionHistoryDetailsUseCase.getSessionHistoryDetails(userId, sessionId);
 
-      ResponseHelper.success(res, MESSAGES.USERS.SESSION_HISTORY_DETAILS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.USERS.SESSION_HISTORY_DETAILS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 }

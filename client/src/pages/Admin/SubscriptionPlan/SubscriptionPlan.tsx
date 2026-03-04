@@ -11,7 +11,7 @@ import ConfirmationModal from '../../../components/confirmModal/ConfirmationModa
 import { X, Edit2 } from 'lucide-react';
 import {
   useGetSubscriptionPlans,
-  useCreateSubscriptionPlan,     
+  useCreateSubscriptionPlan,
   useUpdateSubscriptionPlanStatus,
   useGetSubscriptionEditPage,
   useUpdateSubscriptionPlan,
@@ -34,36 +34,30 @@ const SubscriptionPlans: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
-  
-  // States for search and filter
+
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState(''); 
-  
-  // States for confirmation modal
+  const [statusFilter, setStatusFilter] = useState('');
+
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SelectedPlan | null>(null);
 
-  // Hook call passing all 4 required parameters (page, limit, status, search)
   const { data, isLoading, isError, refetch } = useGetSubscriptionPlans(
     page,
     limit,
     statusFilter,
     debouncedSearch
   );
-  
+
   const createMutation = useCreateSubscriptionPlan();
   const updateStatusMutation = useUpdateSubscriptionPlanStatus();
   const updatePlanMutation = useUpdateSubscriptionPlan();
 
-  // Fetch subscription data for editing (only when editingPlanId is set)
-  const { 
-    data: editData, 
+  const {
+    data: editData,
     isLoading: isEditLoading,
-    // isError: isEditError 
   } = useGetSubscriptionEditPage(editingPlanId || '');
 
-  // Normalize data
   const plans: SubscriptionPlan[] = useMemo(() => {
     const resp = data as any;
     return resp?.data?.data?.subscriptions || [];
@@ -75,22 +69,14 @@ const SubscriptionPlans: React.FC = () => {
   }, [data]);
 
   const formattedPlans: TablePlan[] = useMemo(
-    () =>
-      plans.map((plan: any) => ({
-        ...plan,
-        id: plan._id,
-      })),
+    () => plans.map((plan: any) => ({ ...plan, id: plan._id })),
     [plans]
   );
 
-  // Extract edit plan data
   const editPlanData = useMemo(() => {
     if (!editData) return null;
-    const resp = editData as any;
-    return resp?.data || null;
+    return (editData as any)?.data || null;
   }, [editData]);
-
-  // --- Search & Filter Handlers ---
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
@@ -106,13 +92,11 @@ const SubscriptionPlans: React.FC = () => {
     setDebouncedSearch('');
     setPage(1);
   }, []);
-  
+
   const handleStatusChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatusFilter(e.target.value);
     setPage(1);
   }, []);
-
-  // --- Edit Handlers ---
 
   const handleEditClick = useCallback((plan: TablePlan) => {
     setEditingPlanId(plan.id);
@@ -125,14 +109,8 @@ const SubscriptionPlans: React.FC = () => {
   }, []);
 
   const handleUpdatePlan = useCallback(
-    (formData: {
-      planName: string;
-      price: number;
-      durationMonths: number;
-      description: string;
-    }) => {
+    (formData: { planName: string; price: number; durationMonths: number; description: string }) => {
       if (!editingPlanId) return;
-
       updatePlanMutation.mutate(
         { id: editingPlanId, ...formData },
         {
@@ -150,55 +128,34 @@ const SubscriptionPlans: React.FC = () => {
     [editingPlanId, updatePlanMutation, refetch, handleCloseEditModal]
   );
 
-  // --- Status Toggle Handlers (using modal) ---
-
-  const handleStatusToggle = useCallback(
-    (plan: TablePlan) => {
-      setSelectedPlan({ 
-        id: plan.id, 
-        planName: plan.planName, 
-        isActive: plan.isActive as 'active' | 'inactive' 
-      });
-      setIsConfirmModalOpen(true);
-    },
-    []
-  );
+  const handleStatusToggle = useCallback((plan: TablePlan) => {
+    setSelectedPlan({ id: plan.id, planName: plan.planName, isActive: plan.isActive as 'active' | 'inactive' });
+    setIsConfirmModalOpen(true);
+  }, []);
 
   const handleConfirmStatusChange = useCallback(
     (plan: SelectedPlan) => {
       const newStatus = plan.isActive === 'active' ? 'inactive' : 'active';
-
       updateStatusMutation.mutate(
         { id: plan.id, status: newStatus },
         {
           onSuccess: () => {
-            toast.success(
-              `Plan ${plan.planName} ${
-                newStatus === 'active' ? 'activated' : 'deactivated'
-              } successfully`
-            );
-            refetch(); 
+            toast.success(`Plan ${plan.planName} ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`);
+            refetch();
             setIsConfirmModalOpen(false);
             setSelectedPlan(null);
           },
           onError: (err: any) => {
-            toast.error(
-              err?.response?.data?.message || 'Failed to update status'
-            );
+            toast.error(err?.response?.data?.message || 'Failed to update status');
           },
         }
       );
     },
     [updateStatusMutation, refetch]
   );
-  
+
   const handleCreatePlan = useCallback(
-    (formData: {
-      planName: string;
-      price: number;
-      durationMonths: number;
-      description: string;
-    }) => {
+    (formData: { planName: string; price: number; durationMonths: number; description: string }) => {
       createMutation.mutate(formData, {
         onSuccess: (res: any) => {
           toast.success(res.message || 'Plan created successfully');
@@ -232,9 +189,7 @@ const SubscriptionPlans: React.FC = () => {
         id: 'price',
         label: 'Price',
         render: (row: TablePlan) => (
-          <span className="font-medium text-green-600">
-            {row.price.toFixed(2)}
-          </span>
+          <span className="font-medium text-green-600">₹{row.price.toFixed(2)}</span>
         ),
       },
       {
@@ -246,7 +201,7 @@ const SubscriptionPlans: React.FC = () => {
         id: 'description',
         label: 'Description',
         render: (row: TablePlan) => (
-          <span className="text-gray-600 text-sm">
+          <span className="text-gray-600 text-sm truncate block max-w-[160px]">
             {row.description || '-'}
           </span>
         ),
@@ -256,10 +211,9 @@ const SubscriptionPlans: React.FC = () => {
         label: 'Status',
         render: (row: TablePlan) => {
           const isActive = row.isActive === 'active';
-
           return (
             <button
-              onClick={() => handleStatusToggle(row)} 
+              onClick={() => handleStatusToggle(row)}
               disabled={updateStatusMutation.isPending}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${
                 isActive
@@ -290,105 +244,91 @@ const SubscriptionPlans: React.FC = () => {
   );
 
   return (
-    <div className="flex bg-gray-50"> 
-      
-      {/* 1. FIXED SIDEBAR CONTAINER */}
-      <div className="w-64 fixed h-screen z-40"> 
-        <AdminSidebar />
-      </div>
+    <div className="flex min-h-screen bg-gray-50">
 
-      {/* 2. MAIN CONTENT CONTAINER (with ml-64 offset) */}
-      <div className="flex-1 flex flex-col ml-64 min-h-screen"> 
+      <AdminSidebar />
+
+      <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader />
 
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-3 sm:p-6">
           <div className="max-w-7xl mx-auto">
+
             {/* Header Section */}
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-              <div className="flex items-start justify-between">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-800">
+                  <h1 className="text-xl sm:text-3xl font-bold text-gray-800">
                     Subscription Plans
                   </h1>
-                  <p className="text-gray-600 mt-1">
+                  <p className="text-gray-500 text-sm mt-1">
                     Manage your subscription tiers and pricing
                   </p>
                 </div>
                 <button
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium shadow-lg shadow-indigo-500/30"
+                  className="px-4 py-2 sm:px-5 sm:py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium shadow-lg shadow-indigo-500/30 text-sm w-full sm:w-auto"
                 >
-                  + Add Subscription Plan
+                  + Add Plan
                 </button>
               </div>
 
-              {/* Search and Filter Row */}
-              <div className="mt-6 flex flex-col md:flex-row gap-3 md:items-center justify-between">
-                
-                {/* Search Input Group (md:w-2/3 width) */}
-                <div className="flex gap-2 w-full md:w-2/3 relative">
+              {/* Search and Filter */}
+              <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                <div className="flex gap-2 w-full sm:w-2/3 relative">
                   <input
                     type="text"
-                    placeholder="Search plans by name or description..."
+                    placeholder="Search plans..."
                     value={searchInput}
                     onChange={handleSearchChange}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
-                    className="px-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-indigo-400"
+                    className="px-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 text-sm"
                   />
-
                   {searchInput && (
                     <button
                       onClick={handleClearSearch}
-                      className="absolute right-20 top-2.5 text-gray-500 hover:text-red-500" 
+                      className="absolute right-20 top-2.5 text-gray-500 hover:text-red-500"
                       title="Clear"
                     >
                       <X size={18} />
                     </button>
                   )}
-
                   <button
                     onClick={handleSearchClick}
                     disabled={updateStatusMutation.isPending}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 text-sm whitespace-nowrap"
                   >
                     Search
                   </button>
                 </div>
-                
-                {/* Status Filter Dropdown */}
+
                 <select
                   value={statusFilter}
                   onChange={handleStatusChange}
                   disabled={updateStatusMutation.isPending}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 md:w-auto"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 text-sm w-full sm:w-auto"
                 >
                   <option value="">All Statuses</option>
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
-                
               </div>
             </div>
-            {/* End Header Section */}
 
             {/* Content Section */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               {isLoading ? (
                 <div className="flex items-center justify-center py-20">
                   <div className="text-center">
-                    <div className="inline-block w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-                    <p className="text-gray-600 font-medium">
-                      Loading plans...
-                    </p>
+                    <div className="inline-block w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4" />
+                    <p className="text-gray-600 font-medium">Loading plans...</p>
                   </div>
                 </div>
               ) : isError ? (
                 <div className="flex items-center justify-center py-20">
                   <div className="text-center">
                     <div className="text-6xl mb-4">⚠️</div>
-                    <p className="text-black-600 font-medium text-lg">
-                      No subscriptions plans found.
-                    </p>
+                    <p className="text-gray-800 font-medium text-lg">No subscription plans found.</p>
                     <button
                       onClick={() => refetch()}
                       className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
@@ -406,28 +346,25 @@ const SubscriptionPlans: React.FC = () => {
                       {debouncedSearch && ` for "${debouncedSearch}"`}
                     </p>
                     <p className="text-gray-500 text-sm">
-                      Create your first subscription plan or try a different search or filter.
+                      Create your first plan or try a different search.
                     </p>
                   </div>
                 </div>
               ) : (
                 <>
                   <Table headers={headers} data={formattedPlans} />
-                  <div className="border-t border-gray-200 px-6 py-4">
-                    <Pagination
-                      currentPage={page}
-                      totalPages={totalPages}
-                      setPage={setPage}
-                    />
+                  <div className="border-t border-gray-200 px-4 sm:px-6 py-4">
+                    <Pagination currentPage={page} totalPages={totalPages} setPage={setPage} />
                   </div>
                 </>
               )}
             </div>
+
           </div>
         </main>
       </div>
 
-      {/* Create Modal */}
+      {/* Modals */}
       <CreateSubscriptionModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -435,7 +372,6 @@ const SubscriptionPlans: React.FC = () => {
         isLoading={createMutation.isPending}
       />
 
-      {/* Edit Modal */}
       <EditSubscriptionModal
         isOpen={isEditModalOpen}
         onClose={handleCloseEditModal}
@@ -445,7 +381,6 @@ const SubscriptionPlans: React.FC = () => {
         isLoadingData={isEditLoading}
       />
 
-      {/* Confirmation/Status Change Modal */}
       {selectedPlan && (
         <ConfirmationModal
           isOpen={isConfirmModalOpen}

@@ -20,7 +20,7 @@ export class HandleWebhookUseCase implements IHandleWebhookUseCase {
     private _stripeCheckoutService: IStripeCheckoutService,
     private _membershipRepository: IMembershipRepository,
     private _createNotification: CreateNotification,
-    private _walletRepository: IWalletRepository
+    private _walletRepository: IWalletRepository,
     ) {}
 
     async excute(rawBody: Buffer, signature: string): Promise<void> {
@@ -52,8 +52,8 @@ export class HandleWebhookUseCase implements IHandleWebhookUseCase {
     }
 
     private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session): Promise<void> {
-         console.log('🔍 session.metadata:', session.metadata);
-    console.log('🔍 session.subscription:', session.subscription);
+        console.log('🔍 session.metadata:', session.metadata);
+        console.log('🔍 session.subscription:', session.subscription);
         
         const userId = session.metadata?.localUserId;
         const planId = session.metadata?.localPlanId;
@@ -61,9 +61,9 @@ export class HandleWebhookUseCase implements IHandleWebhookUseCase {
         const stripeSubscriptionId = session.subscription as string;
         const stripeCustomerId = session.customer as string;
 
-         console.log('userId:', userId);
-    console.log('planId:', planId);
-    console.log('stripeSubscriptionId:', stripeSubscriptionId);
+        console.log('userId:', userId);
+        console.log('planId:', planId);
+        console.log('stripeSubscriptionId:', stripeSubscriptionId);
 
         if (!userId || !planId) {
             console.error('❌ Missing metadata - userId or planId is null');
@@ -73,15 +73,15 @@ export class HandleWebhookUseCase implements IHandleWebhookUseCase {
         console.log('💰 walletDiscount:', walletDiscount);
         if (walletDiscount > 0) {
             console.log('🔄 Debiting wallet...');
-        await this._walletRepository.debit(userId, 'user', walletDiscount, {
-            type: WalletTransactionType.SUBSCRIPTION_PAYMENT,
-            amount: walletDiscount,
-            description: `Wallet discount applied for subscription`,
-            relatedId: stripeSubscriptionId,
-        });
-        console.log('✅ Wallet debited');
+            await this._walletRepository.debit(userId, 'user', walletDiscount, {
+                type: WalletTransactionType.SUBSCRIPTION_PAYMENT,
+                amount: walletDiscount,
+                description: 'Wallet discount applied for subscription',
+                relatedId: stripeSubscriptionId,
+            });
+            console.log('✅ Wallet debited');
         
-    }
+        }
         console.log('🔄 Fetching subscription details...');
         const subscription = await this._stripeCheckoutService.getSubscriptionDetails(stripeSubscriptionId);
         console.log('✅ Subscription fetched:', subscription.id);
@@ -118,10 +118,10 @@ export class HandleWebhookUseCase implements IHandleWebhookUseCase {
             recipientId: userId,
             recipientRole: UserRole.USER,
             type: NotificationType.SUBSCRIPTION_PURCHASED,
-            title: "Subscription Activated! 🎉",
+            title: 'Subscription Activated! 🎉',
             message: `Your subscription has been successfully activated. Enjoy your premium features! Your plan is valid until ${currentPeriodEnd?.toLocaleDateString()}.`,
             relatedId: stripeSubscriptionId,
-            isRead: false
+            isRead: false,
         });
     }
 
@@ -139,10 +139,10 @@ export class HandleWebhookUseCase implements IHandleWebhookUseCase {
                 recipientId: membership.userId,
                 recipientRole: UserRole.USER,
                 type: NotificationType.PAYMENT_SUCCESS,
-                title: "Subscription Renewed! 🚀",
-                message: "Your subscription has been successfully renewed. Thank you for staying with us!",
+                title: 'Subscription Renewed! 🚀',
+                message: 'Your subscription has been successfully renewed. Thank you for staying with us!',
                 relatedId: membership.stripeSubscriptionId,
-                isRead: false
+                isRead: false,
             });
         }
     }
@@ -159,10 +159,10 @@ export class HandleWebhookUseCase implements IHandleWebhookUseCase {
                 recipientId: membership.userId,
                 recipientRole: UserRole.USER,
                 type: NotificationType.PAYMENT_FAILED,
-                title: "Payment Failed 💳",
+                title: 'Payment Failed 💳',
                 message: "We couldn't process your subscription payment. Please check your payment method.",
                 relatedId: membership.stripeSubscriptionId,
-                isRead: false
+                isRead: false,
             });
         }
     }
@@ -178,10 +178,10 @@ export class HandleWebhookUseCase implements IHandleWebhookUseCase {
                 recipientId: membership.userId,
                 recipientRole: UserRole.USER,
                 type: NotificationType.SUBSCRIPTION_CANCELLED,
-                title: "Subscription Cancelled ⚠️",
+                title: 'Subscription Cancelled ⚠️',
                 message: "Your subscription has been cancelled. We're sorry to see you go!",
                 relatedId: membership.stripeSubscriptionId,
-                isRead: false
+                isRead: false,
             });
         }
     }

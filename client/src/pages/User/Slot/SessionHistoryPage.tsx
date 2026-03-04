@@ -1,23 +1,23 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import UserSidebar from "../../../components/user/Sidebar";
-import Header from "../../../components/user/Header";
-import Pagination from "../../../components/pagination/Pagination";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { useGetSessionHistory } from "../../../hooks/User/userServiceHooks";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import UserSidebar from '../../../components/user/Sidebar';
+import Header from '../../../components/user/Header';
+import Pagination from '../../../components/pagination/Pagination';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { useGetSessionHistory } from '../../../hooks/User/userServiceHooks';
 
 const LIMIT = 10;
 
 const statusStyles: Record<string, string> = {
-  completed: "bg-emerald-100 text-emerald-700 border border-emerald-200",
-  missed:    "bg-amber-100 text-amber-700 border border-amber-200",
-  cancelled: "bg-red-100 text-red-700 border border-red-200",
+  completed: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+  missed:    'bg-amber-100 text-amber-700 border border-amber-200',
+  cancelled: 'bg-red-100 text-red-700 border border-red-200',
 };
 
 const statusDot: Record<string, string> = {
-  completed: "bg-emerald-500",
-  missed:    "bg-amber-500",
-  cancelled: "bg-red-500",
+  completed: 'bg-emerald-500',
+  missed:    'bg-amber-500',
+  cancelled: 'bg-red-500',
 };
 
 type Session = {
@@ -30,13 +30,13 @@ type Session = {
 };
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    weekday: "short", year: "numeric", month: "short", day: "numeric",
+  return new Date(iso).toLocaleDateString('en-US', {
+    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
   });
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
 // ── Star display (readonly) ───────────────────────────────────────────────────
@@ -49,7 +49,7 @@ function StarDisplay({ rating }: { rating?: number }) {
       {[1, 2, 3, 4, 5].map((star) => (
         <span
           key={star}
-          className={`text-sm ${star <= rating ? "text-yellow-400" : "text-gray-200"}`}
+          className={`text-sm ${star <= rating ? 'text-yellow-400' : 'text-gray-200'}`}
         >
           ★
         </span>
@@ -65,7 +65,7 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } },
+  show:   { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 22 } },
   exit:   { opacity: 0, x: -30, transition: { duration: 0.2 } },
 };
 
@@ -129,8 +129,8 @@ function SessionCard({
         </div>
         <div>
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Status</p>
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${statusStyles[session.sessionStatus] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${statusDot[session.sessionStatus] ?? "bg-gray-400"}`} />
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${statusStyles[session.sessionStatus] ?? 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${statusDot[session.sessionStatus] ?? 'bg-gray-400'}`} />
             {session.sessionStatus}
           </span>
         </div>
@@ -267,8 +267,8 @@ const SessionHistoryPage = () => {
                       {/* ✅ Rating column — replaces Duration */}
                       <StarDisplay rating={session.rating} />
 
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit capitalize ${statusStyles[session.sessionStatus] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot[session.sessionStatus] ?? "bg-gray-400"}`} />
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit capitalize ${statusStyles[session.sessionStatus] ?? 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot[session.sessionStatus] ?? 'bg-gray-400'}`} />
                         {session.sessionStatus}
                       </span>
 
