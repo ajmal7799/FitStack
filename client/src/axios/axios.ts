@@ -4,7 +4,7 @@ import { setAccessToken, clearData } from '../redux/slice/userSlice/authDataSlic
 
 
 const AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -62,11 +62,11 @@ AxiosInstance.interceptors.response.use(
 
       try {
         // ✅ Call refresh endpoint
-        const response = await axios.post(
-          'http://localhost:3000/refresh-token',
-          {},
-          { withCredentials: true }
-        );
+      const response = await axios.post(
+  `${import.meta.env.VITE_API_URL}/refresh-token`,
+  {},
+  { withCredentials: true }
+);
 
         const newAccessToken = response.data.accessToken;
 
