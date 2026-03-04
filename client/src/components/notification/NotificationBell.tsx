@@ -24,8 +24,8 @@ export default function NotificationBell() {
     if (data)
       dispatch(
         setNotifications({
-          notifications: data.data.notifications,
-          unreadCount: data.data.unreadCount,
+          notifications: data?.data?.notifications,
+          unreadCount: data?.data?.unreadCount,
         })
       );
   }, [data, dispatch]);

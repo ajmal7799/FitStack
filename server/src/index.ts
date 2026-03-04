@@ -1,6 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
-import cors from 'cors';
+import cors from 'cors'; 
 import { User_Router } from './interfaceAdapters/routes/userRoutes';
 import { mongoConnect } from './infrastructure/database/connectDB/mongoConnect';
 import { Admin_Routes } from './interfaceAdapters/routes/adminRoutes';
