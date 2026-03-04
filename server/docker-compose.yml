@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # This is your backend app service
+  fitstack-backend:
+    
+    # Build using the Dockerfile in current folder
+    build: .
+    
+    # Name the running container
+    container_name: fitstack-backend
+    
+    # Always restart if it crashes (like auto-recovery!)
+    restart: always
+    
+    # Map port 3000 inside container to port 3000 on server
+    # Format is "server-port:container-port"
+    ports:
+      - "3000:3000"
+    
+    # Load environment variables from .env file
+    # This is how your MONGO_URI and secrets get inside Docker!
+    env_file:
+      - .env
+```
+
+> 🗣️ **What is `restart: always`?** Imagine your app crashes at 3am while you're sleeping 😴 With `restart: always`, Docker automatically brings it back up without you doing anything! Like a self-healing app! 🔥
+
