@@ -1,8 +1,8 @@
-import { Errors, USER_ERRORS } from '../../../shared/constants/error';
+import { Errors, } from '../../../shared/constants/error';
 import { HTTPStatus } from '../../../shared/constants/httpStatus';
 import { MESSAGES } from '../../../shared/constants/messages';
 import { ResponseHelper } from '../../../shared/utils/responseHelper';
-import { InvalidDataException, NotFoundException } from '../../../application/constants/exceptions';
+import { InvalidDataException,  } from '../../../application/constants/exceptions';
 import { NextFunction, Request, Response } from 'express';
 import { ISessionHistoryUseCase } from '../../../application/useCase/admin/session/ISessionHistoryUseCase';
 import { ISessionAdminHistoryUseCase } from '../../../application/useCase/admin/session/ISessionAdminHistoryUseCase';
@@ -11,7 +11,7 @@ import { ISessionAdminHistoryUseCase } from '../../../application/useCase/admin/
 export class AdminSessionController {
     constructor(
         private _sessionHistoryUseCase: ISessionHistoryUseCase,
-        private _sessionAdminHistoryUseCase: ISessionAdminHistoryUseCase
+        private _sessionAdminHistoryUseCase: ISessionAdminHistoryUseCase,
 
     ) {}
 
@@ -27,7 +27,7 @@ export class AdminSessionController {
             }
 
             const result = await this._sessionHistoryUseCase.getSessionHistory(page, limit, status, search);
-            ResponseHelper.success(res, MESSAGES.USERS.SESSION_HISTORY_FETCHED_SUCCESS, {result}, HTTPStatus.OK);
+            ResponseHelper.success(res, MESSAGES.USERS.SESSION_HISTORY_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
         } catch (error) {
             next(error);
         }
@@ -41,7 +41,7 @@ export class AdminSessionController {
                 throw new InvalidDataException(Errors.INVALID_DATA);
             }
             const result = await this._sessionAdminHistoryUseCase.getSessionHistoryDetails(sessionId);
-            ResponseHelper.success(res, MESSAGES.USERS.SESSION_HISTORY_DETAILS_FETCHED_SUCCESS, {result}, HTTPStatus.OK);
+            ResponseHelper.success(res, MESSAGES.USERS.SESSION_HISTORY_DETAILS_FETCHED_SUCCESS, { result }, HTTPStatus.OK);
         } catch (error) {
             next(error);
         }

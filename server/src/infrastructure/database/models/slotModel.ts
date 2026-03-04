@@ -1,4 +1,4 @@
-import { Document, Model, model,Types } from 'mongoose';
+import { Document, model,Types } from 'mongoose';
 
 import slotSchema from '../schema/slotSchema';
 import { SlotStatus } from '../../../domain/enum/SlotEnums';

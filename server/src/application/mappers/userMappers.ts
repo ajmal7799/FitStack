@@ -46,7 +46,7 @@ export class UserMapper {
             verificationCheck,
             userProfileCompleted,
             hasActiveSubscription,
-            profileImage
+            profileImage: profileImage || user.profileImage,
 
         };
     }

@@ -31,7 +31,7 @@ class TrainerSelectMapper {
             userId,
             trainerId,
             status: trainerSelectionEnums_1.TrainerSelectionStatus.ACTIVE,
-            selectedAt: new Date()
+            selectedAt: new Date(),
         };
     }
 }

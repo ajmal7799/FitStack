@@ -50,7 +50,7 @@ class UpdateSubscription {
             }
             const updateSubscription = subscriptionMappers_1.SubscriptionMapper.toUpdateEntity(existingSub, Object.assign(Object.assign({}, data), { stripeProductId,
                 stripePriceId }));
-            let updatedSubscription = yield this._subscriptionRepository.findByIdAndUpdate(updateSubscription);
+            const updatedSubscription = yield this._subscriptionRepository.findByIdAndUpdate(updateSubscription);
             return updatedSubscription;
         });
     }

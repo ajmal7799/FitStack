@@ -1,5 +1,5 @@
 
-import { MessageTypeEnums } from "../../enum/MessageTypeEnums";
+import { MessageTypeEnums } from '../../enum/MessageTypeEnums';
 
 
 

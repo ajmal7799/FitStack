@@ -15,7 +15,7 @@ import {
     TokenMissingException,
     ConflictException,
     UnauthorizedException,
-    ForbiddenException
+    ForbiddenException,
 } from '../../application/constants/exceptions';
 
 import { Request, Response, NextFunction } from 'express';

@@ -16,12 +16,13 @@ const exceptions_1 = require("../../../../application/constants/exceptions");
 const subscriptionValidator_1 = require("../../../../shared/validations/subscription/subscriptionValidator");
 const error_1 = require("../../../../shared/constants/error");
 class AdminSubscriptionController {
-    constructor(_createSubscriptionUseCase, _getAllSubscriptionUseCase, _updateSubscriptionStatusUseCase, _getSubscriptionEditPageUseCase, _updateSubscriptionUseCase) {
+    constructor(_createSubscriptionUseCase, _getAllSubscriptionUseCase, _updateSubscriptionStatusUseCase, _getSubscriptionEditPageUseCase, _updateSubscriptionUseCase, _getAllMembershipsUseCase) {
         this._createSubscriptionUseCase = _createSubscriptionUseCase;
         this._getAllSubscriptionUseCase = _getAllSubscriptionUseCase;
         this._updateSubscriptionStatusUseCase = _updateSubscriptionStatusUseCase;
         this._getSubscriptionEditPageUseCase = _getSubscriptionEditPageUseCase;
         this._updateSubscriptionUseCase = _updateSubscriptionUseCase;
+        this._getAllMembershipsUseCase = _getAllMembershipsUseCase;
     }
     // --------------------------------------------------
     //              🛠 CREATE SUBSCRIPTION
@@ -108,6 +109,24 @@ class AdminSubscriptionController {
                 }
                 const subscription = yield this._updateSubscriptionUseCase.updateSubscription(subscriptionId, parseResult.data);
                 responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.SUBSCRIPTION.SUBSCRIPTION_UPDATE_SUCCESS, subscription, 200 /* HTTPStatus.OK */);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    getAllMemberships(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const page = parseInt(req.query.page) || 1;
+                const limit = parseInt(req.query.limit) || 10;
+                const status = req.query.status || undefined;
+                const search = req.query.search || undefined;
+                if (page < 1 || limit < 1 || limit > 100) {
+                    throw new exceptions_1.InvalidDataException(error_1.Errors.INVALID_PAGINATION_PARAMETERS);
+                }
+                const result = yield this._getAllMembershipsUseCase.execute(page, limit, status, search);
+                responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.SUBSCRIPTION.MEMBERSHIP_SUCCESS, { result }, 200 /* HTTPStatus.OK */);
             }
             catch (error) {
                 next(error);

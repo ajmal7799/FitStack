@@ -3,12 +3,12 @@ import { IProcessExpiredSubscriptionsUseCase } from '../../application/useCase/u
 
 export class CheckExpirySubscription {
     constructor(
-        private _processExpiredSubscriptionsUseCase: IProcessExpiredSubscriptionsUseCase
+        private _processExpiredSubscriptionsUseCase: IProcessExpiredSubscriptionsUseCase,
     ) {}
 
     start() {
         // Runs every hour at minute 0
-        cron.schedule('0 * * * *', async () => {
+        cron.schedule('0 * * * *', async() => {
             try {
                 await this._processExpiredSubscriptionsUseCase.execute();
                 console.log('[Cron] Successfully checked for expired subscriptions.');

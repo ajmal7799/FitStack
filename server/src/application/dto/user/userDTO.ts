@@ -7,4 +7,6 @@ export interface UserDTO {
     phone?: string;
     role: UserRole;
     isActive: UserStatus;
+    profileImage?: string;
+    averageRating?: number;
 }

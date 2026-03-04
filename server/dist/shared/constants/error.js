@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SUBSCRIPTION_ERRORS = exports.ADMIN_ERRORS = exports.TRAINER_ERRORS = exports.USER_ERRORS = exports.Errors = void 0;
+exports.CHAT_ERRORS = exports.SUBSCRIPTION_ERRORS = exports.ADMIN_ERRORS = exports.TRAINER_ERRORS = exports.USER_ERRORS = exports.Errors = void 0;
 exports.Errors = {
     INVALID_CREDENTIALS: 'Invalid email or password',
     OTP_MISSING: 'OTP expired or OTP not found',
@@ -40,6 +40,15 @@ exports.Errors = {
     OTP_MISMATCH: 'OTP does not match',
     CONVERSTION_ERROR: 'Error in file conversion',
     STORAGE_UPLOAD_ERROR: 'Error while uploading file to storage',
+    SLOT_NOT_FOUND: 'Slot not found',
+    SLOT_ALREADY_BOOKED: 'This slot is already booked',
+    SLOT_ALREADY_EXISTS_IN_THAT_TIME: 'Slot already exists in that time',
+    VIDEO_CALL_NOT_FOUND: 'Video call not found',
+    VIDEO_CALL_NOT_COMPLETED: 'Video call is not completed',
+    NOT_ALLOWED: 'You are not allowed to perform this action',
+    FEEDBACK_ALREADY_EXISTS: 'Feedback already exists',
+    TRAINER_NOT_FOUND: 'Trainer not found',
+    USER_NOT_FOUND: 'User not found',
 };
 exports.USER_ERRORS = {
     USER_ALREADY_EXISTS: 'This email is already registered. Please log in instead.',
@@ -55,8 +64,15 @@ exports.USER_ERRORS = {
     USER_WORKOUT_PLAN_NOT_FOUND: 'Workout plan not found !',
     USER_DIET_PLAN_NOT_FOUND: 'Diet plan not found !',
     NO_ACTIVE_SUBSCRIPTION_FOUND: 'No active subscription found for this user',
-    TRAINER_ALREADY_SELECTED: "You already have an active trainer. Cancel your current trainer before selecting a new one.",
+    TRAINER_ALREADY_SELECTED: 'You already have an active trainer. Cancel your current trainer before selecting a new one.',
     USER_NOT_SELECTED: 'User is not selected as trainer',
+    TRAINER_SELECT_NOT_FOUND: 'Please select to your trainer first',
+    TRAINER_SLOT_NOT_FOUND: 'This trainer is not available on this day.',
+    SLOT_NOT_FOUND: 'Slot not found',
+    CONNOT_BOOK_SLOT_THAT_ALREADY_PASSED: 'Cannot book a slot that has already passed',
+    YOUR_HAVE_ALREADY_BOOKED_A_SEESSION_FOR_THIS_DAY: 'You have already booked a session for this dayYou have already booked or cancelled a session today. Only one session per day is allowed.',
+    THIS_SLOT_WAS_BOOKED_BY_ANOTHER_USER: 'This slot was just booked by someone else',
+    OLD_PASSWORD_INCORRECT: 'The old password you entered is incorrect',
 };
 exports.TRAINER_ERRORS = {
     TRAINER_ALREADY_EXISTS: 'Trainer already exists',
@@ -65,6 +81,13 @@ exports.TRAINER_ERRORS = {
     TRAINER_VERIFICATION_NOT_FOUND: 'Trainer verification not found',
     TRAINER_NOT_FOUND: 'Trainer not found',
     TRAINER_PROFILE_DATA_NOT_FOUND: 'Trainer profile data not found',
+    SLOT_ALREADY_EXISTS_IN_THAT_TIME: 'Slot already exists in that time',
+    SLOT_NOT_FOUND: 'Slot not found',
+    TRAINER_NOT_SELECTED_IN_THAT_TIME_SLOT: 'Trainer not selected in that time slot',
+    YOU_CAN_ONLY_DELETE_YOUR_OWN_SLOT: 'You can only delete your own slot',
+    SLOT_ALREADY_BOOKED: 'Cannot delete a slot that has already been booked by a user',
+    COULD_NOT_DELETE_SLOT: 'Could not delete slot. It may have been booked just now.',
+    NO_USERS_SELECTED_YET: 'No users have selected you as their trainer yet.',
 };
 exports.ADMIN_ERRORS = {
     ADMIN_SIGNUP_NOT_ALLOWED: 'You are not allowed to register as admin.',
@@ -77,4 +100,13 @@ exports.SUBSCRIPTION_ERRORS = {
     STRIPE_PRICE_ID_MISSING: 'Stripe Price ID is missing for the selected plan',
     MISSING_METADATA: 'Missing metadata in webhook',
     USER_ALREADY_HAS_ACTIVE_MEMBERSHIP: 'User already has an active membership',
+};
+exports.CHAT_ERRORS = {
+    CHAT_NOT_FOUND: 'Chat not found',
+    MESSAGE_NOT_FOUND: 'Message not found',
+    FAILED_FETCHING_CHATS: 'Failed to fetch chats',
+    FAILED_FETCHING_MESSAGES: 'Failed to fetch messages',
+    ACCESS_DENIED: 'Access Denied: You are not a participant of this chat.',
+    YOU_CAN_ONLY_DELETE_YOUR_OWN_MESSAGE: 'You can only delete your own message',
+    MESSAGE_ALREADY_DELETED: 'Message already deleted',
 };

@@ -12,8 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetAllUsersUseCase = void 0;
 const userMappers_1 = require("../../../mappers/userMappers");
 class GetAllUsersUseCase {
-    constructor(_userRepository) {
+    constructor(_userRepository, _storageService) {
         this._userRepository = _userRepository;
+        this._storageService = _storageService;
     }
     getAllUser(page, limit, status, search) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -22,7 +23,14 @@ class GetAllUsersUseCase {
                 this._userRepository.findAllUsers(skip, limit, status, search),
                 this._userRepository.countUsers(status, search),
             ]);
-            const userDTOs = users.map((user) => userMappers_1.UserMapper.toDTO(user));
+            const userDTOs = yield Promise.all(users.map((user) => __awaiter(this, void 0, void 0, function* () {
+                const dto = userMappers_1.UserMapper.toDTO(user);
+                // ✅ Get presigned profile image URL
+                if (user.profileImage) {
+                    dto.profileImage = yield this._storageService.createSignedUrl(user.profileImage, 10 * 60);
+                }
+                return dto;
+            })));
             return {
                 users: userDTOs,
                 totalUsers,

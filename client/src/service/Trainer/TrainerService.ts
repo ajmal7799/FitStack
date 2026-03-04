@@ -55,32 +55,34 @@ export const CreateRecurringSlot = async (data: string | string[]) => {
 };
 
 
-export const getBookedSlots = async (page: number, limit: number, status?: string) => {
+export const getBookedSlots = async (page: number, limit: number, status?: string, search?: string) => {
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
   });
   if(status) params.append('status',status);
+  if(search) params.append('search',search);
   const response = await AxiosInstance.get(`/trainer/booked-slots?${params.toString()}`);
   return response.data;
-}
+};
 
 export const getBookedSlotDetails = async (slotId: string) => {
   const response = await AxiosInstance.get(`/trainer/booked-slots/${slotId}`);
   return response.data;
-}
+};
 
-export const getSessionHistory = async (page: number, limit: number, status?: string) => {
+export const getSessionHistory = async (page: number, limit: number, status?: string, search?: string) => {
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),  });
   if(status) params.append('status',status);
+  if(search) params.append('search',search);
   const response = await AxiosInstance.get(`/trainer/sessions-history?${params.toString()}`);
   return response.data;
-}
+};
 
 
 export const getSessionHistoryDetails = async (sessionId: string) => {
   const response = await AxiosInstance.get(`/trainer/session-history/${sessionId}`);
   return response.data;
-}
+};

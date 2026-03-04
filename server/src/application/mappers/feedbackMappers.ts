@@ -1,5 +1,5 @@
 import mongoose, { Mongoose } from 'mongoose';
-import { Feedback } from "../../domain/entities/Feedback/feedbackEntity";
+import { Feedback } from '../../domain/entities/Feedback/feedbackEntity';
 import { IFeedbackModel } from '../../infrastructure/database/models/feedbackModel';
 import { CreateFeedbackDto } from '../dto/feedback/createFeedback';
 
@@ -12,8 +12,8 @@ export class FeedbackMapper {
             userId: new mongoose.Types.ObjectId(feedback.userId),
             trainerId: new mongoose.Types.ObjectId(feedback.trainerId),
             rating: feedback.rating,
-            review: feedback.review
-        }
+            review: feedback.review,
+        };
     }
 
     static fromMongooseDocument(feedback: IFeedbackModel): Feedback {
@@ -24,7 +24,7 @@ export class FeedbackMapper {
             trainerId: feedback.trainerId.toString(),
             rating: feedback.rating,
             review: feedback.review,
-            createdAt: feedback.createdAt
+            createdAt: feedback.createdAt,
         };
     }
 
@@ -35,7 +35,7 @@ export class FeedbackMapper {
             userId: feedback.userId.toString(),
             trainerId: feedback.trainerId.toString(),
             rating: feedback.rating,
-            review: feedback.review
+            review: feedback.review,
         };
     }
 }

@@ -1,6 +1,6 @@
 import userProfileSchema from '../schema/userProfileSchema';
 import { Document, model, Types } from 'mongoose';
-import { UserGender, DietPreference, ExperienceLevel,FitnessGoal,PreferredWorkoutType,WorkoutLocation } from '../../../domain/enum/userProfileEnums';
+import { UserGender, DietPreference, ExperienceLevel,FitnessGoal,WorkoutLocation } from '../../../domain/enum/userProfileEnums';
 
 
 export interface IUserProfileModel extends Document {

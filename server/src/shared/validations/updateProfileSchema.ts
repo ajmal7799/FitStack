@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserGender,DietPreference,ExperienceLevel,FitnessGoal, PreferredWorkoutType,WorkoutLocation } from '../../domain/enum/userProfileEnums'; 
+import { UserGender,DietPreference,ExperienceLevel,FitnessGoal, PreferredWorkoutType } from '../../domain/enum/userProfileEnums'; 
 
 export const updateProfileSchema = z.object({
     

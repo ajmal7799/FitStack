@@ -90,14 +90,14 @@ export default function ChatUserSidebar({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <h3 className={`font-semibold text-base truncate ${chat.unreadCount > 0 ? 'text-gray-900' : 'text-gray-900'
-                    }`}>
+                  }`}>
                     {chat.trainerName}
                   </h3>
 
                   <div className="flex items-center gap-2 ml-2 flex-shrink-0">
                     {chat.lastMessage && (
                       <span className={`text-xs ${chat.unreadCount > 0 ? 'text-[#25D366] font-medium' : 'text-gray-400'
-                        }`}>
+                      }`}>
                         {new Date(chat.lastMessage.timestamp).toLocaleTimeString([], {
                           hour: '2-digit',
                           minute: '2-digit'
@@ -108,21 +108,21 @@ export default function ChatUserSidebar({
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                {chat.lastMessage ? (
-    <p className={`text-sm truncate flex-1 ${
-        chat.unreadCount > 0 ? 'text-gray-900 font-medium' : 'text-gray-600'
-    }`}>
-        {chat.lastMessage.text === '📷 Image' ? '📷 Photo' :
-         chat.lastMessage.text === '🎥 Video' ? '🎥 Video' : 
-         chat.lastMessage.text === '📄 File' ? '📄 File' :
-         chat.lastMessage.text === '🎵 Audio' ? '🎵 Audio' :
-         chat.lastMessage.text}
-    </p>
-) : (
-    <p className="text-sm text-gray-400 italic flex-1">
+                  {chat.lastMessage ? (
+                    <p className={`text-sm truncate flex-1 ${
+                      chat.unreadCount > 0 ? 'text-gray-900 font-medium' : 'text-gray-600'
+                    }`}>
+                      {chat.lastMessage.text === '📷 Image' ? '📷 Photo' :
+                        chat.lastMessage.text === '🎥 Video' ? '🎥 Video' : 
+                          chat.lastMessage.text === '📄 File' ? '📄 File' :
+                            chat.lastMessage.text === '🎵 Audio' ? '🎵 Audio' :
+                              chat.lastMessage.text}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-400 italic flex-1">
         Say hi to start the conversation! ✌️
-    </p>
-)}
+                    </p>
+                  )}
 
                   {/* WhatsApp-style unread count badge */}
                   {chat.unreadCount > 0 && (

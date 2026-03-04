@@ -16,11 +16,16 @@ export class TrainerSelectRepository extends BaseRepository<TrainerSelection, IT
         return TrainerSelectMapper.fromMongooseDocument(found);
     }
 
- async findByTrainerId(trainerId: string): Promise<TrainerSelection[] | null> {
-     return this._model.find({ trainerId: trainerId }).then(docs => {
-         if (!docs || docs.length === 0) return null;
-         return docs.map(doc => TrainerSelectMapper.fromMongooseDocument(doc));
-     });
- }   
+    async findByTrainerId(trainerId: string): Promise<TrainerSelection[] | null> {
+        return this._model.find({ trainerId: trainerId }).then(docs => {
+            if (!docs || docs.length === 0) return null;
+            return docs.map(doc => TrainerSelectMapper.fromMongooseDocument(doc));
+        });
+    }
+ 
+    async countByTrainerId(trainerId: string): Promise<number> {
+        const count = await this._model.countDocuments({ trainerId: trainerId });
+        return count;
+    }
 
 }

@@ -1,10 +1,10 @@
-import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import AdminSidebar from "../../../components/admin/Sidebar";
-import AdminHeader from "../../../components/admin/Header";
-import Pagination from "../../../components/pagination/Pagination";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { useGetMembershipPage } from "../../../hooks/Admin/AdminHooks";
+import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminSidebar from '../../../components/admin/Sidebar';
+import AdminHeader from '../../../components/admin/Header';
+import Pagination from '../../../components/pagination/Pagination';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { useGetMembershipPage } from '../../../hooks/Admin/AdminHooks';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Membership = {
@@ -22,40 +22,40 @@ type Membership = {
 const LIMIT = 6;
 
 const STATUS_OPTIONS: { label: string; value: string | undefined }[] = [
-  { label: "All",        value: undefined },
-  { label: "Active",     value: "active" },
-  { label: "Trialing",   value: "trialing" },
-  { label: "Past Due",   value: "past_due" },
-  { label: "Canceled",   value: "canceled" },
-  { label: "Incomplete", value: "incomplete" },
+  { label: 'All',        value: undefined },
+  { label: 'Active',     value: 'active' },
+  { label: 'Trialing',   value: 'trialing' },
+  { label: 'Past Due',   value: 'past_due' },
+  { label: 'Canceled',   value: 'canceled' },
+  { label: 'Incomplete', value: 'incomplete' },
 ];
 
 const statusStyles: Record<string, string> = {
-  active:     "bg-emerald-100 text-emerald-700 border border-emerald-200",
-  trialing:   "bg-blue-100   text-blue-700   border border-blue-200",
-  past_due:   "bg-amber-100  text-amber-700  border border-amber-200",
-  canceled:   "bg-red-100    text-red-700    border border-red-200",
-  incomplete: "bg-gray-100   text-gray-600   border border-gray-200",
+  active:     'bg-emerald-100 text-emerald-700 border border-emerald-200',
+  trialing:   'bg-blue-100   text-blue-700   border border-blue-200',
+  past_due:   'bg-amber-100  text-amber-700  border border-amber-200',
+  canceled:   'bg-red-100    text-red-700    border border-red-200',
+  incomplete: 'bg-gray-100   text-gray-600   border border-gray-200',
 };
 
 const statusDot: Record<string, string> = {
-  active:     "bg-emerald-500",
-  trialing:   "bg-blue-500",
-  past_due:   "bg-amber-500",
-  canceled:   "bg-red-500",
-  incomplete: "bg-gray-400",
+  active:     'bg-emerald-500',
+  trialing:   'bg-blue-500',
+  past_due:   'bg-amber-500',
+  canceled:   'bg-red-500',
+  incomplete: 'bg-gray-400',
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric", month: "short", day: "numeric",
+  return new Date(iso).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
   });
 }
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency", currency: "INR", maximumFractionDigits: 0,
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency', currency: 'INR', maximumFractionDigits: 0,
   }).format(price);
 }
 
@@ -67,7 +67,7 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
-  show:   { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } },
+  show:   { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 22 } },
   exit:   { opacity: 0, x: -20, transition: { duration: 0.16 } },
 };
 
@@ -92,9 +92,9 @@ function Avatar({ name, image }: { name: string; image: string | null }) {
 // ── Status Badge ──────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit capitalize ${statusStyles[status] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>
-      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot[status] ?? "bg-gray-400"}`} />
-      {status.replace("_", " ")}
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit capitalize ${statusStyles[status] ?? 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot[status] ?? 'bg-gray-400'}`} />
+      {status.replace('_', ' ')}
     </span>
   );
 }
@@ -157,7 +157,7 @@ function EmptyState({ hasSearch }: { hasSearch: boolean }) {
         </svg>
       </div>
       <p className="text-sm font-medium text-gray-600">No memberships found</p>
-      <p className="text-xs mt-1">{hasSearch ? "Try a different search or filter." : "No memberships yet."}</p>
+      <p className="text-xs mt-1">{hasSearch ? 'Try a different search or filter.' : 'No memberships yet.'}</p>
     </div>
   );
 }
@@ -181,8 +181,8 @@ const MembershipListing = () => {
 //   const navigate = useNavigate();
   const [page, setPage]                 = useState(1);
   const [activeFilter, setActiveFilter] = useState<string | undefined>(undefined);
-  const [search, setSearch]             = useState("");
-  const [searchInput, setSearchInput]   = useState("");
+  const [search, setSearch]             = useState('');
+  const [searchInput, setSearchInput]   = useState('');
 
   const { data, isLoading, isError } = useGetMembershipPage(page, LIMIT, activeFilter, search);
 
@@ -201,12 +201,12 @@ const MembershipListing = () => {
   }, [searchInput]);
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleSearch();
+    if (e.key === 'Enter') handleSearch();
   };
 
   const handleClearSearch = () => {
-    setSearchInput("");
-    setSearch("");
+    setSearchInput('');
+    setSearch('');
     setPage(1);
   };
 
@@ -241,7 +241,7 @@ const MembershipListing = () => {
               >
                 <div className="w-2 h-2 rounded-full bg-indigo-600" />
                 <span className="text-sm font-semibold text-gray-700">
-                  {totalMemberships} total membership{totalMemberships !== 1 ? "s" : ""}
+                  {totalMemberships} total membership{totalMemberships !== 1 ? 's' : ''}
                 </span>
               </motion.div>
             )}
@@ -298,9 +298,9 @@ const MembershipListing = () => {
                 onClick={() => handleFilterChange(opt.value)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200
                   ${activeFilter === opt.value
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 hover:text-gray-900"
-                  }`}
+                ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400 hover:text-gray-900'
+              }`}
               >
                 {opt.label}
               </button>
@@ -386,7 +386,7 @@ const MembershipListing = () => {
 
                       <span className="text-sm font-semibold text-gray-800 truncate">{item.planName}</span>
                       <span className="text-sm text-gray-700">{formatPrice(item.price)}</span>
-                      <span className="text-sm text-gray-600">{item.durationMonths} month{item.durationMonths !== 1 ? "s" : ""}</span>
+                      <span className="text-sm text-gray-600">{item.durationMonths} month{item.durationMonths !== 1 ? 's' : ''}</span>
                       <span className="text-sm text-gray-600">{formatDate(item.currentPeriodEnd)}</span>
                       <StatusBadge status={item.status} />
                     </motion.div>

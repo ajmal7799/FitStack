@@ -25,45 +25,45 @@ interface PopulatedMembership {
 }
 
 export class GetAllMembershipsUseCase implements IGetAllMembershipsUseCase {
-  constructor(
+    constructor(
     private _membershipRepository: IMembershipRepository,
-    private _storageService: IStorageService
-  ) {}
+    private _storageService: IStorageService,
+    ) {}
 
-  async execute(
-    page: number,
-    limit: number,
-    status?: string,
-    search?: string
-  ): Promise<MembershipAdminListResult> {
-    const skip = (page - 1) * limit;
+    async execute(
+        page: number,
+        limit: number,
+        status?: string,
+        search?: string,
+    ): Promise<MembershipAdminListResult> {
+        const skip = (page - 1) * limit;
 
-    const [memberships, totalMemberships] = await Promise.all([
+        const [memberships, totalMemberships] = await Promise.all([
       this._membershipRepository.findAllForAdmin(skip, limit, status, search) as Promise<PopulatedMembership[]>,
       this._membershipRepository.countAllForAdmin(status, search),
-    ]);
+        ]);
 
-    // ✅ Resolve all signed URLs in parallel
-    const mappedMemberships: MembershipAdminResult[] = await Promise.all(
-      memberships.map(async item => ({
-        _id:             item.membership._id,
-        userName:        item.user?.name                 ?? "Unknown User",
-        planName:        item.subscription?.planName     ?? "Unknown Plan",
-        price:           item.subscription?.price        ?? 0,
-        durationMonths:  item.subscription?.durationMonths ?? 0,
-        status:          item.membership.status,
-        currentPeriodEnd: item.membership.currentPeriodEnd,
-        profileImage:    item.user?.profileImage
-          ? await this._storageService.createSignedUrl(item.user.profileImage, 10 * 60)
-          : null,
-      }))
-    );
+        // ✅ Resolve all signed URLs in parallel
+        const mappedMemberships: MembershipAdminResult[] = await Promise.all(
+            memberships.map(async item => ({
+                _id:             item.membership._id,
+                userName:        item.user?.name                 ?? 'Unknown User',
+                planName:        item.subscription?.planName     ?? 'Unknown Plan',
+                price:           item.subscription?.price        ?? 0,
+                durationMonths:  item.subscription?.durationMonths ?? 0,
+                status:          item.membership.status,
+                currentPeriodEnd: item.membership.currentPeriodEnd,
+                profileImage:    item.user?.profileImage
+                    ? await this._storageService.createSignedUrl(item.user.profileImage, 10 * 60)
+                    : null,
+            })),
+        );
 
-    return {
-      memberships: mappedMemberships,
-      totalMemberships,
-      totalPages:  Math.ceil(totalMemberships / limit),
-      currentPage: page,
-    };
-  }
+        return {
+            memberships: mappedMemberships,
+            totalMemberships,
+            totalPages:  Math.ceil(totalMemberships / limit),
+            currentPage: page,
+        };
+    }
 }

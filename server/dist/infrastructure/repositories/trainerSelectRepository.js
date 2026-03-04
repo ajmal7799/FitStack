@@ -25,5 +25,20 @@ class TrainerSelectRepository extends baseRepository_1.BaseRepository {
             return trainerSelectMappers_1.TrainerSelectMapper.fromMongooseDocument(found);
         });
     }
+    findByTrainerId(trainerId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this._model.find({ trainerId: trainerId }).then(docs => {
+                if (!docs || docs.length === 0)
+                    return null;
+                return docs.map(doc => trainerSelectMappers_1.TrainerSelectMapper.fromMongooseDocument(doc));
+            });
+        });
+    }
+    countByTrainerId(trainerId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const count = yield this._model.countDocuments({ trainerId: trainerId });
+            return count;
+        });
+    }
 }
 exports.TrainerSelectRepository = TrainerSelectRepository;

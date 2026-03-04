@@ -9,10 +9,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { User } from '../../types/AuthPayloads';
 import AdminSidebar from '../../components/admin/Sidebar';
 import AdminHeader from '../../components/admin/Header';
+import { useNavigate } from 'react-router-dom';
 
 interface TableUser extends User {
 	_id: string;
 	id: string;
+	profileImage?: string;
+	averageRating?: number;
 }
 
 const TrainersListing: React.FC = () => {
@@ -21,6 +24,8 @@ const TrainersListing: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  const navigate = useNavigate();
 
   const { data, isLoading, isError } = useGetAllTrainers(
     page,
@@ -36,11 +41,9 @@ const TrainersListing: React.FC = () => {
 		status: 'ACTIVE' | 'BLOCKED';
 	} | null>(null);
 
-  // temporary: keep full mutation object (typed any to avoid TS mismatches)
   const updateUserStatusMutation: any = useUpdateTrainerStatus();
   const queryClient = useQueryClient();
 
-  // normalize users list from response safely
   const users: User[] = useMemo(() => {
     const resp = data as any;
     return resp?.data?.data?.users || [];
@@ -48,7 +51,6 @@ const TrainersListing: React.FC = () => {
 
   const totalPages = useMemo(() => {
     const resp = data as any;
-    // fallback to 1 if missing
     return resp?.data?.data?.totalPages ?? 1;
   }, [data]);
 
@@ -61,7 +63,6 @@ const TrainersListing: React.FC = () => {
     [users]
   );
 
-  // Search handlers
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
   }, []);
@@ -77,13 +78,11 @@ const TrainersListing: React.FC = () => {
     setPage(1);
   }, []);
 
-  // Status filter handler
   const handleStatusChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatusFilter(e.target.value);
     setPage(1);
   }, []);
 
-  // Toggle user status with optimistic update for immediate UI feedback
   const handleStatusToggle = useCallback(
     (userId: string, currentStatus: 'ACTIVE' | 'BLOCKED') => {
       const queryKey = ['users', page, limit, statusFilter, debouncedSearch];
@@ -94,42 +93,35 @@ const TrainersListing: React.FC = () => {
         {
           onMutate: async (variables: { userId: string; currentStatus: string }) => {
             await queryClient.cancelQueries({ queryKey });
-
             const previousData = queryClient.getQueryData(queryKey);
 
             if (previousData) {
               const newData = structuredClone(previousData as any);
               const usersArr: any[] = newData.data.data.users || [];
-
               const updatedUsers = usersArr.map((u: any) =>
                 u._id === variables.userId ? { ...u, isActive: newStatus } : u
               );
-
-              // If a filter is active, remove users who no longer match
               const filteredUsers = statusFilter
                 ? updatedUsers.filter((u: any) => u.isActive === statusFilter)
                 : updatedUsers;
-
               newData.data.data.users = filteredUsers;
               newData.data.data.totalPages = Math.max(1, Math.ceil(filteredUsers.length / limit));
               newData.data.data.totalUsers = filteredUsers.length;
-
               queryClient.setQueryData(queryKey, newData);
             }
-
             return { previousData };
           },
-          onError: (_err:any, _vars:any, context:any) => {
+          onError: (_err: any, _vars: any, context: any) => {
             if (context?.previousData) {
               queryClient.setQueryData(queryKey, context.previousData);
             }
-            toast.error('Failed to update user status');
+            toast.error('Failed to update trainer status');
           },
           onSettled: () => {
             queryClient.invalidateQueries({ queryKey });
           },
           onSuccess: () => {
-            toast.success(`User ${newStatus} successfully`);
+            toast.success(`Trainer ${newStatus} successfully`);
           },
         }
       );
@@ -151,17 +143,47 @@ const TrainersListing: React.FC = () => {
       {
         id: 'name',
         label: 'Name',
-        render: (row: TableUser) => row.name,
+        render: (row: TableUser) => (
+          <div className="flex items-center gap-3">
+            {/* Profile Image */}
+            {row.profileImage ? (
+              <img
+                src={row.profileImage}
+                alt={row.name}
+                className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-gray-200"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 text-indigo-600 font-semibold text-sm">
+                {row.name?.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <span className="truncate">{row.name}</span>
+          </div>
+        ),
       },
       {
         id: 'email',
         label: 'Email',
-        render: (row: TableUser) => row.email,
+        render: (row: TableUser) => (
+          <span className="truncate block max-w-[160px]">{row.email}</span>
+        ),
       },
       {
         id: 'phone',
         label: 'Phone',
-        render: (row: TableUser) => row.phone || '-', // render phone number
+        render: (row: TableUser) => row.phone || '-',
+      },
+      {
+        id: 'averageRating',
+        label: 'Rating',
+        render: (row: TableUser) => (
+          <div className="flex items-center gap-1">
+            <span className="text-yellow-400">⭐</span>
+            <span className="font-medium text-gray-700">
+              {(row.averageRating ?? 0) > 0 ? row.averageRating!.toFixed(1) : 'N/A'}
+            </span>
+          </div>
+        ),
       },
       {
         id: 'status',
@@ -183,32 +205,45 @@ const TrainersListing: React.FC = () => {
           </button>
         ),
       },
+      {
+        id: 'action',
+        label: 'Action',
+        render: (row: TableUser) => (
+          <button
+            onClick={() => navigate(`/admin/trainers/${row._id}`)}
+            className="px-3 py-1.5 text-xs font-medium text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors"
+          >
+            View
+          </button>
+        ),
+      },
     ],
     [updateUserStatusMutation, page, limit, users]
   );
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen">
       <AdminSidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader />
 
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h1 className="text-2xl font-semibold mb-6 text-gray-800">Users Management</h1>
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md m-2 sm:m-4">
+          <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">
+            Trainers Management
+          </h1>
 
-          {/* search and filter */}
-          <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-6">
-            <div className="flex gap-2 w-full md:w-1/3 relative">
+          {/* Search and filter */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between mb-6">
+            <div className="flex gap-2 w-full sm:w-1/3 relative">
               <input
                 type="text"
                 placeholder="Search by name or email"
                 value={searchInput}
                 onChange={handleSearchChange}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
-                className="px-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-indigo-400"
+                className="px-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-indigo-400 text-sm"
               />
-
               {searchInput && (
                 <button
                   onClick={handleClearSearch}
@@ -218,13 +253,12 @@ const TrainersListing: React.FC = () => {
                   <X size={18} />
                 </button>
               )}
-
               <button
                 onClick={handleSearchClick}
                 disabled={updateUserStatusMutation?.isLoading}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 text-sm whitespace-nowrap"
               >
-								Search
+                Search
               </button>
             </div>
 
@@ -232,7 +266,7 @@ const TrainersListing: React.FC = () => {
               value={statusFilter}
               onChange={handleStatusChange}
               disabled={updateUserStatusMutation?.isLoading}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 text-sm w-full sm:w-auto"
             >
               <option value="">All Status</option>
               <option value="ACTIVE">Active</option>
@@ -240,14 +274,13 @@ const TrainersListing: React.FC = () => {
             </select>
           </div>
 
-          {/* states: loading / error / empty */}
+          {/* States */}
           {isLoading ? (
-            <div className="py-10 text-center text-gray-500">Loading users...</div>
+            <div className="py-10 text-center text-gray-500">Loading trainers...</div>
           ) : isError ? (
-          // <div className="py-10 text-center text-red-500">Failed to load users.</div>
-            <div className="py-10 text-center text-gray-500">No users found.</div>
+            <div className="py-10 text-center text-gray-500">No trainers found.</div>
           ) : formattedUsers.length === 0 ? (
-            <div className="py-10 text-center text-gray-500">No users found.</div>
+            <div className="py-10 text-center text-gray-500">No trainers found.</div>
           ) : (
             <>
               <Table<TableUser> headers={headers} data={formattedUsers} />
@@ -265,7 +298,6 @@ const TrainersListing: React.FC = () => {
                 />
               )}
 
-              {/* Pagination */}
               {formattedUsers.length > 0 && (
                 <Pagination totalPages={totalPages} currentPage={page} setPage={setPage} />
               )}

@@ -13,6 +13,8 @@ import SessionAdminHistoryDetails from '../pages/Admin/session/SessionAdminHisto
 import MembershipListing from '../pages/Admin/memberships/MembershipListing';
 import AdminDashboard from '../pages/Admin/dashboard/AdminDashboard'; 
 import { AdminSidebarProvider } from '../components/admin/AdminSidebarContext';
+import TrainerAdminDetailsPage from '../pages/Admin/TrainerDetails';
+import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
 
 
  
@@ -20,24 +22,28 @@ const AdminRoutes = () => {
 
   return (
     <AdminSidebarProvider>
-    <Routes>
-      <Route path={FRONTEND_ROUTES.ADMIN.LOGIN} element={<PublicRoute><AdminLoginPage /></PublicRoute>} />
-      <Route path={FRONTEND_ROUTES.ADMIN.DASHBOARD} element={<PrivateRoute > <AdminDashboard /> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.ADMIN.USERS} element={<PrivateRoute> <UsersListing/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.ADMIN.TRAINER} element={<PrivateRoute> <TrainersListing/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.ADMIN.VERIFICATION} element={<PrivateRoute> <VerificationPage/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.ADMIN.VERIFICATION_DETAILS} element={<PrivateRoute> <VerificationDetailsPage/> </PrivateRoute>} />
-      {/* subscription plan */}
-      <Route path={FRONTEND_ROUTES.ADMIN.SUBSCRIPTION_PLAN} element={<PrivateRoute> <SubscriptionPlan/> </PrivateRoute>} />
+      <Routes>
+        <Route path={FRONTEND_ROUTES.ADMIN.LOGIN} element={<PublicRoute><AdminLoginPage /></PublicRoute>} />
+        <Route path={FRONTEND_ROUTES.ADMIN.DASHBOARD} element={<PrivateRoute > <AdminDashboard /> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.ADMIN.USERS} element={<PrivateRoute> <UsersListing/> </PrivateRoute>} />
+
+        <Route path={FRONTEND_ROUTES.ADMIN.TRAINER} element={<PrivateRoute> <TrainersListing/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.ADMIN.TRAINER_DETAILS} element={<PrivateRoute> <TrainerAdminDetailsPage/> </PrivateRoute>} />
+
+        <Route path={FRONTEND_ROUTES.ADMIN.VERIFICATION} element={<PrivateRoute> <VerificationPage/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.ADMIN.VERIFICATION_DETAILS} element={<PrivateRoute> <VerificationDetailsPage/> </PrivateRoute>} />
+        {/* subscription plan */}
+        <Route path={FRONTEND_ROUTES.ADMIN.SUBSCRIPTION_PLAN} element={<PrivateRoute> <SubscriptionPlan/> </PrivateRoute>} />
 
     /* session management */
-      <Route path={FRONTEND_ROUTES.ADMIN.SESSION_HISTORY} element={<PrivateRoute> <SessionAdminHistoryPage/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.ADMIN.SESSION_HISTORY_DETAILS} element={<PrivateRoute> <SessionAdminHistoryDetails/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.ADMIN.SESSION_HISTORY} element={<PrivateRoute> <SessionAdminHistoryPage/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.ADMIN.SESSION_HISTORY_DETAILS} element={<PrivateRoute> <SessionAdminHistoryDetails/> </PrivateRoute>} />
 
       // membership
-      <Route path={FRONTEND_ROUTES.ADMIN.MEMBERSHIPS} element={<PrivateRoute> <MembershipListing/> </PrivateRoute>} />
+        <Route path={FRONTEND_ROUTES.ADMIN.MEMBERSHIPS} element={<PrivateRoute> <MembershipListing/> </PrivateRoute>} />
+        <Route path="*" element={<NotFoundPage />} />
 
-    </Routes>
+      </Routes>
     </AdminSidebarProvider>
   );
 };

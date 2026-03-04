@@ -1,17 +1,18 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import TrainerSidebar from "../../../components/trainer/Sidebar";
-import TrainerHeader from "../../../components/trainer/Header";
-import Pagination from "../../../components/pagination/Pagination";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { useGetBookedSlots } from "../../../hooks/Trainer/TrainerHooks";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import TrainerSidebar from '../../../components/trainer/Sidebar';
+import TrainerHeader from '../../../components/trainer/Header';
+import Pagination from '../../../components/pagination/Pagination';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { useGetBookedSlots } from '../../../hooks/Trainer/TrainerHooks';
+import { X } from 'lucide-react';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const SessionStatus = {
-  COMPLETED: "completed",
-  MISSED:    "missed",
-  CANCELLED: "cancelled",
-  WAITING:   "waiting",
+  COMPLETED: 'completed',
+  MISSED:    'missed',
+  CANCELLED: 'cancelled',
+  WAITING:   'waiting',
 } as const;
 
 type SessionStatusValue = typeof SessionStatus[keyof typeof SessionStatus];
@@ -21,48 +22,48 @@ const LIMIT = 4;
 // ── Status config ─────────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   waiting: {
-    bg:    "bg-[#faac05]/10 border border-[#faac05]/30",
-    text:  "text-[#b87d00]",
-    dot:   "bg-[#faac05]",
-    label: "Waiting",
+    bg:    'bg-[#faac05]/10 border border-[#faac05]/30',
+    text:  'text-[#b87d00]',
+    dot:   'bg-[#faac05]',
+    label: 'Waiting',
   },
   booked: {
-    bg:    "bg-[#faac05]/10 border border-[#faac05]/30",
-    text:  "text-[#b87d00]",
-    dot:   "bg-[#faac05]",
-    label: "Booked",
+    bg:    'bg-[#faac05]/10 border border-[#faac05]/30',
+    text:  'text-[#b87d00]',
+    dot:   'bg-[#faac05]',
+    label: 'Booked',
   },
   completed: {
-    bg:    "bg-emerald-100 border border-emerald-200",
-    text:  "text-emerald-700",
-    dot:   "bg-emerald-500",
-    label: "Completed",
+    bg:    'bg-emerald-100 border border-emerald-200',
+    text:  'text-emerald-700',
+    dot:   'bg-emerald-500',
+    label: 'Completed',
   },
   missed: {
-    bg:    "bg-amber-100 border border-amber-200",
-    text:  "text-amber-700",
-    dot:   "bg-amber-500",
-    label: "Missed",
+    bg:    'bg-amber-100 border border-amber-200',
+    text:  'text-amber-700',
+    dot:   'bg-amber-500',
+    label: 'Missed',
   },
   cancelled: {
-    bg:    "bg-red-100 border border-red-200",
-    text:  "text-red-700",
-    dot:   "bg-red-500",
-    label: "Cancelled",
+    bg:    'bg-red-100 border border-red-200',
+    text:  'text-red-700',
+    dot:   'bg-red-500',
+    label: 'Cancelled',
   },
 };
 
 const DEFAULT_STATUS = {
-  bg: "bg-gray-100 border border-gray-200", text: "text-gray-600", dot: "bg-gray-400", label: "Unknown",
+  bg: 'bg-gray-100 border border-gray-200', text: 'text-gray-600', dot: 'bg-gray-400', label: 'Unknown',
 };
 
 // ── Filter options ────────────────────────────────────────────────────────────
 const filterOptions: { label: string; value: SessionStatusValue | undefined }[] = [
-  { label: "All",       value: undefined },
-  { label: "Waiting",   value: SessionStatus.WAITING },
-  { label: "Completed", value: SessionStatus.COMPLETED },
-  { label: "Missed",    value: SessionStatus.MISSED },
-  { label: "Cancelled", value: SessionStatus.CANCELLED },
+  { label: 'All',       value: undefined },
+  { label: 'Waiting',   value: SessionStatus.WAITING },
+  { label: 'Completed', value: SessionStatus.COMPLETED },
+  { label: 'Missed',    value: SessionStatus.MISSED },
+  { label: 'Cancelled', value: SessionStatus.CANCELLED },
 ];
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -76,20 +77,20 @@ interface BookedSlot {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    weekday: "short", year: "numeric", month: "short", day: "numeric",
+  return new Date(iso).toLocaleDateString('en-US', {
+    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
   });
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
 function getDuration(start: string, end: string) {
   const diff = (new Date(end).getTime() - new Date(start).getTime()) / 60000;
   const h = Math.floor(diff / 60);
   const m = diff % 60;
-  if (h > 0) return `${h}h${m > 0 ? ` ${m}m` : ""}`;
+  if (h > 0) return `${h}h${m > 0 ? ` ${m}m` : ''}`;
   return `${m} min`;
 }
 
@@ -101,7 +102,7 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 18 },
-  show:   { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } },
+  show:   { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 22 } },
   exit:   { opacity: 0, x: -24, transition: { duration: 0.18 } },
 };
 
@@ -121,7 +122,7 @@ const EmptyState = ({ filter }: { filter?: string }) => (
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     </div>
-    <p className="text-sm font-medium text-gray-600">No slots found{filter ? ` for "${filter}"` : ""}</p>
+    <p className="text-sm font-medium text-gray-600">No slots found{filter ? ` for "${filter}"` : ''}</p>
     <p className="text-xs mt-1 text-gray-400">Try a different filter or check back later.</p>
   </div>
 );
@@ -212,7 +213,16 @@ const UpcomingSlotsPage = () => {
   const [currentPage,  setCurrentPage]  = useState(1);
   const [activeFilter, setActiveFilter] = useState<SessionStatusValue | undefined>(undefined);
 
-  const { data, isLoading, isError } = useGetBookedSlots(currentPage, LIMIT, activeFilter);
+  // ✅ Search state
+  const [searchInput,     setSearchInput]     = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  const { data, isLoading, isError } = useGetBookedSlots(
+    currentPage,
+    LIMIT,
+    activeFilter,
+    debouncedSearch, // ✅ pass search to hook
+  );
 
   const slots: BookedSlot[] = data?.data?.result?.slots      || [];
   const totalPages: number  = data?.data?.result?.totalePages || 1;
@@ -220,6 +230,18 @@ const UpcomingSlotsPage = () => {
 
   const handleFilterChange = (value: SessionStatusValue | undefined) => {
     setActiveFilter(value);
+    setCurrentPage(1);
+  };
+
+  // ✅ Search handlers
+  const handleSearchClick = () => {
+    setDebouncedSearch(searchInput.trim());
+    setCurrentPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput('');
+    setDebouncedSearch('');
     setCurrentPage(1);
   };
 
@@ -246,7 +268,7 @@ const UpcomingSlotsPage = () => {
           >
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
-                Upcoming Slots
+                My All Sessions
               </h1>
               <p className="text-gray-500 text-sm mt-1">
                 Manage and view your scheduled appointments.
@@ -263,32 +285,64 @@ const UpcomingSlotsPage = () => {
               >
                 <div className="w-2 h-2 rounded-full bg-[#faac05] animate-pulse" />
                 <span className="text-sm font-semibold text-gray-700">
-                  {totalSlots} appointment{totalSlots !== 1 ? "s" : ""}
+                  {totalSlots} appointment{totalSlots !== 1 ? 's' : ''}
                 </span>
               </motion.div>
             )}
           </motion.div>
 
-          {/* ── Filter Pills ─────────────────────────────────────────────── */}
+          {/* ── Search + Filter Row ──────────────────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.1 }}
-            className="flex gap-2 mb-5 flex-wrap"
+            className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5"
           >
-            {filterOptions.map(({ label, value }) => (
+            {/* ✅ Search input */}
+            <div className="relative flex gap-2 w-full sm:w-89">
+              <input
+                type="text"
+                placeholder="Search by client name..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
+                className="w-full px-4 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#faac05]/40 focus:border-[#faac05] transition-all"
+              />
+              {searchInput && (
+                <button
+                  onClick={handleClearSearch}
+                  className="absolute right-[72px] top-2.5 text-gray-400 hover:text-red-400 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              )}
               <button
-                key={label}
-                onClick={() => handleFilterChange(value)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200
-                  ${activeFilter === value
-                    ? "bg-[#faac05] text-white border-[#faac05] shadow-sm"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-[#faac05]/60 hover:text-[#b87d00]"
-                  }`}
+                onClick={handleSearchClick}
+                className="px-4 py-2 bg-[#faac05] hover:bg-[#e09b00] text-white text-sm font-semibold rounded-xl transition-all whitespace-nowrap"
               >
-                {label}
+                Search
               </button>
-            ))}
+            </div>
+
+            {/* ✅ Divider */}
+            <div className="hidden sm:block w-px h-6 bg-gray-200 flex-shrink-0" />
+
+            {/* Filter pills */}
+            <div className="flex gap-2 flex-wrap">
+              {filterOptions.map(({ label, value }) => (
+                <button
+                  key={label}
+                  onClick={() => handleFilterChange(value)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200
+                    ${activeFilter === value
+                  ? 'bg-[#faac05] text-white border-[#faac05] shadow-sm'
+                  : 'bg-white text-gray-600 border-gray-200 hover:border-[#faac05]/60 hover:text-[#b87d00]'
+                }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </motion.div>
 
           {/* ── DESKTOP TABLE (md+) ──────────────────────────────────────── */}
@@ -298,7 +352,6 @@ const UpcomingSlotsPage = () => {
             transition={{ duration: 0.4, delay: 0.15 }}
             className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
           >
-            {/* Light gray header — matching TrainerSessionHistoryPage */}
             <div className="grid grid-cols-[40px_1fr_1.4fr_1fr_80px_110px_110px] px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider gap-4">
               <span>#</span>
               <span>Client</span>
@@ -309,7 +362,6 @@ const UpcomingSlotsPage = () => {
               <span>Action</span>
             </div>
 
-            {/* Loading skeleton */}
             {isLoading && (
               <div className="divide-y divide-gray-50">
                 {Array(LIMIT).fill(null).map((_, i) => (
@@ -323,12 +375,13 @@ const UpcomingSlotsPage = () => {
             )}
 
             {isError && !isLoading && <ErrorState />}
-            {!isLoading && !isError && slots.length === 0 && <EmptyState filter={activeFilter} />}
+            {!isLoading && !isError && slots.length === 0 && (
+              <EmptyState filter={debouncedSearch || activeFilter} />
+            )}
 
-            {/* Data rows */}
             {!isLoading && !isError && slots.length > 0 && (
               <motion.div
-                key={`desktop-${currentPage}-${activeFilter}`}
+                key={`desktop-${currentPage}-${activeFilter}-${debouncedSearch}`}
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
@@ -346,10 +399,8 @@ const UpcomingSlotsPage = () => {
                         exit="exit"
                         className="grid grid-cols-[40px_1fr_1.4fr_1fr_80px_110px_110px] px-6 py-4 items-center hover:bg-gray-50 transition-colors duration-150 gap-4"
                       >
-                        {/* # */}
                         <span className="text-sm font-medium text-gray-400">{rowNum}</span>
 
-                        {/* Client */}
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-xs font-bold uppercase flex-shrink-0">
                             {slot.userName.charAt(0)}
@@ -359,28 +410,23 @@ const UpcomingSlotsPage = () => {
                           </span>
                         </div>
 
-                        {/* Date */}
                         <span className="text-sm text-gray-600 truncate">
                           {formatDate(slot.startTime)}
                         </span>
 
-                        {/* Time */}
                         <span className="text-sm text-gray-600 truncate">
                           {formatTime(slot.startTime)} – {formatTime(slot.endTime)}
                         </span>
 
-                        {/* Duration */}
                         <span className="text-sm text-gray-600">
                           {getDuration(slot.startTime, slot.endTime)}
                         </span>
 
-                        {/* Status badge */}
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit capitalize ${cfg.bg} ${cfg.text}`}>
                           <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
                           {cfg.label}
                         </span>
 
-                        {/* Details button — #faac05 */}
                         <button
                           onClick={() => handleDetails(slot._id)}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#faac05] hover:bg-[#e09b00] text-white text-xs font-bold transition-all duration-200 w-fit shadow-sm"
@@ -423,11 +469,13 @@ const UpcomingSlotsPage = () => {
             )}
 
             {isError && !isLoading && <ErrorState />}
-            {!isLoading && !isError && slots.length === 0 && <EmptyState filter={activeFilter} />}
+            {!isLoading && !isError && slots.length === 0 && (
+              <EmptyState filter={debouncedSearch || activeFilter} />
+            )}
 
             {!isLoading && !isError && slots.length > 0 && (
               <motion.div
-                key={`mobile-${currentPage}-${activeFilter}`}
+                key={`mobile-${currentPage}-${activeFilter}-${debouncedSearch}`}
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"

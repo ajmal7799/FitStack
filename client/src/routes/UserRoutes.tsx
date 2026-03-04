@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { FRONTEND_ROUTES } from '../constants/frontendRoutes';
 import UserSignUpPage from '../pages/Auth/SignupPage';
-import LandingPage from '../pages/LandingPages/landingPage';
+// import LandingPage from '../pages/LandingPages/landingPage';
 import UserLoginPage from '../pages/Auth/LoginPage';
 import Home from '../pages/Home/home';
 import PrivateRoute from '../components/protectedComponents/PrivateRoute';
@@ -30,26 +30,29 @@ import VideoSessionPage from '../pages/Video/VideoSessionPage';
 import SessionHistoryPage from '../pages/User/Slot/SessionHistoryPage';
 import SessionHistoryDetailsPage from '../pages/User/Slot/SessionHistoryDetailsPage';
 import UserWalletPage from '../pages/User/wallet/UserWalletPage';
+import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
 
 
 const UserRoutes = () => {
   return (
     <Routes>
-      <Route path={FRONTEND_ROUTES.LANDING} element={<PublicRoute> <LandingPage /> </PublicRoute>} />
+      <Route path={FRONTEND_ROUTES.LANDING} element={ <Home /> } />
+      <Route path={FRONTEND_ROUTES.USER.SUBSCRIPTION} element={< SubscriptionPlans /> } />
+      <Route path={FRONTEND_ROUTES.USER.TRAINERS} element={  < TrainersPageListing />   } />
+      <Route path={FRONTEND_ROUTES.USER.TRAINER_DETAILS} element={ <TrainerDetails /> } />
+      <Route path={FRONTEND_ROUTES.USER.AI_WORKOUT} element={ <  AiWorkoutPlan /> } />
+      <Route path={FRONTEND_ROUTES.USER.AI_DIET} element={ <  AiDietPlan /> } />
+
+
       <Route path={FRONTEND_ROUTES.USER.SIGNUP} element={<PublicRoute> <UserSignUpPage/> </PublicRoute>} />
       <Route path={FRONTEND_ROUTES.USER.LOGIN} element={<PublicRoute><UserLoginPage/> </PublicRoute>} />
       <Route path={FRONTEND_ROUTES.USER.FORGOTPASSWORD} element={<PublicRoute> < ForgotPassword/></PublicRoute>} />
-      <Route path={FRONTEND_ROUTES.USER.HOME} element={<PrivateRoute> < Home /> </PrivateRoute>} />
+      
       <Route path={FRONTEND_ROUTES.USER.ADD_PROFILE} element={<PrivateRoute> <AddProfilePage/> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.USER.SUBSCRIPTION} element={<PrivateRoute> < SubscriptionPlans /> </PrivateRoute>} />
-
-      <Route path={FRONTEND_ROUTES.USER.TRAINER_DETAILS} element={ <PrivateRoute><TrainerDetails /> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.USER.TRAINERS} element={ <PrivateRoute> < TrainersPageListing /> </PrivateRoute>  } />
       <Route path={FRONTEND_ROUTES.USER.SELECTED_TRAINER} element={ <PrivateRoute> < GetSelectedTrainer /> </PrivateRoute>  } />
 
     
-      <Route path={FRONTEND_ROUTES.USER.AI_WORKOUT} element={<PrivateRoute> <  AiWorkoutPlan /> </PrivateRoute>} />
-      <Route path={FRONTEND_ROUTES.USER.AI_DIET} element={<PrivateRoute> <  AiDietPlan /> </PrivateRoute>} />
+    
 
       <Route path={FRONTEND_ROUTES.USER.PROFOILE} element={<PrivateRoute> <  UserProfile /> </PrivateRoute>} />
       <Route path={FRONTEND_ROUTES.USER.PROFOILE_EDIT} element={<PrivateRoute> <  EditUserPersonalPage /> </PrivateRoute>} />
@@ -77,7 +80,7 @@ const UserRoutes = () => {
       <Route path={FRONTEND_ROUTES.USER.WALLET} element={<PrivateRoute> < UserWalletPage /> </PrivateRoute>} />
 
       <Route path={FRONTEND_ROUTES.USER.VIDEO_SESSION} element={<PrivateRoute> < VideoSessionPage /> </PrivateRoute>} />
-
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

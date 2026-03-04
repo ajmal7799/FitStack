@@ -1,45 +1,45 @@
-import { IJoinSessionUseCase } from "../../useCase/video/IJoinSessionUseCase";
-import { NotFoundException,ForbiddenException } from "../../constants/exceptions";
-import { ISlotRepository } from "../../../domain/interfaces/repositories/ISlotRepository";
-import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
-import { SlotStatus } from "../../../domain/enum/SlotEnums";
-import { VideoCallStatus } from "../../../domain/enum/videoCallEnums";
-import { VideoCall } from "../../../domain/entities/videoCall/videoCallEntity";
-import { IVideoCallRepository } from "../../../domain/interfaces/repositories/IVideoCallRepository";
+import { IJoinSessionUseCase } from '../../useCase/video/IJoinSessionUseCase';
+import { NotFoundException,ForbiddenException } from '../../constants/exceptions';
+import { ISlotRepository } from '../../../domain/interfaces/repositories/ISlotRepository';
+import { IUserRepository } from '../../../domain/interfaces/repositories/IUserRepository';
+import { SlotStatus } from '../../../domain/enum/SlotEnums';
+import { VideoCallStatus } from '../../../domain/enum/videoCallEnums';
+import { VideoCall } from '../../../domain/entities/videoCall/videoCallEntity';
+import { IVideoCallRepository } from '../../../domain/interfaces/repositories/IVideoCallRepository';
 
 
 export class JoinSessionUseCase implements IJoinSessionUseCase {
     constructor(
         private _slotRepository: ISlotRepository,
-        private _videoCallRepository: IVideoCallRepository
+        private _videoCallRepository: IVideoCallRepository,
     ) {}
-  async execute(userId: string,slotId: string): Promise<{roomId: string}> {
+    async execute(userId: string,slotId: string): Promise<{roomId: string}> {
 
         const slot = await this._videoCallRepository.findById(slotId);
-        if (!slot || slot.status == VideoCallStatus.COMPLETED || slot.status == VideoCallStatus.MISSED) {
-            throw new NotFoundException("Valid booked slot not found.");
+        if (!slot || slot.status === VideoCallStatus.COMPLETED || slot.status === VideoCallStatus.MISSED) {
+            throw new NotFoundException('Valid booked slot not found.');
         }
 
         // 2. Validate Time Window (Allow joining 5 mins early, for example)
         const now = new Date();
         const bufferMillis = 5 * 60 * 1000; 
         if (now.getTime() < new Date(slot.startTime).getTime() - bufferMillis) {
-            throw new ForbiddenException("Session has not started yet.");
+            throw new ForbiddenException('Session has not started yet.');
         }
         if (now.getTime() > new Date(slot.endTime).getTime()) {
-            throw new ForbiddenException("This session has already ended.");
+            throw new ForbiddenException('This session has already ended.');
         }
 
         // 3. Find the Video Session
         const session = await this._videoCallRepository.findById(slotId);
-        if (!session) throw new NotFoundException("Video session record missing.");
+        if (!session) throw new NotFoundException('Video session record missing.');
 
         // 4. Update Join Flags
         const isTrainer = userId === slot.trainerId;
         const isUser = userId === slot.userId; 
 
         if (!isTrainer && !isUser) {
-            throw new ForbiddenException("You are not authorized to join this session.");
+            throw new ForbiddenException('You are not authorized to join this session.');
         }
 
         const updateData: Partial<VideoCall> = {};

@@ -4,10 +4,10 @@ import { IFindExpiredSessionUseCase } from '../../application/useCase/video/IFin
 export class CheckExpireySession {
     
     constructor(
-        private _findExpiredSessionUseCase: IFindExpiredSessionUseCase
+        private _findExpiredSessionUseCase: IFindExpiredSessionUseCase,
     ) {}
     start() {
-        cron.schedule('0 0 * * * *', async () => {
+        cron.schedule('0 0 * * * *', async() => {
             try {
                 await this._findExpiredSessionUseCase.execute();
                 console.log('[Cron] Successfully processed expired sessions.');

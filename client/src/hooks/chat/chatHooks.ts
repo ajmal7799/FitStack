@@ -5,26 +5,26 @@ import {
   markAsRead,
   getAttachmentUploadUrl,
   uploadFileToS3,
-} from "../../service/chat/chatServices";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+} from '../../service/chat/chatServices';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 
 export const useInitiateChat = () => {
   return useQuery({
-    queryKey: ["initiateChat"],
+    queryKey: ['initiateChat'],
     queryFn: () => intiateChat(),
   });
 };
 
 export const useInitiateChatTrainer = () => {
   return useQuery({
-    queryKey: ["initiateChatTrainer"],
+    queryKey: ['initiateChatTrainer'],
     queryFn: () => intiateChatTrainer(),
   });
 };
 
 export const useGetMessages = (chatId: string) => {
   return useQuery({
-    queryKey: ["getMessages", chatId],
+    queryKey: ['getMessages', chatId],
     queryFn: () => getMessages(chatId),
   });
 };
@@ -36,10 +36,10 @@ export const useMarkAsRead = () => {
     mutationFn: (chatId: string) => markAsRead(chatId),
     onSuccess: () => {
       // Invalidate chat queries to refresh unread counts
-      queryClient.invalidateQueries({ queryKey: ["initiateChat"] });
+      queryClient.invalidateQueries({ queryKey: ['initiateChat'] });
     },
     onError: (error) => {
-      console.error("Failed to mark chat as read:", error);
+      console.error('Failed to mark chat as read:', error);
     },
   });
 };
@@ -52,11 +52,11 @@ export const useUploadAttachment = () => {
         file.name,
         file.type,
       );
-      console.log("🔑 uploadUrl:", uploadUrl);
-      console.log("🔑 key:", key);
+      console.log('🔑 uploadUrl:', uploadUrl);
+      console.log('🔑 key:', key);
 
       if (!uploadUrl || !key) {
-        throw new Error("Failed to get upload URL");
+        throw new Error('Failed to get upload URL');
       }
 
       await uploadFileToS3(uploadUrl, file);

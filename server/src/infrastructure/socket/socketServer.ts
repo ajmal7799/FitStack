@@ -51,7 +51,7 @@ export class SocketService {
         const notificationRepository = new NotificationRepository(notificationModel);
 
 
-       const createNotification = new CreateNotification(notificationRepository);
+        const createNotification = new CreateNotification(notificationRepository);
         const sendingMessageUseCase = new SendingMessageUseCase(messageRepository, chatRepository, storageService);
         const deleteMessageUseCase = new DeleteMessageUseCase(messageRepository, chatRepository);
         const endVideoCallSessionUseCase = new EndVideoCallSessionUseCase( videoCallRepository, slotRepository, walletRepository, membershipRepository, subscriptionRepository, createNotification);
@@ -71,7 +71,7 @@ export class SocketService {
 
     public static get io() {
         if (!this._io) {
-            throw new Error("Socket.IO not initialized!");
+            throw new Error('Socket.IO not initialized!');
         }
         return this._io;
     }

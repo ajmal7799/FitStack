@@ -1,6 +1,6 @@
-import { Document, model, Types } from "mongoose";
-import messageSchema from "../schema/messageSchema";
-import { MessageTypeEnums } from "../../../domain/enum/MessageTypeEnums";
+import { Document, model, Types } from 'mongoose';
+import messageSchema from '../schema/messageSchema';
+import { MessageTypeEnums } from '../../../domain/enum/MessageTypeEnums';
 
 export interface IMessageModel extends Document {
   _id: Types.ObjectId;
@@ -27,6 +27,6 @@ export interface IMessageModel extends Document {
 }
 
 export const messageModel = model<IMessageModel>(
-  "Message",
-  messageSchema
+    'Message',
+    messageSchema,
 );

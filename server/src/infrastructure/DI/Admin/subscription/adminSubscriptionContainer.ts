@@ -30,7 +30,7 @@ const getSubscriptionEditPageUseCase = new GetSubscriptionEditPage(subscriptionR
 const updateSubscriptionUseCase = new UpdateSubscription(subscriptionRepository, stripeService);
 const getAllMembershipsUseCase = new GetAllMembershipsUseCase(
     membershipRepository,
-    storageService
+    storageService,
 );
 
 
@@ -41,6 +41,6 @@ export const adminSubscriptionController = new AdminSubscriptionController(
     updateSubscriptionStatusUseCase,
     getSubscriptionEditPageUseCase,
     updateSubscriptionUseCase,
-    getAllMembershipsUseCase
+    getAllMembershipsUseCase,
     
 );

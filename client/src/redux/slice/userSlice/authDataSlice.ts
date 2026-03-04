@@ -42,8 +42,8 @@ const userAuthDataSlice = createSlice({
       state.hasActiveSubscription = action.payload;
     },
     setAccessToken: (state, action) => {
-    state.accessToken = action.payload;
-  },
+      state.accessToken = action.payload;
+    },
 
     clearData: ()=> initialState,
   },    

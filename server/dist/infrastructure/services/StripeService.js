@@ -45,7 +45,7 @@ class StripeService {
         return __awaiter(this, void 0, void 0, function* () {
             yield stripe.products.update(productId, {
                 name: data.name,
-                description: data.description
+                description: data.description,
             });
         });
     }
@@ -68,28 +68,37 @@ class StripeService {
             yield stripe.prices.update(priceId, { active: false });
         });
     }
-    createCheckoutSessionUrl(priceId, planId, userId, stripeCustomerId) {
+    createCheckoutSessionUrl(priceId, planId, userId, stripeCustomerId, walletDiscount) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const successUrl = `${config_1.CONFIG.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`;
             const cancelUrl = `${config_1.CONFIG.FRONTEND_URL}/plans`;
-            const session = yield stripe.checkout.sessions.create({
-                payment_method_types: ['card'],
-                mode: 'subscription',
-                line_items: [
-                    {
-                        price: priceId,
-                        quantity: 1,
-                    },
-                ],
-                customer: stripeCustomerId,
-                // 3. Pass local IDs to the webhook handler via metadata (CRITICAL for persistence)
-                metadata: {
+            let discounts = [];
+            if (walletDiscount && walletDiscount > 0) {
+                // Fetch the price to check amount — prevent coupon >= plan price
+                const stripePrice = yield stripe.prices.retrieve(priceId);
+                const planAmountInPaise = (_a = stripePrice.unit_amount) !== null && _a !== void 0 ? _a : 0;
+                const discountInPaise = Math.round(walletDiscount * 100);
+                // ✅ Only apply coupon if discount is strictly less than plan price
+                if (discountInPaise > 0 && discountInPaise < planAmountInPaise) {
+                    const coupon = yield stripe.coupons.create({
+                        amount_off: discountInPaise,
+                        currency: 'usd', // ✅ match your price currency
+                        duration: 'once',
+                        name: 'Wallet Balance Discount',
+                    });
+                    discounts = [{ coupon: coupon.id }];
+                    console.log(`🎟️ Coupon created: ₹${walletDiscount} discount for user ${userId}`);
+                }
+                else {
+                    console.warn(`⚠️ Skipping coupon: discount ₹${walletDiscount} >= plan price, handle via wallet-only path`);
+                }
+            }
+            const session = yield stripe.checkout.sessions.create(Object.assign(Object.assign({ payment_method_types: ['card'], mode: 'subscription', line_items: [{ price: priceId, quantity: 1 }], customer: stripeCustomerId, metadata: {
                     localPlanId: planId,
                     localUserId: userId,
-                },
-                success_url: successUrl,
-                cancel_url: cancelUrl,
-            });
+                    walletDiscount: (walletDiscount === null || walletDiscount === void 0 ? void 0 : walletDiscount.toString()) || '0',
+                } }, (discounts.length > 0 && { discounts })), { success_url: successUrl, cancel_url: cancelUrl }));
             return session.url;
         });
     }

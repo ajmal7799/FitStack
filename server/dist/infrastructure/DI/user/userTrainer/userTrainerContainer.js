@@ -22,7 +22,7 @@ const userRepository = new userRepository_1.UserRepository(userModel_1.userModel
 const trainerRepository = new trainerRepository_1.TrainerRepository(trainerModel_1.trainerModel);
 const trainerSelectRepository = new trainerSelectRepository_1.TrainerSelectRepository(trainerSelectModel_1.trainerSelectModel);
 // useCases
-const getAllTrainerUseCase = new GetAllTrainerUseCase_1.GetAllTrainerUseCase(verificationRepository, storageService);
+const getAllTrainerUseCase = new GetAllTrainerUseCase_1.GetAllTrainerUseCase(verificationRepository, storageService, userRepository);
 const getTrainerDetailsUseCase = new GetTrainerDetailsUseCase_1.GetTrainerDetailsUseCase(trainerRepository, userRepository, storageService);
 const selectTrainer = new TrainerSelectUseCase_1.TrainerSelectUseCase(trainerSelectRepository, userRepository);
 const getSelectedTrainer = new GetSelectedTrainerUseCase_1.GetSelectedTrainerUseCase(trainerSelectRepository, userRepository, storageService, trainerRepository);

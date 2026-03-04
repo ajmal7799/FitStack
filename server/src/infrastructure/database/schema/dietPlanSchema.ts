@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
 // Schema for individual meal components
 const MealComponentSchema = new mongoose.Schema({

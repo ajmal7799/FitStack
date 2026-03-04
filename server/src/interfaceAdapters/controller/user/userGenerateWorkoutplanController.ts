@@ -15,7 +15,6 @@ export class UserGenerateWorkoutplanController {
 
     async handleGenerateWorkoutplan(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log('reched here ');
             const userId = req.user?.userId;
 
             if (!userId) {
@@ -23,7 +22,6 @@ export class UserGenerateWorkoutplanController {
             }
       
             const result = await this._generateWorkoutplanUseCase.generateWorkoutPlan(userId);
-            console.log('result', result);
 
             ResponseHelper.success(res, MESSAGES.USERS.WORKOUT_PLAN_CREATED_SUCCESSFULLY, { result }, HTTPStatus.OK);
         

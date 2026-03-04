@@ -23,6 +23,8 @@ class StorageService {
                 accessKeyId: config_1.CONFIG.AWS_ACCESS_KEY_ID,
                 secretAccessKey: config_1.CONFIG.AWS_SECRET_ACCESS_KEY,
             },
+            requestChecksumCalculation: 'WHEN_REQUIRED', // ← add this
+            responseChecksumValidation: 'WHEN_REQUIRED',
         });
     }
     upload(file, key) {
@@ -50,6 +52,18 @@ class StorageService {
             });
             const signedUrl = yield (0, s3_request_presigner_1.getSignedUrl)(this._s3Client, command, { expiresIn: expiary });
             return signedUrl;
+        });
+    }
+    createPresignedUploadUrl(key, fileType, expiry) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const command = new client_s3_1.PutObjectCommand({
+                Bucket: config_1.CONFIG.S3_BUCKET_NAME,
+                Key: key,
+                // ← removed ContentType, no ChecksumAlgorithm
+            });
+            return yield (0, s3_request_presigner_1.getSignedUrl)(this._s3Client, command, {
+                expiresIn: expiry,
+            });
         });
     }
 }

@@ -11,8 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MembershipRepository = void 0;
 const baseRepository_1 = require("./baseRepository");
+const membershipEnums_1 = require("../../domain/enum/membershipEnums");
 const membershipMappers_1 = require("../../application/mappers/membershipMappers");
 const subscriptionMappers_1 = require("../../application/mappers/subscriptionMappers");
+const userMappers_1 = require("../../application/mappers/userMappers");
 class MembershipRepository extends baseRepository_1.BaseRepository {
     constructor(_model) {
         super(_model, membershipMappers_1.MembershipMapper);
@@ -20,7 +22,7 @@ class MembershipRepository extends baseRepository_1.BaseRepository {
     }
     findBySubscriptionId(subscriptionId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const membershipDoc = yield this._model.findOne({ subscriptionId: subscriptionId });
+            const membershipDoc = yield this._model.findOne({ stripeSubscriptionId: subscriptionId });
             if (!membershipDoc) {
                 return null;
             }
@@ -48,7 +50,7 @@ class MembershipRepository extends baseRepository_1.BaseRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const pipeline = [];
             pipeline.push({
-                $match: { userId: userId }
+                $match: { userId: userId },
             }, {
                 $lookup: {
                     from: 'subscriptions',
@@ -63,10 +65,110 @@ class MembershipRepository extends baseRepository_1.BaseRepository {
                 },
             });
             const results = yield this._model.aggregate(pipeline);
-            return results.map((result) => ({
+            return results.map(result => ({
                 membership: membershipMappers_1.MembershipMapper.fromMongooseDocument(result),
                 subscription: subscriptionMappers_1.SubscriptionMapper.fromMongooseDocument(result.subscriptionData),
             }));
+        });
+    }
+    findAllForAdmin(skip, limit, status, search) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pipeline = [
+                {
+                    $addFields: {
+                        userObjectId: { $toObjectId: "$userId" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'userObjectId',
+                        foreignField: '_id',
+                        as: 'userId',
+                    },
+                },
+                { $unwind: '$userId' },
+                {
+                    $lookup: {
+                        from: 'subscriptions',
+                        localField: 'planId',
+                        foreignField: '_id',
+                        as: 'planId',
+                    },
+                },
+                { $unwind: { path: '$planId' } },
+                {
+                    $match: Object.assign(Object.assign({}, (status ? { status } : {})), (search
+                        ? {
+                            $or: [
+                                { 'userId.name': { $regex: search, $options: 'i' } },
+                                { 'planId.planName': { $regex: search, $options: 'i' } },
+                            ],
+                        }
+                        : {})),
+                },
+                { $sort: { createdAt: -1 } },
+                { $skip: skip === undefined ? 0 : skip },
+                { $limit: limit === undefined ? 10 : limit },
+            ];
+            const docs = yield this._model.aggregate(pipeline).exec();
+            return docs.map(doc => ({
+                membership: membershipMappers_1.MembershipMapper.fromMongooseDocument(doc),
+                subscription: subscriptionMappers_1.SubscriptionMapper.fromMongooseDocument(doc.planId),
+                user: userMappers_1.UserMapper.fromMongooseDocument(doc.userId),
+            }));
+        });
+    }
+    countAllForAdmin(status, search) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pipeline = [
+                {
+                    $addFields: {
+                        userObjectId: { $toObjectId: "$userId" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'userObjectId',
+                        foreignField: '_id',
+                        as: 'userId',
+                    },
+                },
+                { $unwind: '$userId' },
+                {
+                    $lookup: {
+                        from: 'subscriptions',
+                        localField: 'planId',
+                        foreignField: '_id',
+                        as: 'planId',
+                    },
+                },
+                { $unwind: { path: '$planId' } },
+                {
+                    $match: Object.assign(Object.assign({}, (status ? { status } : {})), (search
+                        ? {
+                            $or: [
+                                { 'userId.name': { $regex: search, $options: 'i' } },
+                                { 'planId.planName': { $regex: search, $options: 'i' } },
+                            ],
+                        }
+                        : {})),
+                },
+                { $count: 'total' },
+            ];
+            const result = yield this._model.aggregate(pipeline).exec();
+            return result.length > 0 ? result[0].total : 0;
+        });
+    }
+    findExpiredActiveMemberships() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const now = new Date();
+            const docs = yield this._model.find({
+                status: membershipEnums_1.MembershipStatus.Active,
+                currentPeriodEnd: { $lt: now }
+            });
+            return docs.map(doc => membershipMappers_1.MembershipMapper.fromMongooseDocument(doc));
         });
     }
 }

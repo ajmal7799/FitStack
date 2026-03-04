@@ -224,6 +224,63 @@ const TrainerSlotPage = () => {
     Available: { bg: 'bg-orange-50',  text: 'text-orange-600', dot: 'bg-orange-400' }
   };
 
+  // ─── Compute minTime / maxTime for single slot time picker ──────────────────
+  // If today is selected, restrict past times; otherwise allow full day.
+  const singleIsToday = selectedDate
+    ? selectedDate.toDateString() === new Date().toDateString()
+    : false;
+
+  const singleSlotMinTime = singleIsToday
+    ? new Date()
+    : new Date(new Date().setHours(0, 0, 0, 0));
+
+  const singleSlotMaxTime = new Date(new Date().setHours(23, 59, 0, 0));
+
+  // ─── Guard: is the combined single-slot date+time already in the past? ────
+  // This catches the case where the user types a past time via the free-text
+  // input (minTime only disables list items, it can't block typed values).
+  const singleSlotIsPast = (() => {
+    if (!selectedDate || !selectedTime) return false;
+    const combined = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
+      selectedTime.getHours(),
+      selectedTime.getMinutes(),
+      0, 0
+    );
+    return combined <= new Date();
+  })();
+
+  // ─── Compute minTime / maxTime for recurring slot time picker ────────────
+  // If the chosen start date is today, block past times.
+  // If the start date is a future date (or not yet chosen), allow all times.
+  const recurringIsStartToday = recurringStartDate
+    ? recurringStartDate.toDateString() === new Date().toDateString()
+    : false;
+
+  const recurringMinTime = recurringIsStartToday
+    ? new Date()
+    : new Date(new Date().setHours(0, 0, 0, 0));
+
+  const recurringMaxTime = new Date(new Date().setHours(23, 59, 0, 0));
+
+  // ─── Guard: is the recurring start date today AND chosen time already past?
+  // Same typed-value safety net as above.
+  const recurringIsPast = (() => {
+    if (!recurringStartDate || !recurringStartTime) return false;
+    if (!recurringIsStartToday) return false; // future date → never "past"
+    const combined = new Date(
+      recurringStartDate.getFullYear(),
+      recurringStartDate.getMonth(),
+      recurringStartDate.getDate(),
+      recurringStartTime.getHours(),
+      recurringStartTime.getMinutes(),
+      0, 0
+    );
+    return combined <= new Date();
+  })();
+
   return (
     <>
       {/* ── Global styles injected inline so no extra CSS file needed ── */}
@@ -252,6 +309,33 @@ const TrainerSlotPage = () => {
         .react-datepicker__day:hover { background: var(--orange-light) !important; border-radius: 8px !important; }
         .react-datepicker__time-container .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--selected { background: var(--orange) !important; }
         .react-datepicker-wrapper { width: 100%; }
+
+        /* ── Single slot: show both scrollable list AND free-text minute input ── */
+        .single-slot-time .react-datepicker__time-container { width: 160px !important; }
+        .single-slot-time .react-datepicker__time-box { width: 100% !important; }
+        .single-slot-time .react-datepicker__input-time-container { padding: 8px 12px !important; }
+        .single-slot-time .react-datepicker-time__input-container { width: 100% !important; }
+        .single-slot-time .react-datepicker-time__input input[type="time"] {
+          width: 100% !important;
+          padding: 6px 10px !important;
+          border: 1.5px solid var(--gray-200) !important;
+          border-radius: 8px !important;
+          font-size: 14px !important;
+          outline: none !important;
+          color: var(--gray-900) !important;
+          font-family: inherit !important;
+        }
+        .single-slot-time .react-datepicker-time__input input[type="time"]:focus {
+          border-color: var(--orange) !important;
+          box-shadow: 0 0 0 3px rgba(245,141,66,0.15) !important;
+        }
+        .single-slot-time .react-datepicker-time__caption {
+          font-weight: 600 !important;
+          color: var(--gray-700) !important;
+          font-size: 13px !important;
+          margin-bottom: 4px !important;
+        }
+
         .slot-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
         .slot-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,141,66,0.15); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -479,28 +563,40 @@ const TrainerSlotPage = () => {
                 />
               </div>
 
-              {/* Time */}
+              {/* ── Time: scrollable list + free-text minute input via showTimeInput ── */}
+              {/*
+                KEY CHANGE:
+                  - Removed `showTimeSelectOnly` (which rendered a time-only dropdown
+                    with fixed 30-min intervals — no minute typing possible).
+                  - Added `showTimeSelect` + `showTimeInput` together:
+                      • `showTimeSelect` keeps the scrollable hour:minute list.
+                      • `showTimeInput` adds a native <input type="time"> below the
+                        list so the user can type any hour AND any minute freely.
+                  - `timeIntervals={1}` makes every minute selectable in the list.
+                  - `wrapperClassName="single-slot-time"` targets the CSS we added
+                    above to style the time input to match the rest of the UI.
+              */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Select Time
                 </label>
-                <DatePicker
-                  selected={selectedTime}
-                  onChange={(time: Date | null) => setSelectedTime(time)}
-                  showTimeSelect
-                  showTimeSelectOnly
-                  timeIntervals={30}
-                  timeCaption="Time"
-                  dateFormat="h:mm aa"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none"
-                  placeholderText="Choose a time"
-                  minTime={
-                    selectedDate && selectedDate.toDateString() === new Date().toDateString()
-                      ? new Date()
-                      : new Date(new Date().setHours(0, 0, 0, 0))
-                  }
-                  maxTime={new Date(new Date().setHours(23, 30, 0, 0))}
-                />
+                <div className="single-slot-time">
+                  <DatePicker
+                    selected={selectedTime}
+                    onChange={(time: Date | null) => setSelectedTime(time)}
+                    showTimeSelect
+                    showTimeInput
+                    timeIntervals={1}
+                    timeInputLabel="Or type:"
+                    timeCaption="Time"
+                    dateFormat="h:mm aa"
+                    showTimeSelectOnly
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none"
+                    placeholderText="Choose a time (e.g. 9:45 AM)"
+                    minTime={singleSlotMinTime}
+                    maxTime={singleSlotMaxTime}
+                  />
+                </div>
               </div>
 
               {/* Preview */}
@@ -518,6 +614,11 @@ const TrainerSlotPage = () => {
                     {addOneHour(selectedTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
                     <span className="ml-2 text-xs text-gray-400">(1 hour)</span>
                   </p>
+                  {singleSlotIsPast && (
+                    <p className="mt-2 text-xs font-semibold text-red-500">
+                      ⚠ This time has already passed. Please choose a future time.
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -528,7 +629,7 @@ const TrainerSlotPage = () => {
                 </button>
                 <button
                   onClick={handleCreateSlot}
-                  disabled={!selectedDate || !selectedTime || createSlotMutation.isPending}
+                  disabled={!selectedDate || !selectedTime || singleSlotIsPast || createSlotMutation.isPending}
                   className="flex-1 px-4 py-3 rounded-xl text-white font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{ background: 'var(--orange)' }}
                 >
@@ -603,7 +704,14 @@ const TrainerSlotPage = () => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Start Date *</label>
                   <DatePicker
                     selected={recurringStartDate}
-                    onChange={(date: Date | null) => setRecurringStartDate(date)}
+                    onChange={(date: Date | null) => {
+                      setRecurringStartDate(date);
+                      // If the user switches to today and a time is already picked,
+                      // clear it so they can't accidentally keep a past time.
+                      if (date && date.toDateString() === new Date().toDateString()) {
+                        setRecurringStartTime(null);
+                      }
+                    }}
                     minDate={new Date()}
                     dateFormat="MMM d, yyyy"
                     className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none"
@@ -624,21 +732,39 @@ const TrainerSlotPage = () => {
               </div>
 
               {/* Start time */}
+              {/*
+                minTime / maxTime: if the chosen start date is TODAY, disable all
+                past time slots in the scrollable list. If the start date is a
+                future date (or not chosen yet), the full 00:00–23:59 range is open.
+                showTimeInput adds a native <input type="time"> so the user can
+                type any hour AND minute freely — same behaviour as single slot.
+              */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Start Time * <span className="font-normal text-gray-400">(sessions are 1 hour)</span>
                 </label>
-                <DatePicker
-                  selected={recurringStartTime}
-                  onChange={(time: Date | null) => setRecurringStartTime(time)}
-                  showTimeSelect
-                  showTimeSelectOnly
-                  timeIntervals={30}
-                  timeCaption="Time"
-                  dateFormat="h:mm aa"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none"
-                  placeholderText="Choose start time"
-                />
+                <div className="single-slot-time">
+                  <DatePicker
+                    selected={recurringStartTime}
+                    onChange={(time: Date | null) => setRecurringStartTime(time)}
+                    showTimeSelect
+                    showTimeInput
+                    showTimeSelectOnly
+                    timeIntervals={1}
+                    timeInputLabel="Or type:"
+                    timeCaption="Time"
+                    dateFormat="h:mm aa"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none"
+                    placeholderText="Choose start time (e.g. 9:45 AM)"
+                    minTime={recurringMinTime}
+                    maxTime={recurringMaxTime}
+                  />
+                </div>
+                {recurringIsPast && (
+                  <p className="mt-1.5 text-xs font-semibold text-red-500">
+                    ⚠ This time has already passed. Please choose a future time.
+                  </p>
+                )}
               </div>
 
               {/* Weekday selector */}
@@ -696,7 +822,7 @@ const TrainerSlotPage = () => {
                   onClick={handleCreateRecurringSlot}
                   disabled={
                     !recurringStartDate || !recurringEndDate || !recurringStartTime ||
-                    selectedWeekdays.length === 0 || createRecurringSlotMutation.isPending
+                    selectedWeekdays.length === 0 || recurringIsPast || createRecurringSlotMutation.isPending
                   }
                   className="flex-1 px-4 py-3 rounded-xl bg-gray-900 text-white font-semibold text-sm hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >

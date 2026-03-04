@@ -1,6 +1,6 @@
-import { IGetNotificationsUseCase } from "../../useCase/notification/IGetNotificationsUseCase";
-import { INotificationRepository } from "../../../domain/interfaces/repositories/INotificationRepository";
-import { Notification } from "../../../domain/entities/Notification/NotificationEntity";
+import { IGetNotificationsUseCase } from '../../useCase/notification/IGetNotificationsUseCase';
+import { INotificationRepository } from '../../../domain/interfaces/repositories/INotificationRepository';
+import { Notification } from '../../../domain/entities/Notification/NotificationEntity';
 
 export class GetNotificationsUseCase implements IGetNotificationsUseCase {
     constructor(private _notificationRepository: INotificationRepository) {}
@@ -8,8 +8,8 @@ export class GetNotificationsUseCase implements IGetNotificationsUseCase {
         
         const [notifications, unreadCount] = await Promise.all([
             this._notificationRepository.findByRecipientId(userId),
-            this._notificationRepository.getUnreadCount(userId)
-        ])
+            this._notificationRepository.getUnreadCount(userId),
+        ]);
 
         return { notifications, unreadCount };
     }

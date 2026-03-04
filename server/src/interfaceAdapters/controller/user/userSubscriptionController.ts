@@ -3,12 +3,11 @@ import { MESSAGES } from '../../../shared/constants/messages';
 import { ResponseHelper } from '../../../shared/utils/responseHelper';
 import { InvalidDataException, NotFoundException } from '../../../application/constants/exceptions';
 import { NextFunction, Request, Response } from 'express';
-import { Errors, SUBSCRIPTION_ERRORS } from '../../../shared/constants/error';
+import { Errors, SUBSCRIPTION_ERRORS,USER_ERRORS } from '../../../shared/constants/error';
 import { IGetAllSubscriptionUser } from '../../../application/useCase/user/subscription/IGetAllSubscription';
 import { ICreateUserCheckoutSession } from '../../../application/useCase/user/subscription/ICreateUserCheckoutSession';
 import { IHandleWebhookUseCase } from '../../../application/useCase/user/subscription/IHandleWebhookUseCase';
 import { IActiveSubscriptionUseCase } from '../../../application/useCase/user/subscription/IActiveSubscriptionUseCase';
-import { USER_ERRORS } from '../../../shared/constants/error';
 import { INonSubscribedUserUseCase } from '../../../application/useCase/user/subscription/INonSubscribedUserUseCase';
 import { IGetWalletUseCase } from '../../../application/useCase/wallet/IGetWalletUseCase';
 
@@ -19,7 +18,7 @@ export class UserSubscriptionController {
     private _handleWebhookUseCase: IHandleWebhookUseCase,
     private _activeSubscriptionUseCase: IActiveSubscriptionUseCase,
     private _nonSubscribedUsersUseCase: INonSubscribedUserUseCase,
-    private _getWalletUseCase: IGetWalletUseCase
+    private _getWalletUseCase: IGetWalletUseCase,
     ) {}
 
     // --------------------------------------------------
@@ -73,19 +72,19 @@ export class UserSubscriptionController {
     //              🛠 HANDLE STRIPE WEBHOOK
     // --------------------------------------------------
 
-        async handleStripeWebhook(req: Request, res: Response, next: NextFunction) {
-                const signature = req.headers['stripe-signature'] as string;
-                console.log('Body is Buffer:', Buffer.isBuffer(req.body)); // must print TRUE
-                console.log('Signature:', signature);
-                res.status(200).json({ received: true });
-            try {
+    async handleStripeWebhook(req: Request, res: Response, next: NextFunction) {
+        const signature = req.headers['stripe-signature'] as string;
+        console.log('Body is Buffer:', Buffer.isBuffer(req.body)); // must print TRUE
+        console.log('Signature:', signature);
+        res.status(200).json({ received: true });
+        try {
 
-                await this._handleWebhookUseCase.excute(req.body, signature);
-            } catch (error) {
-                console.error('❌ Webhook error:', error);
+            await this._handleWebhookUseCase.excute(req.body, signature);
+        } catch (error) {
+            console.error('❌ Webhook error:', error);
                 
-            }
         }
+    }
 
     // --------------------------------------------------
     //              🛠 SHOW ACTIVE SUBSCRIPTION

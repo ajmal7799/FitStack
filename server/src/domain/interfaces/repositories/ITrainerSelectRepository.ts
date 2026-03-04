@@ -3,5 +3,6 @@ import { TrainerSelection } from '../../entities/trainer/trainerSelectionEntitie
 export interface ITrainerSelectRepository extends IBaseRepository<TrainerSelection> {
     findByUserId(userId: string): Promise<TrainerSelection | null>;
     findByTrainerId(trainerId: string): Promise<TrainerSelection[] | null>;
+    countByTrainerId(trainerId: string): Promise<number>;
 }
 

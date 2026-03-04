@@ -30,6 +30,7 @@ export class CreateUserProfileUseCase implements ICreateUserProfileUseCase {
             dietPreference,
             preferredWorkoutTypes,
             medicalConditions,
+            profileImage,
         } = data;
 
         const user = await this._userRepository.findById(userId);
@@ -40,13 +41,13 @@ export class CreateUserProfileUseCase implements ICreateUserProfileUseCase {
    
         let profileImageUrl: string | undefined;
 
-        // if (profileImage) {
-        //     profileImageUrl = await this._storageService.upload(
-        //         profileImage,
-        //         StorageFolderNameEnums.USER_PROFILE_IMAGE + '/' + userId + Date.now(),
-        //     );
-        //     await this._userRepository.updateUserProfileImage(userId, profileImageUrl);
-        // }
+        if (profileImage) {
+            profileImageUrl = await this._storageService.upload(
+                profileImage,
+                StorageFolderNameEnums.USER_PROFILE_IMAGE + '/' + userId + Date.now(),
+            );
+            await this._userRepository.updateUserProfileImage(userId, profileImageUrl);
+        }
        
 
         const updateUserProfile = await this._userProfileRepository.createUserProfile(userId, {

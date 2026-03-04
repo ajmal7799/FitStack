@@ -23,13 +23,11 @@ class UserGenerateWorkoutplanController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             try {
-                console.log('reched here ');
                 const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
                 if (!userId) {
                     throw new exceptions_1.InvalidDataException(error_1.USER_ERRORS.NO_USERS_FOUND);
                 }
                 const result = yield this._generateWorkoutplanUseCase.generateWorkoutPlan(userId);
-                console.log('result', result);
                 responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.USERS.WORKOUT_PLAN_CREATED_SUCCESSFULLY, { result }, 200 /* HTTPStatus.OK */);
             }
             catch (error) {

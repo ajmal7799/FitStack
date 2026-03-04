@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userSubscriptionController = void 0;
+exports.userSubscriptionController = exports.processExpiredSubscriptionsUseCase = void 0;
 const userSubscriptionController_1 = require("../../../../interfaceAdapters/controller/user/userSubscriptionController");
 const GetAllSubscription_1 = require("../../../../application/implementation/user/subscription/GetAllSubscription");
 const subscriptionRepository_1 = require("../../../repositories/subscriptionRepository");
@@ -13,15 +13,29 @@ const handleWebhookUseCase_1 = require("../../../../application/implementation/u
 const membershipRepository_1 = require("../../../repositories/membershipRepository");
 const membershipModel_1 = require("../../../database/models/membershipModel");
 const ActiveSubscriptionUseCase_1 = require("../../../../application/implementation/user/subscription/ActiveSubscriptionUseCase");
+const NonSubscribedUsersUseCase_1 = require("../../../../application/implementation/user/subscription/NonSubscribedUsersUseCase");
+const ProcessExpiredSubscriptionsUseCase_1 = require("../../../../application/implementation/user/subscription/ProcessExpiredSubscriptionsUseCase");
+const CreateNotification_1 = require("../../../../application/implementation/notification/CreateNotification");
+const notificationRepository_1 = require("../../../repositories/notificationRepository");
+const notificationModel_1 = require("../../../database/models/notificationModel");
+const walletRepository_1 = require("../../../repositories/walletRepository");
+const walletModel_1 = require("../../../database/models/walletModel");
+const GetWalletUseCase_1 = require("../../../../application/implementation/wallet/GetWalletUseCase");
 // repository & service
 const subscriptionRepository = new subscriptionRepository_1.SubscriptionRepository(subscriptionModel_1.subscriptionModel);
 const stripeService = new StripeService_1.StripeService();
 const userRepository = new userRepository_1.UserRepository(userModel_1.userModel);
 const membershipRepository = new membershipRepository_1.MembershipRepository(membershipModel_1.membershipModel);
+const notificationRepository = new notificationRepository_1.NotificationRepository(notificationModel_1.notificationModel);
+const createNotification = new CreateNotification_1.CreateNotification(notificationRepository);
+const walletRepository = new walletRepository_1.WalletRepository(walletModel_1.walletModel);
 // usecase
 const getAllSubscriptionUseCase = new GetAllSubscription_1.GetAllSubscriptionUser(subscriptionRepository);
-const createUserCheckoutSessionUseCase = new CreateUserCheckoutSession_1.CreateUserCheckoutSession(subscriptionRepository, userRepository, stripeService, stripeService);
-const webhookHandler = new handleWebhookUseCase_1.HandleWebhookUseCase(userRepository, stripeService, membershipRepository);
+const createUserCheckoutSessionUseCase = new CreateUserCheckoutSession_1.CreateUserCheckoutSession(subscriptionRepository, userRepository, stripeService, stripeService, membershipRepository, walletRepository, createNotification);
+const webhookHandler = new handleWebhookUseCase_1.HandleWebhookUseCase(userRepository, stripeService, membershipRepository, createNotification, walletRepository);
 const activeSubscriptionUseCase = new ActiveSubscriptionUseCase_1.ActiveSubscriptionUseCase(subscriptionRepository, userRepository, membershipRepository);
+const nonSubscribedUsersUseCase = new NonSubscribedUsersUseCase_1.NonSubscribedUsersUseCase(userRepository);
+const getWalletUseCase = new GetWalletUseCase_1.GetWalletUseCase(walletRepository);
+exports.processExpiredSubscriptionsUseCase = new ProcessExpiredSubscriptionsUseCase_1.ProcessExpiredSubscriptionsUseCase(membershipRepository, userRepository, createNotification);
 // controller
-exports.userSubscriptionController = new userSubscriptionController_1.UserSubscriptionController(getAllSubscriptionUseCase, createUserCheckoutSessionUseCase, webhookHandler, activeSubscriptionUseCase);
+exports.userSubscriptionController = new userSubscriptionController_1.UserSubscriptionController(getAllSubscriptionUseCase, createUserCheckoutSessionUseCase, webhookHandler, activeSubscriptionUseCase, nonSubscribedUsersUseCase, getWalletUseCase);

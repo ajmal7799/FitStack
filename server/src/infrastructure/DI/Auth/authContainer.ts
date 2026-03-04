@@ -103,7 +103,7 @@ export const userAuthController = new UserAuthController(
     googleAuthUseCase,
     jwtService,
     refreshTokenUseCase,
-    changePasswordUseCase
+    changePasswordUseCase,
  
 );
 

@@ -118,5 +118,19 @@ class UserRepository extends baseRepository_1.BaseRepository {
             return userMappers_1.UserMapper.fromMongooseDocument(updatedDoc);
         });
     }
+    updateUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this._model.findByIdAndUpdate(user._id, { $set: user }, { new: true });
+        });
+    }
+    findNonSubscribedUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const docs = yield this._model.find({
+                role: userEnums_1.UserRole.USER,
+                activeMembershipId: { $exists: false }
+            });
+            return docs.map(doc => userMappers_1.UserMapper.fromMongooseDocument(doc));
+        });
+    }
 }
 exports.UserRepository = UserRepository;

@@ -1,5 +1,5 @@
-import { INotificationModel } from "../../infrastructure/database/models/notificationModel";
-import { Notification} from "../../domain/entities/Notification/NotificationEntity";
+import { INotificationModel } from '../../infrastructure/database/models/notificationModel';
+import { Notification } from '../../domain/entities/Notification/NotificationEntity';
 import mongoose, { Mongoose } from 'mongoose';
 
 
@@ -14,8 +14,8 @@ export class NotficationMapper {
             message: notification.message,
             relatedId: notification.relatedId,
             isRead: notification.isRead,
-            createdAt: notification.createdAt
-        }
+            createdAt: notification.createdAt,
+        };
     }
 
     static fromMongooseDocument(notification: INotificationModel) : Notification {
@@ -28,8 +28,8 @@ export class NotficationMapper {
             message: notification.message,
             relatedId: notification.relatedId?.toString() ,
             isRead: notification.isRead,
-            createdAt: notification.createdAt
-        }
+            createdAt: notification.createdAt,
+        };
     }
 }
 

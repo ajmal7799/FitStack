@@ -1,34 +1,34 @@
-import { IBookedSlotDetailsUseCase } from "../../../useCase/trainer/slot/IBookedSlotDetailsUseCase";
-import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { UpcomingSlotDetailsDTO } from "../../../dto/slot/slotDTO";
-import { IStorageService } from "../../../../domain/interfaces/services/IStorage/IStorageService";
-import { NotFoundException,UnauthorizedException } from "../../../constants/exceptions";
-import { Errors, USER_ERRORS } from "../../../../shared/constants/error";
-import { IVideoCallRepository } from "../../../../domain/interfaces/repositories/IVideoCallRepository";
+import { IBookedSlotDetailsUseCase } from '../../../useCase/trainer/slot/IBookedSlotDetailsUseCase';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { UpcomingSlotDetailsDTO } from '../../../dto/slot/slotDTO';
+import { IStorageService } from '../../../../domain/interfaces/services/IStorage/IStorageService';
+import { NotFoundException,UnauthorizedException } from '../../../constants/exceptions';
+import { Errors, USER_ERRORS } from '../../../../shared/constants/error';
+import { IVideoCallRepository } from '../../../../domain/interfaces/repositories/IVideoCallRepository';
 
 
 export class BookedSlotDetailsUseCase implements IBookedSlotDetailsUseCase {
     constructor(
         private _videoCallRepository: IVideoCallRepository,
         private _userRepository: IUserRepository,
-        private _storageService: IStorageService
+        private _storageService: IStorageService,
     ) {}
 
     async getBookedSlotDetails(trainerId: string, slotId: string): Promise<UpcomingSlotDetailsDTO> {
         const slot = await this._videoCallRepository.findById(slotId);
-        if(!slot) {
+        if (!slot) {
             throw new NotFoundException(Errors.SLOT_NOT_FOUND);
         }
-        if(slot.trainerId !== trainerId) {
-             throw new UnauthorizedException("You do not have permission to view this slot.");
+        if (slot.trainerId !== trainerId) {
+            throw new UnauthorizedException('You do not have permission to view this slot.');
         }
 
         const user = await this._userRepository.findById(slot.userId || '');
-        if(!user) {
+        if (!user) {
             throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
         }
 
-        let profileImageUrl = user.profileImage || "";
+        let profileImageUrl = user.profileImage || '';
         if (profileImageUrl) {
             profileImageUrl = await this._storageService.createSignedUrl(profileImageUrl, 10 * 60);
         }     
@@ -43,7 +43,7 @@ export class BookedSlotDetailsUseCase implements IBookedSlotDetailsUseCase {
             slotStatus: slot.status,
             cancellationReason: slot.cancellationReason || null,
             cancelledAt: slot.cancelledAt || null,
-            cancelledBy: slot.cancelledBy || null
+            cancelledBy: slot.cancelledBy || null,
 
             // cancellationReason: slot.cancellationReason? slot.cancellationReason : "",
         };

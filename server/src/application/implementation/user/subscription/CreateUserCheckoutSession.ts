@@ -1,20 +1,20 @@
-    import { IStripeCheckoutService } from '../../../../domain/interfaces/services/IStripeCheckoutService';
-    import { ISubscriptionRepository } from '../../../../domain/interfaces/repositories/ISubscriptionRepository';
-    import { NotFoundException } from '../../../constants/exceptions';
-    import { SUBSCRIPTION_ERRORS, USER_ERRORS } from '../../../../shared/constants/error';
-    import { CheckoutSessionDTO } from '../../../dto/user/subscription/checkoutSessionDTO';
-    import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
-    import { User } from '../../../../domain/entities/user/userEntities';
-    import { IStripeService } from '../../../../domain/interfaces/services/IStripeService';
-    import { IMembershipRepository } from '../../../../domain/interfaces/repositories/IMembershipRepository';
-    import { MembershipStatus } from '../../../../domain/enum/membershipEnums';
-    import { IWalletRepository } from '../../../../domain/interfaces/repositories/IWalletRepository';
-    import { CreateNotification } from '../../notification/CreateNotification';
+import { IStripeCheckoutService } from '../../../../domain/interfaces/services/IStripeCheckoutService';
+import { ISubscriptionRepository } from '../../../../domain/interfaces/repositories/ISubscriptionRepository';
+import { NotFoundException } from '../../../constants/exceptions';
+import { SUBSCRIPTION_ERRORS, USER_ERRORS } from '../../../../shared/constants/error';
+import { CheckoutSessionDTO } from '../../../dto/user/subscription/checkoutSessionDTO';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { User } from '../../../../domain/entities/user/userEntities';
+import { IStripeService } from '../../../../domain/interfaces/services/IStripeService';
+import { IMembershipRepository } from '../../../../domain/interfaces/repositories/IMembershipRepository';
+import { MembershipStatus } from '../../../../domain/enum/membershipEnums';
+import { IWalletRepository } from '../../../../domain/interfaces/repositories/IWalletRepository';
+import { CreateNotification } from '../../notification/CreateNotification';
 import { WalletTransactionType } from '../../../../domain/enum/WalletTransactionType';
 import { UserRole } from '../../../../domain/enum/userEnums';
 import { NotificationType } from '../../../../domain/enum/NotificationEnums';
 
-   export class CreateUserCheckoutSession {
+export class CreateUserCheckoutSession {
     constructor(
         private _subscriptionRepository: ISubscriptionRepository,
         private _userRepository: IUserRepository,

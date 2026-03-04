@@ -26,7 +26,7 @@ interface VerificationData {
   experienceCert: string;
 }
 
-const BRAND_COLOR = "#eb9334";
+const BRAND_COLOR = '#eb9334';
 
 const TrainerGetVerification: React.FC = () => {
   const { data, isLoading, isError } = useGetTrainerVerification();
@@ -89,28 +89,28 @@ const TrainerGetVerification: React.FC = () => {
 
   const statusConfig: Record<string, { color: string; bg: string; icon: React.ReactElement; label: string }> = {
     pending: {
-      color: "#eab308",
-      bg: "#fefce8",
+      color: '#eab308',
+      bg: '#fefce8',
       icon: <Clock size={24} />,
-      label: "Pending Review"
+      label: 'Pending Review'
     },
     approved: {
-      color: "#22c55e",
-      bg: "#f0fdf4",
+      color: '#22c55e',
+      bg: '#f0fdf4',
       icon: <CheckCircle2 size={24} />,
-      label: "Verified Professional"
+      label: 'Verified Professional'
     },
     verified: { // Alias for approved
-      color: "#22c55e",
-      bg: "#f0fdf4",
+      color: '#22c55e',
+      bg: '#f0fdf4',
       icon: <CheckCircle2 size={24} />,
-      label: "Verified Professional"
+      label: 'Verified Professional'
     },
     rejected: {
-      color: "#ef4444",
-      bg: "#fef2f2",
+      color: '#ef4444',
+      bg: '#fef2f2',
       icon: <AlertCircle size={24} />,
-      label: "Action Required"
+      label: 'Action Required'
     }
   };
 
@@ -159,9 +159,9 @@ const TrainerGetVerification: React.FC = () => {
                   {currentStatus.label}
                 </h2>
                 <p className="text-slate-600 font-semibold mt-1">
-                  {rawStatus === 'pending' && "We are currently reviewing your documents. This usually takes 2-3 business days."}
-                  {rawStatus === 'approved' && "Congratulations! Your profile is verified and active."}
-                  {rawStatus === 'rejected' && "Your application was not approved. Please review the reason below."}
+                  {rawStatus === 'pending' && 'We are currently reviewing your documents. This usually takes 2-3 business days.'}
+                  {rawStatus === 'approved' && 'Congratulations! Your profile is verified and active.'}
+                  {rawStatus === 'rejected' && 'Your application was not approved. Please review the reason below.'}
                 </p>
               </div>
             </motion.div>

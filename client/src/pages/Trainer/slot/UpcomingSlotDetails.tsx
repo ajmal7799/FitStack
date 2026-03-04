@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import TrainerHeader from "../../../components/trainer/Header";
-import TrainerSidebar from "../../../components/trainer/Sidebar";
-import { useGetBookedSlotDetails } from "../../../hooks/Trainer/TrainerHooks";
-import { useJoinSession, useCancelBookedSlot } from "../../../hooks/User/userServiceHooks";
-import { toast } from "react-hot-toast";
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import TrainerHeader from '../../../components/trainer/Header';
+import TrainerSidebar from '../../../components/trainer/Sidebar';
+import { useGetBookedSlotDetails } from '../../../hooks/Trainer/TrainerHooks';
+import { useJoinSession, useCancelBookedSlot } from '../../../hooks/User/userServiceHooks';
+import { toast } from 'react-hot-toast';
 
 interface SlotDetails {
   _id: string;
@@ -22,45 +22,45 @@ interface SlotDetails {
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string; bar: string }> = {
   waiting: {
-    bg:    "bg-[#faac05]/10 border border-[#faac05]/30",
-    text:  "text-[#b87d00]",
-    dot:   "bg-[#faac05]",
-    label: "Waiting",
-    bar:   "bg-[#faac05]",
+    bg:    'bg-[#faac05]/10 border border-[#faac05]/30',
+    text:  'text-[#b87d00]',
+    dot:   'bg-[#faac05]',
+    label: 'Waiting',
+    bar:   'bg-[#faac05]',
   },
   booked: {
-    bg:    "bg-[#faac05]/10 border border-[#faac05]/30",
-    text:  "text-[#b87d00]",
-    dot:   "bg-[#faac05]",
-    label: "Confirmed",
-    bar:   "bg-[#faac05]",
+    bg:    'bg-[#faac05]/10 border border-[#faac05]/30',
+    text:  'text-[#b87d00]',
+    dot:   'bg-[#faac05]',
+    label: 'Confirmed',
+    bar:   'bg-[#faac05]',
   },
   completed: {
-    bg:    "bg-emerald-50 border border-emerald-200",
-    text:  "text-emerald-700",
-    dot:   "bg-emerald-500",
-    label: "Completed",
-    bar:   "bg-emerald-500",
+    bg:    'bg-emerald-50 border border-emerald-200',
+    text:  'text-emerald-700',
+    dot:   'bg-emerald-500',
+    label: 'Completed',
+    bar:   'bg-emerald-500',
   },
   missed: {
-    bg:    "bg-orange-50 border border-orange-200",
-    text:  "text-orange-600",
-    dot:   "bg-orange-400",
-    label: "Missed",
-    bar:   "bg-orange-400",
+    bg:    'bg-orange-50 border border-orange-200',
+    text:  'text-orange-600',
+    dot:   'bg-orange-400',
+    label: 'Missed',
+    bar:   'bg-orange-400',
   },
   cancelled: {
-    bg:    "bg-red-50 border border-red-200",
-    text:  "text-red-600",
-    dot:   "bg-red-500",
-    label: "Cancelled",
-    bar:   "bg-red-500",
+    bg:    'bg-red-50 border border-red-200',
+    text:  'text-red-600',
+    dot:   'bg-red-500',
+    label: 'Cancelled',
+    bar:   'bg-red-500',
   },
 };
 
 const DEFAULT_STATUS = {
-  bg: "bg-gray-100 border border-gray-200", text: "text-gray-500",
-  dot: "bg-gray-400", label: "Unknown", bar: "bg-gray-400",
+  bg: 'bg-gray-100 border border-gray-200', text: 'text-gray-500',
+  dot: 'bg-gray-400', label: 'Unknown', bar: 'bg-gray-400',
 };
 
 // ── Cancel Modal ──────────────────────────────────────────────────────────────
@@ -72,13 +72,13 @@ function CancelModal({
   onConfirm: (reason: string) => void;
   isCancelling: boolean;
 }) {
-  const [reason, setReason] = useState("");
+  const [reason, setReason] = useState('');
   const [touched, setTouched] = useState(false);
   const isEmpty = reason.trim().length === 0;
   const isShort = reason.trim().length < 10;
 
   useEffect(() => {
-    if (!isOpen) { setReason(""); setTouched(false); }
+    if (!isOpen) { setReason(''); setTouched(false); }
   }, [isOpen]);
 
   const handleConfirm = () => {
@@ -105,7 +105,7 @@ function CancelModal({
               initial={{ scale: 0.92, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.92, y: 20 }}
-              transition={{ type: "spring", stiffness: 280, damping: 26 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 26 }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Orange top bar */}
@@ -128,7 +128,7 @@ function CancelModal({
                 {/* Info note */}
                 <div className="bg-[#faac05]/5 border border-[#faac05]/20 rounded-2xl p-4 mb-5">
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    <span className="font-bold text-gray-700">Before you cancel —</span>{" "}
+                    <span className="font-bold text-gray-700">Before you cancel —</span>{' '}
                     your client will be notified of this cancellation along with the reason you provide. Please ensure you genuinely need to cancel.
                   </p>
                 </div>
@@ -146,9 +146,9 @@ function CancelModal({
                     rows={3}
                     className={`w-full resize-none px-4 py-3 rounded-2xl text-sm text-gray-800 placeholder-gray-300 border-2 focus:outline-none transition-all font-medium
                       ${touched && (isEmpty || isShort)
-                        ? "border-red-300 bg-red-50 focus:border-red-400"
-                        : "border-gray-200 bg-gray-50 focus:border-[#faac05] focus:bg-white"
-                      }`}
+          ? 'border-red-300 bg-red-50 focus:border-red-400'
+          : 'border-gray-200 bg-gray-50 focus:border-[#faac05] focus:bg-white'
+        }`}
                   />
                   {touched && isEmpty && (
                     <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-red-500 font-semibold mt-1.5">
@@ -186,11 +186,11 @@ function CancelModal({
                         <motion.span
                           className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full inline-block"
                           animate={{ rotate: 360 }}
-                          transition={{ duration: 0.7, repeat: Infinity, ease: "linear" }}
+                          transition={{ duration: 0.7, repeat: Infinity, ease: 'linear' }}
                         />
                         Cancelling...
                       </>
-                    ) : "Yes, Cancel"}
+                    ) : 'Yes, Cancel'}
                   </motion.button>
                 </div>
               </div>
@@ -209,17 +209,17 @@ const UpcomingSlotDetails = () => {
   const [currentTime, setCurrentTime]         = useState(new Date());
   const [showCancelModal, setShowCancelModal] = useState(false);
 
-  const { data, isLoading }                          = useGetBookedSlotDetails(slotId || "");
+  const { data, isLoading }                          = useGetBookedSlotDetails(slotId || '');
   const { mutate: joinSession,  isPending: isJoining }   = useJoinSession();
   const { mutate: cancelSlot,   isPending: isCancelling } = useCancelBookedSlot();
 
   const details: SlotDetails | undefined = data?.data?.result;
-  const statusKey = details?.slotStatus?.toLowerCase() ?? "";
+  const statusKey = details?.slotStatus?.toLowerCase() ?? '';
   const cfg       = STATUS_CONFIG[statusKey] ?? DEFAULT_STATUS;
 
-  const isCancelled = statusKey === "cancelled";
-  const isCompleted = statusKey === "completed";
-  const isMissed    = statusKey === "missed";
+  const isCancelled = statusKey === 'cancelled';
+  const isCompleted = statusKey === 'completed';
+  const isMissed    = statusKey === 'missed';
   const isTerminal  = isCancelled || isCompleted || isMissed;
 
   useEffect(() => {
@@ -233,14 +233,14 @@ const UpcomingSlotDetails = () => {
       onSuccess: (response) => {
         const roomId = response?.data?.result?.roomId;
         if (roomId) {
-          toast.success("Room found! Joining now...");
+          toast.success('Room found! Joining now...');
           navigate(`/trainer/video-session/${roomId}/${slotId}`);
         } else {
-          toast.error("Session is active, but Room ID was not received.");
+          toast.error('Session is active, but Room ID was not received.');
         }
       },
       onError: (err: any) => {
-        toast.error(err?.response?.data?.message || "Failed to join session");
+        toast.error(err?.response?.data?.message || 'Failed to join session');
       },
     });
   };
@@ -249,12 +249,12 @@ const UpcomingSlotDetails = () => {
     if (!slotId) return;
     cancelSlot({ slotId, reason }, {
       onSuccess: () => {
-        toast.success("Session cancelled successfully.");
+        toast.success('Session cancelled successfully.');
         setShowCancelModal(false);
-        navigate("/trainer/sessions-history");
+        navigate('/trainer/upcoming-slots');
       },
       onError: (err: any) => {
-        toast.error(err?.response?.data?.message || "Failed to cancel session");
+        toast.error(err?.response?.data?.message || 'Failed to cancel session');
       },
     });
   };
@@ -270,11 +270,11 @@ const UpcomingSlotDetails = () => {
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const secs  = Math.floor((diff % (1000 * 60)) / 1000);
-      return { label: `Starting in ${hours}h ${mins}m ${secs}s`, type: "WAITING", disabled: true };
+      return { label: `Starting in ${hours}h ${mins}m ${secs}s`, type: 'WAITING', disabled: true };
     } else if (now >= start && now <= end) {
-      return { label: "Enter Video Room", type: "LIVE", disabled: false };
+      return { label: 'Enter Video Room', type: 'LIVE', disabled: false };
     } else {
-      return { label: "Session Expired", type: "EXPIRED", disabled: true };
+      return { label: 'Session Expired', type: 'EXPIRED', disabled: true };
     }
   };
 
@@ -343,7 +343,7 @@ const UpcomingSlotDetails = () => {
                   animate={{ opacity: [0.85, 1] }}
                   transition={{ duration: 0.4 }}
                 >
-                  {currentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                  {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                 </motion.div>
               </motion.div>
 
@@ -359,7 +359,7 @@ const UpcomingSlotDetails = () => {
                       <motion.div
                         className="w-12 h-12 border-4 border-[#faac05]/20 border-t-[#faac05] rounded-full mx-auto mb-4"
                         animate={{ rotate: 360 }}
-                        transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                        transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
                       />
                       <p className="font-bold text-gray-400 uppercase tracking-tighter text-sm">Syncing Session...</p>
                     </motion.div>
@@ -400,7 +400,7 @@ const UpcomingSlotDetails = () => {
                         {/* Message button */}
                         <motion.button
                           className="w-full py-3 px-6 bg-gray-900 text-white hover:bg-gray-700 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-sm mb-2.5"
-                          onClick={() => navigate("/trainer/chat")}
+                          onClick={() => navigate('/trainer/chat')}
                           whileHover={{ scale: 1.03 }}
                           whileTap={{ scale: 0.97 }}
                         >
@@ -439,10 +439,10 @@ const UpcomingSlotDetails = () => {
                           >
                             <p className="text-[10px] font-black text-[#b87d00] uppercase tracking-widest mb-2">Check In</p>
                             <p className="text-3xl font-black text-gray-900">
-                              {new Date(details?.startTime || "").toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                              {new Date(details?.startTime || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
                             <p className="text-xs text-gray-400 font-bold uppercase mt-1">
-                              {new Date(details?.startTime || "").toLocaleDateString()}
+                              {new Date(details?.startTime || '').toLocaleDateString()}
                             </p>
                           </motion.div>
 
@@ -453,10 +453,10 @@ const UpcomingSlotDetails = () => {
                           >
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Check Out</p>
                             <p className="text-3xl font-black text-gray-800">
-                              {new Date(details?.endTime || "").toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                              {new Date(details?.endTime || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
                             <p className="text-xs text-gray-400 font-bold uppercase mt-1">
-                              {new Date(details?.endTime || "").toLocaleDateString()}
+                              {new Date(details?.endTime || '').toLocaleDateString()}
                             </p>
                           </motion.div>
                         </div>
@@ -483,7 +483,7 @@ const UpcomingSlotDetails = () => {
                               {details?.cancelledBy && (
                                 <div>
                                   <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">Cancelled By</p>
-                                  <span className={`px-3 py-0.5 rounded-full text-xs font-bold capitalize ${details.cancelledBy === "user" ? "bg-orange-100 text-orange-600" : "bg-red-100 text-red-600"}`}>
+                                  <span className={`px-3 py-0.5 rounded-full text-xs font-bold capitalize ${details.cancelledBy === 'user' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'}`}>
                                     {details.cancelledBy}
                                   </span>
                                 </div>
@@ -492,7 +492,7 @@ const UpcomingSlotDetails = () => {
                                 <div>
                                   <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">Cancelled At</p>
                                   <p className="text-red-700 font-medium text-sm">
-                                    {new Date(details.cancelledAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}
+                                    {new Date(details.cancelledAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
                                   </p>
                                 </div>
                               )}
@@ -541,19 +541,19 @@ const UpcomingSlotDetails = () => {
                               onClick={handleJoin}
                               disabled={sessionStatus?.disabled || isJoining}
                               className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.12em] text-sm transition-all flex items-center justify-center gap-3 border-2
-                                ${sessionStatus?.type === "LIVE"
-                                  ? "bg-[#faac05] hover:bg-[#e09b00] text-white border-transparent shadow-xl shadow-[#faac05]/25 animate-pulse"
-                                  : sessionStatus?.type === "EXPIRED"
-                                  ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
-                                  : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                                }`}
+                                ${sessionStatus?.type === 'LIVE'
+                            ? 'bg-[#faac05] hover:bg-[#e09b00] text-white border-transparent shadow-xl shadow-[#faac05]/25 animate-pulse'
+                            : sessionStatus?.type === 'EXPIRED'
+                              ? 'bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed'
+                              : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                          }`}
                               whileHover={!sessionStatus?.disabled ? { scale: 1.02 } : {}}
                               whileTap={!sessionStatus?.disabled ? { scale: 0.97 } : {}}
                             >
-                              {isJoining ? "Connecting..." : sessionStatus?.label}
+                              {isJoining ? 'Connecting...' : sessionStatus?.label}
                             </motion.button>
 
-                            {sessionStatus?.type === "WAITING" && (
+                            {sessionStatus?.type === 'WAITING' && (
                               <div className="flex items-center justify-center gap-2 text-[10px] font-black text-gray-300 uppercase tracking-widest">
                                 <span className="w-6 h-px bg-gray-200" />
                                 Waiting for Schedule

@@ -24,5 +24,5 @@ export const findExpiredSessionUseCase =  new FindExpiredSessionUseCase(videoCal
 
 //controllers
 export const videoCallController = new VideoCallController(
-    joinSessionUseCase
-)
+    joinSessionUseCase,
+);

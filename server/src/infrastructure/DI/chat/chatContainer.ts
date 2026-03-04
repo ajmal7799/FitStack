@@ -1,20 +1,20 @@
-import { ChatController } from "../../../interfaceAdapters/controller/chat/chatController";
-import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
-import { InitiateChatUseCase } from "../../../application/implementation/chat/initiateChatUseCase";
-import { ChatRepository } from "../../repositories/chatRepository";
-import { TrainerSelectRepository } from "../../repositories/trainerSelectRepository";
-import { MessageRepository } from "../../repositories/messageRepository";
-import { trainerSelectModel } from "../../database/models/trainerSelectModel";
-import { chatModel } from "../../database/models/chatModel";
-import { UserRepository } from "../../repositories/userRepository";
-import { userModel } from "../../database/models/userModel";
-import { StorageService } from "../../services/Storage/storageService";
-import { GetMessageUseCase } from "../../../application/implementation/chat/getMessageUseCase";
-import { messageModel } from "../../database/models/messageModel";
-import { InitiateTrainerChatUseCase } from "../../../application/implementation/chat/initiateTrainerChatUseCase";
-import { MarkAsReadUseCase } from "../../../application/implementation/chat/markAsReadUseCase";
-import { DeleteMessageUseCase } from "../../../application/implementation/chat/deleteMessageUseCase";
-import { GetAttachmentUploadUrlUseCase } from "../../../application/implementation/chat/getAttachmentUploadUrlUseCase";
+import { ChatController } from '../../../interfaceAdapters/controller/chat/chatController';
+import { IUserRepository } from '../../../domain/interfaces/repositories/IUserRepository';
+import { InitiateChatUseCase } from '../../../application/implementation/chat/initiateChatUseCase';
+import { ChatRepository } from '../../repositories/chatRepository';
+import { TrainerSelectRepository } from '../../repositories/trainerSelectRepository';
+import { MessageRepository } from '../../repositories/messageRepository';
+import { trainerSelectModel } from '../../database/models/trainerSelectModel';
+import { chatModel } from '../../database/models/chatModel';
+import { UserRepository } from '../../repositories/userRepository';
+import { userModel } from '../../database/models/userModel';
+import { StorageService } from '../../services/Storage/storageService';
+import { GetMessageUseCase } from '../../../application/implementation/chat/getMessageUseCase';
+import { messageModel } from '../../database/models/messageModel';
+import { InitiateTrainerChatUseCase } from '../../../application/implementation/chat/initiateTrainerChatUseCase';
+import { MarkAsReadUseCase } from '../../../application/implementation/chat/markAsReadUseCase';
+import { DeleteMessageUseCase } from '../../../application/implementation/chat/deleteMessageUseCase';
+import { GetAttachmentUploadUrlUseCase } from '../../../application/implementation/chat/getAttachmentUploadUrlUseCase';
 
 // Repositories & Services
 const trainerSelectRepository = new TrainerSelectRepository(trainerSelectModel);

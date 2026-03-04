@@ -1,4 +1,4 @@
-import { MessageTypeEnums } from "../enum/MessageTypeEnums";
+import { MessageTypeEnums } from '../enum/MessageTypeEnums';
 export  type SendMessagePayload = {
   chatId: string;
   type:  MessageTypeEnums;

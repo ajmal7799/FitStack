@@ -1,8 +1,8 @@
-    import { Document, model, Types } from 'mongoose';
-    import membershipSchema from '../schema/membershipSchema';
-    import { MembershipStatus } from '../../../domain/enum/membershipEnums';
+import { Document, model, Types } from 'mongoose';
+import membershipSchema from '../schema/membershipSchema';
+import { MembershipStatus } from '../../../domain/enum/membershipEnums';
 
-    export interface IMembershipModel extends Document {
+export interface IMembershipModel extends Document {
         _id: Types.ObjectId;
         userId: string;
         planId: Types.ObjectId; 
@@ -14,4 +14,4 @@
         updatedAt: Date;
     }
 
-    export const membershipModel = model<IMembershipModel>('Membership', membershipSchema);
+export const membershipModel = model<IMembershipModel>('Membership', membershipSchema);

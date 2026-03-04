@@ -15,11 +15,12 @@ const userMappers_1 = require("../../../mappers/userMappers");
 const userEnums_1 = require("../../../../domain/enum/userEnums");
 const exceptions_1 = require("../../../constants/exceptions");
 class UserLoginUseCase {
-    constructor(userRepository, hashService, trainerRepository, userProfileRepository) {
+    constructor(userRepository, hashService, trainerRepository, userProfileRepository, storageService) {
         this._userRepository = userRepository;
         this._hashService = hashService;
         this._trainerRepository = trainerRepository;
         this._userProfileRepository = userProfileRepository;
+        this._storageService = storageService;
     }
     userLogin(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,6 +34,10 @@ class UserLoginUseCase {
             const verifyPassword = yield this._hashService.comparePassword(password, user.password);
             if (!verifyPassword) {
                 throw new exceptions_1.PasswordNotMatchingException(error_1.Errors.INVALID_CREDENTIALS);
+            }
+            let profileImage = "";
+            if (user.profileImage) {
+                profileImage = yield this._storageService.createSignedUrl(user.profileImage, 10 * 60);
             }
             let verificationCheck = true;
             let userProfile = true;
@@ -62,7 +67,7 @@ class UserLoginUseCase {
                     userProfile = false;
                 }
             }
-            const response = userMappers_1.UserMapper.toLoginUserResponse(user, verificationCheck, userProfile, hasActiveSubscription);
+            const response = userMappers_1.UserMapper.toLoginUserResponse(user, verificationCheck, userProfile, hasActiveSubscription, profileImage);
             return response;
         });
     }

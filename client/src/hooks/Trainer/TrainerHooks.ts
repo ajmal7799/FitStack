@@ -94,16 +94,16 @@ export const useCreateRecurringSlot = () => {
   });
 };
 
-export const useGetBookedSlots = (page: number, limit: number, status?: string) => {
+export const useGetBookedSlots = (page: number, limit: number, status?: string, search?: string) => {
   return useQuery({
-    queryKey: ['bookedSlots', page, limit, status],
-    queryFn: () => getBookedSlots(page, limit, status),
+    queryKey: ['bookedSlots', page, limit, status, search],
+    queryFn: () => getBookedSlots(page, limit, status, search),
   });
 };
 
 export const useGetBookedSlotDetails = (slotId: string) => {
   return useQuery({
-    queryKey: ["bookedSlotDetails", slotId],
+    queryKey: ['bookedSlotDetails', slotId],
     queryFn: () => getBookedSlotDetails(slotId),
     staleTime: 0,
     enabled: !!slotId,
@@ -111,7 +111,7 @@ export const useGetBookedSlotDetails = (slotId: string) => {
     // ✅ Poll every 3s but ONLY when status is not yet terminal
     refetchInterval: (query) => {
       const status = query.state.data?.data?.result?.slotStatus;
-      const terminalStatuses = ["completed", "cancelled", "missed"];
+      const terminalStatuses = ['completed', 'cancelled', 'missed'];
       // Stop polling once we have a terminal status
       if (status && terminalStatuses.includes(status)) return false;
       return 2000; // poll every 3s until terminal
@@ -120,16 +120,16 @@ export const useGetBookedSlotDetails = (slotId: string) => {
 };
 
 
-export const useGetSessionHistory = (page: number, limit: number, status?: string) => {
+export const useGetSessionHistory = (page: number, limit: number, status?: string, search?: string) => {
   return useQuery({
-    queryKey: ['sessionHistory', page, limit, status],
-    queryFn: () => getSessionHistory(page, limit, status),  
+    queryKey: ['sessionHistory', page, limit, status, search],
+    queryFn: () => getSessionHistory(page, limit, status, search),  
   });
-}
+};
 
 export const useGetSessionHistoryDetails = (sessionId: string) => {
   return useQuery({
     queryKey: ['sessionHistoryDetails', sessionId],
     queryFn: () => getSessionHistoryDetails(sessionId),  
   });
-}
+};

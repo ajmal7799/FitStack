@@ -2,9 +2,9 @@ import { HTTPStatus } from '../../../shared/constants/httpStatus';
 import { MESSAGES } from '../../../shared/constants/messages';
 import { ResponseHelper } from '../../../shared/utils/responseHelper';
 import {
-  InvalidDataException,
-  NotFoundException,
-  DataMissingExecption,
+    InvalidDataException,
+    NotFoundException,
+    DataMissingExecption,
 } from '../../../application/constants/exceptions';
 import { NextFunction, Request, Response } from 'express';
 import { Errors, SUBSCRIPTION_ERRORS } from '../../../shared/constants/error';
@@ -14,7 +14,7 @@ import { IMarkAsReadUseCase } from '../../../application/useCase/notification/IM
 export class NotificationController {
     constructor(
         private _getNotificationsUseCase: IGetNotificationsUseCase,
-        private _markAsReadUseCase: IMarkAsReadUseCase
+        private _markAsReadUseCase: IMarkAsReadUseCase,
     ) {}
 
     async getNotifications(req: Request, res: Response, next: NextFunction) {
@@ -26,7 +26,7 @@ export class NotificationController {
     }
 
     async markAsRead(req: Request, res: Response, next: NextFunction) {
-        const {notificationId} = req.params;
+        const { notificationId } = req.params;
         const result = await this._markAsReadUseCase.markOne(notificationId);
         ResponseHelper.success(res, MESSAGES.NOTIFICATION.MARK_AS_READ_SUCCESS, result, HTTPStatus.OK);
     }

@@ -1,5 +1,5 @@
 // domain/entities/wallet/walletEntity.ts
-import { WalletTransactionType } from "../../enum/WalletTransactionType"; 
+import { WalletTransactionType } from '../../enum/WalletTransactionType'; 
 
 
 

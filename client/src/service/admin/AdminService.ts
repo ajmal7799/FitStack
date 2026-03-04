@@ -1,4 +1,4 @@
-import AxiosInstance from "../../axios/axios";
+import AxiosInstance from '../../axios/axios';
 
 export const getAllVerification = async (
   page = 1,
@@ -10,8 +10,8 @@ export const getAllVerification = async (
     page: String(page),
     limit: String(limit),
   });
-  if (status) params.append("status", status);
-  if (search) params.append("search", search);
+  if (status) params.append('status', status);
+  if (search) params.append('search', search);
 
   const response = await AxiosInstance.get(
     `/admin/verification?${params.toString()}`,
@@ -49,8 +49,8 @@ export const getSessionHistory = async (
     page: String(page),
     limit: String(limit),
   });
-  if (status) params.append("status", status);
-  if (search) params.append("search", search);
+  if (status) params.append('status', status);
+  if (search) params.append('search', search);
   const response = await AxiosInstance.get(
     `/admin/sessions?${params.toString()}`,
   );
@@ -72,10 +72,16 @@ export const getMembershipPage = async (
     page: String(page),
     limit: String(limit),
   });
-  if (status) params.append("status", status);
-  if (search) params.append("search", search);
+  if (status) params.append('status', status);
+  if (search) params.append('search', search);
   const response = await AxiosInstance.get(
     `/admin/memberships?${params.toString()}`,
   );
+  return response.data;
+};
+
+
+export const getTrainerDetails = async (trainerId: string) => {
+  const response = await AxiosInstance.get(`/admin/trainers/${trainerId}`);
   return response.data;
 };

@@ -1,6 +1,6 @@
-import { IGetWalletUseCase } from "../../useCase/wallet/IGetWalletUseCase";
-import { IWalletRepository } from "../../../domain/interfaces/repositories/IWalletRepository";
-import { Wallet } from "../../../domain/entities/wallet/walletEntity";
+import { IGetWalletUseCase } from '../../useCase/wallet/IGetWalletUseCase';
+import { IWalletRepository } from '../../../domain/interfaces/repositories/IWalletRepository';
+import { Wallet } from '../../../domain/entities/wallet/walletEntity';
 
 export class GetWalletUseCase implements IGetWalletUseCase {
     constructor(private _walletRepository: IWalletRepository) {}

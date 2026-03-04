@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Users,
   UserCheck,
@@ -8,13 +8,13 @@ import {
   Activity,
   CheckCircle,
   XCircle,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   useGetDashboardStats,
   useGetDashboardCharts,
-} from "../../../hooks/Admin/useDashboard";
-import AdminSidebar from "../../../components/admin/Sidebar";
-import AdminHeader from "../../../components/admin/Header";
+} from '../../../hooks/Admin/useDashboard';
+import AdminSidebar from '../../../components/admin/Sidebar';
+import AdminHeader from '../../../components/admin/Header';
 import {
   LineChart,
   Line,
@@ -29,74 +29,74 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
+} from 'recharts';
 
-type Period = "daily" | "weekly" | "monthly" | "yearly";
+type Period = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
-const COLORS = ["#10b981", "#f59e0b", "#ef4444", "#3b82f6"];
+const COLORS = ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'];
 
 const AdminDashboard = () => {
-  const [period, setPeriod] = useState<Period>("monthly");
+  const [period, setPeriod] = useState<Period>('monthly');
   const { data: stats, isLoading: statsLoading } = useGetDashboardStats();
   const { data: charts, isLoading: chartsLoading } =
     useGetDashboardCharts(period);
 
   const statCards = [
     {
-      label: "Total Users",
+      label: 'Total Users',
       value: stats?.totalUsers || 0,
       icon: Users,
-      color: "bg-blue-500",
+      color: 'bg-blue-500',
     },
     {
-      label: "Total Trainers",
+      label: 'Total Trainers',
       value: stats?.totalTrainers || 0,
       icon: UserCheck,
-      color: "bg-purple-500",
+      color: 'bg-purple-500',
     },
     {
-      label: "Total Sessions",
+      label: 'Total Sessions',
       value: stats?.totalSessions || 0,
       icon: Video,
-      color: "bg-green-500",
+      color: 'bg-green-500',
     },
     {
-      label: "Total Memberships",
+      label: 'Total Memberships',
       value: stats?.totalMemberships || 0,
       icon: CreditCard,
-      color: "bg-orange-500",
+      color: 'bg-orange-500',
     },
     {
-      label: "Active Memberships",
+      label: 'Active Memberships',
       value: stats?.activeMemberships || 0,
       icon: CheckCircle,
-      color: "bg-teal-500",
+      color: 'bg-teal-500',
     },
     {
-      label: "Completed Sessions",
+      label: 'Completed Sessions',
       value: stats?.completedSessions || 0,
       icon: Activity,
-      color: "bg-indigo-500",
+      color: 'bg-indigo-500',
     },
     {
-      label: "Cancelled Sessions",
+      label: 'Cancelled Sessions',
       value: stats?.cancelledSessions || 0,
       icon: XCircle,
-      color: "bg-red-500",
+      color: 'bg-red-500',
     },
     {
-      label: "Platform Revenue",
+      label: 'Platform Revenue',
       value: `₹${(stats?.platformRevenue || 0).toFixed(2)}`,
       icon: TrendingUp,
-      color: "bg-yellow-500",
+      color: 'bg-yellow-500',
     },
   ];
 
   const periods: { label: string; value: Period }[] = [
-    { label: "Daily", value: "daily" },
-    { label: "Weekly", value: "weekly" },
-    { label: "Monthly", value: "monthly" },
-    { label: "Yearly", value: "yearly" },
+    { label: 'Daily', value: 'daily' },
+    { label: 'Weekly', value: 'weekly' },
+    { label: 'Monthly', value: 'monthly' },
+    { label: 'Yearly', value: 'yearly' },
   ];
 
   return (
@@ -159,8 +159,8 @@ const AdminDashboard = () => {
                 onClick={() => setPeriod(p.value)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   period === p.value
-                    ? "bg-gray-900 text-white shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? 'bg-gray-900 text-white shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 {p.label}
@@ -191,21 +191,21 @@ const AdminDashboard = () => {
                   <LineChart data={charts?.revenueChart || []}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis
-    dataKey="label"
-    tick={{ fontSize: 10 }}
-    angle={-35}           // ← angle labels
-    textAnchor="end"
-    height={60}           // ← give more space for angled labels
-    interval={0}          // ← show all labels
-/>
+                      dataKey="label"
+                      tick={{ fontSize: 10 }}
+                      angle={-35}           // ← angle labels
+                      textAnchor="end"
+                      height={60}           // ← give more space for angled labels
+                      interval={0}          // ← show all labels
+                    />
                     <YAxis tick={{ fontSize: 11 }} />
-                    <Tooltip formatter={(value) => [`₹${value}`, "Revenue"]} />
+                    <Tooltip formatter={(value) => [`₹${value}`, 'Revenue']} />
                     <Line
                       type="monotone"
                       dataKey="value"
                       stroke="#111827"
                       strokeWidth={2}
-                      dot={{ fill: "#111827", r: 4 }}
+                      dot={{ fill: '#111827', r: 4 }}
                       activeDot={{ r: 6 }}
                     />
                   </LineChart>
@@ -230,13 +230,13 @@ const AdminDashboard = () => {
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis
-    dataKey="label"
-    tick={{ fontSize: 10 }}
-    angle={-35}           // ← angle labels
-    textAnchor="end"
-    height={60}           // ← give more space for angled labels
-    interval={0}          // ← show all labels
-/>
+                      dataKey="label"
+                      tick={{ fontSize: 10 }}
+                      angle={-35}           // ← angle labels
+                      textAnchor="end"
+                      height={60}           // ← give more space for angled labels
+                      interval={0}          // ← show all labels
+                    />
                     <YAxis tick={{ fontSize: 11 }} />
                     <Tooltip />
                     <Legend />
@@ -291,15 +291,15 @@ const AdminDashboard = () => {
                   <BarChart data={charts?.membershipChart || []}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis
-    dataKey="label"
-    tick={{ fontSize: 10 }}
-    angle={-35}           // ← angle labels
-    textAnchor="end"
-    height={60}           // ← give more space for angled labels
-    interval={0}          // ← show all labels
-/>
+                      dataKey="label"
+                      tick={{ fontSize: 10 }}
+                      angle={-35}           // ← angle labels
+                      textAnchor="end"
+                      height={60}           // ← give more space for angled labels
+                      interval={0}          // ← show all labels
+                    />
                     <YAxis tick={{ fontSize: 11 }} />
-                    <Tooltip formatter={(value) => [value, "Memberships"]} />
+                    <Tooltip formatter={(value) => [value, 'Memberships']} />
                     <Bar dataKey="value" fill="#6b7280" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>

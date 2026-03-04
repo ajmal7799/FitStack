@@ -1,5 +1,5 @@
 
-import { SlotStatus } from "../../enum/SlotEnums";
+import { SlotStatus } from '../../enum/SlotEnums';
 export interface Slot {
     _id: string;
     trainerId: string;

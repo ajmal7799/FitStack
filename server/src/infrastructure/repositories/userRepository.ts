@@ -5,11 +5,6 @@ import { UserMapper } from '../../application/mappers/userMappers';
 import { IUserModel } from '../database/models/userModel';
 import { User } from '../../domain/entities/user/userEntities';
 import { UserRole, UserStatus } from '../../domain/enum/userEnums';
-import { Trainer } from '../../domain/entities/trainer/trainerEntities';
-import { TrainerVerification } from '../../domain/entities/trainer/verification';
-import { UserProfile } from '../../domain/entities/user/userProfile';
-import { UserProfileMapper } from '../../application/mappers/userProfileMapper';
-
 export class UserRepository extends BaseRepository<User, IUserModel> implements IUserRepository {
     constructor(protected _model: Model<IUserModel>) {
         super(_model, UserMapper);
@@ -112,14 +107,14 @@ export class UserRepository extends BaseRepository<User, IUserModel> implements 
         return UserMapper.fromMongooseDocument(updatedDoc);
     }
 
-  async updateUser(user: User): Promise<void> {
+    async updateUser(user: User): Promise<void> {
         await this._model.findByIdAndUpdate(user._id, { $set: user }, { new: true });
     }
 
-   async findNonSubscribedUsers(): Promise<User[]> {
-       const docs = await this._model.find({
+    async findNonSubscribedUsers(): Promise<User[]> {
+        const docs = await this._model.find({
             role: UserRole.USER,
-            activeMembershipId: { $exists: false }
+            activeMembershipId: { $exists: false },
         });
         return docs.map(doc => UserMapper.fromMongooseDocument(doc));
     }

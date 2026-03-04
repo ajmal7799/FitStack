@@ -1,5 +1,5 @@
-import { SlotStatus } from "../../../domain/enum/SlotEnums";
-import { VideoCallStatus } from "../../../domain/enum/videoCallEnums";
+import { SlotStatus } from '../../../domain/enum/SlotEnums';
+import { VideoCallStatus } from '../../../domain/enum/videoCallEnums';
 export interface BookedSlotDTO {
     _id: string;
     trainerName: string;
@@ -37,6 +37,7 @@ export interface BookedSlotsTrainerDTO {
     startTime: Date;
     endTime: Date;
     slotStatus: VideoCallStatus;
+    profileImage: string;
 }
 
 export interface UpcomingSlotDetailsDTO {

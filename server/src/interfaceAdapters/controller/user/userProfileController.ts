@@ -26,7 +26,7 @@ export class UserProfileController {
     async createUserProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const userId = req.user?.userId;
-            // const files = req.files as MulterFiles;
+            const files = req.files as MulterFiles;
 
             const age = parseInt(req.body.age, 10);
             const height = parseFloat(req.body.height);
@@ -66,9 +66,9 @@ export class UserProfileController {
                 }
             }
 
-            // if (files['profileImage']?.[0]) {
-            //   data.profileImage = multerFileToFileConverter(files['profileImage'][0]);
-            // }
+            if (files['profileImage']?.[0]) {
+                data.profileImage = multerFileToFileConverter(files['profileImage'][0]);
+            }
 
             const result = userProfileSchema.safeParse(data);
 

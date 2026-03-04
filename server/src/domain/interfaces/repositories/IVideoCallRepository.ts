@@ -1,6 +1,6 @@
-import { IBaseRepository } from "./IBaseRepository";
-import { VideoCall } from "../../entities/videoCall/videoCallEntity";
-import { VideoCallStatus } from "../../enum/videoCallEnums";
+import { IBaseRepository } from './IBaseRepository';
+import { VideoCall } from '../../entities/videoCall/videoCallEntity';
+import { VideoCallStatus } from '../../enum/videoCallEnums';
 
 export interface IVideoCallRepository extends IBaseRepository< VideoCall> {
     findBySlotId(slotId: string): Promise<VideoCall | null>;
@@ -10,14 +10,15 @@ export interface IVideoCallRepository extends IBaseRepository< VideoCall> {
     updateStatus(slotId: string, status: VideoCallStatus): Promise<void>
     findSessionsByUserId(userId: string, skip: number, limit: number): Promise<VideoCall[]>;
     countSessionsByUserId(userId: string, status?: VideoCallStatus): Promise<number>;
-    findSessionsByTrainerId(trainerId: string, skip: number, limit: number,): Promise<VideoCall[]>;
-    countSessionsByTrainerId(trainerId: string, ): Promise<number>;
+    findSessionsByTrainerId(trainerId: string, skip: number, limit: number, search?: string): Promise<VideoCall[]>;
+    countSessionsByTrainerId(trainerId: string,  search?: string): Promise<number>;
     findSessionsForAdmin(skip: number, limit: number, status?: string, search?: string): Promise<VideoCall[]>;
     countSessionsForAdmin(status?: string, search?: string): Promise<number>;
     findAllBookedSessionByUserId(userId: string, skip: number, limit: number, status: VideoCallStatus): Promise<VideoCall[]>
     countBookedSessionByUserId(userId: string, status?: VideoCallStatus): Promise<number>
-    findAllBookedSessionByTrainerId(trainerId: string, skip: number, limit: number, status?: VideoCallStatus): Promise<VideoCall[]>
-    countBookedSessionByTrainerId(trainerId: string, status?: VideoCallStatus): Promise<number>
+    findAllBookedSessionByTrainerId(trainerId: string, skip: number, limit: number, status?: VideoCallStatus, search?: string): Promise<VideoCall[]>
+    countBookedSessionByTrainerId(trainerId: string, status?: VideoCallStatus, search?: string): Promise<number>
+    checkUserBookingForDay(userId: string, startTime: Date, endTime: Date): Promise<boolean>
     
     
 }

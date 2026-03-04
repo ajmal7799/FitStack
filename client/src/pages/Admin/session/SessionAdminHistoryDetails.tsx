@@ -1,9 +1,9 @@
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import AdminSidebar from "../../../components/admin/Sidebar";
-import AdminHeader from "../../../components/admin/Header";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { useGetSessionAdminHistoryDetail } from "../../../hooks/Admin/AdminHooks";
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import AdminSidebar from '../../../components/admin/Sidebar';
+import AdminHeader from '../../../components/admin/Header';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { useGetSessionAdminHistoryDetail } from '../../../hooks/Admin/AdminHooks';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type SessionDetails = {
@@ -28,7 +28,7 @@ type SessionDetails = {
 };
 
 // ── Theme token ───────────────────────────────────────────────────────────────
-const AMBER = "#eb9b34";
+const AMBER = '#eb9b34';
 
 // ── Status config ─────────────────────────────────────────────────────────────
 const statusConfig: Record <
@@ -36,51 +36,51 @@ const statusConfig: Record <
   { label: string; bg: string; text: string; dot: string; border: string; icon: React.ReactNode }
 > = {
   completed: {
-    label: "Completed",
-    bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500", border: "border-emerald-200",
+    label: 'Completed',
+    bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', border: 'border-emerald-200',
     icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   },
   missed: {
-    label: "Missed",
-    bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500", border: "border-amber-200",
+    label: 'Missed',
+    bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', border: 'border-amber-200',
     icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /></svg>,
   },
   cancelled: {
-    label: "Cancelled",
-    bg: "bg-red-50", text: "text-red-700", dot: "bg-red-500", border: "border-red-200",
+    label: 'Cancelled',
+    bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500', border: 'border-red-200',
     icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   },
   waiting: {
-    label: "Waiting",
-    bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-500", border: "border-blue-200",
+    label: 'Waiting',
+    bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', border: 'border-blue-200',
     icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   },
   active: {
-    label: "Active",
-    bg: "bg-violet-50", text: "text-violet-700", dot: "bg-violet-500", border: "border-violet-200",
+    label: 'Active',
+    bg: 'bg-violet-50', text: 'text-violet-700', dot: 'bg-violet-500', border: 'border-violet-200',
     icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
   },
 };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  return new Date(iso).toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
 }
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString("en-US", {
-    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+  return new Date(iso).toLocaleString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
   });
 }
 function getDuration(start: string, end: string) {
   const diff = (new Date(end).getTime() - new Date(start).getTime()) / 60000;
   const h = Math.floor(diff / 60);
   const m = diff % 60;
-  if (h > 0) return `${h}h ${m > 0 ? `${m}m` : ""}`.trim();
+  if (h > 0) return `${h}h ${m > 0 ? `${m}m` : ''}`.trim();
   return `${m} min`;
 }
 
@@ -92,17 +92,17 @@ const pageVariants: Variants = {
 
 const heroVariants: Variants = {
   hidden: { opacity: 0, y: -24 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 220, damping: 22 } },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 220, damping: 22 } },
 };
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 240, damping: 24 } },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 240, damping: 24 } },
 };
 
 const cancelVariants: Variants = {
   hidden: { opacity: 0, scale: 0.97, y: 16 },
-  show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 220, damping: 22 } },
+  show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 220, damping: 22 } },
   exit: { opacity: 0, scale: 0.97, y: -12, transition: { duration: 0.2 } },
 };
 
@@ -112,7 +112,7 @@ function StarDisplay({ rating }: { rating?: number }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star} className={`text-xl ${star <= rating ? "text-yellow-400" : "text-gray-200"}`}>★</span>
+        <span key={star} className={`text-xl ${star <= rating ? 'text-yellow-400' : 'text-gray-200'}`}>★</span>
       ))}
       <span className="ml-2 text-sm font-bold text-gray-700">
         {rating}<span className="text-gray-400 font-normal">/5</span>
@@ -129,9 +129,9 @@ function ProfileCard({
   name: string;
   email: string;
   phone: string;
-  role: "User" | "Trainer";
+  role: 'User' | 'Trainer';
 }) {
-  const isTrainer = role === "Trainer";
+  const isTrainer = role === 'Trainer';
   return (
     <motion.div variants={cardVariants} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
       <div className="h-1.5 w-full" style={{ backgroundColor: AMBER }} />
@@ -245,12 +245,12 @@ const SessionAdminHistoryDetails = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate      = useNavigate();
 
-  const { data, isLoading, isError } = useGetSessionAdminHistoryDetail(sessionId ?? "");
+  const { data, isLoading, isError } = useGetSessionAdminHistoryDetail(sessionId ?? '');
 
   const session: SessionDetails | undefined = data?.data?.result;
-  const status      = session ? (statusConfig[session.sessionStatus] ?? statusConfig["missed"]) : null;
-  const isCancelled = session?.sessionStatus === "cancelled";
-  const isCompleted = session?.sessionStatus === "completed";
+  const status      = session ? (statusConfig[session.sessionStatus] ?? statusConfig['missed']) : null;
+  const isCancelled = session?.sessionStatus === 'cancelled';
+  const isCompleted = session?.sessionStatus === 'completed';
   const hasFeedback = isCompleted && !!session?.rating;
 
   return (
@@ -353,14 +353,14 @@ const SessionAdminHistoryDetails = () => {
                     </div>
 
                     {/* Duration — desktop */}
-                    <div className="hidden sm:flex flex-col items-center rounded-2xl px-5 py-4 flex-shrink-0 border border-gray-200" style={{ backgroundColor: "#fff9f0" }}>
+                    <div className="hidden sm:flex flex-col items-center rounded-2xl px-5 py-4 flex-shrink-0 border border-gray-200" style={{ backgroundColor: '#fff9f0' }}>
                       <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: AMBER }}>Duration</p>
                       <p className="text-2xl font-bold text-gray-900 mt-1">{getDuration(session.startTime, session.endTime)}</p>
                     </div>
                   </div>
 
                   {/* Duration — mobile */}
-                  <div className="flex sm:hidden items-center justify-center gap-2 mt-4 rounded-xl py-3 px-4 border border-gray-200" style={{ backgroundColor: "#fff9f0" }}>
+                  <div className="flex sm:hidden items-center justify-center gap-2 mt-4 rounded-xl py-3 px-4 border border-gray-200" style={{ backgroundColor: '#fff9f0' }}>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: AMBER }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -387,10 +387,10 @@ const SessionAdminHistoryDetails = () => {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4">
                   {[
-                    { label: "Date",       value: formatDate(session.startTime) },
-                    { label: "Start Time", value: formatTime(session.startTime) },
-                    { label: "End Time",   value: formatTime(session.endTime) },
-                    { label: "Duration",   value: getDuration(session.startTime, session.endTime) },
+                    { label: 'Date',       value: formatDate(session.startTime) },
+                    { label: 'Start Time', value: formatTime(session.startTime) },
+                    { label: 'End Time',   value: formatTime(session.endTime) },
+                    { label: 'Duration',   value: getDuration(session.startTime, session.endTime) },
                   ].map((item) => (
                     <div key={item.label}>
                       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">{item.label}</p>
@@ -449,8 +449,8 @@ const SessionAdminHistoryDetails = () => {
                         </svg>
                         <p className="text-xs text-red-600 leading-relaxed">
                           This session was cancelled
-                          {session.cancelledBy === "user" ? " by the user" : session.cancelledBy === "trainer" ? " by the trainer" : ""}.
-                          {" "}No further action is required unless a dispute has been raised.
+                          {session.cancelledBy === 'user' ? ' by the user' : session.cancelledBy === 'trainer' ? ' by the trainer' : ''}.
+                          {' '}No further action is required unless a dispute has been raised.
                         </p>
                       </div>
                     </div>

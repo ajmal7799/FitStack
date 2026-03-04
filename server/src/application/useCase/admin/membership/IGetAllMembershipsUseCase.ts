@@ -1,4 +1,4 @@
-import { MembershipAdminListResult } from "../../../dto/admin/subscription/MembershipDTO";
+import { MembershipAdminListResult } from '../../../dto/admin/subscription/MembershipDTO';
 
 export interface IGetAllMembershipsUseCase {
     execute(

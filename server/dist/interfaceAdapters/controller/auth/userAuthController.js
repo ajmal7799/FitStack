@@ -24,7 +24,7 @@ const forgetPasswordVerifyOtpValidator_1 = require("../../../shared/validations/
 const forgetPasswordResetPasswordValidator_1 = require("../../../shared/validations/forgetPasswordResetPasswordValidator");
 const googleLoginValidator_1 = require("../../../shared/validations/googleLoginValidator");
 class UserAuthController {
-    constructor(_registerUseCase, _sendOtpUseCase, _verifyOtpUseCase, _tokenCreationUseCase, _userLoginUseCase, _tokenInvalidationUseCase, _resendOtpUseCase, _forgetPasswordUseCase, _forgetPasswordVerifyOtpUseCase, _forgetPasswordResetPasswordUseCase, _googleLoginUseCase, _jwtService) {
+    constructor(_registerUseCase, _sendOtpUseCase, _verifyOtpUseCase, _tokenCreationUseCase, _userLoginUseCase, _tokenInvalidationUseCase, _resendOtpUseCase, _forgetPasswordUseCase, _forgetPasswordVerifyOtpUseCase, _forgetPasswordResetPasswordUseCase, _googleLoginUseCase, _jwtService, _tokenRefreshUseCase, _changePasswordUseCase) {
         this._registerUseCase = _registerUseCase;
         this._sendOtpUseCase = _sendOtpUseCase;
         this._verifyOtpUseCase = _verifyOtpUseCase;
@@ -37,6 +37,8 @@ class UserAuthController {
         this._forgetPasswordResetPasswordUseCase = _forgetPasswordResetPasswordUseCase;
         this._googleLoginUseCase = _googleLoginUseCase;
         this._jwtService = _jwtService;
+        this._tokenRefreshUseCase = _tokenRefreshUseCase;
+        this._changePasswordUseCase = _changePasswordUseCase;
     }
     // --------------------------------------------------
     //               SINGUP SEND OTP
@@ -201,6 +203,59 @@ class UserAuthController {
                 });
                 (0, setRefreshTokenCookie_1.setRefreshTokenCookie)(res, refreshToken);
                 responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.USERS.LOGIN_SUCCESS, { user: responseDTO, accessToken: accessToken }, 200 /* HTTPStatus.OK */);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    // --------------------------------------------------
+    //              🛠 HANDLE REFRESH TOKEN
+    // --------------------------------------------------
+    handleRefreshToken(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // ✅ Fix: was 'refreshToken' (lowercase), cookie is set as 'RefreshToken'
+                const refreshToken = req.cookies.RefreshToken;
+                if (!refreshToken) {
+                    res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
+                        success: false,
+                        message: 'Refresh token missing'
+                    });
+                    return;
+                }
+                const accessToken = yield this._tokenRefreshUseCase.refresh(refreshToken);
+                res.status(200 /* HTTPStatus.OK */).json({
+                    success: true,
+                    message: messages_1.MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL,
+                    accessToken
+                });
+            }
+            catch (error) {
+                // ✅ If refresh token expired → force logout
+                (0, clearRefreshTokenCookie_1.clearRefreshTokenCookie)(res);
+                res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
+                    success: false,
+                    message: 'Session expired. Please login again.'
+                });
+            }
+        });
+    }
+    // --------------------------------------------------
+    //              🛠 PASSWORD CHANGE
+    // --------------------------------------------------
+    handlePasswordChange(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            try {
+                console.log("reached here");
+                const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+                const { oldPassword, newPassword } = req.body;
+                if (!userId || !oldPassword || !newPassword) {
+                    throw new exceptions_1.InvalidDataException(error_1.Errors.INVALID_DATA);
+                }
+                yield this._changePasswordUseCase.changePassword(userId, oldPassword, newPassword);
+                responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.USERS.PASSWORD_CHANGE_SUCCESSFULLY, 200 /* HTTPStatus.OK */);
             }
             catch (error) {
                 next(error);

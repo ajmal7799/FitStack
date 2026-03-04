@@ -19,60 +19,60 @@ export class AuthMiddleware {
     //              🛠 VERIFY TOKEN
     // --------------------------------------------------
 
-  verify = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const header = req.header('Authorization');
-
-        if (!header?.startsWith('Bearer ')) {
-            res.status(HTTPStatus.UNAUTHORIZED).json({
-                success: false,
-                message: Errors.INVALID_TOKEN
-            });
-            return;
-        }
-
-        const token = header.split(' ')[1];
-
-        let decoded;
+    verify = async(req: Request, res: Response, next: NextFunction) => {
         try {
-            decoded = this._jwtService.verifyAccessToken(token);
-        } catch (error) {
+            const header = req.header('Authorization');
+
+            if (!header?.startsWith('Bearer ')) {
+                res.status(HTTPStatus.UNAUTHORIZED).json({
+                    success: false,
+                    message: Errors.INVALID_TOKEN,
+                });
+                return;
+            }
+
+            const token = header.split(' ')[1];
+
+            let decoded;
+            try {
+                decoded = this._jwtService.verifyAccessToken(token);
+            } catch (error) {
             // ✅ Return 401 with specific code so frontend knows to refresh
-            res.status(HTTPStatus.UNAUTHORIZED).json({
-                success: false,
-                message: 'TOKEN_EXPIRED', // ← frontend checks this
-            });
-            return;
+                res.status(HTTPStatus.UNAUTHORIZED).json({
+                    success: false,
+                    message: 'TOKEN_EXPIRED', // ← frontend checks this
+                });
+                return;
+            }
+
+            if (!decoded) {
+                res.status(HTTPStatus.UNAUTHORIZED).json({
+                    success: false,
+                    message: Errors.INVALID_TOKEN,
+                });
+                return;
+            }
+
+            const user = await this._userRepository.findById(decoded.userId);
+
+            if (!user) {
+                throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
+            }
+
+            if (user.isActive === UserStatus.BLOCKED) {
+                throw new IsBlockedExecption(USER_ERRORS.USER_BLOCKED);
+            }
+
+            req.user = {
+                userId: user._id!,
+                role: user.role,
+            };
+
+            next();
+        } catch (error) {
+            next(error);
         }
-
-        if (!decoded) {
-            res.status(HTTPStatus.UNAUTHORIZED).json({
-                success: false,
-                message: Errors.INVALID_TOKEN
-            });
-            return;
-        }
-
-        const user = await this._userRepository.findById(decoded.userId);
-
-        if (!user) {
-            throw new NotFoundException(USER_ERRORS.USER_NOT_FOUND);
-        }
-
-        if (user.isActive === UserStatus.BLOCKED) {
-            throw new IsBlockedExecption(USER_ERRORS.USER_BLOCKED);
-        }
-
-        req.user = {
-            userId: user._id!,
-            role: user.role,
-        };
-
-        next();
-    } catch (error) {
-        next(error);
-    }
-  }
+    };
   
     // --------------------------------------------------
     //              🛠 ROLE CHECKING (reusable)

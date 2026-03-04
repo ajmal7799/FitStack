@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { MulterFiles } from '../../../domain/types/multerFilesType';
-import { multerFileToFileConverter } from '../../../shared/utils/fileConverter';
-import { Errors, TRAINER_ERRORS } from '../../../shared/constants/error';
+
+import { Errors } from '../../../shared/constants/error';
 import { ResponseHelper } from '../../../shared/utils/responseHelper';
 import { MESSAGES } from '../../../shared/constants/messages';
 import { DataMissingExecption, InvalidDataException } from '../../../application/constants/exceptions';
@@ -15,111 +14,111 @@ import { IGetAttachmentUploadUrlUseCase } from '../../../application/useCase/cha
 
 
 export class ChatController {
-  constructor(
+    constructor(
     private _initiateChatUseCase: IInitiateChatUseCase,
     private _getMessageUseCase: IGetMessageUseCase,
     private _initiateTrainerChatUseCase: IInitiateTrainerChatUseCase,
     private _markAsReadUseCase: IMarkAsReadUseCase,
     private _deleteMessageUseCase: IDeleteMessagesUseCase,
-    private _getAttachmentUploadUrlUseCase: IGetAttachmentUploadUrlUseCase
-  ) {}
+    private _getAttachmentUploadUrlUseCase: IGetAttachmentUploadUrlUseCase,
+    ) {}
 
-  async initiateChat(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userId = req.user?.userId;
+    async initiateChat(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.user?.userId;
 
-      if (!userId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+            if (!userId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
 
-      const result = await this._initiateChatUseCase.initiateChat(userId);
+            const result = await this._initiateChatUseCase.initiateChat(userId);
 
-      ResponseHelper.success(res, MESSAGES.CHAT.INITIATE_CHAT_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.CHAT.INITIATE_CHAT_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  async initiateChatTrainer(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const trainerId = req.user?.userId;
+    async initiateChatTrainer(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const trainerId = req.user?.userId;
 
-      if (!trainerId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+            if (!trainerId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
 
-      const result = await this._initiateTrainerChatUseCase.initiateChatTrainer(trainerId);
+            const result = await this._initiateTrainerChatUseCase.initiateChatTrainer(trainerId);
 
-      ResponseHelper.success(res, MESSAGES.CHAT.INITIATE_CHAT_SUCCESS, { result }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.CHAT.INITIATE_CHAT_SUCCESS, { result }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  async getMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userId = req.user?.userId;
-      const { chatId } = req.params;
+    async getMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.user?.userId;
+            const { chatId } = req.params;
 
-      if (!userId && !chatId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
-      const messages = await this._getMessageUseCase.getMessages(userId!, chatId);
+            if (!userId && !chatId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
+            const messages = await this._getMessageUseCase.getMessages(userId!, chatId);
 
-      ResponseHelper.success(res, MESSAGES.CHAT.MESSAGES_FETCHED_SUCCESS, { messages }, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.CHAT.MESSAGES_FETCHED_SUCCESS, { messages }, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  async markAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const { chatId } = req.params;
-      const userId = req.user?.userId;
+    async markAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { chatId } = req.params;
+            const userId = req.user?.userId;
 
-      if (!chatId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+            if (!chatId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
 
-      await this._markAsReadUseCase.execute(chatId, userId!);
+            await this._markAsReadUseCase.execute(chatId, userId!);
 
-      ResponseHelper.success(res, MESSAGES.CHAT.MARK_AS_READ_SUCCESS, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.CHAT.MARK_AS_READ_SUCCESS, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  async deleteMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const { messageId } = req.params;
-      const userId = req.user?.userId;
-      if (!messageId) {
-        throw new DataMissingExecption(Errors.INVALID_DATA);
-      }
+    async deleteMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { messageId } = req.params;
+            const userId = req.user?.userId;
+            if (!messageId) {
+                throw new DataMissingExecption(Errors.INVALID_DATA);
+            }
 
-      await this._deleteMessageUseCase.execute(messageId, userId!);
+            await this._deleteMessageUseCase.execute(messageId, userId!);
 
-      ResponseHelper.success(res, MESSAGES.CHAT.DELETE_MESSAGE_SUCCESS, HTTPStatus.OK);
-    } catch (error) {
-      next(error);
+            ResponseHelper.success(res, MESSAGES.CHAT.DELETE_MESSAGE_SUCCESS, HTTPStatus.OK);
+        } catch (error) {
+            next(error);
+        }
     }
-  }
 
-  async getAttachment(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const { chatId, fileName, fileType } = req.query as {
+    async getAttachment(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { chatId, fileName, fileType } = req.query as {
         chatId: string;
         fileName: string;
         fileType: string;
     };
 
-    if (!chatId || !fileName || !fileType) {
-      throw new InvalidDataException(Errors.INVALID_DATA);
+        if (!chatId || !fileName || !fileType) {
+            throw new InvalidDataException(Errors.INVALID_DATA);
+        }
+
+        const result = await this._getAttachmentUploadUrlUseCase.execute(chatId, fileName, fileType);
+        ResponseHelper.success(res, MESSAGES.CHAT.GET_ATTACHMENT_SUCCESS, result, HTTPStatus.OK);
+
+
     }
-
-    const result = await this._getAttachmentUploadUrlUseCase.execute(chatId, fileName, fileType);
-ResponseHelper.success(res, MESSAGES.CHAT.GET_ATTACHMENT_SUCCESS, result, HTTPStatus.OK);
-
-
-  }
 
 }

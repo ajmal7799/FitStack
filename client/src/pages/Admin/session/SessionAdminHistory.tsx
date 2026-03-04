@@ -1,18 +1,18 @@
-import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import AdminSidebar from "../../../components/admin/Sidebar";
-import AdminHeader from "../../../components/admin/Header";
-import Pagination from "../../../components/pagination/Pagination";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { useGetSessionAdminHistory } from "../../../hooks/Admin/AdminHooks";
+import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminSidebar from '../../../components/admin/Sidebar';
+import AdminHeader from '../../../components/admin/Header';
+import Pagination from '../../../components/pagination/Pagination';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { useGetSessionAdminHistory } from '../../../hooks/Admin/AdminHooks';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const SessionStatus = {
-  COMPLETED: "completed",
-  MISSED:    "missed",
-  CANCELLED: "cancelled",
-  WAITING:   "waiting",
-  ACTIVE:    "active",
+  COMPLETED: 'completed',
+  MISSED:    'missed',
+  CANCELLED: 'cancelled',
+  WAITING:   'waiting',
+  ACTIVE:    'active',
 } as const;
 
 type SessionStatusValue = (typeof SessionStatus)[keyof typeof SessionStatus];
@@ -21,29 +21,29 @@ const LIMIT = 3;
 
 // ── Status styles ─────────────────────────────────────────────────────────────
 const statusStyles: Record<string, string> = {
-  completed: "bg-emerald-100 text-emerald-700 border border-emerald-200",
-  missed:    "bg-amber-100  text-amber-700  border border-amber-200",
-  cancelled: "bg-red-100    text-red-700    border border-red-200",
-  waiting:   "bg-blue-100   text-blue-700   border border-blue-200",
-  active:    "bg-violet-100 text-violet-700 border border-violet-200",
+  completed: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+  missed:    'bg-amber-100  text-amber-700  border border-amber-200',
+  cancelled: 'bg-red-100    text-red-700    border border-red-200',
+  waiting:   'bg-blue-100   text-blue-700   border border-blue-200',
+  active:    'bg-violet-100 text-violet-700 border border-violet-200',
 };
 
 const statusDot: Record<string, string> = {
-  completed: "bg-emerald-500",
-  missed:    "bg-amber-500",
-  cancelled: "bg-red-500",
-  waiting:   "bg-blue-500",
-  active:    "bg-violet-500",
+  completed: 'bg-emerald-500',
+  missed:    'bg-amber-500',
+  cancelled: 'bg-red-500',
+  waiting:   'bg-blue-500',
+  active:    'bg-violet-500',
 };
 
 // ── Filter options ────────────────────────────────────────────────────────────
 const filterOptions: { label: string; value: SessionStatusValue | undefined }[] = [
-  { label: "All",       value: undefined },
-  { label: "Completed", value: SessionStatus.COMPLETED },
-  { label: "Missed",    value: SessionStatus.MISSED },
-  { label: "Cancelled", value: SessionStatus.CANCELLED },
-  { label: "Waiting",   value: SessionStatus.WAITING },
-  { label: "Active",    value: SessionStatus.ACTIVE },
+  { label: 'All',       value: undefined },
+  { label: 'Completed', value: SessionStatus.COMPLETED },
+  { label: 'Missed',    value: SessionStatus.MISSED },
+  { label: 'Cancelled', value: SessionStatus.CANCELLED },
+  { label: 'Waiting',   value: SessionStatus.WAITING },
+  { label: 'Active',    value: SessionStatus.ACTIVE },
 ];
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -59,13 +59,13 @@ type Session = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    weekday: "short", month: "short", day: "numeric", year: "numeric",
+  return new Date(iso).toLocaleDateString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
   });
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
 // ── Animation variants ────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
-  show:   { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } },
+  show:   { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 22 } },
   exit:   { opacity: 0, x: -20, transition: { duration: 0.16 } },
 };
 
@@ -86,15 +86,15 @@ function StarDisplay({ rating }: { rating?: number }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star} className={`text-sm ${star <= rating ? "text-yellow-400" : "text-gray-200"}`}>★</span>
+        <span key={star} className={`text-sm ${star <= rating ? 'text-yellow-400' : 'text-gray-200'}`}>★</span>
       ))}
     </div>
   );
 }
 
 // ── Avatar ─────────────────────────────────────────────────────────────────────
-function Avatar({ name, size = "sm" }: { name: string; size?: "sm" | "md" }) {
-  const dim = size === "sm" ? "w-7 h-7 text-xs" : "w-8 h-8 text-xs";
+function Avatar({ name, size = 'sm' }: { name: string; size?: 'sm' | 'md' }) {
+  const dim = size === 'sm' ? 'w-7 h-7 text-xs' : 'w-8 h-8 text-xs';
   return (
     <div className={`${dim} rounded-full bg-gray-800 text-white flex items-center justify-center font-bold uppercase flex-shrink-0`}>
       {name.charAt(0)}
@@ -105,8 +105,8 @@ function Avatar({ name, size = "sm" }: { name: string; size?: "sm" | "md" }) {
 // ── Status Badge ──────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit capitalize ${statusStyles[status] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>
-      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot[status] ?? "bg-gray-400"}`} />
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit capitalize ${statusStyles[status] ?? 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${statusDot[status] ?? 'bg-gray-400'}`} />
       {status}
     </span>
   );
@@ -197,7 +197,7 @@ const EmptyState = ({ hasSearch }: { hasSearch: boolean }) => (
       </svg>
     </div>
     <p className="text-sm font-medium text-gray-600">No sessions found</p>
-    <p className="text-xs mt-1">{hasSearch ? "Try a different search term or filter." : "Try a different filter or check back later."}</p>
+    <p className="text-xs mt-1">{hasSearch ? 'Try a different search term or filter.' : 'Try a different filter or check back later.'}</p>
   </div>
 );
 
@@ -218,8 +218,8 @@ const SessionAdminHistoryPage = () => {
   const navigate = useNavigate();
   const [page, setPage]                 = useState(1);
   const [activeFilter, setActiveFilter] = useState<SessionStatusValue | undefined>(undefined);
-  const [search, setSearch]             = useState("");
-  const [searchInput, setSearchInput]   = useState("");
+  const [search, setSearch]             = useState('');
+  const [searchInput, setSearchInput]   = useState('');
 
   const { data, isLoading, isError } = useGetSessionAdminHistory(page, LIMIT, activeFilter, search);
 
@@ -238,12 +238,12 @@ const SessionAdminHistoryPage = () => {
   }, [searchInput]);
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleSearch();
+    if (e.key === 'Enter') handleSearch();
   };
 
   const handleClearSearch = () => {
-    setSearchInput("");
-    setSearch("");
+    setSearchInput('');
+    setSearch('');
     setPage(1);
   };
 
@@ -278,7 +278,7 @@ const SessionAdminHistoryPage = () => {
               >
                 <div className="w-2 h-2 rounded-full bg-indigo-600" />
                 <span className="text-sm font-semibold text-gray-700">
-                  {totalSessions} total session{totalSessions !== 1 ? "s" : ""}
+                  {totalSessions} total session{totalSessions !== 1 ? 's' : ''}
                 </span>
               </motion.div>
             )}
@@ -335,9 +335,9 @@ const SessionAdminHistoryPage = () => {
                 onClick={() => handleFilterChange(opt.value)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200
                   ${activeFilter === opt.value
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 hover:text-gray-900"
-                  }`}
+                ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400 hover:text-gray-900'
+              }`}
               >
                 {opt.label}
               </button>

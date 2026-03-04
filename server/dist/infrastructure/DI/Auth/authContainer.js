@@ -30,6 +30,9 @@ const googleAuthService_1 = require("../../services/googleAuthService");
 const userGoogleLoginUseCase_1 = require("../../../application/implementation/auth/userGoogleLoginUseCase");
 const userProfileRepository_1 = require("../../repositories/userProfileRepository");
 const userProfileModel_1 = require("../../database/models/userProfileModel");
+const refreshTokenUseCase_1 = require("../../../application/implementation/auth/refreshTokenUseCase");
+const changePasswordUseCase_1 = require("../../../application/implementation/auth/changePasswordUseCase");
+const storageService_1 = require("../../services/Storage/storageService");
 //Repositories & Services
 const userRepository = new userRepository_1.UserRepository(userModel_1.userModel);
 const hashService = new hashPasswordService_1.HashPassword();
@@ -42,12 +45,13 @@ const tokenService = new tokenService_1.TokenSerivce();
 const trainerRepository = new trainerRepository_1.TrainerRepository(trainerModel_1.trainerModel);
 const googleAuthService = new googleAuthService_1.GoogleAuthService();
 const userProfileRepository = new userProfileRepository_1.UserProfileRepository(userProfileModel_1.userProfileModel);
+const storageService = new storageService_1.StorageService();
 //UseCases
 const registerUserUseCase = new signupUserUseCase_1.RegisterUserUseCase(userRepository, hashService);
 const userSendOtpUseCase = new signUpSendOtpUseCase_1.SignUpSendOtpUseCase(otpService, otpContentGenerator, emailService, userRepository, cacheStorage);
 const verifyOtpUseCase = new verifyOtpUseCase_1.VerifyOtpUseCase(cacheStorage);
 const tokenCreationUseCase = new tokenCreationUseCase_1.TokenCreationUseCase(jwtService);
-const userLoginUseCase = new loginUserUseCase_1.UserLoginUseCase(userRepository, hashService, trainerRepository, userProfileRepository);
+const userLoginUseCase = new loginUserUseCase_1.UserLoginUseCase(userRepository, hashService, trainerRepository, userProfileRepository, storageService);
 const adminLoginUseCase = new AdminLoginUseCase_1.AdminLoginUseCase(userRepository, hashService);
 const tokenValidationUseCase = new tokenInvalidationUseCase_1.TokenInvalidationUseCase(jwtService, cacheStorage);
 const resendOtpUseCase = new resendOtpUseCase_1.ResendOtpUseCase(otpService, otpContentGenerator, emailService, userRepository, cacheStorage);
@@ -55,8 +59,10 @@ const forgetPasswordSentOtp = new forgetPasswordSentOtp_1.ForgetPasswordSentOtp(
 const forgetPasswordVerifyOtpUseCase = new forgetPasswordVerifyOtpUseCase_1.ForgetPasswordVerifyOtpUseCase(cacheStorage, tokenService);
 const forgetPasswordResetPasswordUseCase = new forgetPasswordResetPassword_1.ForgetPasswordResetPasswordUseCase(cacheStorage, userRepository, hashService);
 const googleAuthUseCase = new userGoogleLoginUseCase_1.UserGoogleLoginUseCase(googleAuthService, userRepository, userProfileRepository);
+const refreshTokenUseCase = new refreshTokenUseCase_1.RefreshTokenUseCase(jwtService);
+const changePasswordUseCase = new changePasswordUseCase_1.ChangePasswordUseCase(userRepository, hashService);
 //Controller
-exports.userAuthController = new userAuthController_1.UserAuthController(registerUserUseCase, userSendOtpUseCase, verifyOtpUseCase, tokenCreationUseCase, userLoginUseCase, tokenValidationUseCase, resendOtpUseCase, forgetPasswordSentOtp, forgetPasswordVerifyOtpUseCase, forgetPasswordResetPasswordUseCase, googleAuthUseCase, jwtService);
+exports.userAuthController = new userAuthController_1.UserAuthController(registerUserUseCase, userSendOtpUseCase, verifyOtpUseCase, tokenCreationUseCase, userLoginUseCase, tokenValidationUseCase, resendOtpUseCase, forgetPasswordSentOtp, forgetPasswordVerifyOtpUseCase, forgetPasswordResetPasswordUseCase, googleAuthUseCase, jwtService, refreshTokenUseCase, changePasswordUseCase);
 exports.adminAuthController = new adminAuthController_1.AdminAuthController(adminLoginUseCase, tokenCreationUseCase);
 /// Middleware
 exports.authMiddleware = new authMiddleware_1.AuthMiddleware(jwtService, cacheStorage, userRepository);

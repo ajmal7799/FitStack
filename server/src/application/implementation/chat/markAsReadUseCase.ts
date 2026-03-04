@@ -1,7 +1,7 @@
-import { IMarkAsReadUseCase } from "../../useCase/chat/IMarkAsReadUseCase";
-import { IChatRepository } from "../../../domain/interfaces/repositories/IChatRepository";
-import { NotFoundException } from "../../constants/exceptions";
-import { CHAT_ERRORS } from "../../../shared/constants/error";
+import { IMarkAsReadUseCase } from '../../useCase/chat/IMarkAsReadUseCase';
+import { IChatRepository } from '../../../domain/interfaces/repositories/IChatRepository';
+import { NotFoundException } from '../../constants/exceptions';
+import { CHAT_ERRORS } from '../../../shared/constants/error';
 
 
 export class MarkAsReadUseCase implements IMarkAsReadUseCase {
@@ -11,7 +11,7 @@ export class MarkAsReadUseCase implements IMarkAsReadUseCase {
         if (!chat) {
             throw new NotFoundException(CHAT_ERRORS.CHAT_NOT_FOUND);
         }
-           const userType = userId === chat.userId ? 'user' : 'trainer';
+        const userType = userId === chat.userId ? 'user' : 'trainer';
         await this._chatRepository.resetUnreadCount(chatId, userType);
     }
 }

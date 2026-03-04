@@ -17,6 +17,7 @@ export interface UserProfile {
 
     preferredWorkoutTypes?: string[],
     medicalConditions?: string[],
+    profileImage?: string
     profileCompleted: boolean
 }
   

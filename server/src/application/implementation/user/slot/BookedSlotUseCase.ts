@@ -1,27 +1,27 @@
-import { IBookedSlotUseCase } from "../../../useCase/user/booking/IBookedSlotUseCase";
-import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { ISlotRepository } from "../../../../domain/interfaces/repositories/ISlotRepository";
-import { ITrainerSelectRepository } from "../../../../domain/interfaces/repositories/ITrainerSelectRepository";
-import { TrainerRepository } from "../../../../infrastructure/repositories/trainerRepository";
-import { NotFoundException,ConflictException } from "../../../constants/exceptions";
-import { USER_ERRORS,TRAINER_ERRORS } from "../../../../shared/constants/error";
-import { BookedSlotDTO } from "../../../dto/slot/slotDTO";
-import { IVideoCallRepository } from "../../../../domain/interfaces/repositories/IVideoCallRepository";
-import { VideoCallStatus } from "../../../../domain/enum/videoCallEnums";
+import { IBookedSlotUseCase } from '../../../useCase/user/booking/IBookedSlotUseCase';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/IUserRepository';
+import { ISlotRepository } from '../../../../domain/interfaces/repositories/ISlotRepository';
+import { ITrainerSelectRepository } from '../../../../domain/interfaces/repositories/ITrainerSelectRepository';
+import { TrainerRepository } from '../../../../infrastructure/repositories/trainerRepository';
+import { NotFoundException,ConflictException } from '../../../constants/exceptions';
+import { USER_ERRORS,TRAINER_ERRORS } from '../../../../shared/constants/error';
+import { BookedSlotDTO } from '../../../dto/slot/slotDTO';
+import { IVideoCallRepository } from '../../../../domain/interfaces/repositories/IVideoCallRepository';
+import { VideoCallStatus } from '../../../../domain/enum/videoCallEnums';
 
 
 export class BookedSlotUseCase implements IBookedSlotUseCase {
     constructor( 
         private _userRepository: IUserRepository,
         private _trainerSelectRepository: ITrainerSelectRepository,
-        private _videoCallRepository: IVideoCallRepository
+        private _videoCallRepository: IVideoCallRepository,
     ) {}
 
     async getBookedSlots(
         userId: string, 
         page: number, 
         limit: number,
-        status: string
+        status: string,
     ): Promise<{ slots: BookedSlotDTO[], totalSlots: number, totalePages: number, currentPage: number }> {
         
         const skip = (page - 1) * limit;
@@ -57,7 +57,7 @@ export class BookedSlotUseCase implements IBookedSlotUseCase {
             slots: bookedSlotsDTO,
             totalSlots: totalSlots,
             totalePages: Math.ceil(totalSlots / limit) || 1,
-            currentPage: page
+            currentPage: page,
         };
     }
 }

@@ -8,168 +8,168 @@ import { MessageTypeEnums } from '../../../domain/enum/MessageTypeEnums';
 
 
 export class SocketController {
-  private io: Server;
-  private endingRooms = new Set<string>();
+    private io: Server;
+    private endingRooms = new Set<string>();
 
-  private _sendingMessageUseCase: ISendingMessageUseCase;
-  private _deleteMessageUseCase: IDeleteMessagesUseCase;
-  private _endVideoCallSessionUseCase: IEndVideoCallSessionUseCase;
-  constructor(
-    io: Server,
-    sendingMessageUseCase: ISendingMessageUseCase,
-    deleteMessageUseCase: IDeleteMessagesUseCase,
-    endVideoCallSessionUseCase: IEndVideoCallSessionUseCase
-  ) {
-    this.io = io;
-    this._sendingMessageUseCase = sendingMessageUseCase;
-    this._deleteMessageUseCase = deleteMessageUseCase;
-    this._endVideoCallSessionUseCase = endVideoCallSessionUseCase;
-  }
-
-  public async onConnection(socket: Socket) {
-    const userId = socket.data.userId;
-    console.log(`📡 New connection established. User ID: ${userId}, Socket ID: ${socket.id}`);
-    
-    if (userId) {
-      await socket.join(userId.toString());
-      console.log(`🏠 User [${userId}] joined personal notification room`);
-    } else {
-      console.warn(`⚠️ Socket [${socket.id}] connected but has no userId in data`);
+    private _sendingMessageUseCase: ISendingMessageUseCase;
+    private _deleteMessageUseCase: IDeleteMessagesUseCase;
+    private _endVideoCallSessionUseCase: IEndVideoCallSessionUseCase;
+    constructor(
+        io: Server,
+        sendingMessageUseCase: ISendingMessageUseCase,
+        deleteMessageUseCase: IDeleteMessagesUseCase,
+        endVideoCallSessionUseCase: IEndVideoCallSessionUseCase,
+    ) {
+        this.io = io;
+        this._sendingMessageUseCase = sendingMessageUseCase;
+        this._deleteMessageUseCase = deleteMessageUseCase;
+        this._endVideoCallSessionUseCase = endVideoCallSessionUseCase;
     }
 
-
-    socket.on('join_room', (chatId: string) => {
-      if (!chatId) {
-        console.log('⚠️ Join attempt failed: No chatId provided');
-        return;
-      }
-
-      socket.join(chatId);
-
-      console.log(`🏠 User [${userId}] joined Chat Room [${chatId}]`);
-
-      socket.to(chatId).emit('user_joined', { userId });
-    });
-
-    // --------------------------------------------------
-    //              🛠 SEND MESSAGE LOGIC
-    // --------------------------------------------------
- socket.on('send_message', async (data: SendMessagePayload) => {
-    try {
-        const { chatId, type, text, attachment } = data;
-
-        if (!chatId || !type) {
-            socket.emit('error', 'Invalid message payload');
-            return;
+    public async onConnection(socket: Socket) {
+        const userId = socket.data.userId;
+        console.log(`📡 New connection established. User ID: ${userId}, Socket ID: ${socket.id}`);
+    
+        if (userId) {
+            await socket.join(userId.toString());
+            console.log(`🏠 User [${userId}] joined personal notification room`);
+        } else {
+            console.warn(`⚠️ Socket [${socket.id}] connected but has no userId in data`);
         }
 
-        if (type === MessageTypeEnums.TEXT && (!text || text.trim() === '')) {
-            socket.emit('error', 'Text message cannot be empty');
-            return;
-        }
 
-        if (type !== MessageTypeEnums.TEXT && !attachment) {
-            socket.emit('error', 'Attachment required');
-            return;
-        }
+        socket.on('join_room', (chatId: string) => {
+            if (!chatId) {
+                console.log('⚠️ Join attempt failed: No chatId provided');
+                return;
+            }
 
-        await socket.join(chatId);
+            socket.join(chatId);
 
-        const savedMessage = await this._sendingMessageUseCase.sendMessage({
-            chatId,
-            senderId: userId,
-            type,
-            text,
-            attachment,
+            console.log(`🏠 User [${userId}] joined Chat Room [${chatId}]`);
+
+            socket.to(chatId).emit('user_joined', { userId });
         });
 
-        this.io.to(chatId).emit('receive_message', savedMessage);
-    } catch (error) {
-        console.error('❌ Error handling send_message:', error);
-        socket.emit('error', 'Message could not be sent');
+        // --------------------------------------------------
+        //              🛠 SEND MESSAGE LOGIC
+        // --------------------------------------------------
+        socket.on('send_message', async(data: SendMessagePayload) => {
+            try {
+                const { chatId, type, text, attachment } = data;
+
+                if (!chatId || !type) {
+                    socket.emit('error', 'Invalid message payload');
+                    return;
+                }
+
+                if (type === MessageTypeEnums.TEXT && (!text || text.trim() === '')) {
+                    socket.emit('error', 'Text message cannot be empty');
+                    return;
+                }
+
+                if (type !== MessageTypeEnums.TEXT && !attachment) {
+                    socket.emit('error', 'Attachment required');
+                    return;
+                }
+
+                await socket.join(chatId);
+
+                const savedMessage = await this._sendingMessageUseCase.sendMessage({
+                    chatId,
+                    senderId: userId,
+                    type,
+                    text,
+                    attachment,
+                });
+
+                this.io.to(chatId).emit('receive_message', savedMessage);
+            } catch (error) {
+                console.error('❌ Error handling send_message:', error);
+                socket.emit('error', 'Message could not be sent');
+            }
+        });
+
+        socket.on('delete_message', async(data: { messageId: string; chatId: string }) => {
+            try {
+                const { messageId, chatId } = data;
+                console.log(`🗑️ Received delete request for message ${messageId} from user ${userId}`);
+
+                await this._deleteMessageUseCase.execute(messageId, userId);
+                await socket.join(chatId);
+                this.io.to(chatId).emit('message_deleted', { messageId });
+            } catch (error) {
+                console.error('❌ Error handling delete_message:', error);
+                socket.emit('error', 'Message could not be deleted');
+            }
+        });
+
+        socket.on('disconnect', () => {
+            console.log(`🔌 User ${userId} disconnected`);
+        });
+
+        // --------------------------------------------------
+        //              🛠 VIDEO CALL
+        // --------------------------------------------------
+
+        socket.on('video_call:join', ({ roomId, userId, slotId }: { roomId: string; userId: string; slotId: string }) => {
+            console.log(`🎥 User [${userId}] joined Video Room [${roomId}]`);
+            if (!roomId) return;
+
+            const vUserId = userId;
+            socket.data.roomId = roomId;
+            socket.data.slotId = slotId;
+
+            socket.join(roomId);
+            console.log(`🎥 User [${vUserId}] joined Video Room [${roomId}]`);
+
+            // Notify the other user in the room that a peer has arrived.
+            // This is the "trigger" for Peer A to start the WebRTC handshake.
+            socket.to(roomId).emit('video_call:peer_joined', { userId });
+        });
+
+        // 2. SIGNAL RELAY (The "Mailman")
+        socket.on('video_call:signal', (data: { roomId: string; signalData: any }) => {
+            const { roomId, signalData } = data;
+
+            // Take the WebRTC data from Peer A and send it directly to Peer B.
+            // We use socket.to(roomId) to ensure the sender doesn't receive their own signal.
+            socket.to(roomId).emit('video_call:signal', signalData);
+        });
+
+        // 3. LEAVE VIDEO ROOM
+        socket.on('video_call:leave', async({ roomId }: { roomId: string }) => {
+            const userId = socket.data.userId;
+            const slotId = socket.data.slotId;
+
+            socket.leave(roomId);
+            socket.to(roomId).emit('video_call:peer_left');
+
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            const remaining = (await this.io.in(roomId).allSockets()).size;
+
+            if (remaining === 0 && slotId && !this.endingRooms.has(roomId)) {
+                this.endingRooms.add(roomId);
+                try {
+                    await this._endVideoCallSessionUseCase.execute(slotId);
+
+                    // ✅ Notify both users that session is officially completed
+                    this.io.to(roomId).emit('video_call:session_completed', { slotId });
+                } catch (err) {
+                } finally {
+                    setTimeout(() => this.endingRooms.delete(roomId), 5000);
+                }
+            }
+        });
+
+        // --------------------------------------------------
+        //              🛠 NOTIFICATION
+        // --------------------------------------------------
+
+
+
+
+
     }
-});
-
-    socket.on('delete_message', async (data: { messageId: string; chatId: string }) => {
-      try {
-        const { messageId, chatId } = data;
-        console.log(`🗑️ Received delete request for message ${messageId} from user ${userId}`);
-
-        await this._deleteMessageUseCase.execute(messageId, userId);
-        await socket.join(chatId);
-        this.io.to(chatId).emit('message_deleted', { messageId });
-      } catch (error) {
-        console.error('❌ Error handling delete_message:', error);
-        socket.emit('error', 'Message could not be deleted');
-      }
-    });
-
-    socket.on('disconnect', () => {
-      console.log(`🔌 User ${userId} disconnected`);
-    });
-
-    // --------------------------------------------------
-    //              🛠 VIDEO CALL
-    // --------------------------------------------------
-
-    socket.on('video_call:join', ({ roomId, userId, slotId }: { roomId: string; userId: string; slotId: string }) => {
-      console.log(`🎥 User [${userId}] joined Video Room [${roomId}]`);
-      if (!roomId) return;
-
-      const vUserId = userId;
-      socket.data.roomId = roomId;
-      socket.data.slotId = slotId;
-
-      socket.join(roomId);
-      console.log(`🎥 User [${vUserId}] joined Video Room [${roomId}]`);
-
-      // Notify the other user in the room that a peer has arrived.
-      // This is the "trigger" for Peer A to start the WebRTC handshake.
-      socket.to(roomId).emit('video_call:peer_joined', { userId });
-    });
-
-    // 2. SIGNAL RELAY (The "Mailman")
-    socket.on('video_call:signal', (data: { roomId: string; signalData: any }) => {
-      const { roomId, signalData } = data;
-
-      // Take the WebRTC data from Peer A and send it directly to Peer B.
-      // We use socket.to(roomId) to ensure the sender doesn't receive their own signal.
-      socket.to(roomId).emit('video_call:signal', signalData);
-    });
-
-    // 3. LEAVE VIDEO ROOM
-    socket.on('video_call:leave', async ({ roomId }: { roomId: string }) => {
-      const userId = socket.data.userId;
-      const slotId = socket.data.slotId;
-
-      socket.leave(roomId);
-      socket.to(roomId).emit('video_call:peer_left');
-
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      const remaining = (await this.io.in(roomId).allSockets()).size;
-
-      if (remaining === 0 && slotId && !this.endingRooms.has(roomId)) {
-        this.endingRooms.add(roomId);
-        try {
-          await this._endVideoCallSessionUseCase.execute(slotId);
-
-          // ✅ Notify both users that session is officially completed
-          this.io.to(roomId).emit('video_call:session_completed', { slotId });
-        } catch (err) {
-        } finally {
-          setTimeout(() => this.endingRooms.delete(roomId), 5000);
-        }
-      }
-    });
-
-    // --------------------------------------------------
-    //              🛠 NOTIFICATION
-    // --------------------------------------------------
-
-
-
-
-
-  }
 }

@@ -1,8 +1,6 @@
-import { success } from 'zod';
 import { IAdminLoginUseCase } from '../../../application/useCase/auth/admin/IAdminLoginUseCase';
 import { ITokenCreationUseCase } from '../../../application/useCase/auth/ITokenCreation';
 import { UserRole } from '../../../domain/enum/userEnums';
-import { Errors } from '../../../shared/constants/error';
 import { HTTPStatus } from '../../../shared/constants/httpStatus';
 import { setRefreshTokenCookie } from '../../../shared/utils/setRefreshTokenCookie';
 import { loginSchema } from '../../../shared/validations/loginValidator';

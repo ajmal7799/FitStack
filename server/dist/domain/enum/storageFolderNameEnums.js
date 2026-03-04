@@ -8,4 +8,5 @@ var StorageFolderNameEnums;
     StorageFolderNameEnums["EXPERIENCE_CERTIFICATES"] = "experience_certificates";
     StorageFolderNameEnums["USER_PROFILE_IMAGE"] = "user_profile_image";
     StorageFolderNameEnums["TRAINER_PROFILE_IMAGE"] = "trainer_profile_image";
+    StorageFolderNameEnums["CHAT_ATTACHMENTS"] = "chat-attachments";
 })(StorageFolderNameEnums || (exports.StorageFolderNameEnums = StorageFolderNameEnums = {}));

@@ -30,9 +30,9 @@ function Pagination({ totalPages, currentPage, setPage }: PropType) {
             onClick={() => setPage(page)}
             className={`px-4 py-2 rounded-lg border font-medium transition text-sm
               ${isActive
-                ? "bg-blue-600 text-white border-blue-600 shadow-sm"
-                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-              }`}
+            ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+          }`}
           >
             {page}
           </button>

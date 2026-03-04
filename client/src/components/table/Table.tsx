@@ -25,13 +25,13 @@ const rowVariants = {
 function Table<T extends { id?: string | number }>({ headers, data }: propType<T>) {
   return (
     <div className="w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm hide-scroll-bar">
-      <table className="w-full border-collapse text-sm text-left table-fixed ">
+      <table className="w-full border-collapse text-sm text-left min-w-[600px]">
         <thead className="bg-gray-50 text-gray-600 text-[13px] font-semibold uppercase tracking-wider border-b border-gray-200">
           <tr>
             {headers.map((header) => (
               <th
                 key={header.id}
-                className="px-6 py-3 text-left whitespace-nowrap select-none"
+                className="px-4 sm:px-6 py-3 text-left whitespace-nowrap select-none"
               >
                 {header.label}
               </th>
@@ -39,12 +39,12 @@ function Table<T extends { id?: string | number }>({ headers, data }: propType<T
           </tr>
         </thead>
 
-        <tbody className="divide-y divide-gray-100 ">
+        <tbody className="divide-y divide-gray-100">
           <AnimatePresence mode="wait">
             {data.length > 0 ? (
               data.map((row, index) => (
                 <motion.tr
-                  key={row.id ?? index} // unique key per row
+                  key={row.id ?? index}
                   custom={index}
                   initial="hidden"
                   animate="visible"
@@ -55,12 +55,12 @@ function Table<T extends { id?: string | number }>({ headers, data }: propType<T
                   {headers.map((header) => (
                     <td
                       key={header.id}
-                      className="px-6 py-4 text-gray-800 whitespace-nowrap"
+                      className="px-4 sm:px-6 py-3 sm:py-4 text-gray-800 whitespace-nowrap"
                     >
                       {header.render(row, index)}
                     </td>
                   ))}
-                </motion.tr> 
+                </motion.tr>
               ))
             ) : (
               <tr>
@@ -68,7 +68,7 @@ function Table<T extends { id?: string | number }>({ headers, data }: propType<T
                   colSpan={headers.length}
                   className="text-center text-gray-500 py-8"
                 >
-                                    No data available
+                  No data available
                 </td>
               </tr>
             )}

@@ -33,7 +33,7 @@ class UserMapper {
             isActive: entity.isActive,
         };
     }
-    static toLoginUserResponse(user, verificationCheck = true, userProfileCompleted = true, hasActiveSubscription = false) {
+    static toLoginUserResponse(user, verificationCheck = true, userProfileCompleted = true, hasActiveSubscription = false, profileImage) {
         return {
             _id: user._id,
             name: user.name,
@@ -43,8 +43,8 @@ class UserMapper {
             isActive: user.isActive,
             verificationCheck,
             userProfileCompleted,
-            profileImage: user.profileImage,
             hasActiveSubscription,
+            profileImage
         };
     }
     static toLoginAdminResponse(user) {
@@ -67,7 +67,7 @@ class UserMapper {
             isActive: user.isActive,
             stripeCustomerId: user.stripeCustomerId,
             activeMembershipId: user.activeMembershipId,
-            profileImage: user.profileImage
+            profileImage: user.profileImage,
         };
     }
     static fromMongooseDocument(doc) {

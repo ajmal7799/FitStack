@@ -45,6 +45,7 @@ export const Errors = {
     NOT_ALLOWED : 'You are not allowed to perform this action',
     FEEDBACK_ALREADY_EXISTS : 'Feedback already exists',
     TRAINER_NOT_FOUND : 'Trainer not found',
+    USER_NOT_FOUND : 'User not found',
     
 };
 
@@ -68,7 +69,7 @@ export const USER_ERRORS = {
     TRAINER_SLOT_NOT_FOUND : 'This trainer is not available on this day.',
     SLOT_NOT_FOUND : 'Slot not found',
     CONNOT_BOOK_SLOT_THAT_ALREADY_PASSED : 'Cannot book a slot that has already passed',
-    YOUR_HAVE_ALREADY_BOOKED_A_SEESSION_FOR_THIS_DAY : 'You have already booked a session for this day',
+    YOUR_HAVE_ALREADY_BOOKED_A_SEESSION_FOR_THIS_DAY : 'You have already booked a session for this dayYou have already booked or cancelled a session today. Only one session per day is allowed.',
     THIS_SLOT_WAS_BOOKED_BY_ANOTHER_USER : 'This slot was just booked by someone else',
     OLD_PASSWORD_INCORRECT : 'The old password you entered is incorrect', 
 };

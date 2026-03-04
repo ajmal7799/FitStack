@@ -43,5 +43,16 @@ class TrainerRepository extends baseRepository_1.BaseRepository {
             return trainerMappers_1.TrainerMapper.fromMongooseDocument(updatedDoc);
         });
     }
+    updateRatingMetrics(id, metrics) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this._model.findByIdAndUpdate(id, {
+                $set: {
+                    ratingSum: metrics.ratingSum,
+                    ratingCount: metrics.ratingCount,
+                    averageRating: metrics.averageRating
+                }
+            });
+        });
+    }
 }
 exports.TrainerRepository = TrainerRepository;

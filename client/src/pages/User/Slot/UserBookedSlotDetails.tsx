@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import UserSidebar from "../../../components/user/Sidebar";
-import Header from "../../../components/user/Header";
-import { useGetBookedSlotDetails, useCancelBookedSlot, useJoinSession, useFeedback } from "../../../hooks/User/userServiceHooks";
-import { toast } from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import UserSidebar from '../../../components/user/Sidebar';
+import Header from '../../../components/user/Header';
+import { useGetBookedSlotDetails, useCancelBookedSlot, useJoinSession, useFeedback } from '../../../hooks/User/userServiceHooks';
+import { toast } from 'react-hot-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface SlotDetails {
   _id: string;
@@ -17,7 +17,7 @@ interface SlotDetails {
   slotStatus: string;
   cancellationReason?: string;
   cancelledAt?: string;
-  cancelledBy?: "user" | "trainer" | string;
+  cancelledBy?: 'user' | 'trainer' | string;
   hasFeedback: boolean;
   feedback: {
     _id: string;
@@ -28,11 +28,11 @@ interface SlotDetails {
 }
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
-  waiting:   { label: "Waiting",   className: "bg-yellow-100 text-yellow-700" },
-  live:      { label: "Live",      className: "bg-green-100 text-green-700 animate-pulse" },
-  completed: { label: "Completed", className: "bg-blue-100 text-blue-700" },
-  missed:    { label: "Missed",    className: "bg-orange-100 text-orange-600" },
-  cancelled: { label: "Cancelled", className: "bg-red-100 text-red-600" },
+  waiting:   { label: 'Waiting',   className: 'bg-yellow-100 text-yellow-700' },
+  live:      { label: 'Live',      className: 'bg-green-100 text-green-700 animate-pulse' },
+  completed: { label: 'Completed', className: 'bg-blue-100 text-blue-700' },
+  missed:    { label: 'Missed',    className: 'bg-orange-100 text-orange-600' },
+  cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-600' },
 };
 
 // ── Star Rating Component ─────────────────────────────────────────────────────
@@ -57,12 +57,12 @@ function StarRating({
           onClick={() => !readonly && onChange?.(star)}
           onMouseEnter={() => !readonly && setHovered(star)}
           onMouseLeave={() => !readonly && setHovered(0)}
-          className={`text-2xl transition-all duration-150 ${readonly ? "cursor-default" : "cursor-pointer hover:scale-110"}`}
+          className={`text-2xl transition-all duration-150 ${readonly ? 'cursor-default' : 'cursor-pointer hover:scale-110'}`}
         >
           <span className={
             star <= (hovered || value)
-              ? "text-yellow-400"
-              : "text-gray-200"
+              ? 'text-yellow-400'
+              : 'text-gray-200'
           }>
             ★
           </span>
@@ -83,7 +83,7 @@ function FeedbackForm({
   onSuccess: () => void;
 }) {
   const [rating, setRating]   = useState(0);
-  const [review, setReview]   = useState("");
+  const [review, setReview]   = useState('');
   const [touched, setTouched] = useState(false);
 
   const { mutate: submitFeedback, isPending } = useFeedback();
@@ -91,18 +91,18 @@ function FeedbackForm({
   const handleSubmit = () => {
     setTouched(true);
     if (rating === 0) {
-      toast.error("Please select a rating");
+      toast.error('Please select a rating');
       return;
     }
     submitFeedback(
       { sessionId: slotId, rating, review },
       {
         onSuccess: () => {
-          toast.success("Feedback submitted!");
+          toast.success('Feedback submitted!');
           onSuccess();
         },
         onError: (err: any) => {
-          toast.error(err?.response?.data?.message || "Failed to submit feedback");
+          toast.error(err?.response?.data?.message || 'Failed to submit feedback');
         },
       }
     );
@@ -168,12 +168,12 @@ function FeedbackForm({
             <motion.span
               className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full"
               animate={{ rotate: 360 }}
-              transition={{ duration: 0.7, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 0.7, repeat: Infinity, ease: 'linear' }}
             />
             Submitting...
           </>
         ) : (
-          "Submit Feedback"
+          'Submit Feedback'
         )}
       </motion.button>
     </motion.div>
@@ -184,7 +184,7 @@ function FeedbackForm({
 function FeedbackDisplay({
   feedback,
 }: {
-  feedback: NonNullable<SlotDetails["feedback"]>;
+  feedback: NonNullable<SlotDetails['feedback']>;
 }) {
   return (
     <motion.div
@@ -206,10 +206,10 @@ function FeedbackDisplay({
 
       {feedback.createdAt && (
         <p className="text-green-500 text-xs">
-          Submitted on{" "}
+          Submitted on{' '}
           {new Date(feedback.createdAt).toLocaleString([], {
-            dateStyle: "medium",
-            timeStyle: "short",
+            dateStyle: 'medium',
+            timeStyle: 'short',
           })}
         </p>
       )}
@@ -224,10 +224,10 @@ const UserBookedSlotDetails = () => {
   const queryClient  = useQueryClient();
 
   const [isModalOpen,   setIsModalOpen]   = useState(false);
-  const [cancelReason,  setCancelReason]  = useState("");
+  const [cancelReason,  setCancelReason]  = useState('');
   const [currentTime,   setCurrentTime]   = useState(new Date());
 
-  const { data, isLoading }                          = useGetBookedSlotDetails(slotId || "");
+  const { data, isLoading }                          = useGetBookedSlotDetails(slotId || '');
   const { mutate: cancelSlot,  isPending: isCancelling } = useCancelBookedSlot();
   const { mutate: joinSession, isPending: isJoining }    = useJoinSession();
 
@@ -244,28 +244,28 @@ const UserBookedSlotDetails = () => {
       onSuccess: (data) => {
         const roomId = data?.data?.result?.roomId;
         if (roomId) {
-          toast.success("Joining session...");
+          toast.success('Joining session...');
           navigate(`/video-session/${roomId}/${slotId}`);
         }
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || "Could not join session");
+        toast.error(error?.response?.data?.message || 'Could not join session');
       },
     });
   };
 
   const handleCancelSubmit = () => {
     if (!cancelReason.trim()) {
-      toast.error("Please provide a reason");
+      toast.error('Please provide a reason');
       return;
     }
     cancelSlot(
-      { slotId: slotId || "", reason: cancelReason },
+      { slotId: slotId || '', reason: cancelReason },
       {
         onSuccess: () => {
-          toast.success("Cancelled successfully");
+          toast.success('Cancelled successfully');
           setIsModalOpen(false);
-          navigate("/sessions-history");
+          navigate('/sessions-history');
         },
       }
     );
@@ -273,7 +273,7 @@ const UserBookedSlotDetails = () => {
 
   // Invalidate query so feedback section refreshes after submission
   const handleFeedbackSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ["bookedSlotDetails", slotId] });
+    queryClient.invalidateQueries({ queryKey: ['bookedSlotDetails', slotId] });
   };
 
   const getSessionStatus = () => {
@@ -287,20 +287,20 @@ const UserBookedSlotDetails = () => {
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const secs  = Math.floor((diff % (1000 * 60)) / 1000);
-      return { label: `Starts in ${hours}h ${mins}m ${secs}s`, type: "WAITING", disabled: true };
+      return { label: `Starts in ${hours}h ${mins}m ${secs}s`, type: 'WAITING', disabled: true };
     } else if (now >= start && now <= end) {
-      return { label: "Join Session Now", type: "LIVE", disabled: false };
+      return { label: 'Join Session Now', type: 'LIVE', disabled: false };
     } else {
-      return { label: "Session Expired", type: "EXPIRED", disabled: true };
+      return { label: 'Session Expired', type: 'EXPIRED', disabled: true };
     }
   };
 
   const sessionStatus = getSessionStatus();
-  const statusKey  = details?.slotStatus?.toLowerCase() ?? "";
-  const badge      = STATUS_BADGE[statusKey] ?? { label: details?.slotStatus ?? "—", className: "bg-gray-100 text-gray-500" };
-  const isCancelled = statusKey === "cancelled";
-  const isCompleted = statusKey === "completed";
-  const isMissed    = statusKey === "missed";
+  const statusKey  = details?.slotStatus?.toLowerCase() ?? '';
+  const badge      = STATUS_BADGE[statusKey] ?? { label: details?.slotStatus ?? '—', className: 'bg-gray-100 text-gray-500' };
+  const isCancelled = statusKey === 'cancelled';
+  const isCompleted = statusKey === 'completed';
+  const isMissed    = statusKey === 'missed';
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -327,7 +327,7 @@ const UserBookedSlotDetails = () => {
           >
             {/* Header Banner */}
             <div className={`p-8 flex items-center justify-between text-white ${
-              isCancelled ? "bg-red-500" : isCompleted ? "bg-green-600" : isMissed ? "bg-orange-500" : "bg-blue-600"
+              isCancelled ? 'bg-red-500' : isCompleted ? 'bg-green-600' : isMissed ? 'bg-orange-500' : 'bg-blue-600'
             }`}>
               <div>
                 <h2 className="text-2xl font-bold tracking-tight">Booking Overview</h2>
@@ -344,7 +344,7 @@ const UserBookedSlotDetails = () => {
                   <motion.div
                     className="w-10 h-10 border-4 border-blue-100 border-t-blue-500 rounded-full"
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                    transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
                   />
                   <p className="text-sm font-medium">Loading session details...</p>
                 </div>
@@ -388,8 +388,8 @@ const UserBookedSlotDetails = () => {
                         transition={{ duration: 0.3, delay: 0.4 }}
                       >
                         <label className="block text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-2">Scheduled Start</label>
-                        <p className="text-blue-900 font-bold text-lg">{new Date(details?.startTime || "").toLocaleDateString()}</p>
-                        <p className="text-blue-600 font-medium">{new Date(details?.startTime || "").toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
+                        <p className="text-blue-900 font-bold text-lg">{new Date(details?.startTime || '').toLocaleDateString()}</p>
+                        <p className="text-blue-600 font-medium">{new Date(details?.startTime || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                       </motion.div>
                       <motion.div
                         className="bg-blue-50/50 p-5 rounded-2xl border border-blue-100"
@@ -398,8 +398,8 @@ const UserBookedSlotDetails = () => {
                         transition={{ duration: 0.3, delay: 0.47 }}
                       >
                         <label className="block text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-2">Scheduled End</label>
-                        <p className="text-blue-900 font-bold text-lg">{new Date(details?.endTime || "").toLocaleDateString()}</p>
-                        <p className="text-blue-600 font-medium">{new Date(details?.endTime || "").toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
+                        <p className="text-blue-900 font-bold text-lg">{new Date(details?.endTime || '').toLocaleDateString()}</p>
+                        <p className="text-blue-600 font-medium">{new Date(details?.endTime || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                       </motion.div>
                     </div>
 
@@ -424,7 +424,7 @@ const UserBookedSlotDetails = () => {
                             {details?.cancelledBy && (
                               <div>
                                 <p className="text-[10px] font-black text-red-400 uppercase tracking-[0.15em] mb-1">Cancelled By</p>
-                                <span className={`px-3 py-0.5 rounded-full text-xs font-bold capitalize ${details.cancelledBy === "trainer" ? "bg-orange-100 text-orange-600" : "bg-red-100 text-red-600"}`}>
+                                <span className={`px-3 py-0.5 rounded-full text-xs font-bold capitalize ${details.cancelledBy === 'trainer' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'}`}>
                                   {details.cancelledBy}
                                 </span>
                               </div>
@@ -433,7 +433,7 @@ const UserBookedSlotDetails = () => {
                               <div>
                                 <p className="text-[10px] font-black text-red-400 uppercase tracking-[0.15em] mb-1">Cancelled At</p>
                                 <p className="text-red-700 font-medium text-sm">
-                                  {new Date(details.cancelledAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}
+                                  {new Date(details.cancelledAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
                                 </p>
                               </div>
                             )}
@@ -463,7 +463,7 @@ const UserBookedSlotDetails = () => {
                           {details?.hasFeedback ? (
                             // hasFeedback = true → no feedback yet → show form
                             <FeedbackForm
-                              slotId={slotId || ""}
+                              slotId={slotId || ''}
                               trainerName={details.trainerName}
                               onSuccess={handleFeedbackSuccess}
                             />
@@ -504,18 +504,18 @@ const UserBookedSlotDetails = () => {
                             onClick={handleJoin}
                             disabled={sessionStatus?.disabled || isJoining}
                             className={`w-full py-4 rounded-2xl font-bold text-white transition-all shadow-lg flex items-center justify-center gap-2 ${
-                              sessionStatus?.type === "LIVE"
-                                ? "bg-green-600 hover:bg-green-700 animate-pulse"
-                                : sessionStatus?.type === "EXPIRED"
-                                ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-blue-400 cursor-not-allowed"
+                              sessionStatus?.type === 'LIVE'
+                                ? 'bg-green-600 hover:bg-green-700 animate-pulse'
+                                : sessionStatus?.type === 'EXPIRED'
+                                  ? 'bg-gray-400 cursor-not-allowed'
+                                  : 'bg-blue-400 cursor-not-allowed'
                             }`}
                             whileHover={!sessionStatus?.disabled ? { scale: 1.02 } : {}}
                             whileTap={!sessionStatus?.disabled ? { scale: 0.97 } : {}}
                           >
-                            {isJoining ? "Connecting..." : sessionStatus?.label}
+                            {isJoining ? 'Connecting...' : sessionStatus?.label}
                           </motion.button>
-                          {sessionStatus?.type === "WAITING" && (
+                          {sessionStatus?.type === 'WAITING' && (
                             <p className="text-center text-xs text-gray-400 font-bold uppercase tracking-widest">
                               Button will activate at start time
                             </p>
@@ -532,13 +532,13 @@ const UserBookedSlotDetails = () => {
                     >
                       <motion.button
                         className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition-all text-sm"
-                        onClick={() => navigate("/chat")}
+                        onClick={() => navigate('/chat')}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.97 }}
                       >
                         Chat with Trainer
                       </motion.button>
-                      {!isCancelled && !isCompleted && !isMissed && sessionStatus?.type === "WAITING" && (
+                      {!isCancelled && !isCompleted && !isMissed && sessionStatus?.type === 'WAITING' && (
                         <motion.button
                           onClick={() => setIsModalOpen(true)}
                           className="flex-1 border-2 border-red-100 text-red-500 hover:bg-red-50 font-bold py-3 rounded-xl transition-all text-sm"
@@ -571,7 +571,7 @@ const UserBookedSlotDetails = () => {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
             >
               <h3 className="text-2xl font-bold text-blue-900 mb-2">Cancel Booking?</h3>
               <p className="text-gray-400 text-sm mb-4">Please let us know why you want to cancel this session.</p>
@@ -596,7 +596,7 @@ const UserBookedSlotDetails = () => {
                   className="flex-1 px-4 py-3 rounded-xl font-bold bg-red-500 hover:bg-red-600 text-white shadow-lg disabled:opacity-60"
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 >
-                  {isCancelling ? "Processing..." : "Confirm Cancel"}
+                  {isCancelling ? 'Processing...' : 'Confirm Cancel'}
                 </motion.button>
               </div>
             </motion.div>

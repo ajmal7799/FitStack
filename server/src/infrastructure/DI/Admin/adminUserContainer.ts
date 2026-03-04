@@ -4,13 +4,14 @@ import { GetAllUsersUseCase } from '../../../application/implementation/admin/us
 import { AdminUserController } from '../../../interfaceAdapters/controller/admin/adminUserController';
 import { UpdateUserStatusUseCase } from '../../../application/implementation/admin/user/updateUserStatusUseCase';
 
-
+import { StorageService } from '../../services/Storage/storageService';
 
 //Repository & Service
 const userRepository = new UserRepository(userModel);
+const storageSvc = new StorageService();
 
 //UseCases
-const getAllUserUseCase = new GetAllUsersUseCase(userRepository);
+const getAllUserUseCase = new GetAllUsersUseCase(userRepository,storageSvc);
 const updateUserStatus = new UpdateUserStatusUseCase(userRepository);
 
 //Controllers

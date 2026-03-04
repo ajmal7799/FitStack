@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import { Eye, EyeOff, Lock } from "lucide-react";
-import UserSidebar from "../../../components/user/Sidebar";
-import Header from "../../../components/user/Header";
-import { useChangePassword } from "../../../hooks/User/userServiceHooks";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { Eye, EyeOff, Lock } from 'lucide-react';
+import UserSidebar from '../../../components/user/Sidebar';
+import Header from '../../../components/user/Header';
+import { useChangePassword } from '../../../hooks/User/userServiceHooks';
 
 
 type FormData = {
@@ -31,14 +31,14 @@ const ChangePasswordUserPage = () => {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     },
   });
 
 
-  const newPassword = watch("newPassword");
+  const newPassword = watch('newPassword');
 
 
   const onSubmit = handleSubmit((data) => {
@@ -49,12 +49,12 @@ const ChangePasswordUserPage = () => {
       },
       {
         onSuccess: () => {
-          toast.success("Password changed successfully");
+          toast.success('Password changed successfully');
           reset();
         },
         onError: (err: unknown) => {
           const message =
-            (err as any)?.response?.data?.message || "Failed to change password";
+            (err as any)?.response?.data?.message || 'Failed to change password';
           toast.error(message);
         },
       }
@@ -92,9 +92,9 @@ const ChangePasswordUserPage = () => {
                   </label>
                   <div className="relative">
                     <input
-                      type={showOld ? "text" : "password"}
-                      {...register("oldPassword", {
-                        required: "Current password is required",
+                      type={showOld ? 'text' : 'password'}
+                      {...register('oldPassword', {
+                        required: 'Current password is required',
                       })}
                       className="block w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                       placeholder="Enter your current password"
@@ -122,21 +122,21 @@ const ChangePasswordUserPage = () => {
                   </label>
                   <div className="relative">
                     <input
-                      type={showNew ? "text" : "password"}
-                      {...register("newPassword", {
-                        required: "New password is required",
+                      type={showNew ? 'text' : 'password'}
+                      {...register('newPassword', {
+                        required: 'New password is required',
                         minLength: {
                           value: 6,
-                          message: "Password must be at least 6 characters",
+                          message: 'Password must be at least 6 characters',
                         },
                         validate: {
                           hasUppercase: (v) =>
-                            /[A-Z]/.test(v) || "At least one uppercase letter",
+                            /[A-Z]/.test(v) || 'At least one uppercase letter',
                           hasNumber: (v) =>
-                            /[0-9]/.test(v) || "At least one number",
+                            /[0-9]/.test(v) || 'At least one number',
                           hasSymbol: (v) =>
                             /[^A-Za-z0-9]/.test(v) ||
-                            "At least one special character",
+                            'At least one special character',
                         },
                       })}
                       className="block w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
@@ -165,11 +165,11 @@ const ChangePasswordUserPage = () => {
                   </label>
                   <div className="relative">
                     <input
-                      type={showConfirm ? "text" : "password"}
-                      {...register("confirmPassword", {
-                        required: "Please confirm your password",
+                      type={showConfirm ? 'text' : 'password'}
+                      {...register('confirmPassword', {
+                        required: 'Please confirm your password',
                         validate: (value) =>
-                          value === newPassword || "Passwords do not match",
+                          value === newPassword || 'Passwords do not match',
                       })}
                       className="block w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                       placeholder="Confirm password"
@@ -196,7 +196,7 @@ const ChangePasswordUserPage = () => {
                     disabled={isPending}
                     className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
                   >
-                    {isPending ? "Updating..." : "Update Password"}
+                    {isPending ? 'Updating...' : 'Update Password'}
                   </button>
                 </div>
               </form>

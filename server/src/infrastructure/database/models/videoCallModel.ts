@@ -1,6 +1,6 @@
-    import { Document, Model, model, Types } from 'mongoose';
+import { Document, Model, model, Types } from 'mongoose';
 
-import videoCallSchema from "../schema/videoCallSchema";
+import videoCallSchema from '../schema/videoCallSchema';
 import { VideoCallStatus } from '../../../domain/enum/videoCallEnums';
 import { UserRole } from '../../../domain/enum/userEnums';
 

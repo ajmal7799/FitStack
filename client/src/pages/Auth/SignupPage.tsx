@@ -134,7 +134,7 @@ export default function UserSignUpPage() {
               navigate('/trainer/verification');
             }
           } else {
-            navigate('/home');
+            navigate('/');
           }
         },
         onError: (err) => {

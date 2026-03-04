@@ -215,7 +215,7 @@ class VerificationRepository extends baseRepository_1.BaseRepository {
     }
     countVerifiedTrainer(search) {
         return __awaiter(this, void 0, void 0, function* () {
-            const initialMatch = { VerificationStatus: verificationStatus_1.VerificationStatus.VERIFIED };
+            const initialMatch = { verificationStatus: verificationStatus_1.VerificationStatus.VERIFIED };
             const pipeline = [];
             pipeline.push({ $match: initialMatch });
             if (search) {
@@ -227,6 +227,7 @@ class VerificationRepository extends baseRepository_1.BaseRepository {
             // 4. Use the $count stage for efficient counting in MongoDB.
             pipeline.push({ $count: 'verifiedTrainerCount' });
             const result = yield this._model.aggregate(pipeline).exec();
+            console.log(result);
             return result.length > 0 ? result[0].verifiedTrainerCount : 0;
         });
     }

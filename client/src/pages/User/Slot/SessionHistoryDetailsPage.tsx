@@ -1,9 +1,9 @@
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import UserSidebar from "../../../components/user/Sidebar";
-import Header from "../../../components/user/Header";
-import { useGetSessionHistoryDetails } from "../../../hooks/User/userServiceHooks";
-import { motion, type Variants } from "framer-motion";
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import UserSidebar from '../../../components/user/Sidebar';
+import Header from '../../../components/user/Header';
+import { useGetSessionHistoryDetails } from '../../../hooks/User/userServiceHooks';
+import { motion, type Variants } from 'framer-motion';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type SessionDetails = {
@@ -21,19 +21,19 @@ type SessionDetails = {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  return new Date(iso).toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
 function formatDateTime(iso: string | Date) {
-  return new Date(iso).toLocaleString("en-US", {
-    year: "numeric", month: "short", day: "numeric",
-    hour: "2-digit", minute: "2-digit",
+  return new Date(iso).toLocaleString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
   });
 }
 
@@ -41,7 +41,7 @@ function getDuration(start: string, end: string) {
   const diff = (new Date(end).getTime() - new Date(start).getTime()) / 60000;
   const h = Math.floor(diff / 60);
   const m = diff % 60;
-  if (h > 0) return `${h}h ${m > 0 ? `${m}m` : ""}`.trim();
+  if (h > 0) return `${h}h ${m > 0 ? `${m}m` : ''}`.trim();
   return `${m} min`;
 }
 
@@ -53,12 +53,12 @@ const pageVariants: Variants = {
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 240, damping: 24 } },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 240, damping: 24 } },
 };
 
 const heroVariants: Variants = {
   hidden: { opacity: 0, y: -20 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 220, damping: 22 } },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 220, damping: 22 } },
 };
 
 // ── Info Row ─────────────────────────────────────────────────────────────────
@@ -82,7 +82,7 @@ function StarDisplay({ rating }: { rating?: number }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
-        <span key={star} className={`text-xl ${star <= rating ? "text-yellow-400" : "text-gray-200"}`}>★</span>
+        <span key={star} className={`text-xl ${star <= rating ? 'text-yellow-400' : 'text-gray-200'}`}>★</span>
       ))}
       <span className="ml-2 text-sm font-bold text-gray-700">
         {rating}<span className="text-gray-400 font-normal">/5</span>
@@ -130,7 +130,7 @@ const SessionHistoryDetailsPage = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useGetSessionHistoryDetails(sessionId ?? "");
+  const { data, isLoading, isError } = useGetSessionHistoryDetails(sessionId ?? '');
   const session: SessionDetails | undefined = data?.data?.result;
   const hasFeedback = !!session?.rating;
 

@@ -16,11 +16,13 @@ const exceptions_1 = require("../../../application/constants/exceptions");
 const error_1 = require("../../../shared/constants/error");
 const error_2 = require("../../../shared/constants/error");
 class UserSubscriptionController {
-    constructor(_getAllSubscriptionUseCase, _createCheckoutSessionUseCase, _handleWebhookUseCase, _activeSubscriptionUseCase) {
+    constructor(_getAllSubscriptionUseCase, _createCheckoutSessionUseCase, _handleWebhookUseCase, _activeSubscriptionUseCase, _nonSubscribedUsersUseCase, _getWalletUseCase) {
         this._getAllSubscriptionUseCase = _getAllSubscriptionUseCase;
         this._createCheckoutSessionUseCase = _createCheckoutSessionUseCase;
         this._handleWebhookUseCase = _handleWebhookUseCase;
         this._activeSubscriptionUseCase = _activeSubscriptionUseCase;
+        this._nonSubscribedUsersUseCase = _nonSubscribedUsersUseCase;
+        this._getWalletUseCase = _getWalletUseCase;
     }
     // --------------------------------------------------
     //              🛠 SHOW ALL SUBSCRIPTION PLAN
@@ -71,13 +73,15 @@ class UserSubscriptionController {
     // --------------------------------------------------
     handleStripeWebhook(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
+            const signature = req.headers['stripe-signature'];
+            console.log('Body is Buffer:', Buffer.isBuffer(req.body)); // must print TRUE
+            console.log('Signature:', signature);
+            res.status(200).json({ received: true });
             try {
-                const event = req.body;
-                const signature = req.headers['stripe-signature'];
-                yield this._handleWebhookUseCase.excute(Buffer.from(event), signature);
+                yield this._handleWebhookUseCase.excute(req.body, signature);
             }
             catch (error) {
-                next(error);
+                console.error('❌ Webhook error:', error);
             }
         });
     }
@@ -94,6 +98,26 @@ class UserSubscriptionController {
                 }
                 const result = yield this._activeSubscriptionUseCase.showActiveSubscription(userId);
                 responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.SUBSCRIPTION.SUBSCRIPTION_GET_SUCCESS, { result }, 200 /* HTTPStatus.OK */);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    // --------------------------------------------------
+    //              🛠 GET WALLET
+    // --------------------------------------------------
+    getWallet(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            try {
+                const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+                const role = (_b = req.user) === null || _b === void 0 ? void 0 : _b.role;
+                if (!userId) {
+                    throw new exceptions_1.NotFoundException(error_2.USER_ERRORS.NO_USERS_FOUND);
+                }
+                const result = yield this._getWalletUseCase.execute(userId, role);
+                responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.SUBSCRIPTION.WALLET_FETCHED_SUCCESS, result, 200 /* HTTPStatus.OK */);
             }
             catch (error) {
                 next(error);

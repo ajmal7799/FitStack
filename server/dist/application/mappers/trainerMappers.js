@@ -15,6 +15,9 @@ class TrainerMapper {
             experience: trainer.experience,
             about: trainer.about,
             isVerified: trainer.isVerified,
+            ratingCount: trainer.ratingCount,
+            ratingSum: trainer.ratingSum,
+            averageRating: trainer.averageRating
         };
     }
     static fromMongooseDocument(doc) {
@@ -26,6 +29,9 @@ class TrainerMapper {
             experience: doc.experience,
             about: doc.about,
             isVerified: doc.isVerified,
+            ratingCount: doc.ratingCount,
+            ratingSum: doc.ratingSum,
+            averageRating: doc.averageRating
         };
     }
     static toTrainerProfileDTO(trainer, user, verification) {
@@ -52,7 +58,7 @@ class TrainerMapper {
             qualification: trainer.qualification,
             specialisation: trainer.specialisation,
             experience: trainer.experience,
-            about: trainer.about
+            about: trainer.about,
         };
     }
 }

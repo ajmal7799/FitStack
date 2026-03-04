@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createRotatingFileStream = void 0;
-const rfs = require("rotating-file-stream");
+const rfs = require('rotating-file-stream');
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 // Helper to ensure directory exists
@@ -16,13 +16,13 @@ const createRotatingFileStream = (interval, maxFiles, dirPath) => {
     ensureDir(dirPath);
     return rfs.createStream((time) => {
         if (!time)
-            return path_1.default.join(dirPath, "buffer.log");
-        const fileName = new Date().toISOString().split("T")[0] + ".log";
+            return path_1.default.join(dirPath, 'buffer.log');
+        const fileName = new Date().toISOString().split('T')[0] + '.log';
         return path_1.default.join(dirPath, fileName);
     }, {
         interval,
         maxFiles,
-        compress: "gzip",
+        compress: 'gzip',
     });
 };
 exports.createRotatingFileStream = createRotatingFileStream;
