@@ -3,8 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SocketService = void 0;
 const socket_io_1 = require("socket.io");
 const socketAuth_1 = require("../../interfaceAdapters/middleware/socketAuth");
-// import { SocketController } from '../../interfaceAdapters/controllers/socketController';
-const config_1 = require("../config/config");
 const SocketController_1 = require("../../interfaceAdapters/controller/socket/SocketController");
 const messageRepository_1 = require("../repositories/messageRepository");
 const sendingMessageUseCase_1 = require("../../application/implementation/chat/sendingMessageUseCase");
@@ -31,7 +29,11 @@ class SocketService {
     static init(httpServer) {
         this._io = new socket_io_1.Server(httpServer, {
             cors: {
-                origin: config_1.CONFIG.FRONTEND_URL,
+                origin: [
+                    'http://localhost:5173',
+                    'https://www.fitstack.co.in',
+                    'https://fitstack.co.in'
+                ],
                 credentials: true,
             },
         });
