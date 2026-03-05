@@ -28,11 +28,11 @@ class SessionHistoryUseCase {
                 const feedback = yield this._feedbackRepository.findBySessionId(session._id);
                 return {
                     _id: session._id,
-                    userName: (user === null || user === void 0 ? void 0 : user.name) || "Unknown User",
+                    userName: (user === null || user === void 0 ? void 0 : user.name) || 'Unknown User',
                     startTime: session.startTime,
                     endTime: session.endTime,
                     sessionStatus: session.status,
-                    rating: (feedback === null || feedback === void 0 ? void 0 : feedback.rating) || 0
+                    rating: (feedback === null || feedback === void 0 ? void 0 : feedback.rating) || 0,
                 };
             })));
             const totalPages = Math.ceil(totalSessions / limit);
@@ -40,7 +40,7 @@ class SessionHistoryUseCase {
                 sessions: sessionHistoryResults,
                 totalSessions,
                 totalPages,
-                currentPage: page
+                currentPage: page,
             };
         });
     }

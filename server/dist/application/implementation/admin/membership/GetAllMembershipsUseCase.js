@@ -27,8 +27,8 @@ class GetAllMembershipsUseCase {
                 var _a, _b, _c, _d, _e, _f, _g, _h, _j;
                 return ({
                     _id: item.membership._id,
-                    userName: (_b = (_a = item.user) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : "Unknown User",
-                    planName: (_d = (_c = item.subscription) === null || _c === void 0 ? void 0 : _c.planName) !== null && _d !== void 0 ? _d : "Unknown Plan",
+                    userName: (_b = (_a = item.user) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : 'Unknown User',
+                    planName: (_d = (_c = item.subscription) === null || _c === void 0 ? void 0 : _c.planName) !== null && _d !== void 0 ? _d : 'Unknown Plan',
                     price: (_f = (_e = item.subscription) === null || _e === void 0 ? void 0 : _e.price) !== null && _f !== void 0 ? _f : 0,
                     durationMonths: (_h = (_g = item.subscription) === null || _g === void 0 ? void 0 : _g.durationMonths) !== null && _h !== void 0 ? _h : 0,
                     status: item.membership.status,

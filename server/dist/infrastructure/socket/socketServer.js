@@ -58,7 +58,7 @@ class SocketService {
     }
     static get io() {
         if (!this._io) {
-            throw new Error("Socket.IO not initialized!");
+            throw new Error('Socket.IO not initialized!');
         }
         return this._io;
     }

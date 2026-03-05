@@ -28,13 +28,13 @@ class RecurringSlotUseCase {
             const { startDate, endDate, startTime, weekdays } = data;
             const start = new Date(startDate);
             const end = new Date(endDate);
-            const [hours, minutes] = startTime.split(":").map(Number);
+            const [hours, minutes] = startTime.split(':').map(Number);
             const slotsToCreate = [];
             // 2. Loop through each date in the range
-            let current = new Date(start);
+            const current = new Date(start);
             while (current <= end) {
                 const dayName = current
-                    .toLocaleDateString("en-US", { weekday: "short" })
+                    .toLocaleDateString('en-US', { weekday: 'short' })
                     .toUpperCase();
                 // 3. Match against selected weekdays
                 if (weekdays.includes(dayName)) {
@@ -60,7 +60,7 @@ class RecurringSlotUseCase {
                 current.setDate(current.getDate() + 1);
             }
             if (slotsToCreate.length === 0) {
-                throw new Error("No slots generated for the selected date range and weekdays.");
+                throw new Error('No slots generated for the selected date range and weekdays.');
             }
             // 6. Bulk Insert and Map
             return yield this._slotRepository.createMany(slotsToCreate);

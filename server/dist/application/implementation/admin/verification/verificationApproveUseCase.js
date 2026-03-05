@@ -33,9 +33,9 @@ class VerificationApproveUseCase {
                 recipientId: trainerId,
                 recipientRole: userEnums_1.UserRole.TRAINER,
                 type: NotificationEnums_1.NotificationType.VERIFICATION_APPROVED,
-                title: "Verification Approved",
-                message: "Your documents have been verified. You can now start hosting sessions!",
-                isRead: false
+                title: 'Verification Approved',
+                message: 'Your documents have been verified. You can now start hosting sessions!',
+                isRead: false,
             });
             return {
                 id: trainerVerification.id,

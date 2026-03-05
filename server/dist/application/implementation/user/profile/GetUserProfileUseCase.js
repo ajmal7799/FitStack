@@ -25,7 +25,9 @@ class GetProfileUseCase {
                 throw new exceptions_1.NotFoundException(error_1.USER_ERRORS.USER_NOT_FOUND);
             }
             const response = userMappers_1.UserMapper.toLoginUserResponse(user);
-            response.profileImage = yield this._storageService.createSignedUrl(response.profileImage, 10 * 60);
+            if (response.profileImage) {
+                response.profileImage = yield this._storageService.createSignedUrl(response.profileImage, 10 * 60);
+            }
             return response;
         });
     }

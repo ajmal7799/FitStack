@@ -21,7 +21,7 @@ class ChatRepository extends baseRepository_1.BaseRepository {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this._model.findOne({
                 userId: userId,
-                trainerId: trainerId
+                trainerId: trainerId,
             });
         });
     }
@@ -32,9 +32,9 @@ class ChatRepository extends baseRepository_1.BaseRepository {
                 $set: {
                     lastMessage: data.lastMessage,
                     lastSenderId: data.senderId,
-                    updatedAt: new Date().toISOString()
+                    updatedAt: new Date().toISOString(),
                 },
-                $inc: { [incrementField]: 1 }
+                $inc: { [incrementField]: 1 },
             }, { new: true });
         });
     }
@@ -50,8 +50,8 @@ class ChatRepository extends baseRepository_1.BaseRepository {
                 $set: {
                     lastMessage: data.lastMessage,
                     lastSenderId: data.senderId,
-                    updatedAt: new Date().toISOString()
-                }
+                    updatedAt: new Date().toISOString(),
+                },
             }, { new: true });
         });
     }

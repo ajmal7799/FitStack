@@ -17,16 +17,16 @@ class Chat_Router {
         this._route.get('/initiatetrainer', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.isTrainer, (req, res, next) => {
             chatContainer_1.chatController.initiateChatTrainer(req, res, next);
         });
-        this._route.get("/messages/:chatId", authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.hasRole(userEnums_1.UserRole.USER, userEnums_1.UserRole.TRAINER), (req, res, next) => {
+        this._route.get('/messages/:chatId', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.hasRole(userEnums_1.UserRole.USER, userEnums_1.UserRole.TRAINER), (req, res, next) => {
             chatContainer_1.chatController.getMessages(req, res, next);
         });
-        this._route.patch("/mark-as-read/:chatId", authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.hasRole(userEnums_1.UserRole.USER, userEnums_1.UserRole.TRAINER), (req, res, next) => {
+        this._route.patch('/mark-as-read/:chatId', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.hasRole(userEnums_1.UserRole.USER, userEnums_1.UserRole.TRAINER), (req, res, next) => {
             chatContainer_1.chatController.markAsRead(req, res, next);
         });
-        this._route.delete("/delete/:messageId", authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.hasRole(userEnums_1.UserRole.USER, userEnums_1.UserRole.TRAINER), (req, res, next) => {
+        this._route.delete('/delete/:messageId', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.hasRole(userEnums_1.UserRole.USER, userEnums_1.UserRole.TRAINER), (req, res, next) => {
             chatContainer_1.chatController.deleteMessage(req, res, next);
         });
-        this._route.get("/attachment/upload-url", authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.hasRole(userEnums_1.UserRole.USER, userEnums_1.UserRole.TRAINER), (req, res, next) => {
+        this._route.get('/attachment/upload-url', authContainer_1.authMiddleware.verify, authContainer_1.authMiddleware.hasRole(userEnums_1.UserRole.USER, userEnums_1.UserRole.TRAINER), (req, res, next) => {
             chatContainer_1.chatController.getAttachment(req, res, next);
         });
     }

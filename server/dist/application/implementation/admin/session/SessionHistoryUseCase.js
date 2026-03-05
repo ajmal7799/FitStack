@@ -21,7 +21,7 @@ class SessionHistoryUseCase {
             const skip = (page - 1) * limit;
             const [sessions, totalSessions] = yield Promise.all([
                 this._videoCallRepository.findSessionsForAdmin(skip, limit, status, search),
-                this._videoCallRepository.countSessionsForAdmin(status, search)
+                this._videoCallRepository.countSessionsForAdmin(status, search),
             ]);
             // ✅ Fetch feedback only for completed sessions in one parallel batch
             const completedSessions = sessions.filter(session => session.status === videoCallEnums_1.VideoCallStatus.COMPLETED);
@@ -38,8 +38,8 @@ class SessionHistoryUseCase {
                 var _a, _b;
                 return ({
                     _id: session._id,
-                    userName: (_a = session.userName) !== null && _a !== void 0 ? _a : "Unknown User",
-                    trainerName: (_b = session.trainerName) !== null && _b !== void 0 ? _b : "Unknown Trainer",
+                    userName: (_a = session.userName) !== null && _a !== void 0 ? _a : 'Unknown User',
+                    trainerName: (_b = session.trainerName) !== null && _b !== void 0 ? _b : 'Unknown Trainer',
                     startTime: session.startTime,
                     endTime: session.endTime,
                     sessionStatus: session.status,

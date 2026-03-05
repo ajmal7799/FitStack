@@ -25,13 +25,13 @@ class BookedSlotDetailsUseCase {
                 throw new exceptions_1.NotFoundException(error_1.Errors.SLOT_NOT_FOUND);
             }
             if (slot.trainerId !== trainerId) {
-                throw new exceptions_1.UnauthorizedException("You do not have permission to view this slot.");
+                throw new exceptions_1.UnauthorizedException('You do not have permission to view this slot.');
             }
             const user = yield this._userRepository.findById(slot.userId || '');
             if (!user) {
                 throw new exceptions_1.NotFoundException(error_1.USER_ERRORS.USER_NOT_FOUND);
             }
-            let profileImageUrl = user.profileImage || "";
+            let profileImageUrl = user.profileImage || '';
             if (profileImageUrl) {
                 profileImageUrl = yield this._storageService.createSignedUrl(profileImageUrl, 10 * 60);
             }
@@ -45,7 +45,7 @@ class BookedSlotDetailsUseCase {
                 slotStatus: slot.status,
                 cancellationReason: slot.cancellationReason || null,
                 cancelledAt: slot.cancelledAt || null,
-                cancelledBy: slot.cancelledBy || null
+                cancelledBy: slot.cancelledBy || null,
                 // cancellationReason: slot.cancellationReason? slot.cancellationReason : "",
             };
         });

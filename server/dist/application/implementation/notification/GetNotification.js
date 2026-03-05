@@ -18,7 +18,7 @@ class GetNotificationsUseCase {
         return __awaiter(this, void 0, void 0, function* () {
             const [notifications, unreadCount] = yield Promise.all([
                 this._notificationRepository.findByRecipientId(userId),
-                this._notificationRepository.getUnreadCount(userId)
+                this._notificationRepository.getUnreadCount(userId),
             ]);
             return { notifications, unreadCount };
         });

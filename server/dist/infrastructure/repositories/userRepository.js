@@ -127,7 +127,7 @@ class UserRepository extends baseRepository_1.BaseRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const docs = yield this._model.find({
                 role: userEnums_1.UserRole.USER,
-                activeMembershipId: { $exists: false }
+                activeMembershipId: { $exists: false },
             });
             return docs.map(doc => userMappers_1.UserMapper.fromMongooseDocument(doc));
         });

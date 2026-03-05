@@ -13,8 +13,7 @@ exports.GetMessageUseCase = void 0;
 const exceptions_1 = require("../../constants/exceptions");
 const error_1 = require("../../../shared/constants/error");
 class GetMessageUseCase {
-    constructor(_messageRepository, _chatRepository, _storageService // ← inject
-    ) {
+    constructor(_messageRepository, _chatRepository, _storageService) {
         this._messageRepository = _messageRepository;
         this._chatRepository = _chatRepository;
         this._storageService = _storageService;
@@ -33,8 +32,7 @@ class GetMessageUseCase {
             const messagesWithUrls = yield Promise.all(messages.map((msg) => __awaiter(this, void 0, void 0, function* () {
                 var _a;
                 if ((_a = msg.attachment) === null || _a === void 0 ? void 0 : _a.key) {
-                    const url = yield this._storageService.createSignedUrl(msg.attachment.key, 60 * 60 // 1 hour
-                    );
+                    const url = yield this._storageService.createSignedUrl(msg.attachment.key, 60 * 60);
                     return Object.assign(Object.assign({}, msg), { attachment: Object.assign(Object.assign({}, msg.attachment), { url }) });
                 }
                 return msg;

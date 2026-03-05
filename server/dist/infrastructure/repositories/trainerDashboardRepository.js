@@ -10,9 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrainerDashboardRepository = void 0;
+// infrastructure/repositories/trainerDashboardRepository.ts
+const mongoose_1 = require("mongoose");
 const videoCallEnums_1 = require("../../domain/enum/videoCallEnums");
 const WalletTransactionType_1 = require("../../domain/enum/WalletTransactionType");
-const mongoose_1 = require("mongoose");
 class TrainerDashboardRepository {
     constructor(_videoCallModel, _walletModel, _feedbackModel, _trainerSelectModel, _userModel) {
         this._videoCallModel = _videoCallModel;
@@ -101,8 +102,8 @@ class TrainerDashboardRepository {
         const now = new Date();
         let startDate;
         let groupFormat;
-        let labels = [];
-        let dateKeys = [];
+        const labels = [];
+        const dateKeys = [];
         switch (period) {
             case 'daily':
                 startDate = new Date(now);
@@ -254,7 +255,7 @@ class TrainerDashboardRepository {
                     rating: item.rating,
                     review: item.review || '',
                     date: new Date(item.createdAt).toLocaleDateString('en-IN', {
-                        day: '2-digit', month: 'short', year: 'numeric'
+                        day: '2-digit', month: 'short', year: 'numeric',
                     }),
                 });
             });

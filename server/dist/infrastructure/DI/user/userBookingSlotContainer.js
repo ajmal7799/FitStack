@@ -3,10 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userBookingSlotController = void 0;
 const userBookingSlotController_1 = require("../../../interfaceAdapters/controller/user/userBookingSlotController");
 const userRepository_1 = require("../../repositories/userRepository");
-const trainerRepository_1 = require("../../repositories/trainerRepository");
 const trainerSelectRepository_1 = require("../../repositories/trainerSelectRepository");
 const userModel_1 = require("../../database/models/userModel");
-const trainerModel_1 = require("../../database/models/trainerModel");
 const trainerSelectModel_1 = require("../../database/models/trainerSelectModel");
 const GetAllAvailableSlotUseCase_1 = require("../../../application/implementation/user/slot/GetAllAvailableSlotUseCase");
 const slotRepository_1 = require("../../repositories/slotRepository");
@@ -33,7 +31,6 @@ const subscriptionRepository_1 = require("../../repositories/subscriptionReposit
 const subscriptionModel_1 = require("../../database/models/subscriptionModel");
 // Repository & Service
 const userRepository = new userRepository_1.UserRepository(userModel_1.userModel);
-const trainerRepository = new trainerRepository_1.TrainerRepository(trainerModel_1.trainerModel);
 const trainerSelectRepository = new trainerSelectRepository_1.TrainerSelectRepository(trainerSelectModel_1.trainerSelectModel);
 const slotRepository = new slotRepository_1.SlotRepository(slotModel_1.slotModel);
 const storageSvc = new storageService_1.StorageService();

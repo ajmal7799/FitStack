@@ -70,9 +70,9 @@ class CreateFeedback {
                 recipientId: trainerId,
                 recipientRole: userEnums_1.UserRole.TRAINER,
                 type: NotificationEnums_1.NotificationType.FEEDBACK_RECEIVED,
-                title: "Feedback Received",
+                title: 'Feedback Received',
                 message: `${user.name} has given you a feedback.`,
-                isRead: false
+                isRead: false,
             });
             return feedback;
         });

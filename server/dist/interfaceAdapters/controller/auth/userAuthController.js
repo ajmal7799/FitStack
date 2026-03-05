@@ -220,7 +220,7 @@ class UserAuthController {
                 if (!refreshToken) {
                     res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
                         success: false,
-                        message: 'Refresh token missing'
+                        message: 'Refresh token missing',
                     });
                     return;
                 }
@@ -228,7 +228,7 @@ class UserAuthController {
                 res.status(200 /* HTTPStatus.OK */).json({
                     success: true,
                     message: messages_1.MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL,
-                    accessToken
+                    accessToken,
                 });
             }
             catch (error) {
@@ -236,7 +236,7 @@ class UserAuthController {
                 (0, clearRefreshTokenCookie_1.clearRefreshTokenCookie)(res);
                 res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
                     success: false,
-                    message: 'Session expired. Please login again.'
+                    message: 'Session expired. Please login again.',
                 });
             }
         });
@@ -248,7 +248,7 @@ class UserAuthController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             try {
-                console.log("reached here");
+                console.log('reached here');
                 const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
                 const { oldPassword, newPassword } = req.body;
                 if (!userId || !oldPassword || !newPassword) {

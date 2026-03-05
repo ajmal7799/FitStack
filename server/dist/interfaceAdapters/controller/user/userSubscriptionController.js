@@ -14,7 +14,6 @@ const messages_1 = require("../../../shared/constants/messages");
 const responseHelper_1 = require("../../../shared/utils/responseHelper");
 const exceptions_1 = require("../../../application/constants/exceptions");
 const error_1 = require("../../../shared/constants/error");
-const error_2 = require("../../../shared/constants/error");
 class UserSubscriptionController {
     constructor(_getAllSubscriptionUseCase, _createCheckoutSessionUseCase, _handleWebhookUseCase, _activeSubscriptionUseCase, _nonSubscribedUsersUseCase, _getWalletUseCase) {
         this._getAllSubscriptionUseCase = _getAllSubscriptionUseCase;
@@ -94,7 +93,7 @@ class UserSubscriptionController {
             try {
                 const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
                 if (!userId) {
-                    throw new exceptions_1.NotFoundException(error_2.USER_ERRORS.NO_USERS_FOUND);
+                    throw new exceptions_1.NotFoundException(error_1.USER_ERRORS.NO_USERS_FOUND);
                 }
                 const result = yield this._activeSubscriptionUseCase.showActiveSubscription(userId);
                 responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.SUBSCRIPTION.SUBSCRIPTION_GET_SUCCESS, { result }, 200 /* HTTPStatus.OK */);
@@ -114,7 +113,7 @@ class UserSubscriptionController {
                 const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
                 const role = (_b = req.user) === null || _b === void 0 ? void 0 : _b.role;
                 if (!userId) {
-                    throw new exceptions_1.NotFoundException(error_2.USER_ERRORS.NO_USERS_FOUND);
+                    throw new exceptions_1.NotFoundException(error_1.USER_ERRORS.NO_USERS_FOUND);
                 }
                 const result = yield this._getWalletUseCase.execute(userId, role);
                 responseHelper_1.ResponseHelper.success(res, messages_1.MESSAGES.SUBSCRIPTION.WALLET_FETCHED_SUCCESS, result, 200 /* HTTPStatus.OK */);

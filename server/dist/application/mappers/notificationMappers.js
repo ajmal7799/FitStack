@@ -16,7 +16,7 @@ class NotficationMapper {
             message: notification.message,
             relatedId: notification.relatedId,
             isRead: notification.isRead,
-            createdAt: notification.createdAt
+            createdAt: notification.createdAt,
         };
     }
     static fromMongooseDocument(notification) {
@@ -30,7 +30,7 @@ class NotficationMapper {
             message: notification.message,
             relatedId: (_a = notification.relatedId) === null || _a === void 0 ? void 0 : _a.toString(),
             isRead: notification.isRead,
-            createdAt: notification.createdAt
+            createdAt: notification.createdAt,
         };
     }
 }

@@ -28,13 +28,13 @@ class SendingMessageUseCase {
                 throw new exceptions_1.NotFoundException(error_1.CHAT_ERRORS.CHAT_NOT_FOUND);
             }
             if (type === MessageTypeEnums_1.MessageTypeEnums.TEXT) {
-                if (!text || text.trim() === "") {
-                    throw new Error("Text message cannot be empty");
+                if (!text || text.trim() === '') {
+                    throw new Error('Text message cannot be empty');
                 }
             }
             if (type !== MessageTypeEnums_1.MessageTypeEnums.TEXT) {
                 if (!attachment) {
-                    throw new Error("Attachment required for non-text message");
+                    throw new Error('Attachment required for non-text message');
                 }
             }
             const messageData = {
@@ -50,22 +50,22 @@ class SendingMessageUseCase {
             const savedMessage = yield this._messageRepository.save(messageData);
             console.log('✅ Saved message attachment:', JSON.stringify(savedMessage.attachment));
             // Last message preview
-            let previewText = "";
+            let previewText = '';
             switch (type) {
                 case MessageTypeEnums_1.MessageTypeEnums.TEXT:
                     previewText = text;
                     break;
                 case MessageTypeEnums_1.MessageTypeEnums.IMAGE:
-                    previewText = "📷 Image";
+                    previewText = '📷 Image';
                     break;
                 case MessageTypeEnums_1.MessageTypeEnums.FILE:
-                    previewText = "📄 File";
+                    previewText = '📄 File';
                     break;
                 case MessageTypeEnums_1.MessageTypeEnums.VIDEO:
-                    previewText = "🎥 Video";
+                    previewText = '🎥 Video';
                     break;
                 case MessageTypeEnums_1.MessageTypeEnums.AUDIO:
-                    previewText = "🎵 Audio";
+                    previewText = '🎵 Audio';
                     break;
             }
             const isUserSending = senderId === chat.userId;
@@ -77,8 +77,7 @@ class SendingMessageUseCase {
             });
             // Resolve signed URL for attachment before emitting to clients
             if ((_a = savedMessage.attachment) === null || _a === void 0 ? void 0 : _a.key) {
-                const signedUrl = yield this._storageService.createSignedUrl(savedMessage.attachment.key, 60 * 60 // 1 hour
-                );
+                const signedUrl = yield this._storageService.createSignedUrl(savedMessage.attachment.key, 60 * 60);
                 return Object.assign(Object.assign({}, savedMessage), { attachment: Object.assign(Object.assign({}, savedMessage.attachment), { url: signedUrl }) });
             }
             return savedMessage;

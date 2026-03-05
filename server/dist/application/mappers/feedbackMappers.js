@@ -13,7 +13,7 @@ class FeedbackMapper {
             userId: new mongoose_1.default.Types.ObjectId(feedback.userId),
             trainerId: new mongoose_1.default.Types.ObjectId(feedback.trainerId),
             rating: feedback.rating,
-            review: feedback.review
+            review: feedback.review,
         };
     }
     static fromMongooseDocument(feedback) {
@@ -24,7 +24,7 @@ class FeedbackMapper {
             trainerId: feedback.trainerId.toString(),
             rating: feedback.rating,
             review: feedback.review,
-            createdAt: feedback.createdAt
+            createdAt: feedback.createdAt,
         };
     }
     static toEntity(feedback) {
@@ -34,7 +34,7 @@ class FeedbackMapper {
             userId: feedback.userId.toString(),
             trainerId: feedback.trainerId.toString(),
             rating: feedback.rating,
-            review: feedback.review
+            review: feedback.review,
         };
     }
 }

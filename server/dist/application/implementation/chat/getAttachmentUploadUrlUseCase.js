@@ -19,8 +19,7 @@ class GetAttachmentUploadUrlUseCase {
         return __awaiter(this, void 0, void 0, function* () {
             const ext = fileName.split('.').pop();
             const key = `${storageFolderNameEnums_1.StorageFolderNameEnums.CHAT_ATTACHMENTS}/${chatId}/${Date.now()}.${ext}`;
-            const uploadUrl = yield this._storageService.createPresignedUploadUrl(key, fileType, 5 * 60 // 5 minutes to upload
-            );
+            const uploadUrl = yield this._storageService.createPresignedUploadUrl(key, fileType, 5 * 60);
             return { uploadUrl, key };
         });
     }

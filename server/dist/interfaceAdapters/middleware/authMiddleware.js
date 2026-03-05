@@ -27,7 +27,7 @@ class AuthMiddleware {
                 if (!(header === null || header === void 0 ? void 0 : header.startsWith('Bearer '))) {
                     res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
                         success: false,
-                        message: error_1.Errors.INVALID_TOKEN
+                        message: error_1.Errors.INVALID_TOKEN,
                     });
                     return;
                 }
@@ -47,7 +47,7 @@ class AuthMiddleware {
                 if (!decoded) {
                     res.status(401 /* HTTPStatus.UNAUTHORIZED */).json({
                         success: false,
-                        message: error_1.Errors.INVALID_TOKEN
+                        message: error_1.Errors.INVALID_TOKEN,
                     });
                     return;
                 }

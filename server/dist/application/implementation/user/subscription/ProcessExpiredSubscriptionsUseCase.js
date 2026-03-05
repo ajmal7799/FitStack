@@ -37,10 +37,10 @@ class ProcessExpiredSubscriptionsUseCase {
                         recipientId: membership.userId,
                         recipientRole: userEnums_1.UserRole.USER,
                         type: NotificationEnums_1.NotificationType.SUBSCRIPTION_EXPIRED,
-                        title: "Subscription Expired 🕰️",
-                        message: "Your subscription has expired. Purchase a new plan to continue enjoying premium features!",
+                        title: 'Subscription Expired 🕰️',
+                        message: 'Your subscription has expired. Purchase a new plan to continue enjoying premium features!',
                         relatedId: membership.stripeSubscriptionId,
-                        isRead: false
+                        isRead: false,
                     });
                     console.log(`[Cron] Processed expiry for user: ${membership.userId}`);
                 }
