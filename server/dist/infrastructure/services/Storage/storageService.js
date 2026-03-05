@@ -14,7 +14,6 @@ const client_s3_1 = require("@aws-sdk/client-s3");
 const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 const config_1 = require("../../config/config");
 const error_1 = require("../../../shared/constants/error");
-const fileConverter_1 = require("../../../shared/utils/fileConverter");
 class StorageService {
     constructor() {
         this._s3Client = new client_s3_1.S3Client({
@@ -29,7 +28,13 @@ class StorageService {
     }
     upload(file, key) {
         return __awaiter(this, void 0, void 0, function* () {
-            const data = file instanceof Buffer ? file : file instanceof File ? yield (0, fileConverter_1.fileToBuffer)(file) : file;
+            let data;
+            if (file instanceof Buffer) {
+                data = file;
+            }
+            else {
+                data = file.buffer;
+            }
             try {
                 const command = new client_s3_1.PutObjectCommand({
                     Bucket: config_1.CONFIG.S3_BUCKET_NAME,
