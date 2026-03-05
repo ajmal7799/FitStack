@@ -16,7 +16,7 @@ export interface createUserProfileRequest {
     dietPreference?: DietPreference,
     preferredWorkoutTypes?: string[],
     medicalConditions?: string[],
-    profileImage?: string;
+    profileImage?: Express.Multer.File;
 }
 
 

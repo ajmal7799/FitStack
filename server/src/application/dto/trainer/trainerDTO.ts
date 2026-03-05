@@ -11,9 +11,9 @@ export interface SubmitTrainerVerificationRequest {
     about: string;
 
     // 2. Verification Document Data
-    idCard: string;      
-    educationCert: string;
-    experienceCert: string;
+    idCard: Express.Multer.File;      
+    educationCert: Express.Multer.File;
+    experienceCert: Express.Multer.File;
 }
 
 export interface TrainerVerificationResponse {
