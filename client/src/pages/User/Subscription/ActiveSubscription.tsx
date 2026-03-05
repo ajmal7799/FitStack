@@ -1,4 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { updateHasActiveSubscription } from '../../../redux/slice/userSlice/authDataSlice'; // adjust path if needed
 import { CheckCircle, AlertCircle, Calendar, CreditCard, ArrowRight } from 'lucide-react';
 import UserSidebar from '../../../components/user/Sidebar';
 import Header from '../../../components/user/Header';
@@ -8,9 +11,17 @@ import type { SubscriptionResult } from '../../../types/AcitveSubscriptionPlan';
 
 const ActiveSubscription = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();  // ✅ add this
+
   const { data, isLoading } = useGetActiveSubscription();
 
   const subscription: SubscriptionResult | null = data?.success ? data.data.result : null;
+
+  useEffect(() => {
+  if (subscription) {
+    dispatch(updateHasActiveSubscription(subscription.hasActiveSubscription));
+  }
+}, [subscription, dispatch]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
