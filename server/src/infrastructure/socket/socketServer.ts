@@ -32,7 +32,11 @@ export class SocketService {
     public static init(httpServer: HttpServer) {
         this._io = new Server(httpServer, {
             cors: {
-                origin: CONFIG.FRONTEND_URL,
+                origin: [
+                'http://localhost:5173',
+                'https://www.fitstack.co.in',
+                'https://fitstack.co.in'
+            ],
                 credentials: true,
             },
         });
