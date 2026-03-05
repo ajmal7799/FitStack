@@ -9,6 +9,7 @@ export interface SubscriptionResult {
   description: string;
   expiresAt: string;
   isExpired: boolean;
+  hasActiveSubscription: boolean;
 }
 
 
