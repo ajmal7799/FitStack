@@ -1,4 +1,4 @@
-import { UserGender,DietPreference, ExperienceLevel,FitnessGoal,WorkoutLocation } from '../enum/userProfileEnums';
+import { UserGender, DietPreference, ExperienceLevel, FitnessGoal, WorkoutLocation } from '../enum/userProfileEnums';
 export type UserProfilePayload = {
   userId?: string;
   age: number;
@@ -8,11 +8,9 @@ export type UserProfilePayload = {
   fitnessGoal: FitnessGoal;
   targetWeight: number;
   experienceLevel: ExperienceLevel;
-workoutLocation: WorkoutLocation;
+  workoutLocation: WorkoutLocation;
   profileImage?: Express.Multer.File;
   dietPreference?: DietPreference;
   preferredWorkoutTypes?: string[];
   medicalConditions?: string[];
-  
-  
 };
