@@ -9,7 +9,7 @@ export type UserProfilePayload = {
   targetWeight: number;
   experienceLevel: ExperienceLevel;
 workoutLocation: WorkoutLocation;
-  profileImage?: File;
+  profileImage?: Express.Multer.File;
   dietPreference?: DietPreference;
   preferredWorkoutTypes?: string[];
   medicalConditions?: string[];
