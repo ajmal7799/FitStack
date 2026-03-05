@@ -25,7 +25,7 @@ class SocketService {
     this.userId = userId;
 
     // Replace with your backend URL
-    const SOCKET_URL = import.meta.env.VITE_API_BASE_URL;
+    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
     this.socket = io(SOCKET_URL, {
       auth: {
