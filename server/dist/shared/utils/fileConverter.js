@@ -13,17 +13,12 @@ exports.multerFileToFileConverter = multerFileToFileConverter;
 exports.fileToBuffer = fileToBuffer;
 const error_1 = require("../constants/error");
 function multerFileToFileConverter(multerFile) {
-    const file = new File([new Uint8Array(multerFile.buffer)], multerFile.originalname, {
-        type: multerFile.mimetype,
-    });
-    return file;
+    return multerFile;
 }
-function fileToBuffer(file) {
+function fileToBuffer(multerFile) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const arrayBuffer = yield file.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-            return buffer;
+            return multerFile.buffer;
         }
         catch (error) {
             console.log('', error);
