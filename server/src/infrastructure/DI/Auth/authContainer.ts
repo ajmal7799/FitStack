@@ -83,7 +83,7 @@ const forgetPasswordResetPasswordUseCase = new ForgetPasswordResetPasswordUseCas
     hashService,
 );
 
-const googleAuthUseCase = new UserGoogleLoginUseCase(googleAuthService,userRepository,userProfileRepository);
+const googleAuthUseCase = new UserGoogleLoginUseCase(googleAuthService,userRepository,userProfileRepository, storageService);
 
 const refreshTokenUseCase = new RefreshTokenUseCase(jwtService);
 const changePasswordUseCase = new ChangePasswordUseCase(userRepository,hashService);

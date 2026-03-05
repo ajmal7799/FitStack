@@ -5,11 +5,15 @@ import { IGoogleLoginUseCase } from '../../useCase/auth/IGoogleLoginUseCase';
 import { IGoogleLoginRequestDTO,IGoogleLoginResponseDTO } from '../../dto/auth/googleAuthDTO';
 import { UserMapper } from '../../mappers/userMappers';
 import { IUserProfileRepository } from '../../../domain/interfaces/repositories/IUserProfileRepository';
+import { IStorageService } from '../../../domain/interfaces/services/IStorage/IStorageService';
+
+
 export class UserGoogleLoginUseCase implements IGoogleLoginUseCase {
     constructor(
         private _googleAuthService: IGoogleAuthService,
         private _userRepository: IUserRepository,
         private _userProfileRepository: IUserProfileRepository,
+        private _storageService: IStorageService
     ) {}
 
     async execute({ authorizationCode, role }: IGoogleLoginRequestDTO): Promise<IGoogleLoginResponseDTO> {
@@ -24,11 +28,18 @@ export class UserGoogleLoginUseCase implements IGoogleLoginUseCase {
                 role:UserRole.USER,
                 isActive: UserStatus.ACTIVE,
                 googleId,
+
            
             };
             const id = await this._userRepository.googleSignUp(user);
             user._id = id;
         }
+
+        let profileImage = ""
+        if(user.profileImage) {
+            profileImage = await this._storageService.createSignedUrl(user.profileImage, 10 * 60);
+        }
+        
         let userProfile: boolean = true;
 
         if (user.role === UserRole.USER) {
@@ -43,7 +54,8 @@ export class UserGoogleLoginUseCase implements IGoogleLoginUseCase {
         }
 
 
-        return UserMapper.toLoginUserResponse(user,true,userProfile);
+
+        return UserMapper.toLoginUserResponse(user,true,userProfile, false, profileImage);
     }
 
 }

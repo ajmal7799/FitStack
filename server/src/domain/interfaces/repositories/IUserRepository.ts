@@ -19,5 +19,4 @@ export interface IUserRepository extends IBaseRepository<User>{
 
     updateActiveMembershipId(userId: string, activeMembershipId: string | null): Promise<void>;
     updateUser(user: User): Promise<void>;
-    findNonSubscribedUsers(): Promise<User[]>;
 }

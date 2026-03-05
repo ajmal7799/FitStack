@@ -1,6 +1,6 @@
 // components/notification/NotificationBell.tsx
 import { useState, useEffect, useRef } from 'react';
-import { Bell, X, Check, Trash2 } from 'lucide-react';
+import { Bell, X, Check } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetNotifications, useMarkAsRead, useMarkAllAsRead, useClearAllNotifications } from '../../hooks/User/userServiceHooks';
 import { setNotifications, markOneRead, markAllRead, clearNotifications } from '../../redux/slice/notificationSlice';

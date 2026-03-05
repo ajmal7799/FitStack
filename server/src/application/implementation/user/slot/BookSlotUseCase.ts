@@ -44,6 +44,9 @@ export class BookSlotUseCase implements IBookSlotUseCase {
         const startOfDay = new Date(`${dateStr}T00:00:00.000Z`);
         const endOfDay = new Date(`${dateStr}T23:59:59.999Z`);
 
+
+        
+
         const hasBookingToday = await this._videoCallRepository.checkUserBookingForDay(userId, startOfDay, endOfDay);
 
         if (hasBookingToday) {
