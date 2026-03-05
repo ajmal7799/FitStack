@@ -90,7 +90,7 @@ const UserLoginPage = () => {
               verificationCheck: res.data.user.verificationCheck,
               userProfileCompleted: res.data.user.userProfileCompleted,
               hasActiveSubscription: res.data.user.hasActiveSubscription,
-              profileImage: res.data.user.profileImage
+              profileImage: res.data.user.profileImage,
             })
           );
           if (res.data.user.role === 'trainer') {

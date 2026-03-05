@@ -110,14 +110,6 @@ export class UserRepository extends BaseRepository<User, IUserModel> implements 
     async updateUser(user: User): Promise<void> {
         await this._model.findByIdAndUpdate(user._id, { $set: user }, { new: true });
     }
-
-    async findNonSubscribedUsers(): Promise<User[]> {
-        const docs = await this._model.find({
-            role: UserRole.USER,
-            activeMembershipId: { $exists: false },
-        });
-        return docs.map(doc => UserMapper.fromMongooseDocument(doc));
-    }
     
     
 

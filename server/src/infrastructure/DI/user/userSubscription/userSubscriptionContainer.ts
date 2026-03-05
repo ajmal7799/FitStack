@@ -10,7 +10,6 @@ import { HandleWebhookUseCase } from '../../../../application/implementation/use
 import { MembershipRepository } from '../../../repositories/membershipRepository';
 import { membershipModel } from '../../../database/models/membershipModel';
 import { ActiveSubscriptionUseCase } from '../../../../application/implementation/user/subscription/ActiveSubscriptionUseCase';
-import { NonSubscribedUsersUseCase } from '../../../../application/implementation/user/subscription/NonSubscribedUsersUseCase';
 import { ProcessExpiredSubscriptionsUseCase } from '../../../../application/implementation/user/subscription/ProcessExpiredSubscriptionsUseCase';
 import { CreateNotification } from '../../../../application/implementation/notification/CreateNotification';
 import { NotificationRepository } from '../../../repositories/notificationRepository';
@@ -33,7 +32,6 @@ const getAllSubscriptionUseCase = new GetAllSubscriptionUser(subscriptionReposit
 const createUserCheckoutSessionUseCase = new CreateUserCheckoutSession(subscriptionRepository,userRepository, stripeService, stripeService, membershipRepository,  walletRepository, createNotification);
 const webhookHandler = new HandleWebhookUseCase(userRepository, stripeService, membershipRepository, createNotification, walletRepository);
 const activeSubscriptionUseCase = new ActiveSubscriptionUseCase(subscriptionRepository, userRepository,membershipRepository);
-const nonSubscribedUsersUseCase = new NonSubscribedUsersUseCase(userRepository);
 
 const getWalletUseCase = new GetWalletUseCase(walletRepository);
 
@@ -41,4 +39,4 @@ export const processExpiredSubscriptionsUseCase = new ProcessExpiredSubscription
 
 
 // controller
-export const userSubscriptionController = new UserSubscriptionController(getAllSubscriptionUseCase, createUserCheckoutSessionUseCase, webhookHandler, activeSubscriptionUseCase, nonSubscribedUsersUseCase, getWalletUseCase);
+export const userSubscriptionController = new UserSubscriptionController(getAllSubscriptionUseCase, createUserCheckoutSessionUseCase, webhookHandler, activeSubscriptionUseCase, getWalletUseCase);

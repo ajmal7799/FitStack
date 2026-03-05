@@ -210,9 +210,9 @@ const Home = () => {
               <>
                 <button
                   className="bg-blue-700 text-white text-base font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-blue-800 transition duration-300 transform hover:scale-[1.02]"
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate('/profile')}
                 >
-                  Go to Dashboard
+                  Go to Profile
                 </button>
                 <button
                   className="bg-green-500 text-white text-base font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-green-600 transition duration-300 transform hover:scale-[1.02]"

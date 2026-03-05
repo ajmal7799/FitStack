@@ -8,7 +8,6 @@ import { IGetAllSubscriptionUser } from '../../../application/useCase/user/subsc
 import { ICreateUserCheckoutSession } from '../../../application/useCase/user/subscription/ICreateUserCheckoutSession';
 import { IHandleWebhookUseCase } from '../../../application/useCase/user/subscription/IHandleWebhookUseCase';
 import { IActiveSubscriptionUseCase } from '../../../application/useCase/user/subscription/IActiveSubscriptionUseCase';
-import { INonSubscribedUserUseCase } from '../../../application/useCase/user/subscription/INonSubscribedUserUseCase';
 import { IGetWalletUseCase } from '../../../application/useCase/wallet/IGetWalletUseCase';
 
 export class UserSubscriptionController {
@@ -17,7 +16,6 @@ export class UserSubscriptionController {
     private _createCheckoutSessionUseCase: ICreateUserCheckoutSession,
     private _handleWebhookUseCase: IHandleWebhookUseCase,
     private _activeSubscriptionUseCase: IActiveSubscriptionUseCase,
-    private _nonSubscribedUsersUseCase: INonSubscribedUserUseCase,
     private _getWalletUseCase: IGetWalletUseCase,
     ) {}
 
@@ -120,6 +118,9 @@ export class UserSubscriptionController {
             next(error);
         }
     }
+
+
+   
 
  
 }
