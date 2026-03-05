@@ -19,7 +19,7 @@ const ActiveSubscription = () => {
 
   useEffect(() => {
   if (subscription) {
-    dispatch(updateHasActiveSubscription(subscription.hasActiveSubscription));
+    dispatch(updateHasActiveSubscription(true));
   }
 }, [subscription, dispatch]);
 
