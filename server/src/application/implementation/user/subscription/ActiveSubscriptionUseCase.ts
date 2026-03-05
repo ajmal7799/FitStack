@@ -46,6 +46,7 @@ export class ActiveSubscriptionUseCase implements IActiveSubscriptionUseCase {
             description: item.subscription.description,
             expiresAt: expiryDate || new Date(),
             isExpired: expiryDate ? now > expiryDate : false,
+            hasActiveSubscription: true,
         };
 
         return dto;

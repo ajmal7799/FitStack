@@ -11,4 +11,5 @@ export interface ActiveSubscriptionPlanResponseDTO {
     description: string;
     expiresAt: Date; 
     isExpired: boolean;
+    hasActiveSubscription: boolean
 }
