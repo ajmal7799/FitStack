@@ -35,7 +35,7 @@ class UserLoginUseCase {
             if (!verifyPassword) {
                 throw new exceptions_1.PasswordNotMatchingException(error_1.Errors.INVALID_CREDENTIALS);
             }
-            let profileImage = "";
+            let profileImage = '';
             if (user.profileImage) {
                 profileImage = yield this._storageService.createSignedUrl(user.profileImage, 10 * 60);
             }

@@ -21,7 +21,7 @@ class FeedbackController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             try {
-                console.log("reached here");
+                console.log('reached here');
                 const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
                 const { sessionId, rating, review } = req.body;
                 if (!sessionId || !rating) {

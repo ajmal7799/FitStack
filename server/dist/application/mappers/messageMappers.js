@@ -23,7 +23,7 @@ class MessageMapper {
                 : undefined,
             isDeleted: message.isDeleted,
             deletedAt: message.deletedAt ? new Date(message.deletedAt) : undefined,
-            createdAt: message.createdAt
+            createdAt: message.createdAt,
         };
     }
     static fromMongooseDocument(message) {

@@ -49,7 +49,7 @@ class VerificationMapper {
             verificationStatus: verification.verificationStatus,
             profileImage: profileImage || undefined,
             averageRating: trainer.averageRating,
-            ratingCount: trainer.ratingCount
+            ratingCount: trainer.ratingCount,
         };
     }
     static toDetailDTO(verification, trainer, user) {

@@ -7,19 +7,19 @@ const WeekdaysEnum = zod_1.z.enum(['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SU
 exports.recurringSlotSchema = zod_1.z.object({
     // Validates YYYY-MM-DD
     startDate: zod_1.z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-        message: "Start date must be in YYYY-MM-DD format"
+        message: 'Start date must be in YYYY-MM-DD format',
     }),
     // Validates YYYY-MM-DD
     endDate: zod_1.z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-        message: "End date must be in YYYY-MM-DD format"
+        message: 'End date must be in YYYY-MM-DD format',
     }),
     // Validates HH:mm (24-hour format)
     startTime: zod_1.z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
-        message: "Start time must be in HH:mm format (24h)"
+        message: 'Start time must be in HH:mm format (24h)',
     }),
     // Ensures at least one day is selected and no duplicates
     weekdays: zod_1.z.array(WeekdaysEnum).min(1, {
-        message: "Select at least one weekday"
+        message: 'Select at least one weekday',
     }),
 })
     .refine((data) => {
@@ -31,6 +31,6 @@ exports.recurringSlotSchema = zod_1.z.object({
     // 2. Ensure start date is not in the past
     return end >= start && start >= today;
 }, {
-    message: "End date must be after start date, and start date cannot be in the past",
-    path: ["endDate"], // This shows the error on the endDate field
+    message: 'End date must be after start date, and start date cannot be in the past',
+    path: ['endDate'], // This shows the error on the endDate field
 });

@@ -47,7 +47,7 @@ class BookSlotUseCase {
             if (hasBookingToday) {
                 throw new exceptions_1.InvalidDataException(error_1.USER_ERRORS.YOUR_HAVE_ALREADY_BOOKED_A_SEESSION_FOR_THIS_DAY);
             }
-            const roomId = crypto_1.default.randomBytes(16).toString("hex");
+            const roomId = crypto_1.default.randomBytes(16).toString('hex');
             const updatedSlot = yield this._slotRepository.updateSlotBooking(slotId, userId);
             if (!updatedSlot) {
                 throw new exceptions_1.ConflictException(error_1.USER_ERRORS.SLOT_NOT_FOUND);
@@ -70,10 +70,10 @@ class BookSlotUseCase {
                 recipientId: slot.trainerId,
                 recipientRole: userEnums_1.UserRole.TRAINER,
                 type: NotificationEnums_1.NotificationType.SLOT_BOOKED,
-                title: "Slot Booked!",
+                title: 'Slot Booked!',
                 message: `${user.name} has booked a slot with you for ${new Date(slot.startTime).toLocaleString()}.`,
                 relatedId: slot._id,
-                isRead: false
+                isRead: false,
             });
             return updatedSlot;
         });

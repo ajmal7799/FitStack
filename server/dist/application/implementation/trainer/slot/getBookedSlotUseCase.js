@@ -25,17 +25,17 @@ class BookedSlotsUseCase {
             ]);
             const mappedSlots = yield Promise.all(slots.map((slot) => __awaiter(this, void 0, void 0, function* () {
                 const trainee = yield this._userRepository.findById(slot.userId || '');
-                let profileImageUrl = "";
+                let profileImageUrl = '';
                 if (trainee === null || trainee === void 0 ? void 0 : trainee.profileImage) {
                     profileImageUrl = yield this._storageService.createSignedUrl(trainee.profileImage, 10 * 60);
                 }
                 return {
                     _id: slot._id,
-                    userName: (trainee === null || trainee === void 0 ? void 0 : trainee.name) || "Unknown User",
+                    userName: (trainee === null || trainee === void 0 ? void 0 : trainee.name) || 'Unknown User',
                     startTime: slot.startTime,
                     endTime: slot.endTime,
                     slotStatus: slot.status,
-                    profileImage: profileImageUrl
+                    profileImage: profileImageUrl,
                 };
             })));
             // 3. Return the formatted paginated response
@@ -43,7 +43,7 @@ class BookedSlotsUseCase {
                 slots: mappedSlots,
                 totalSlots: totalSlots,
                 totalePages: Math.ceil(totalSlots / limit) || 1,
-                currentPage: page
+                currentPage: page,
             };
         });
     }

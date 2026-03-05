@@ -8,12 +8,12 @@ const MessageTypeEnums_1 = require("../../../domain/enum/MessageTypeEnums");
 const messageSchema = new mongoose_1.default.Schema({
     chatId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "Chat",
+        ref: 'Chat',
         required: true,
     },
     senderId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "User",
+        ref: 'User',
         required: true,
     },
     type: {

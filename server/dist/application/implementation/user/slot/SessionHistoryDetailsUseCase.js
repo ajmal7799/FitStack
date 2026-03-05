@@ -22,12 +22,12 @@ class SessionHistoryDetailsUseCase {
             var _a, _b, _c;
             const session = yield this._videoCallRepository.findById(sessionId);
             if (!session || session.userId !== userId) {
-                throw new Error("Session not found or access denied");
+                throw new Error('Session not found or access denied');
             }
             const trainer = yield this._userRepository.findById(session.trainerId);
             if (!trainer)
-                throw new Error("Trainer not found");
-            let profileImageUrl = trainer.profileImage || "";
+                throw new Error('Trainer not found');
+            let profileImageUrl = trainer.profileImage || '';
             if (profileImageUrl) {
                 profileImageUrl = yield this._storageService.createSignedUrl(profileImageUrl, 10 * 60);
             }

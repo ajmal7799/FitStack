@@ -34,7 +34,7 @@ class EndVideoCallSessionUseCase {
             const session = yield this._videoCallRepository.findById(slotId);
             if (!session)
                 throw new exceptions_1.NotFoundException('Session not found');
-            if (session.status == videoCallEnums_1.VideoCallStatus.COMPLETED || session.status == videoCallEnums_1.VideoCallStatus.MISSED) {
+            if (session.status === videoCallEnums_1.VideoCallStatus.COMPLETED || session.status === videoCallEnums_1.VideoCallStatus.MISSED) {
                 throw new exceptions_1.AlreadyExisitingExecption('Session already ended');
             }
             const now = new Date();
@@ -76,13 +76,13 @@ class EndVideoCallSessionUseCase {
                 yield this._walletRepository.credit(session.trainerId, 'trainer', trainerAmount, {
                     type: WalletTransactionType_1.WalletTransactionType.SESSION_COMMISSION,
                     amount: trainerAmount,
-                    description: `Session commission (80%) for completed session`,
+                    description: 'Session commission (80%) for completed session',
                     relatedId: session._id,
                 });
                 yield this._walletRepository.credit(config_1.CONFIG.ADMIN_ID, 'admin', platformAmount, {
                     type: WalletTransactionType_1.WalletTransactionType.PLATFORM_FEE,
                     amount: platformAmount,
-                    description: `Platform fee (20%) for completed session`,
+                    description: 'Platform fee (20%) for completed session',
                     relatedId: session._id,
                 });
                 yield this._createNotification.execute({

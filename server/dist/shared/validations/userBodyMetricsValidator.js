@@ -35,5 +35,6 @@ exports.userProfileSchema = zod_1.z.object({
     medicalConditions: zod_1.z
         .array(zod_1.z.string().min(2))
         .optional(),
+    profileImage: zod_1.z.any().optional(),
 });
 exports.userBodyMetricsSchema = exports.userProfileSchema.partial();

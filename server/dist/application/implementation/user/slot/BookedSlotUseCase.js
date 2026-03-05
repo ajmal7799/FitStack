@@ -48,7 +48,7 @@ class BookedSlotUseCase {
                 slots: bookedSlotsDTO,
                 totalSlots: totalSlots,
                 totalePages: Math.ceil(totalSlots / limit) || 1,
-                currentPage: page
+                currentPage: page,
             };
         });
     }

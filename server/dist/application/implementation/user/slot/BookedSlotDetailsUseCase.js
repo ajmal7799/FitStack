@@ -27,13 +27,13 @@ class BookedSlotDetailsUseCase {
                 throw new exceptions_1.NotFoundException(error_1.Errors.SLOT_NOT_FOUND);
             }
             if (slot.userId !== userId) {
-                throw new exceptions_1.UnauthorizedException("You do not have permission to view this slot.");
+                throw new exceptions_1.UnauthorizedException('You do not have permission to view this slot.');
             }
             const trainer = yield this._userRepository.findById(slot.trainerId);
             if (!trainer) {
                 throw new exceptions_1.NotFoundException(error_1.TRAINER_ERRORS.TRAINER_NOT_FOUND);
             }
-            let profileImageUrl = trainer.profileImage || "";
+            let profileImageUrl = trainer.profileImage || '';
             if (profileImageUrl) {
                 profileImageUrl = yield this._storageService.createSignedUrl(profileImageUrl, 10 * 60);
             }

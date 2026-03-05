@@ -27,10 +27,10 @@ class UserProfileController {
     }
     createUserProfile(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _a, _b;
             try {
                 const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
-                // const files = req.files as MulterFiles;
+                const files = req.files;
                 const age = parseInt(req.body.age, 10);
                 const height = parseFloat(req.body.height);
                 const weight = parseFloat(req.body.weight);
@@ -66,9 +66,9 @@ class UserProfileController {
                         data.medicalConditions = [req.body.medicalConditions];
                     }
                 }
-                // if (files['profileImage']?.[0]) {
-                //   data.profileImage = multerFileToFileConverter(files['profileImage'][0]);
-                // }
+                if ((_b = files['profileImage']) === null || _b === void 0 ? void 0 : _b[0]) {
+                    data.profileImage = (0, fileConverter_1.multerFileToFileConverter)(files['profileImage'][0]);
+                }
                 const result = userBodyMetricsValidator_1.userProfileSchema.safeParse(data);
                 if (!result.success) {
                     throw new exceptions_1.InvalidDataException(result.error.issues[0].message);

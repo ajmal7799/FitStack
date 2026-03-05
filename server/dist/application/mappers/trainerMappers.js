@@ -17,7 +17,7 @@ class TrainerMapper {
             isVerified: trainer.isVerified,
             ratingCount: trainer.ratingCount,
             ratingSum: trainer.ratingSum,
-            averageRating: trainer.averageRating
+            averageRating: trainer.averageRating,
         };
     }
     static fromMongooseDocument(doc) {
@@ -31,7 +31,7 @@ class TrainerMapper {
             isVerified: doc.isVerified,
             ratingCount: doc.ratingCount,
             ratingSum: doc.ratingSum,
-            averageRating: doc.averageRating
+            averageRating: doc.averageRating,
         };
     }
     static toTrainerProfileDTO(trainer, user, verification) {

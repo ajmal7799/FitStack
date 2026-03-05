@@ -10,49 +10,49 @@ const videoCallSchema = new mongoose_1.default.Schema({
     userId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
     },
     trainerId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
     },
     slotId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: 'Slot',
-        required: true
+        required: true,
     },
     roomId: {
         type: String,
         required: true,
-        unique: true // Usually critical for video signaling logic
+        unique: true, // Usually critical for video signaling logic
     },
     trainerJoined: {
         type: Boolean,
-        default: false
+        default: false,
     },
     userJoined: {
         type: Boolean,
-        default: false
+        default: false,
     },
     startedAt: {
-        type: Date
+        type: Date,
     },
     endedAt: {
-        type: Date
+        type: Date,
     },
     startTime: {
         type: Date,
-        required: true
+        required: true,
     },
     endTime: {
         type: Date,
-        required: true
+        required: true,
     },
     status: {
         type: String,
         enum: Object.values(videoCallEnums_1.VideoCallStatus),
-        default: videoCallEnums_1.VideoCallStatus.WAITING // Adjust default based on your enum
+        default: videoCallEnums_1.VideoCallStatus.WAITING, // Adjust default based on your enum
     },
     cancellationReason: { type: String, default: null },
     cancelledAt: { type: Date, default: null },

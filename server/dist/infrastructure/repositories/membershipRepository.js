@@ -76,8 +76,8 @@ class MembershipRepository extends baseRepository_1.BaseRepository {
             const pipeline = [
                 {
                     $addFields: {
-                        userObjectId: { $toObjectId: "$userId" }
-                    }
+                        userObjectId: { $toObjectId: '$userId' },
+                    },
                 },
                 {
                     $lookup: {
@@ -124,8 +124,8 @@ class MembershipRepository extends baseRepository_1.BaseRepository {
             const pipeline = [
                 {
                     $addFields: {
-                        userObjectId: { $toObjectId: "$userId" }
-                    }
+                        userObjectId: { $toObjectId: '$userId' },
+                    },
                 },
                 {
                     $lookup: {
@@ -166,7 +166,7 @@ class MembershipRepository extends baseRepository_1.BaseRepository {
             const now = new Date();
             const docs = yield this._model.find({
                 status: membershipEnums_1.MembershipStatus.Active,
-                currentPeriodEnd: { $lt: now }
+                currentPeriodEnd: { $lt: now },
             });
             return docs.map(doc => membershipMappers_1.MembershipMapper.fromMongooseDocument(doc));
         });

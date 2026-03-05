@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VideoCallRepository = void 0;
+const mongoose_1 = require("mongoose");
 const videoCallMappers_1 = require("../../application/mappers/videoCallMappers");
 const videoCallEnums_1 = require("../../domain/enum/videoCallEnums");
 const baseRepository_1 = require("./baseRepository");
-const mongoose_1 = require("mongoose");
 class VideoCallRepository extends baseRepository_1.BaseRepository {
     constructor(_model) {
         super(_model, videoCallMappers_1.VideoCallMapper);

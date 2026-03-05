@@ -70,7 +70,7 @@ class HandleWebhookUseCase {
                 yield this._walletRepository.debit(userId, 'user', walletDiscount, {
                     type: WalletTransactionType_1.WalletTransactionType.SUBSCRIPTION_PAYMENT,
                     amount: walletDiscount,
-                    description: `Wallet discount applied for subscription`,
+                    description: 'Wallet discount applied for subscription',
                     relatedId: stripeSubscriptionId,
                 });
                 console.log('✅ Wallet debited');
@@ -105,10 +105,10 @@ class HandleWebhookUseCase {
                 recipientId: userId,
                 recipientRole: userEnums_1.UserRole.USER,
                 type: NotificationEnums_1.NotificationType.SUBSCRIPTION_PURCHASED,
-                title: "Subscription Activated! 🎉",
+                title: 'Subscription Activated! 🎉',
                 message: `Your subscription has been successfully activated. Enjoy your premium features! Your plan is valid until ${currentPeriodEnd === null || currentPeriodEnd === void 0 ? void 0 : currentPeriodEnd.toLocaleDateString()}.`,
                 relatedId: stripeSubscriptionId,
-                isRead: false
+                isRead: false,
             });
         });
     }
@@ -124,10 +124,10 @@ class HandleWebhookUseCase {
                     recipientId: membership.userId,
                     recipientRole: userEnums_1.UserRole.USER,
                     type: NotificationEnums_1.NotificationType.PAYMENT_SUCCESS,
-                    title: "Subscription Renewed! 🚀",
-                    message: "Your subscription has been successfully renewed. Thank you for staying with us!",
+                    title: 'Subscription Renewed! 🚀',
+                    message: 'Your subscription has been successfully renewed. Thank you for staying with us!',
                     relatedId: membership.stripeSubscriptionId,
-                    isRead: false
+                    isRead: false,
                 });
             }
         });
@@ -143,10 +143,10 @@ class HandleWebhookUseCase {
                     recipientId: membership.userId,
                     recipientRole: userEnums_1.UserRole.USER,
                     type: NotificationEnums_1.NotificationType.PAYMENT_FAILED,
-                    title: "Payment Failed 💳",
+                    title: 'Payment Failed 💳',
                     message: "We couldn't process your subscription payment. Please check your payment method.",
                     relatedId: membership.stripeSubscriptionId,
-                    isRead: false
+                    isRead: false,
                 });
             }
         });
@@ -161,10 +161,10 @@ class HandleWebhookUseCase {
                     recipientId: membership.userId,
                     recipientRole: userEnums_1.UserRole.USER,
                     type: NotificationEnums_1.NotificationType.SUBSCRIPTION_CANCELLED,
-                    title: "Subscription Cancelled ⚠️",
+                    title: 'Subscription Cancelled ⚠️',
                     message: "Your subscription has been cancelled. We're sorry to see you go!",
                     relatedId: membership.stripeSubscriptionId,
-                    isRead: false
+                    isRead: false,
                 });
             }
         });

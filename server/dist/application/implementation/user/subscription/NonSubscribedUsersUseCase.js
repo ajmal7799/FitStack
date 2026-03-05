@@ -18,7 +18,7 @@ class NonSubscribedUsersUseCase {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield this._userRepository.findById(userId);
             if (!user) {
-                throw new Error("User not found");
+                throw new Error('User not found');
             }
             const nonSubscribedUsers = yield this._userRepository.findNonSubscribedUsers();
             return nonSubscribedUsers;

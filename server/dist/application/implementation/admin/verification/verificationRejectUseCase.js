@@ -33,9 +33,9 @@ class VerificationRejectUseCase {
                 recipientId: id,
                 recipientRole: userEnums_1.UserRole.TRAINER,
                 type: NotificationEnums_1.NotificationType.VERIFICATION_REJECTED,
-                title: "Verification Rejected",
+                title: 'Verification Rejected',
                 message: `Your verification was rejected. Reason: ${reason}`,
-                isRead: false
+                isRead: false,
             });
             return {
                 id: trainerReject.id,

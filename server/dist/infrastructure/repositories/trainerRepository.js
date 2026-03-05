@@ -49,8 +49,8 @@ class TrainerRepository extends baseRepository_1.BaseRepository {
                 $set: {
                     ratingSum: metrics.ratingSum,
                     ratingCount: metrics.ratingCount,
-                    averageRating: metrics.averageRating
-                }
+                    averageRating: metrics.averageRating,
+                },
             });
         });
     }

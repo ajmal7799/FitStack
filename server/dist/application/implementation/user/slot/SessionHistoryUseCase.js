@@ -42,7 +42,7 @@ class SessionHistoryUseCase {
             });
             const sessionHistoryResults = sessions.map(session => ({
                 _id: session._id,
-                trainerName: (user === null || user === void 0 ? void 0 : user.name) || "Unknown Trainer",
+                trainerName: (user === null || user === void 0 ? void 0 : user.name) || 'Unknown Trainer',
                 startTime: session.startTime,
                 endTime: session.endTime,
                 sessionStatus: session.status,

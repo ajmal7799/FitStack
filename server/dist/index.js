@@ -15,7 +15,6 @@ const errorHandlingMiddleware_1 = require("./interfaceAdapters/middleware/errorH
 const loggerMiddleware_1 = require("./interfaceAdapters/middleware/loggerMiddleware");
 const http_1 = require("http");
 const socketServer_1 = require("./infrastructure/socket/socketServer");
-const config_1 = require("./infrastructure/config/config");
 const checkExpireySession_1 = require("./infrastructure/cron/checkExpireySession");
 const videoCallContainer_1 = require("./infrastructure/DI/videoCall/videoCallContainer");
 const userSubscriptionContainer_1 = require("./infrastructure/DI/user/userSubscription/userSubscriptionContainer");
@@ -40,7 +39,11 @@ class ExpressApp {
     }
     _setMiddlewares() {
         this._app.use((0, cors_1.default)({
-            origin: config_1.CONFIG.FRONTEND_URL,
+            origin: [
+                'http://localhost:5173',
+                'https://www.fitstack.co.in',
+                'https://fitstack.co.in'
+            ],
             credentials: true,
         }));
         this._app.use('/stripe/webhook', express_1.default.raw({ type: 'application/json' }));
@@ -52,7 +55,6 @@ class ExpressApp {
                 express_1.default.json()(req, res, next);
             }
         });
-        // this._app.use(express.json());
         this._app.use((0, cookie_parser_1.default)());
     }
     _setErrorHandlingMiddleware() {

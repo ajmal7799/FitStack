@@ -44,7 +44,7 @@ class UserMapper {
             verificationCheck,
             userProfileCompleted,
             hasActiveSubscription,
-            profileImage
+            profileImage: profileImage || user.profileImage,
         };
     }
     static toLoginAdminResponse(user) {
