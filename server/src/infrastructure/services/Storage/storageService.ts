@@ -20,27 +20,27 @@ export class StorageService implements IStorageService {
             responseChecksumValidation: 'WHEN_REQUIRED', 
         });
     }
-async upload(file: Express.Multer.File | Buffer, key: string): Promise<string> {
-    let data: Buffer;
+    async upload(file: Express.Multer.File | Buffer, key: string): Promise<string> {
+        let data: Buffer;
     
-    if (file instanceof Buffer) {
-        data = file;
-    } else {
-        data = file.buffer as Buffer;
-    }
+        if (file instanceof Buffer) {
+            data = file;
+        } else {
+            data = file.buffer as Buffer;
+        }
     
-    try {
-        const command = new PutObjectCommand({
-            Bucket: CONFIG.S3_BUCKET_NAME,
-            Key: key,
-            Body: data,
-        });
-        await this._s3Client.send(command);
-        return key;
-    } catch (error) {
-        throw new Error(Errors.STORAGE_UPLOAD_ERROR);
+        try {
+            const command = new PutObjectCommand({
+                Bucket: CONFIG.S3_BUCKET_NAME,
+                Key: key,
+                Body: data,
+            });
+            await this._s3Client.send(command);
+            return key;
+        } catch (error) {
+            throw new Error(Errors.STORAGE_UPLOAD_ERROR);
+        }
     }
-}
     async createSignedUrl(key: string, expiary: number): Promise<string> {
         const command = new GetObjectCommand({
             Bucket: CONFIG.S3_BUCKET_NAME,

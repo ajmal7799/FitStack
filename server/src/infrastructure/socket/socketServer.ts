@@ -33,10 +33,10 @@ export class SocketService {
         this._io = new Server(httpServer, {
             cors: {
                 origin: [
-                'http://localhost:5173',
-                'https://www.fitstack.co.in',
-                'https://fitstack.co.in'
-            ],
+                    'http://localhost:5173',
+                    'https://www.fitstack.co.in',
+                    'https://fitstack.co.in',
+                ],
                 credentials: true,
             },
         });

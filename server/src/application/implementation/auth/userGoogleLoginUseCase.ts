@@ -13,7 +13,7 @@ export class UserGoogleLoginUseCase implements IGoogleLoginUseCase {
         private _googleAuthService: IGoogleAuthService,
         private _userRepository: IUserRepository,
         private _userProfileRepository: IUserProfileRepository,
-        private _storageService: IStorageService
+        private _storageService: IStorageService,
     ) {}
 
     async execute({ authorizationCode, role }: IGoogleLoginRequestDTO): Promise<IGoogleLoginResponseDTO> {
@@ -35,8 +35,8 @@ export class UserGoogleLoginUseCase implements IGoogleLoginUseCase {
             user._id = id;
         }
 
-        let profileImage = ""
-        if(user.profileImage) {
+        let profileImage = '';
+        if (user.profileImage) {
             profileImage = await this._storageService.createSignedUrl(user.profileImage, 10 * 60);
         }
         

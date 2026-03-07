@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { store } from '../redux/store';
-import { setAccessToken, clearData } from '../redux/slice/userSlice/authDataSlice';
-
+import {
+  setAccessToken,
+  clearData,
+} from '../redux/slice/userSlice/authDataSlice';
 
 const AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -22,7 +24,10 @@ AxiosInstance.interceptors.request.use((config) => {
 
 // ✅ Track if we're already refreshing to prevent infinite loops
 let isRefreshing = false;
-let failedQueue: { resolve: (token: string) => void; reject: (err: any) => void }[] = [];
+let failedQueue: {
+  resolve: (token: string) => void;
+  reject: (err: any) => void;
+}[] = [];
 
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
@@ -39,9 +44,9 @@ AxiosInstance.interceptors.response.use(
     const originalRequest = error.config;
 
     const isTokenExpired =
-            error.response?.status === 401 &&
-            error.response?.data?.message === 'TOKEN_EXPIRED' &&
-            !originalRequest._retry; // ← prevent infinite retry
+      error.response?.status === 401 &&
+      error.response?.data?.message === 'TOKEN_EXPIRED' &&
+      !originalRequest._retry; // ← prevent infinite retry
 
     if (isTokenExpired) {
       if (isRefreshing) {
@@ -62,11 +67,11 @@ AxiosInstance.interceptors.response.use(
 
       try {
         // ✅ Call refresh endpoint
-      const response = await axios.post(
-  `${import.meta.env.VITE_API_URL}/refresh-token`,
-  {},
-  { withCredentials: true }
-);
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/refresh-token`,
+          {},
+          { withCredentials: true },
+        );
 
         const newAccessToken = response.data.accessToken;
 
@@ -79,7 +84,6 @@ AxiosInstance.interceptors.response.use(
         // ✅ Retry original request
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return AxiosInstance(originalRequest);
-
       } catch (refreshError) {
         // ✅ Refresh failed → force logout
         processQueue(refreshError, null);
@@ -92,7 +96,7 @@ AxiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default AxiosInstance;

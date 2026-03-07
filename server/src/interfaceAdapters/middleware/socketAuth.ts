@@ -21,6 +21,6 @@ export const socketAuthMiddleware = (socket: Socket, next: (err?: Error) => void
         next(); // Success!
     } catch (error) {
         
-        next(new Error('Authentication error: Invalid token',));
+        next(new Error('Authentication error: Invalid token'));
     }
 };

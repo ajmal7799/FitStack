@@ -2,7 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { updateHasActiveSubscription } from '../../../redux/slice/userSlice/authDataSlice'; // adjust path if needed
-import { CheckCircle, AlertCircle, Calendar, CreditCard, ArrowRight } from 'lucide-react';
+import {
+  CheckCircle,
+  AlertCircle,
+  Calendar,
+  CreditCard,
+  ArrowRight,
+} from 'lucide-react';
 import UserSidebar from '../../../components/user/Sidebar';
 import Header from '../../../components/user/Header';
 import { useGetActiveSubscription } from '../../../hooks/User/SubscriptionHooks';
@@ -11,17 +17,19 @@ import type { SubscriptionResult } from '../../../types/AcitveSubscriptionPlan';
 
 const ActiveSubscription = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();  // ✅ add this
+  const dispatch = useDispatch(); // ✅ add this
 
   const { data, isLoading } = useGetActiveSubscription();
 
-  const subscription: SubscriptionResult | null = data?.success ? data.data.result : null;
+  const subscription: SubscriptionResult | null = data?.success
+    ? data.data.result
+    : null;
 
   useEffect(() => {
-  if (subscription) {
-    dispatch(updateHasActiveSubscription(true));
-  }
-}, [subscription, dispatch]);
+    if (subscription) {
+      dispatch(updateHasActiveSubscription(true));
+    }
+  }, [subscription, dispatch]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -42,7 +50,9 @@ const ActiveSubscription = () => {
     return diffDays;
   };
 
-  const remainingDays = subscription ? getRemainingDays(subscription.expiresAt) : 0;
+  const remainingDays = subscription
+    ? getRemainingDays(subscription.expiresAt)
+    : 0;
 
   // Helper to determine badge style based on remaining days
   const getRemainingDaysBadge = () => {
@@ -109,7 +119,9 @@ const ActiveSubscription = () => {
             {isLoading ? (
               <div className="flex flex-col justify-center items-center h-64 space-y-4">
                 <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-600"></div>
-                <p className="text-gray-400 text-sm animate-pulse">Loading your plan...</p>
+                <p className="text-gray-400 text-sm animate-pulse">
+                  Loading your plan...
+                </p>
               </div>
             ) : subscription ? (
               /* ACTIVE SUBSCRIPTION */
@@ -144,7 +156,10 @@ const ActiveSubscription = () => {
                       {/* Pricing */}
                       <div className="flex items-start sm:items-center space-x-3 sm:space-x-4">
                         <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-gray-600 border border-gray-100 flex-shrink-0">
-                          <CreditCard size={20} className="sm:w-[22px] sm:h-[22px]" />
+                          <CreditCard
+                            size={20}
+                            className="sm:w-[22px] sm:h-[22px]"
+                          />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
@@ -162,7 +177,10 @@ const ActiveSubscription = () => {
                       {/* Next Billing + Remaining Days */}
                       <div className="flex items-start sm:items-center space-x-3 sm:space-x-4">
                         <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-gray-600 border border-gray-100 flex-shrink-0">
-                          <Calendar size={20} className="sm:w-[22px] sm:h-[22px]" />
+                          <Calendar
+                            size={20}
+                            className="sm:w-[22px] sm:h-[22px]"
+                          />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
@@ -179,7 +197,7 @@ const ActiveSubscription = () => {
                     {/* Right Column - Features / Upgrade */}
                     <div className="bg-indigo-50/50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-indigo-100/50">
                       <h4 className="text-sm font-bold text-indigo-900 mb-3 flex items-center">
-                        <CheckCircle size={16} className="mr-2 flex-shrink-0" /> 
+                        <CheckCircle size={16} className="mr-2 flex-shrink-0" />
                         <span>Plan Features</span>
                       </h4>
                       <p className="text-indigo-800/80 text-sm leading-relaxed">
@@ -205,7 +223,8 @@ const ActiveSubscription = () => {
                   No active plan found
                 </h2>
                 <p className="text-gray-500 mt-3 max-w-xs mx-auto text-sm leading-relaxed px-4">
-                  Join our community of professionals to unlock exclusive features and take your experience to the next level.
+                  Join our community of professionals to unlock exclusive
+                  features and take your experience to the next level.
                 </p>
                 <button
                   onClick={() => navigate('/subscription')}
