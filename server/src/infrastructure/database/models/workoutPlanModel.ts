@@ -1,4 +1,4 @@
-import { Document, model, Types, } from 'mongoose';
+import { Document, model, Types } from 'mongoose';
 import WorkoutPlanSchema from '../schema/wokoutPlanSchema';
 
 export interface IExercise {

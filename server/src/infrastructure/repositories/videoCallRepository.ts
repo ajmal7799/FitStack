@@ -5,6 +5,7 @@ import { VideoCallMapper } from '../../application/mappers/videoCallMappers';
 import { VideoCallStatus } from '../../domain/enum/videoCallEnums';
 import { BaseRepository } from './baseRepository';
 import { IVideoCallModel } from '../database/models/videoCallModel';
+import { boolean } from 'zod';
 
 export class VideoCallRepository extends BaseRepository<VideoCall, IVideoCallModel> implements IVideoCallRepository {
     constructor(protected _model: Model<IVideoCallModel>) {
@@ -313,15 +314,20 @@ export class VideoCallRepository extends BaseRepository<VideoCall, IVideoCallMod
         return result[0]?.total ?? 0;
     }
 
-    async checkUserBookingForDay(userId: string, startTime: Date, endTime: Date): Promise<boolean> {
-        const session = await this._model.findOne({
-            userId,
-            startTime: { $gte: startTime, $lte: endTime },
-            status: {
-                $in: [VideoCallStatus.ACTIVE, VideoCallStatus.WAITING, VideoCallStatus.COMPLETED, VideoCallStatus.CANCELLED],
-            },
-        });
+   
 
-        return !!session;
+   async countTrainerBooking(trainerId: string, startTime: Date, endTime: Date, userId : string): Promise<boolean> {
+        const session = await this._model.countDocuments({
+            userId:userId,
+            startTime: {$gte:startTime, $lte: endTime }
+        })
+
+        const count =await this._model.countDocuments({
+            trainerId:trainerId,
+            startTime: {$gte:startTime, $lte: endTime }
+        })
+
+        return session >= 2 && count>= 8
+        
     }
 }

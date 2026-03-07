@@ -46,28 +46,28 @@ class ExpressApp {
     }
 
     private _setMiddlewares() {
-    this._app.use(
-        cors({
-            origin: [
-                'http://localhost:5173',
-                'https://www.fitstack.co.in',
-                'https://fitstack.co.in'
-            ],
-            credentials: true,
-        }),
-    );
-    this._app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
+        this._app.use(
+            cors({
+                origin: [
+                    'http://localhost:5173',
+                    'https://www.fitstack.co.in',
+                    'https://fitstack.co.in',
+                ],
+                credentials: true,
+            }),
+        );
+        this._app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
-    this._app.use((req, res, next) => {
-        if (req.originalUrl === '/stripe/webhook') {
-            next();
-        } else {
-            express.json()(req, res, next);
-        }
-    });
+        this._app.use((req, res, next) => {
+            if (req.originalUrl === '/stripe/webhook') {
+                next();
+            } else {
+                express.json()(req, res, next);
+            }
+        });
 
-    this._app.use(cookieParser());
-}
+        this._app.use(cookieParser());
+    }
 
     private _setErrorHandlingMiddleware() {
         this._app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
