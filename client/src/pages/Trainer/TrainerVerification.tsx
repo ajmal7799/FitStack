@@ -7,25 +7,61 @@ import BackgroundImg from '../../assets/BackGroundImg.jpg';
 import { useSubmitTrainerVerification } from '../../hooks/Trainer/TrainerHooks';
 import { useNavigate } from 'react-router-dom';
 
+// ─── Zod Schemas ─────────────────────────────────────────────────────────────
 
 const step1Schema = z.object({
-  qualification: z.string().min(2, 'Please enter your qualification'),
-  specialisation: z.string().min(2, 'Please enter your specialisation'),
-  experience: z.coerce.number().min(0, 'Experience must be 0 or more'),
-  about: z.string().min(20, 'Tell us at least 20 characters about yourself'),
+  qualification: z
+    .string()
+    .trim()
+    .min(1, 'Qualification is required')
+    .min(2, 'Please enter your qualification')
+    .max(200, 'Qualification must not exceed 200 characters'),
+
+  specialisation: z
+    .string()
+    .trim()
+    .min(1, 'Specialisation is required')
+    .min(2, 'Please enter your specialisation')
+    .max(300, 'Specialisation must not exceed 300 characters'),
+
+  experience: z
+    .coerce
+    .number({ error: 'Experience must be a number' })
+    .int('Experience must be a whole number')
+    .min(0, 'Experience cannot be negative')
+    .max(60, 'Experience must be realistic (max 60 years)'),
+
+  about: z
+    .string()
+    .trim()
+    .min(1, 'Biography is required')
+    .min(20, 'Tell us at least 20 characters about yourself')
+    .max(1000, 'About must not exceed 1000 characters'),
 });
 
+const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+const fileSchema = (label: string) =>
+  z
+    .instanceof(FileList)
+    .refine((files) => files?.length === 1, `${label} is required`)
+    .refine(
+      (files) => files?.length === 0 || ALLOWED_FILE_TYPES.includes(files[0]?.type),
+      `${label}: only JPG, PNG, WEBP or PDF allowed`
+    )
+    .refine(
+      (files) => files?.length === 0 || files[0]?.size <= MAX_FILE_SIZE,
+      `${label}: file must be less than 5MB`
+    );
+
 const step2Schema = z.object({
-  idCard: z
-    .instanceof(FileList)
-    .refine((files) => files?.length === 1, 'Personal ID Card is required'),
-  educationCert: z
-    .instanceof(FileList)
-    .refine((files) => files?.length === 1, 'Education certificate is required'),
-  experienceCert: z
-    .instanceof(FileList)
-    .refine((files) => files?.length === 1, 'Experience proof is required'),
+  idCard: fileSchema('Personal ID Card'),
+  educationCert: fileSchema('Education Certificate'),
+  experienceCert: fileSchema('Experience Certificate'),
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 type Step1Data = z.infer<typeof step1Schema>;
 type Step2Data = z.infer<typeof step2Schema>;
@@ -34,8 +70,7 @@ const TrainerVerification: React.FC = () => {
   const [step, setStep] = useState(1);
   const [step1Data, setStep1Data] = useState<Step1Data | null>(null);
   const navigate = useNavigate();
-  
-  // React Query Mutation
+
   const { mutate: submitVerification, isPending } = useSubmitTrainerVerification();
 
   // Step 1 Form
@@ -58,40 +93,36 @@ const TrainerVerification: React.FC = () => {
     resolver: zodResolver(step2Schema),
   });
 
-  // Step 1: Next Button
+  // Step 1: Next
   const onNext = (data: Step1Data) => {
     setStep1Data(data);
     setStep(2);
-    
   };
 
-  // Step 2: Submit with React Query + FormData
+  // Step 2: Submit
   const onSubmit = (data: Step2Data) => {
     if (!step1Data) return;
 
-    // Create FormData
     const formData = new FormData();
-    
-    // Add Step 1 text data
+
+    // Step 1 — already trimmed by Zod via result.data
     formData.append('qualification', step1Data.qualification);
     formData.append('specialisation', step1Data.specialisation);
     formData.append('experience', step1Data.experience.toString());
     formData.append('about', step1Data.about);
 
-    // Add Step 2 files
+    // Step 2 files
     formData.append('idCard', data.idCard[0]!);
     formData.append('educationCert', data.educationCert[0]!);
     formData.append('experienceCert', data.experienceCert[0]!);
-     
-    // Use React Query Mutation
+
     submitVerification(formData, {
-      onSuccess: (res:any) => {
+      onSuccess: (res: any) => {
         toast.success(res.message);
         navigate('/trainer/dashboard');
         setStep(3);
-        reset1(); // Clear Step 1 form
-        reset2(); // Clear Step 2 form
-        
+        reset1();
+        reset2();
       },
       onError: (error: any) => {
         toast.error(error.response.data?.message || 'Submission failed');
@@ -142,14 +173,14 @@ const TrainerVerification: React.FC = () => {
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8">
           {/* Step 1 */}
           {step === 1 && (
-            <form onSubmit={handleSubmit1(onNext)} className="space-y-6">
+            <form onSubmit={handleSubmit1(onNext)} className="space-y-6" noValidate>
               <h2 className="text-xl font-semibold text-gray-800">Qualifications & Experience</h2>
 
               <div>
                 <input
                   {...register1('qualification')}
                   placeholder="Highest Qualification (e.g. B.P.Ed, NSCA-CPT)"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 text-base"
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-emerald-500 text-base ${errors1.qualification ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
                 />
                 {errors1.qualification && (
                   <p className="text-red-600 text-xs mt-1">{errors1.qualification.message}</p>
@@ -160,7 +191,7 @@ const TrainerVerification: React.FC = () => {
                 <input
                   {...register1('specialisation')}
                   placeholder="Specialisation (e.g. Weight Loss, Yoga, Powerlifting)"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 text-base"
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-emerald-500 text-base ${errors1.specialisation ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
                 />
                 {errors1.specialisation && (
                   <p className="text-red-600 text-xs mt-1">{errors1.specialisation.message}</p>
@@ -171,8 +202,10 @@ const TrainerVerification: React.FC = () => {
                 <input
                   {...register1('experience')}
                   type="number"
+                  min={0}
+                  max={60}
                   placeholder="Years of Experience"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 text-base"
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-emerald-500 text-base ${errors1.experience ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
                 />
                 {errors1.experience && (
                   <p className="text-red-600 text-xs mt-1">{errors1.experience.message}</p>
@@ -184,7 +217,7 @@ const TrainerVerification: React.FC = () => {
                   {...register1('about')}
                   rows={4}
                   placeholder="About Me – your training style & achievements"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 text-base resize-none"
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-emerald-500 text-base resize-none ${errors1.about ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
                 />
                 {errors1.about && (
                   <p className="text-red-600 text-xs mt-1">{errors1.about.message}</p>
@@ -204,10 +237,10 @@ const TrainerVerification: React.FC = () => {
 
           {/* Step 2 */}
           {step === 2 && (
-            <form onSubmit={handleSubmit2(onSubmit)} className="space-y-7">
+            <form onSubmit={handleSubmit2(onSubmit)} className="space-y-7" noValidate>
               <div>
                 <h2 className="text-xl font-semibold text-gray-800">Upload Documents</h2>
-                <p className="text-red-600 text-sm font-medium mt-1">All documents required</p>
+                <p className="text-red-600 text-sm font-medium mt-1">All documents required · JPG/PNG/WEBP/PDF · Max 5MB each</p>
               </div>
 
               {/* Personal ID Card */}
@@ -215,7 +248,7 @@ const TrainerVerification: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Personal ID Card <span className="text-red-600">*</span>
                 </label>
-                <label className="block border-2 border-dashed border-gray-400 rounded-xl h-32 cursor-pointer hover:border-emerald-500 transition group">
+                <label className={`block border-2 border-dashed rounded-xl h-32 cursor-pointer hover:border-emerald-500 transition group ${errors2.idCard ? 'border-red-400 bg-red-50' : 'border-gray-400'}`}>
                   <div className="flex flex-col items-center justify-center h-full space-y-3">
                     <div className="w-16 h-12 bg-gray-200 border-2 border-dashed rounded-lg flex items-center justify-center">
                       <svg className="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,9 +257,7 @@ const TrainerVerification: React.FC = () => {
                       </svg>
                     </div>
                     <div className="text-center">
-                      <p className="text-sm text-gray-600 group-hover:text-emerald-600 transition">
-                        Click to upload ID
-                      </p>
+                      <p className="text-sm text-gray-600 group-hover:text-emerald-600 transition">Click to upload ID</p>
                       <p className="text-xs text-gray-500">Aadhaar, Passport, DL etc.</p>
                     </div>
                   </div>
@@ -237,11 +268,13 @@ const TrainerVerification: React.FC = () => {
 
               {/* Education Certificate */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Education Certificate</label>
-                <label className="block border-2 border-dashed border-gray-400 rounded-xl h-28 cursor-pointer hover:border-emerald-500 transition group">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Education Certificate <span className="text-red-600">*</span>
+                </label>
+                <label className={`block border-2 border-dashed rounded-xl h-28 cursor-pointer hover:border-emerald-500 transition group ${errors2.educationCert ? 'border-red-400 bg-red-50' : 'border-gray-400'}`}>
                   <div className="flex flex-col items-center justify-center h-full space-y-2">
                     <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 012 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <p className="text-sm text-gray-600 group-hover:text-emerald-600 transition">Upload Degree / Diploma</p>
                     <p className="text-xs text-gray-500">JPG, PNG, PDF</p>
@@ -253,11 +286,13 @@ const TrainerVerification: React.FC = () => {
 
               {/* Experience Certificate */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Experience Certificate / Proof</label>
-                <label className="block border-2 border-dashed border-gray-400 rounded-xl h-28 cursor-pointer hover:border-emerald-500 transition group">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Experience Certificate / Proof <span className="text-red-600">*</span>
+                </label>
+                <label className={`block border-2 border-dashed rounded-xl h-28 cursor-pointer hover:border-emerald-500 transition group ${errors2.experienceCert ? 'border-red-400 bg-red-50' : 'border-gray-400'}`}>
                   <div className="flex flex-col items-center justify-center h-full space-y-2">
                     <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 012 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <p className="text-sm text-gray-600 group-hover:text-emerald-600 transition">Upload Experience Letter</p>
                     <p className="text-xs text-gray-500">From previous gym/company</p>

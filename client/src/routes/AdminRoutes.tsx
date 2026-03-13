@@ -15,7 +15,7 @@ import AdminDashboard from '../pages/Admin/dashboard/AdminDashboard';
 import { AdminSidebarProvider } from '../components/admin/AdminSidebarContext';
 import TrainerAdminDetailsPage from '../pages/Admin/TrainerDetails';
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
-
+import RevenuePage from '../pages/Admin/RevenuePage';
 
  
 const AdminRoutes = () => {
@@ -41,6 +41,10 @@ const AdminRoutes = () => {
 
       // membership
         <Route path={FRONTEND_ROUTES.ADMIN.MEMBERSHIPS} element={<PrivateRoute> <MembershipListing/> </PrivateRoute>} />
+      
+      // revenue
+        <Route path={FRONTEND_ROUTES.ADMIN.REVENUE} element={<PrivateRoute> <RevenuePage/> </PrivateRoute>} />
+
         <Route path="*" element={<NotFoundPage />} />
 
       </Routes>

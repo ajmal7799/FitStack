@@ -58,47 +58,38 @@ const TrainerChatPage = () => {
         senderId: string;
     }>>({});
   const [localUnreadCounts, setLocalUnreadCounts] = useState<Record<string, number>>({});
+  // Mobile: track which panel is visible ('sidebar' | 'chat')
+  const [mobileView, setMobileView] = useState<'sidebar' | 'chat'>('sidebar');
     
   const { data, isLoading, isError, error } = useInitiateChatTrainer();
 
   const chatData = data as InitiateChatResponse | undefined;
   const baseChats: Chat[] = chatData?.data?.result || [];
 
-  // ✅ Initialize socket connection
   useEffect(() => {
     if (token && userId) {
-      console.log('🔌 TRAINER - Initializing socket connection:', userId);
       socketService.connect(token, userId);
     }
-
     return () => {
-      console.log('🔌 TRAINER - Cleaning up socket connection');
       socketService.disconnect();
     };
   }, [token, userId]);
 
-  // ✅ Join all chat rooms when chats are loaded
   useEffect(() => {
     if (baseChats.length > 0) {
-      console.log('🔗 TRAINER - Joining all chat rooms:', baseChats.length);
       baseChats.forEach(chat => {
-        console.log('🔗 Joining room:', chat.chatId);
         socketService.joinRoom(chat.chatId);
       });
     }
-
-    // Cleanup: leave all rooms when component unmounts
     return () => {
       if (baseChats.length > 0) {
-        console.log('🚪 TRAINER - Leaving all chat rooms');
         baseChats.forEach(chat => {
           socketService.leaveRoom(chat.chatId);
         });
       }
     };
-  }, [baseChats.length]); // Only re-run when number of chats changes
+  }, [baseChats.length]);
 
-  // ✅ Define message handler with useCallback and detailed logging
   const handleReceiveMessage = useCallback((message: Message) => {
     const previewText = message.type === 'text'
       ? (message.text || '')
@@ -107,7 +98,6 @@ const TrainerChatPage = () => {
           : message.type === 'audio' ? '🎵 Audio'
             : '📄 File';
 
-    // ✅ key fix: use functional update with [message.chatId]
     setChatUpdates(prev => ({
       ...prev,
       [message.chatId]: {
@@ -118,7 +108,6 @@ const TrainerChatPage = () => {
     }));
 
     const shouldIncrementUnread = selectedChatId !== message.chatId && message.senderId !== userId;
-
     if (shouldIncrementUnread) {
       setLocalUnreadCounts(prev => ({
         ...prev,
@@ -127,31 +116,25 @@ const TrainerChatPage = () => {
     }
   }, [selectedChatId, userId, baseChats.length]);
 
-  // ✅ Listen for messages globally
   useEffect(() => {
-    console.log('👂 TRAINER - Setting up message listener');
     socketService.onReceiveMessage(handleReceiveMessage);
-
     return () => {
-      console.log('👂 TRAINER - Removing message listener');
-      // remove only this handler instead of removing the shared socket listener
       socketService.removeListener('receive_message', handleReceiveMessage);
     };
   }, [handleReceiveMessage]);
 
   const handleChatSelect = (chatId: string) => {
-    console.log('💬 TRAINER - Chat selected:', chatId);
     setSelectedChatId(chatId);
-        
-    // ✅ Reset unread count for this chat when selected
-    setLocalUnreadCounts(prev => ({
-      ...prev,
-      [chatId]: 0
-    }));
+    setLocalUnreadCounts(prev => ({ ...prev, [chatId]: 0 }));
+    // On mobile, switch to chat view
+    setMobileView('chat');
+  };
+
+  const handleBackToSidebar = () => {
+    setMobileView('sidebar');
   };
 
   const handleMessageSent = (chatId: string, text: string, senderId?: string, timestamp?: string) => {
-    console.log('📤 TRAINER - Message sent:', { chatId, text, senderId, timestamp });
     setChatUpdates(prev => ({
       ...prev,
       [chatId]: {
@@ -162,12 +145,10 @@ const TrainerChatPage = () => {
     }));
   };
 
-  // ✅ Merge base chats with updates and sort by last message timestamp
   const sortedChats = useMemo(() => {
     const chatsWithUpdates = baseChats.map(chat => {
       const hasUpdate = chatUpdates[chat.chatId];
       const localUnread = localUnreadCounts[chat.chatId];
-            
       return {
         ...chat,
         lastMessage: hasUpdate || chat.lastMessage,
@@ -177,26 +158,15 @@ const TrainerChatPage = () => {
       };
     });
 
-    // Sort by last message timestamp (most recent first)
-    const sorted = chatsWithUpdates.sort((a, b) => {
+    return chatsWithUpdates.sort((a, b) => {
       const timeA = a.lastMessage?.timestamp ? new Date(a.lastMessage.timestamp).getTime() : 0;
       const timeB = b.lastMessage?.timestamp ? new Date(b.lastMessage.timestamp).getTime() : 0;
       return timeB - timeA;
     });
-
-    console.log('📊 TRAINER - Sorted chats:', sorted.map(c => ({
-      chatId: c.chatId,
-      userName: c.userName,
-      unread: c.unreadCount,
-      lastMsg: c.lastMessage?.text?.substring(0, 20)
-    })));
-
-    return sorted;
   }, [baseChats, chatUpdates, localUnreadCounts, selectedChatId]);
 
   const selectedChat = sortedChats.find(chat => chat.chatId === selectedChatId);
 
-  // ✅ Debug: Log connection status periodically
   useEffect(() => {
     const interval = setInterval(() => {
       console.log('🔍 TRAINER Connection Status:', {
@@ -205,8 +175,7 @@ const TrainerChatPage = () => {
         selectedChat: selectedChatId,
         roomsJoined: baseChats.map(c => c.chatId)
       });
-    }, 10000); // Every 10 seconds
-
+    }, 10000);
     return () => clearInterval(interval);
   }, [baseChats, selectedChatId]);
 
@@ -218,16 +187,26 @@ const TrainerChatPage = () => {
         <TrainerHeader />
 
         <div className="flex-1 flex overflow-hidden">
-          <div className="flex-shrink-0">
+
+          {/* ── SIDEBAR PANEL ── */}
+          {/* Desktop: always visible. Mobile: visible only when mobileView === 'sidebar' */}
+          <div
+            className={`
+              flex-shrink-0
+              ${mobileView === 'sidebar' ? 'flex' : 'hidden'}
+              md:flex
+              w-full md:w-80
+            `}
+          >
             {isLoading ? (
-              <div className="w-full md:w-80 bg-white border-r border-gray-200 flex items-center justify-center h-full">
+              <div className="w-full bg-white border-r border-gray-200 flex items-center justify-center h-full">
                 <div className="text-center">
                   <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-2" />
                   <p className="text-sm text-gray-500">Loading chats...</p>
                 </div>
               </div>
             ) : isError ? (
-              <div className="w-full md:w-80 bg-white border-r border-gray-200 flex items-center justify-center h-full">
+              <div className="w-full bg-white border-r border-gray-200 flex items-center justify-center h-full">
                 <div className="text-center p-4">
                   <MessageSquare className="w-12 h-12 text-red-400 mx-auto mb-3" />
                   <p className="text-sm text-red-600 font-medium">Error loading chats</p>
@@ -237,37 +216,47 @@ const TrainerChatPage = () => {
                 </div>
               </div>
             ) : (
-              <ChatTrainerSidebar 
-                chats={sortedChats} 
+              <ChatTrainerSidebar
+                chats={sortedChats}
                 selectedChatId={selectedChatId}
                 onChatSelect={handleChatSelect}
               />
             )}
           </div>
 
-          <div className="flex-1 flex overflow-hidden">
+          {/* ── CHAT WINDOW PANEL ── */}
+          {/* Desktop: always visible. Mobile: visible only when mobileView === 'chat' */}
+          <div
+            className={`
+              flex-1 flex flex-col overflow-hidden
+              ${mobileView === 'chat' ? 'flex' : 'hidden'}
+              md:flex
+            `}
+          >
             {selectedChat ? (
-              <ChatWindow 
+              <ChatWindow
                 chatId={selectedChat.chatId}
                 userName={selectedChat.userName}
                 userProfilePic={selectedChat.userProfilePic}
                 userId={selectedChat.userId}
                 onMessageSent={handleMessageSent}
+                onBack={handleBackToSidebar}
               />
             ) : (
               <div className="flex-1 flex items-center justify-center bg-white">
                 <div className="text-center p-8">
                   <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                                        Select a conversation
+                    Select a conversation
                   </h3>
                   <p className="text-gray-500">
-                                        Choose a client from the sidebar to start messaging
+                    Choose a client from the sidebar to start messaging
                   </p>
                 </div>
               </div>
             )}
           </div>
+
         </div>
       </div>
     </div>

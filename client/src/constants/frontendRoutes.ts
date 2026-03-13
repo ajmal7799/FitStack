@@ -76,5 +76,6 @@ export const FRONTEND_ROUTES = {
     SESSION_HISTORY: '/sessions',
     SESSION_HISTORY_DETAILS: '/sessions/:sessionId',
     MEMBERSHIPS: '/memberships',
+    REVENUE: '/revenue',
   },
 };

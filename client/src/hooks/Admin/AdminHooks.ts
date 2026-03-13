@@ -7,7 +7,8 @@ import {
   getSessionHistory,
   getSessionHistoryDetails,
   getMembershipPage,
-  getTrainerDetails
+  getTrainerDetails,
+  getRevenue
 } from '../../service/admin/AdminService';
 
 export const useGetAllVerifications = (page: number, limit: number, status?: string, search?: string) => {
@@ -72,4 +73,11 @@ export const useGetTrainerDetails = (trainerId: string) => {
     queryKey: ['trainer', trainerId],
     queryFn: () => getTrainerDetails(trainerId),
   } );
+};
+
+export const useGetRevenue = (page: number, limit: number, search?: string, startDate?: string, endDate?: string) => {
+  return useQuery({
+    queryKey: ['revenue', page, limit, search, startDate, endDate],
+    queryFn: () => getRevenue(page, limit, search, startDate, endDate),
+  });
 };

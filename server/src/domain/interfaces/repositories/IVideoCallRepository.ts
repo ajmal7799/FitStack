@@ -18,8 +18,8 @@ export interface IVideoCallRepository extends IBaseRepository< VideoCall> {
     countBookedSessionByUserId(userId: string, status?: VideoCallStatus): Promise<number>
     findAllBookedSessionByTrainerId(trainerId: string, skip: number, limit: number, status?: VideoCallStatus, search?: string): Promise<VideoCall[]>
     countBookedSessionByTrainerId(trainerId: string, status?: VideoCallStatus, search?: string): Promise<number>
-    checkUserBookingForDay(userId: string, startTime: Date, endTime: Date): Promise<boolean>
-    countTrainerBooking(trainer: string, startTime: Date, endTime: Date): Promise<number>
-    
+    checkUserBookingForDay(userId: string, startTime: Date, endTime: Date): Promise<boolean>    
+    findByIds(ids: string[]): Promise<VideoCall[]>;
+
     
 }
