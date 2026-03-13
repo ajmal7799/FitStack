@@ -1,7 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Dumbbell, CheckCircle,
-  CreditCard, Calendar, X, Award
+  CreditCard, Calendar, X, Award,
+  TrendingUp
+
 } from 'lucide-react';
 import { useAdminSidebar } from './AdminSidebarContext';
 
@@ -18,6 +20,7 @@ const AdminSidebar = () => {
     { id: 'subscription', label: 'Subscription', icon: CreditCard, path: '/admin/subscriptions' },
     { id: 'memberships', label: 'Memberships', icon: Award, path: '/admin/memberships' },
     { id: 'session', label: 'Session', icon: Calendar, path: '/admin/sessions' },
+{ id: 'revenue', label: 'Revenue', icon: TrendingUp , path: '/admin/revenue' }
   ];
 
   const activePath = location.pathname;

@@ -1,8 +1,10 @@
 import AxiosInstance from '../../axios/axios';
 import type { SignupPayload, LoginPayload } from '../../types/AuthPayloads';
+import { API_ROUTES } from '../../constants/apiRoutes';
+
 
 export const signupUser = async (data: SignupPayload) => {
-  const response = await AxiosInstance.post('/signup', data);
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.SIGNUP, data);
   return response.data;
 };
 
@@ -15,7 +17,7 @@ export const userVerifyOtp = async ({
   values: SignupPayload;
 }) => {
   
-  const response = await AxiosInstance.post('/verify-otp', {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.VERIFY_OTP, {
     otp,
     ...values,
   });
@@ -23,7 +25,7 @@ export const userVerifyOtp = async ({
 };
 
 export const userResendOtp = async (email: string) => {
-  const response = await AxiosInstance.post('/resend-otp', {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.RESEND_OTP, {
     email,
   });
   return response.data;
@@ -31,12 +33,12 @@ export const userResendOtp = async (email: string) => {
 
 
 export const loginUser = async (data: LoginPayload) => {
-  const response = await AxiosInstance.post('/login', data);
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.LOGIN, data);
   return response.data;
 };
 
 export const forgotPassword = async (email: string) => {
-  const response = await AxiosInstance.post('/forgot-password',{email});
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.FORGOT_PASSWORD,{email});
   return response.data;
 };
 
@@ -47,7 +49,7 @@ export const forgetPaaswordVerifyOtp = async ({
   email:string;
   otp: string
 }) => {
-  const response = await AxiosInstance.post('/forget-password/verify-otp',{otp,email});
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.FORGOT_PASSWORD_VERIFY_OTP,{otp,email});
   return response.data;
 };
 
@@ -60,7 +62,7 @@ export const resetPassword = async ({
   password: string,
   token:string
 }) => {
-  const response = await AxiosInstance.post('/forget-password/reset-password',{email,password,token});
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.FORGOT_PASSWORD_RESET_PASSWORD,{email,password,token});
   return response.data;  
 };
 
@@ -68,7 +70,7 @@ export const resetPassword = async ({
 
 
 export const logoutUser = async () => {
-  const response = await AxiosInstance.post('/logout');
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.LOGOUT);
   return response.data;
 };
 
@@ -87,7 +89,7 @@ export const getAllUsers = async (
   if(status) params.append('status',status);
   if(search) params.append('search', search);
 
-  const response = await AxiosInstance.get(`/admin/users?${params.toString()}`);
+  const response = await AxiosInstance.get(`${API_ROUTES.ADMIN.USERS}?${params.toString()}`);
   return response.data;
 };
 
@@ -99,7 +101,7 @@ export const updateUserStatus = async ({
   currentStatus: string;
 }) => {
   const response = await AxiosInstance.post(
-    '/admin/users/update-status',
+    API_ROUTES.ADMIN.USERS_UPDATE_STATUS,
     {
       userId,
       currentStatus,
@@ -123,7 +125,7 @@ export const getAllTrainers = async (
   if(status) params.append('status',status);
   if(search) params.append('search', search);
 
-  const response = await AxiosInstance.get(`/admin/trainers?${params.toString()}`);
+  const response = await AxiosInstance.get(`${API_ROUTES.ADMIN.TRAINERS}?${params.toString()}`);
   return response.data;
 };
 
@@ -136,7 +138,7 @@ export const updateTrainerStatus = async ({
   currentStatus: string;
 }) => {
   const response = await AxiosInstance.post(
-    '/admin/trainers/update-status',
+    API_ROUTES.ADMIN.TRAINERS_UPDATE_STATUS,
     {
       userId,
       currentStatus,
@@ -150,7 +152,7 @@ export const userGoogleLogin = async (data: {
   role: string;
 }) => {
   const response = await AxiosInstance.post(
-    '/google-login',
+    API_ROUTES.AUTH.GOOGLE_LOGIN,
     data
   );
   return response.data;

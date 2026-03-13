@@ -8,7 +8,7 @@ import { useInitiateChat } from '../../../hooks/chat/chatHooks';
 import { useChatSocket } from '../../../hooks/Socket/useChat';
 import { socketService } from '../../../service/socket/socket';
 import type { Rootstate } from '../../../redux/store';
-import { MessageSquare, Loader2 } from 'lucide-react';
+import { MessageSquare, Loader2, ArrowLeft } from 'lucide-react';
 
 // Types
 interface TrainerChat {
@@ -60,33 +60,29 @@ const UserChatPage = () => {
     senderId: string;
   } | null>(null);
   const [localUnreadCount, setLocalUnreadCount] = useState<number>(0);
+  // Mobile: track which panel is visible ('sidebar' | 'chat')
+  const [mobileView, setMobileView] = useState<'sidebar' | 'chat'>('sidebar');
 
   const { data, isLoading, isError, error } = useInitiateChat();
 
-  // Prepare the base chat data
   const chatData = data as InitiateChatResponse | undefined;
   const baseChat: TrainerChat | null = chatData?.data?.result || null;
 
-  // Initialize socket connection
   useEffect(() => {
     if (token && userId) {
       socketService.connect(token, userId);
     }
-
     return () => {
       socketService.disconnect();
     };
   }, [token, userId]);
 
-  // Join the chat room when we have chatId
   useEffect(() => {
     if (baseChat?.chatId) {
-      console.log('🔗 Joining chat room:', baseChat.chatId);
       socketService.joinRoom(baseChat.chatId);
     }
   }, [baseChat?.chatId]);
 
-  // ✅ Define the message handler with useCallback to maintain reference
   const handleReceiveMessage = useCallback(
     (message: Message) => {
       const previewText =
@@ -99,7 +95,6 @@ const UserChatPage = () => {
               : message.type === 'audio'
                 ? '🎵 Audio'
                 : '📄 File';
-
 
       setChatUpdates({
         text: previewText,
@@ -114,13 +109,17 @@ const UserChatPage = () => {
     [selectedChatId, userId],
   );
 
-  // Listen for incoming messages
   useChatSocket(handleReceiveMessage);
 
   const handleChatSelect = (chatId: string) => {
     setSelectedChatId(chatId);
     setLocalUnreadCount(0);
-    console.log('Selected chat:', chatId);
+    // On mobile, switch to chat view
+    setMobileView('chat');
+  };
+
+  const handleBackToSidebar = () => {
+    setMobileView('sidebar');
   };
 
   const handleMessageSent = (
@@ -136,10 +135,8 @@ const UserChatPage = () => {
     });
   };
 
-  // Final chat object with latest message preview and unread count
   const currentChat = useMemo(() => {
     if (!baseChat) return null;
-
     return {
       ...baseChat,
       lastMessage: chatUpdates || baseChat.lastMessage,
@@ -150,6 +147,8 @@ const UserChatPage = () => {
     };
   }, [baseChat, chatUpdates, localUnreadCount, selectedChatId]);
 
+  const isChatSelected = currentChat && selectedChatId === currentChat.chatId;
+
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       <UserSidebar />
@@ -158,27 +157,31 @@ const UserChatPage = () => {
         <Header />
 
         <div className="flex-1 flex overflow-hidden">
-          <div className="flex-shrink-0">
+
+          {/* ── SIDEBAR PANEL ── */}
+          {/* Desktop: always visible. Mobile: visible only when mobileView === 'sidebar' */}
+          <div
+            className={`
+              flex-shrink-0
+              ${mobileView === 'sidebar' ? 'flex' : 'hidden'}
+              md:flex
+              w-full md:w-80
+            `}
+          >
             {isLoading ? (
-              <div className="w-full md:w-80 bg-white border-r border-gray-200 flex items-center justify-center h-full">
+              <div className="w-full bg-white border-r border-gray-200 flex items-center justify-center h-full">
                 <div className="text-center">
                   <Loader2 className="w-8 h-8 animate-spin text-purple-600 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">
-                    Connecting to your trainer...
-                  </p>
+                  <p className="text-sm text-gray-500">Connecting to your trainer...</p>
                 </div>
               </div>
             ) : isError ? (
-              <div className="w-full md:w-80 bg-white border-r border-gray-200 flex items-center justify-center h-full">
+              <div className="w-full bg-white border-r border-gray-200 flex items-center justify-center h-full">
                 <div className="text-center p-4">
                   <MessageSquare className="w-12 h-12 text-red-400 mx-auto mb-3" />
-                  <p className="text-sm text-red-600 font-medium">
-                    Failed to load chat
-                  </p>
+                  <p className="text-sm text-red-600 font-medium">Failed to load chat</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {error instanceof Error
-                      ? error.message
-                      : 'Please try again later'}
+                    {error instanceof Error ? error.message : 'Please try again later'}
                   </p>
                 </div>
               </div>
@@ -191,14 +194,23 @@ const UserChatPage = () => {
             )}
           </div>
 
-          <div className="flex-1 flex overflow-hidden">
-            {currentChat && selectedChatId === currentChat.chatId ? (
+          {/* ── CHAT WINDOW PANEL ── */}
+          {/* Desktop: always visible. Mobile: visible only when mobileView === 'chat' */}
+          <div
+            className={`
+              flex-1 flex flex-col overflow-hidden
+              ${mobileView === 'chat' ? 'flex' : 'hidden'}
+              md:flex
+            `}
+          >
+            {isChatSelected ? (
               <ChatWindow
                 chatId={currentChat.chatId}
                 userName={currentChat.trainerName}
                 userProfilePic={currentChat.trainerProfilePic || ''}
                 userId={currentChat.userId}
                 onMessageSent={handleMessageSent}
+                onBack={handleBackToSidebar}
               />
             ) : (
               <div className="flex-1 flex items-center justify-center bg-white">
@@ -222,6 +234,7 @@ const UserChatPage = () => {
               </div>
             )}
           </div>
+
         </div>
       </div>
     </div>

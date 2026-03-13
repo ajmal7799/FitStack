@@ -4,9 +4,10 @@ import { GetDashboardUseCase } from '../../../application/implementation/admin/d
 import { ResponseHelper } from '../../../shared/utils/responseHelper';
 import { HTTPStatus } from '../../../shared/constants/httpStatus';
 import { FilterPeriod } from '../../../domain/entities/admin/dashboardEntities';
+import { IGetRevenueListingUseCase } from '../../../application/useCase/admin/revenue/IGetRevenueListingUseCase';
 
 export class AdminDashboardController {
-    constructor(private _getDashboardUseCase: GetDashboardUseCase) {}
+    constructor(private _getDashboardUseCase: GetDashboardUseCase, private _getRevenueListingUseCase: IGetRevenueListingUseCase) {}
 
     async getStats(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
@@ -26,4 +27,22 @@ export class AdminDashboardController {
             next(error);
         }
     }
+
+    // --------------------------------------------------
+    //              🛠 REVENUE
+    // --------------------------------------------------
+
+  async getRevenueListing(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string;
+      const startDate = req.query.startDate as string;
+      const endDate = req.query.endDate as string;
+      const revenueListing = await this._getRevenueListingUseCase.execute(page, limit, search, startDate, endDate);
+      ResponseHelper.success(res, 'Revenue listing fetched', revenueListing, HTTPStatus.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

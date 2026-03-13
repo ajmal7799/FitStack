@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, type Variants } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { z } from 'zod';
 import { 
   ArrowLeft, 
   Camera, 
@@ -26,12 +27,69 @@ import {
 
 const BRAND_COLOR = '#eb9334';
 
+// ─── Zod Schema ──────────────────────────────────────────────────────────────
+
+const trainerProfileSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Full name is required')
+    .min(3, 'Name must be at least 3 characters')
+    .max(50, 'Name must not exceed 50 characters')
+    .regex(/^[a-zA-Z\s'-]+$/, 'Name can only contain letters, spaces, hyphens and apostrophes'),
+
+  email: z
+    .string()
+    .trim()
+    .min(1, 'Email address is required')
+    .email('Please enter a valid email address')
+    .max(100, 'Email must not exceed 100 characters'),
+
+  phone: z
+    .string()
+    .trim()
+    .min(1, 'Phone number is required')
+    .regex(/^\d{10}$/, 'Phone number must be exactly 10 digits'),
+
+  qualification: z
+    .string()
+    .trim()
+    .min(1, 'Qualification is required')
+    .min(5, 'Qualification must be at least 5 characters')
+    .max(200, 'Qualification must not exceed 200 characters'),
+
+  specialisation: z
+    .string()
+    .trim()
+    .min(1, 'Specialisation is required')
+    .min(3, 'Specialisation must be at least 3 characters')
+    .max(300, 'Specialisation must not exceed 300 characters'),
+
+  experience: z
+    .number({ error: 'Experience must be a number' })
+    .int('Experience must be a whole number')
+    .min(0, 'Experience cannot be negative')
+    .max(60, 'Experience must be realistic (max 60 years)'),
+
+  about: z
+    .string()
+    .trim()
+    .min(1, 'Biography is required')
+    .min(20, 'Biography must be at least 20 characters')
+    .max(1000, 'Biography must not exceed 1000 characters'),
+});
+
+type TrainerProfileFormData = z.infer<typeof trainerProfileSchema>;
+type FormErrors = Partial<Record<keyof TrainerProfileFormData, string>>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const TrainerProfileEdit: React.FC = () => {
   const navigate = useNavigate();
-  const { data: profileData, isLoading, isError } = useGetTrainerProfile();
+  const { data: profileData, isLoading } = useGetTrainerProfile();
   const { mutateAsync: updateProfile } = useUpdateTrainerProfile();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<TrainerProfileFormData>({
     name: '',
     email: '',
     phone: '',
@@ -43,7 +101,8 @@ const TrainerProfileEdit: React.FC = () => {
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [imageError, setImageError] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -72,56 +131,96 @@ const TrainerProfileEdit: React.FC = () => {
     visible: { y: 0, opacity: 1 }
   };
 
-  const validateField = (name: string, value: string | number): string => {
-    switch (name) {
-    case 'name': return String(value).length < 3 ? 'Name must be at least 3 characters' : '';
-    case 'email': return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value)) ? 'Invalid email address' : '';
-    case 'phone': return !/^\d{10}$/.test(String(value)) ? 'Phone number must be 10 digits' : '';
-    case 'about': return String(value).length < 20 ? 'About me must be at least 20 characters' : '';
-    default: return '';
-    }
-  };
+  // ── Validate a single field on change ──────────────────────────────────────
+ const validateField = (name: keyof TrainerProfileFormData, value: string | number) => {
+  const fieldSchema = trainerProfileSchema.shape[name];
+  const result = fieldSchema.safeParse(value);
+  return result.success ? '' : result.error.issues[0].message;
+};
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    const processedValue = name === 'experience' ? Number(value) : value;
+    const fieldName = name as keyof TrainerProfileFormData;
+    const processedValue = fieldName === 'experience' ? Number(value) : value;
 
-    setFormData(prev => ({ ...prev, [name]: processedValue }));
-    setErrors(prev => ({ ...prev, [name]: validateField(name, processedValue) }));
+    setFormData(prev => ({ ...prev, [fieldName]: processedValue }));
+    setErrors(prev => ({ ...prev, [fieldName]: validateField(fieldName, processedValue) }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, profileImage: 'Image must be less than 5MB' }));
-        return;
-      }
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
+    setImageError('');
+
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setImageError('Only JPG, PNG, or WEBP images are allowed');
+      return;
     }
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError('Image must be less than 5MB');
+      return;
+    }
+
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result as string);
+    reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    const submitData = new FormData();
+  // ── Full form validation before submit ─────────────────────────────────────
+const validateForm = (): boolean => {
+  const result = trainerProfileSchema.safeParse(formData);
 
-    Object.entries(formData).forEach(([key, value]) => submitData.append(key, value.toString()));
-    if (imageFile) submitData.append('profileImage', imageFile);
+  if (!result.success) {
+    const fieldErrors: FormErrors = {};
+    result.error.issues.forEach(issue => {         // ← .issues not .errors
+      const field = issue.path[0] as keyof TrainerProfileFormData;
+      if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+    });
+    setErrors(fieldErrors);
+    return false;
+  }
 
-    try {
-      await updateProfile(submitData);
-      toast.success('Profile updated!', { style: { borderRadius: '15px', background: '#333', color: '#fff' } });
-      navigate('/trainer/profile');
-    } catch (err: any) {
-      toast.error('Failed to update profile');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  setErrors({});
+  return true;
+};
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const result = trainerProfileSchema.safeParse(formData);
+
+  if (!result.success) {
+    const fieldErrors: FormErrors = {};
+    result.error.issues.forEach(issue => {
+      const field = issue.path[0] as keyof TrainerProfileFormData;
+      if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+    });
+    setErrors(fieldErrors);
+    toast.error('Please fix the errors before saving', {
+      style: { borderRadius: '15px', background: '#333', color: '#fff' },
+    });
+    return;
+  }
+
+  // result.data has all strings trimmed by Zod
+  setIsSaving(true);
+  const submitData = new FormData();
+  Object.entries(result.data).forEach(([key, value]) => submitData.append(key, value.toString()));
+  if (imageFile) submitData.append('profileImage', imageFile);
+
+  try {
+    await updateProfile(submitData);
+    toast.success('Profile updated!', { style: { borderRadius: '15px', background: '#333', color: '#fff' } });
+    navigate('/trainer/profile');
+  } catch (err: any) {
+    toast.error('Failed to update profile');
+  } finally {
+    setIsSaving(false);
+  }
+};
 
   if (isLoading) {
     return (
@@ -160,7 +259,7 @@ const TrainerProfileEdit: React.FC = () => {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-8" noValidate>
               {/* Image Upload Section */}
               <motion.div variants={itemVars} className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col md:flex-row items-center gap-8">
                 <div className="relative group">
@@ -180,8 +279,8 @@ const TrainerProfileEdit: React.FC = () => {
                 </div>
                 <div className="text-center md:text-left">
                   <h3 className="font-bold text-lg">Profile Photo</h3>
-                  <p className="text-slate-500 text-sm mb-2">Recommended: Square image, max 5MB</p>
-                  {errors.profileImage && <p className="text-red-500 text-xs font-bold">{errors.profileImage}</p>}
+                  <p className="text-slate-500 text-sm mb-2">Recommended: Square image, JPG/PNG/WEBP, max 5MB</p>
+                  {imageError && <p className="text-red-500 text-xs font-bold">{imageError}</p>}
                 </div>
               </motion.div>
 
@@ -196,7 +295,7 @@ const TrainerProfileEdit: React.FC = () => {
                     </label>
                     <input 
                       name="name" value={formData.name} onChange={handleInputChange}
-                      className="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium"
+                      className={`w-full px-5 py-3 rounded-2xl bg-slate-50 border focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium ${errors.name ? 'border-red-400 bg-red-50' : 'border-slate-200'}`}
                     />
                     {errors.name && <p className="text-red-500 text-xs font-medium">{errors.name}</p>}
                   </div>
@@ -207,8 +306,9 @@ const TrainerProfileEdit: React.FC = () => {
                     </label>
                     <input 
                       name="email" type="email" value={formData.email} onChange={handleInputChange}
-                      className="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium"
+                      className={`w-full px-5 py-3 rounded-2xl bg-slate-50 border focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium ${errors.email ? 'border-red-400 bg-red-50' : 'border-slate-200'}`}
                     />
+                    {errors.email && <p className="text-red-500 text-xs font-medium">{errors.email}</p>}
                   </div>
 
                   <div className="space-y-2">
@@ -217,8 +317,9 @@ const TrainerProfileEdit: React.FC = () => {
                     </label>
                     <input 
                       name="phone" value={formData.phone} onChange={handleInputChange} maxLength={10}
-                      className="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium"
+                      className={`w-full px-5 py-3 rounded-2xl bg-slate-50 border focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium ${errors.phone ? 'border-red-400 bg-red-50' : 'border-slate-200'}`}
                     />
+                    {errors.phone && <p className="text-red-500 text-xs font-medium">{errors.phone}</p>}
                   </div>
 
                   <div className="space-y-2">
@@ -226,9 +327,10 @@ const TrainerProfileEdit: React.FC = () => {
                       <Briefcase size={16} style={{ color: BRAND_COLOR }} /> Experience (Years)
                     </label>
                     <input 
-                      name="experience" type="number" value={formData.experience} onChange={handleInputChange}
-                      className="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium"
+                      name="experience" type="number" min={0} max={60} value={formData.experience} onChange={handleInputChange}
+                      className={`w-full px-5 py-3 rounded-2xl bg-slate-50 border focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium ${errors.experience ? 'border-red-400 bg-red-50' : 'border-slate-200'}`}
                     />
+                    {errors.experience && <p className="text-red-500 text-xs font-medium">{errors.experience}</p>}
                   </div>
                 </div>
               </motion.div>
@@ -245,8 +347,9 @@ const TrainerProfileEdit: React.FC = () => {
                     <input 
                       name="qualification" value={formData.qualification} onChange={handleInputChange}
                       placeholder="e.g. Certified Personal Trainer, ACE"
-                      className="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium"
+                      className={`w-full px-5 py-3 rounded-2xl bg-slate-50 border focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium ${errors.qualification ? 'border-red-400 bg-red-50' : 'border-slate-200'}`}
                     />
+                    {errors.qualification && <p className="text-red-500 text-xs font-medium">{errors.qualification}</p>}
                   </div>
 
                   <div className="space-y-2">
@@ -256,18 +359,26 @@ const TrainerProfileEdit: React.FC = () => {
                     <input 
                       name="specialisation" value={formData.specialisation} onChange={handleInputChange}
                       placeholder="e.g. Crossfit, Yoga, Strength Training (comma separated)"
-                      className="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium"
+                      className={`w-full px-5 py-3 rounded-2xl bg-slate-50 border focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium ${errors.specialisation ? 'border-red-400 bg-red-50' : 'border-slate-200'}`}
                     />
+                    {errors.specialisation && <p className="text-red-500 text-xs font-medium">{errors.specialisation}</p>}
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-slate-700">Biography / About Me</label>
                     <textarea 
                       name="about" rows={4} value={formData.about} onChange={handleInputChange}
-                      className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium resize-none"
+                      className={`w-full px-5 py-4 rounded-2xl bg-slate-50 border focus:ring-2 focus:ring-orange-500/20 focus:border-[#eb9334] outline-none transition-all font-medium resize-none ${errors.about ? 'border-red-400 bg-red-50' : 'border-slate-200'}`}
                     />
-                    <div className="flex justify-end"><span className="text-[10px] font-bold text-slate-400">{formData.about.length}/20 minimum</span></div>
-                    {errors.about && <p className="text-red-500 text-xs font-medium">{errors.about}</p>}
+                    <div className="flex justify-between items-center">
+                      {errors.about
+                        ? <p className="text-red-500 text-xs font-medium">{errors.about}</p>
+                        : <span />
+                      }
+                      <span className={`text-[10px] font-bold ${formData.about.length < 20 ? 'text-red-400' : 'text-slate-400'}`}>
+                        {formData.about.length}/1000
+                      </span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
