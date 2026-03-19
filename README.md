@@ -102,7 +102,7 @@ FitStack/
 │   │   └── services/         # API service calls
 │   └── package.json
 │
-├── server/                   # Node.js Backend
+├── server/                    # Node.js Backend
 │   ├── src/
 │   │   ├── domain/            # Entities & interfaces
 │   │   ├── application/       # Use cases & business logic
